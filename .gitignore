@@ -1,0 +1,17 @@
+node_modules
+dist
+build
+.env
+
+# pnpm
+.pnpm-store
+
+# logs
+*.log
+
+# expo / react native
+.expo
+.expo-shared
+
+# nestjs
+coverage
