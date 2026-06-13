@@ -20,6 +20,6 @@ import { TokenModule } from './modules/token/token.module';
     TokenModule,
   ],
   controllers: [AppController],
-  providers: [AppService, GroupsService, TokenService],
+  providers: [AppService],
 })
 export class AppModule {}

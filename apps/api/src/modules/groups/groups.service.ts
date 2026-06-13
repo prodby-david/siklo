@@ -1,94 +1,59 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
-import { CreateGroupDTO } from './dto/create-group.dto';
-import { JoinGroupDTO } from './dto/join-group.dto';
+import { CreateGroupDTO } from './schema/create-group.schema';
+import { JoinGroupDTO } from './schema/join-group.schema';
+import { GroupRepository } from './groups.repository';
+import { Prisma } from '@prisma/client/extension';
 
 @Injectable()
 export class GroupsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly groupRepository: GroupRepository,
+  ) {}
 
-  async createUserGroup(createGroupDto: CreateGroupDTO) {
-    return this.prisma.$transaction(async (txs) => {
-      const group = await txs.group.create({
-        data: {
-          name: createGroupDto.name,
-          description: createGroupDto.description,
-          contributionAmount: createGroupDto.contributionAmount,
-          startDate: createGroupDto.startDate,
-        },
+  private async validateMembership(
+    tx: Prisma.TransactionClient,
+    dto: JoinGroupDTO,
+  ) {
+    const existingMembership = await this.groupRepository.validateMembership(
+      tx,
+      dto,
+    );
+
+    if (existingMembership) {
+      throw new ConflictException('You are already a member of this group');
+    }
+  }
+
+  async createGroup(dto: CreateGroupDTO) {
+    return this.prisma.$transaction(async (tx) => {
+      const group = await this.groupRepository.createGroup(tx, dto);
+      await this.groupRepository.createMembership(tx, {
+        userId: dto.userId,
+        groupId: group.id,
       });
-
-      const membership = await txs.membership.create({
-        data: {
-          userId: createGroupDto.userId,
-          groupId: group.id,
-          position: 1,
-        },
-      });
-
       return {
-        group,
-        membership,
+        message: 'Group created successfully',
       };
     });
   }
 
   async joinGroup(dto: JoinGroupDTO) {
-    return this.prisma.$transaction(async (txs) => {
-      const existingMembership = await txs.membership.findUnique({
-        where: {
-          userId_groupId: {
-            userId: dto.userId,
-            groupId: dto.groupId,
-          },
-        },
-      });
-
-      if (existingMembership) {
-        throw new Error('You are already a member of this group');
-      }
-
-      const currentMemberCount = await txs.membership.count({
-        where: {
-          groupId: dto.groupId,
-        },
-      });
-
-      const nextPosition = currentMemberCount + 1;
-
-      return await txs.membership.create({
-        data: {
-          userId: dto.userId,
-          groupId: dto.groupId,
-          position: nextPosition,
-        },
-        include: {
-          group: true,
-        },
-      });
+    return this.prisma.$transaction(async (tx) => {
+      await this.validateMembership(tx, dto);
+      await this.groupRepository.createMembership(tx, dto);
+      return {
+        message: 'Group joined successfully',
+      };
     });
   }
 
   async getUserGroup(userId: string) {
-    return this.prisma.membership.findMany({
-      where: {
-        userId: userId,
-      },
-      include: {
-        group: true,
-      },
-    });
+    return this.groupRepository.getUserGroup(userId);
   }
 
   async getAllGroups() {
-    return this.prisma.group.findMany({
-      include: {
-        _count: {
-          select: {
-            memberships: true,
-          },
-        },
-      },
-    });
+    return this.groupRepository.getAllGroups();
   }
 }
