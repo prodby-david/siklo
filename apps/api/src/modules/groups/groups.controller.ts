@@ -9,11 +9,11 @@ import type { JoinGroupDTO } from './schema/join-group.schema';
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
   @Post('create')
-  async createUserGroup(
+  async createGroup(
     @Body(new ZodValidationPipe(createGroupWithMemberSchema))
     createGroupDto: CreateGroupDTO,
   ) {
-    return this.groupsService.createUserGroup(createGroupDto);
+    return this.groupsService.createGroup(createGroupDto);
   }
 
   @Post('join')
