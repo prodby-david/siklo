@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  BadRequestException,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userSchema, type CreateUserDTO } from './schema/user.schema';
 import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
@@ -19,10 +12,5 @@ export class UsersController {
     @Body(new ZodValidationPipe(userSchema)) data: CreateUserDTO,
   ) {
     return this.usersService.createUser(data);
-  }
-
-  @Get()
-  async getAllUsers() {
-    return this.usersService.getAllUsers();
   }
 }
