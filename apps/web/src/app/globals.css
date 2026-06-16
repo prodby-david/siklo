@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
+  
+  --brand-primary: #0f172a;
+  --brand-accent: #0d9488;
+  --brand-accent-hover: #0f766e;
+
+  --color-winner-payout: #6366f1;
+  --color-winner-payout-bg: #e0e7ff;
+  --color-success: #10b981;
+  --color-success-bg: #d1fae5;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fef3c7;
+  --color-danger: #ef4444;
+  --color-danger-bg: #fee2e2;
+  --color-danger-border: #fca5a5;
+
+  --neutral-subtext: #475569;
+  --neutral-border: #e2e8f0;
+  --neutral-table-stripe: #f8fafc;
+}
+
+.dark {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+  
+  --brand-primary: #f8fafc;
+  --brand-accent: #14b8a6;
+  --brand-accent-hover: #2dd4bf;
+
+  --color-winner-payout: #818cf8;
+  --color-winner-payout-bg: #1e1b4b;
+  --color-success: #34d399;
+  --color-success-bg: #064e3b;
+  --color-warning: #fbbf24;
+  --color-warning-bg: #78350f;
+  --color-danger: #f87171;
+  --color-danger-bg: #451a03;
+  --color-danger-border: #7f1d1d;
+
+  --neutral-subtext: #94a3b8;
+  --neutral-border: #1e293b;
+  --neutral-table-stripe: #111827;
 }
 
 @theme inline {
+  /* Core Tailwind Layout Overrides */
+  --background-color: var(--background);
+  --text-color: var(--foreground);
+
+  /* Semantic UI Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-hover: var(--brand-accent-hover);
+  
+  --color-winner-payout: var(--color-winner-payout);
+  --color-winner-payout-bg: var(--color-winner-payout-bg);
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
+  --color-danger-border: var(--color-danger-border);
+  --color-neutral-subtext: var(--neutral-subtext);
+  --color-neutral-border: var(--neutral-border);
+  --color-neutral-table-stripe: var(--neutral-table-stripe);
 }
