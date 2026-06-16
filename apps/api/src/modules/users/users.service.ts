@@ -1,27 +1,30 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma.service';
+import { Injectable, ConflictException } from '@nestjs/common';
+import { UsersRepository } from './users.repository';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDTO } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly usersRepository: UsersRepository,
     private readonly authService: AuthService,
   ) {}
 
   async createUser(user: CreateUserDTO) {
+    const emailIsUsed = await this.usersRepository.findByEmail(user.email);
+    if (emailIsUsed) {
+      throw new ConflictException('Email is already used.');
+    }
+
     const hashedPassword = await this.authService.hashPassword(user.password);
 
-    return this.prisma.user.create({
-      data: {
-        ...user,
-        password: hashedPassword,
-      },
+    await this.usersRepository.createUser({
+      ...user,
+      password: hashedPassword,
     });
-  }
 
-  async getAllUsers() {
-    return this.prisma.user.findMany();
+    return {
+      message: 'Account successfully created.',
+    };
   }
 }
