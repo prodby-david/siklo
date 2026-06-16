@@ -13,7 +13,10 @@ export const userSchema = z.object({
     .string()
     .min(1, 'Password is required')
     .min(8, 'Password must be at least 8 characters'),
-  contactNumber: z.string().optional(),
+  contactNumber: z
+    .string()
+    .min(11, 'Contact number must be at least 11 numbers')
+    .max(11, 'Contact number must be at most 11 numbers'),
 });
 
 export type CreateUserDTO = z.infer<typeof userSchema>;
