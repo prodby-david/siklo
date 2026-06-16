@@ -49,11 +49,9 @@
 }
 
 @theme inline {
-  /* Core Tailwind Layout Overrides */
   --background-color: var(--background);
   --text-color: var(--foreground);
 
-  /* Semantic UI Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-brand-primary: var(--brand-primary);
