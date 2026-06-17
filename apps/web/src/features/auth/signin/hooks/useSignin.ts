@@ -1,88 +1,53 @@
-import { useState } from "react";
-import { SigninFormData, SigninErrors, signinSchema } from "../types/signin.type";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { api } from "@/shared/lib/axios";
+import { useForm } from "react-hook-form";
+import { SigninFormData, signinSchema } from "../types/signin.type";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const initialData: SigninFormData = {
   email: "",
   password: "",
 };
 
-export function useSignin(onSuccess?: () => void) {
-  const [formData, setFormData] = useState<SigninFormData>(initialData);
-  const [errors, setErrors] = useState<SigninErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+export function useSignin() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SigninFormData>({
+    resolver: zodResolver(signinSchema),
+    defaultValues: initialData,
+  });
 
-  const validate = (): boolean => {
-    const result = signinSchema.safeParse(formData);
-    if (result.success) {
-      setErrors({});
-      return true;
-    }
+  const router = useRouter();
 
-    const newErrors: SigninErrors = {};
-    result.error.issues.forEach((issue) => {
-      const path = issue.path[0] as keyof SigninFormData;
-      if (path && !newErrors[path]) {
-        newErrors[path] = issue.message;
-      }
-    });
-
-    setErrors(newErrors);
-    return false;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name as keyof SigninFormData]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-    if (submitError) {
-      setSubmitError("");
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitError("");
-
-    if (!validate()) {
-      return;
-    }
-
-    setIsLoading(true);
+  const onSubmit = async (data: SigninFormData) => {
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (formData.email === "error@siklo.com" || formData.password === "wrongpass") {
-            reject(new Error("Invalid email or password"));
-          } else {
-            resolve(true);
-          }
-        }, 1200);
-      });
-      setIsSuccess(true);
-      if (onSuccess) {
-        onSuccess();
+      await api.post("/auth/signin", data);
+      reset();
+      toast.success("Login success, redirecting to dashboard...");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 3000);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const message = err.response?.data.message;
+
+        toast.error(message);
+        return;
       }
-    } catch (err: any) {
-      setSubmitError(err.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
+
+      toast.error((err as Error).message);
     }
   };
 
   return {
-    formData,
+    register,
     errors,
-    isLoading,
-    submitError,
-    isSuccess,
-    handleChange,
-    handleSubmit,
+    isSubmitting,
+    handleSubmit: handleSubmit(onSubmit),
   };
 }
