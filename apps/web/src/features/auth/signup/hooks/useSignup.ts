@@ -1,88 +1,57 @@
-import { useState } from "react";
-import { SignupFormData, SignupErrors, signupSchema } from "../types/signup.type";
+"use client";
 
-const initialData: SignupFormData = {
-  name: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-  contactNumber: "",
-};
+import axios from "axios";
+import { SignupFormData, signupSchema } from "../types/signup.type";
+import { api } from "@/shared/lib/axios";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
-export function useSignup(onSuccess?: () => void) {
-  const [formData, setFormData] = useState<SignupFormData>(initialData);
-  const [errors, setErrors] = useState<SignupErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
+export default function useSignup() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+  });
 
-  const validate = (): boolean => {
-    const result = signupSchema.safeParse(formData);
-    if (result.success) {
-      setErrors({});
-      return true;
-    }
+  const router = useRouter();
 
-    const newErrors: SignupErrors = {};
-    result.error.issues.forEach((issue) => {
-      const path = issue.path[0] as keyof SignupFormData;
-      if (path && !newErrors[path]) {
-        newErrors[path] = issue.message;
-      }
-    });
+  const onSubmit = async (data: SignupFormData) => {
+    const { confirmPassword, ...updatedData } = data;
 
-    setErrors(newErrors);
-    return false;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name as keyof SignupFormData]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
-    }
-    if (submitError) {
-      setSubmitError("");
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitError("");
-    
-    if (!validate()) {
-      return;
-    }
-
-    setIsLoading(true);
     try {
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (formData.email === "error@siklo.com") {
-            reject(new Error("This email is already registered"));
-          } else {
-            resolve(true);
-          }
-        }, 1500);
+      await api.post("/users", updatedData);
+      reset({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        contactNumber: "",
       });
-      setIsSuccess(true);
-      if (onSuccess) {
-        onSuccess();
+      toast.success("Signup success, redirecting to signin...");
+      setTimeout(() => {
+        router.push("/signin");
+      }, 3000);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        const message = err.response?.data.message || "Signup failed";
+
+        toast.error(message);
+        return;
       }
-    } catch (err: any) {
-      setSubmitError(err.message || "An unexpected error occurred during signup");
-    } finally {
-      setIsLoading(false);
+
+      toast.error((err as Error).message);
     }
   };
 
   return {
-    formData,
+    register,
     errors,
-    isLoading,
-    submitError,
-    isSuccess,
-    handleChange,
-    handleSubmit,
+    isSubmitting,
+    handleSubmit: handleSubmit(onSubmit),
   };
 }
