@@ -17,7 +17,9 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials. Please try again.');
+      throw new UnauthorizedException(
+        'Invalid credentials. Please check and try again.',
+      );
     }
 
     const isPasswordValid = await this.comparePassword(
@@ -26,7 +28,9 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials. Please try again.');
+      throw new UnauthorizedException(
+        'Invalid credentials. Please check and try again.',
+      );
     }
 
     const tokens = await this.tokenService.generateToken(user.id, user.email);
