@@ -21,7 +21,9 @@ export default function TrustCards() {
               {getIcon(item.id)}
             </div>
             <div className="flex flex-col gap-1">
-              <h4 className="text-xs font-bold text-foreground">{item.title}</h4>
+              <h4 className="text-xs font-bold text-foreground">
+                {item.title}
+              </h4>
               <p className="text-xs text-neutral-subtext leading-relaxed font-normal">
                 {item.description}
               </p>
