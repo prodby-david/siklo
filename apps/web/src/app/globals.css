@@ -71,3 +71,11 @@
   --color-neutral-border: var(--neutral-border);
   --color-neutral-table-stripe: var(--neutral-table-stripe);
 }
+
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
