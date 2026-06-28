@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Footer from "@/shared/components/footer/Footer";
-import ThemeProvider from "@/shared/components/theme/ThemeProvider";
+import ThemeProvider from "@/shared/providers/ThemeProvider";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Inter } from "next/font/google";
+import TanstackQueryProvider from "@/shared/providers/TanstackQueryProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,10 +23,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-full flex flex-col`}>
-        <ThemeProvider>
-          {children}
-          <Footer />
-        </ThemeProvider>
+        <TanstackQueryProvider>
+          <ThemeProvider>
+            {children}
+            <Footer />
+          </ThemeProvider>
+        </TanstackQueryProvider>
         <Toaster
           richColors
           toastOptions={{
