@@ -7,7 +7,7 @@ export const userSchema = z.object({
     .max(100, 'Name must be at most 100 characters'),
   email: z
     .string()
-    .regex(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i, 'Invalid email format')
+    .email('Invalid email format')
     .max(255, 'Email must be at most 255 characters'),
   password: z
     .string()
