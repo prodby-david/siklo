@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Group: 'Group',
+  Round: 'Round',
   Membership: 'Membership'
 } as const
 
@@ -89,6 +90,11 @@ export const GroupScalarFieldEnum = {
   name: 'name',
   description: 'description',
   contributionAmount: 'contributionAmount',
+  billingCycle: 'billingCycle',
+  cycleDuration: 'cycleDuration',
+  maxMembers: 'maxMembers',
+  inviteCode: 'inviteCode',
+  organizerId: 'organizerId',
   startDate: 'startDate',
   createdAt: 'createdAt'
 } as const
@@ -96,11 +102,25 @@ export const GroupScalarFieldEnum = {
 export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
 
 
+export const RoundScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  cycleNumber: 'cycleNumber',
+  roundNumber: 'roundNumber',
+  recipientId: 'recipientId',
+  targetDate: 'targetDate',
+  status: 'status'
+} as const
+
+export type RoundScalarFieldEnum = (typeof RoundScalarFieldEnum)[keyof typeof RoundScalarFieldEnum]
+
+
 export const MembershipScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   groupId: 'groupId',
-  position: 'position'
+  position: 'position',
+  joinedAt: 'joinedAt'
 } as const
 
 export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]

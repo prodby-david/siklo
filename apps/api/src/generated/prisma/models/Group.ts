@@ -28,10 +28,14 @@ export type AggregateGroup = {
 
 export type GroupAvgAggregateOutputType = {
   contributionAmount: number | null
+  cycleDuration: number | null
+  maxMembers: number | null
 }
 
 export type GroupSumAggregateOutputType = {
   contributionAmount: number | null
+  cycleDuration: number | null
+  maxMembers: number | null
 }
 
 export type GroupMinAggregateOutputType = {
@@ -39,6 +43,11 @@ export type GroupMinAggregateOutputType = {
   name: string | null
   description: string | null
   contributionAmount: number | null
+  billingCycle: $Enums.BillingCycle | null
+  cycleDuration: number | null
+  maxMembers: number | null
+  inviteCode: string | null
+  organizerId: string | null
   startDate: Date | null
   createdAt: Date | null
 }
@@ -48,6 +57,11 @@ export type GroupMaxAggregateOutputType = {
   name: string | null
   description: string | null
   contributionAmount: number | null
+  billingCycle: $Enums.BillingCycle | null
+  cycleDuration: number | null
+  maxMembers: number | null
+  inviteCode: string | null
+  organizerId: string | null
   startDate: Date | null
   createdAt: Date | null
 }
@@ -57,6 +71,11 @@ export type GroupCountAggregateOutputType = {
   name: number
   description: number
   contributionAmount: number
+  billingCycle: number
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: number
+  organizerId: number
   startDate: number
   createdAt: number
   _all: number
@@ -65,10 +84,14 @@ export type GroupCountAggregateOutputType = {
 
 export type GroupAvgAggregateInputType = {
   contributionAmount?: true
+  cycleDuration?: true
+  maxMembers?: true
 }
 
 export type GroupSumAggregateInputType = {
   contributionAmount?: true
+  cycleDuration?: true
+  maxMembers?: true
 }
 
 export type GroupMinAggregateInputType = {
@@ -76,6 +99,11 @@ export type GroupMinAggregateInputType = {
   name?: true
   description?: true
   contributionAmount?: true
+  billingCycle?: true
+  cycleDuration?: true
+  maxMembers?: true
+  inviteCode?: true
+  organizerId?: true
   startDate?: true
   createdAt?: true
 }
@@ -85,6 +113,11 @@ export type GroupMaxAggregateInputType = {
   name?: true
   description?: true
   contributionAmount?: true
+  billingCycle?: true
+  cycleDuration?: true
+  maxMembers?: true
+  inviteCode?: true
+  organizerId?: true
   startDate?: true
   createdAt?: true
 }
@@ -94,6 +127,11 @@ export type GroupCountAggregateInputType = {
   name?: true
   description?: true
   contributionAmount?: true
+  billingCycle?: true
+  cycleDuration?: true
+  maxMembers?: true
+  inviteCode?: true
+  organizerId?: true
   startDate?: true
   createdAt?: true
   _all?: true
@@ -190,6 +228,11 @@ export type GroupGroupByOutputType = {
   name: string
   description: string | null
   contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  organizerId: string
   startDate: Date
   createdAt: Date
   _count: GroupCountAggregateOutputType | null
@@ -222,9 +265,16 @@ export type GroupWhereInput = {
   name?: Prisma.StringFilter<"Group"> | string
   description?: Prisma.StringNullableFilter<"Group"> | string | null
   contributionAmount?: Prisma.IntFilter<"Group"> | number
+  billingCycle?: Prisma.EnumBillingCycleFilter<"Group"> | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFilter<"Group"> | number
+  maxMembers?: Prisma.IntFilter<"Group"> | number
+  inviteCode?: Prisma.StringFilter<"Group"> | string
+  organizerId?: Prisma.StringFilter<"Group"> | string
   startDate?: Prisma.DateTimeFilter<"Group"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
+  organizer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   memberships?: Prisma.MembershipListRelationFilter
+  rounds?: Prisma.RoundListRelationFilter
 }
 
 export type GroupOrderByWithRelationInput = {
@@ -232,29 +282,49 @@ export type GroupOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   contributionAmount?: Prisma.SortOrder
+  billingCycle?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  organizerId?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  organizer?: Prisma.UserOrderByWithRelationInput
   memberships?: Prisma.MembershipOrderByRelationAggregateInput
+  rounds?: Prisma.RoundOrderByRelationAggregateInput
 }
 
 export type GroupWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  inviteCode?: string
+  name_startDate?: Prisma.GroupNameStartDateCompoundUniqueInput
   AND?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[]
   OR?: Prisma.GroupWhereInput[]
   NOT?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[]
   name?: Prisma.StringFilter<"Group"> | string
   description?: Prisma.StringNullableFilter<"Group"> | string | null
   contributionAmount?: Prisma.IntFilter<"Group"> | number
+  billingCycle?: Prisma.EnumBillingCycleFilter<"Group"> | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFilter<"Group"> | number
+  maxMembers?: Prisma.IntFilter<"Group"> | number
+  organizerId?: Prisma.StringFilter<"Group"> | string
   startDate?: Prisma.DateTimeFilter<"Group"> | Date | string
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
+  organizer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   memberships?: Prisma.MembershipListRelationFilter
-}, "id">
+  rounds?: Prisma.RoundListRelationFilter
+}, "id" | "inviteCode" | "name_startDate">
 
 export type GroupOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   contributionAmount?: Prisma.SortOrder
+  billingCycle?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  organizerId?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.GroupCountOrderByAggregateInput
@@ -272,6 +342,11 @@ export type GroupScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Group"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
   contributionAmount?: Prisma.IntWithAggregatesFilter<"Group"> | number
+  billingCycle?: Prisma.EnumBillingCycleWithAggregatesFilter<"Group"> | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntWithAggregatesFilter<"Group"> | number
+  maxMembers?: Prisma.IntWithAggregatesFilter<"Group"> | number
+  inviteCode?: Prisma.StringWithAggregatesFilter<"Group"> | string
+  organizerId?: Prisma.StringWithAggregatesFilter<"Group"> | string
   startDate?: Prisma.DateTimeWithAggregatesFilter<"Group"> | Date | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Group"> | Date | string
 }
@@ -281,9 +356,15 @@ export type GroupCreateInput = {
   name: string
   description?: string | null
   contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
   startDate: Date | string
   createdAt?: Date | string
+  organizer: Prisma.UserCreateNestedOneWithoutOwnedGroupsInput
   memberships?: Prisma.MembershipCreateNestedManyWithoutGroupInput
+  rounds?: Prisma.RoundCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateInput = {
@@ -291,9 +372,15 @@ export type GroupUncheckedCreateInput = {
   name: string
   description?: string | null
   contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  organizerId: string
   startDate: Date | string
   createdAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutGroupInput
+  rounds?: Prisma.RoundUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUpdateInput = {
@@ -301,9 +388,15 @@ export type GroupUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizer?: Prisma.UserUpdateOneRequiredWithoutOwnedGroupsNestedInput
   memberships?: Prisma.MembershipUpdateManyWithoutGroupNestedInput
+  rounds?: Prisma.RoundUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateInput = {
@@ -311,9 +404,15 @@ export type GroupUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  organizerId?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutGroupNestedInput
+  rounds?: Prisma.RoundUncheckedUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupCreateManyInput = {
@@ -321,6 +420,11 @@ export type GroupCreateManyInput = {
   name: string
   description?: string | null
   contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  organizerId: string
   startDate: Date | string
   createdAt?: Date | string
 }
@@ -330,6 +434,10 @@ export type GroupUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -339,8 +447,28 @@ export type GroupUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  organizerId?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type GroupListRelationFilter = {
+  every?: Prisma.GroupWhereInput
+  some?: Prisma.GroupWhereInput
+  none?: Prisma.GroupWhereInput
+}
+
+export type GroupOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type GroupNameStartDateCompoundUniqueInput = {
+  name: string
+  startDate: Date | string
 }
 
 export type GroupCountOrderByAggregateInput = {
@@ -348,12 +476,19 @@ export type GroupCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   contributionAmount?: Prisma.SortOrder
+  billingCycle?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  organizerId?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type GroupAvgOrderByAggregateInput = {
   contributionAmount?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
 }
 
 export type GroupMaxOrderByAggregateInput = {
@@ -361,6 +496,11 @@ export type GroupMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   contributionAmount?: Prisma.SortOrder
+  billingCycle?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  organizerId?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -370,17 +510,70 @@ export type GroupMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   contributionAmount?: Prisma.SortOrder
+  billingCycle?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
+  inviteCode?: Prisma.SortOrder
+  organizerId?: Prisma.SortOrder
   startDate?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type GroupSumOrderByAggregateInput = {
   contributionAmount?: Prisma.SortOrder
+  cycleDuration?: Prisma.SortOrder
+  maxMembers?: Prisma.SortOrder
 }
 
 export type GroupScalarRelationFilter = {
   is?: Prisma.GroupWhereInput
   isNot?: Prisma.GroupWhereInput
+}
+
+export type GroupCreateNestedManyWithoutOrganizerInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutOrganizerInput, Prisma.GroupUncheckedCreateWithoutOrganizerInput> | Prisma.GroupCreateWithoutOrganizerInput[] | Prisma.GroupUncheckedCreateWithoutOrganizerInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutOrganizerInput | Prisma.GroupCreateOrConnectWithoutOrganizerInput[]
+  createMany?: Prisma.GroupCreateManyOrganizerInputEnvelope
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+}
+
+export type GroupUncheckedCreateNestedManyWithoutOrganizerInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutOrganizerInput, Prisma.GroupUncheckedCreateWithoutOrganizerInput> | Prisma.GroupCreateWithoutOrganizerInput[] | Prisma.GroupUncheckedCreateWithoutOrganizerInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutOrganizerInput | Prisma.GroupCreateOrConnectWithoutOrganizerInput[]
+  createMany?: Prisma.GroupCreateManyOrganizerInputEnvelope
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+}
+
+export type GroupUpdateManyWithoutOrganizerNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutOrganizerInput, Prisma.GroupUncheckedCreateWithoutOrganizerInput> | Prisma.GroupCreateWithoutOrganizerInput[] | Prisma.GroupUncheckedCreateWithoutOrganizerInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutOrganizerInput | Prisma.GroupCreateOrConnectWithoutOrganizerInput[]
+  upsert?: Prisma.GroupUpsertWithWhereUniqueWithoutOrganizerInput | Prisma.GroupUpsertWithWhereUniqueWithoutOrganizerInput[]
+  createMany?: Prisma.GroupCreateManyOrganizerInputEnvelope
+  set?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  disconnect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  delete?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  update?: Prisma.GroupUpdateWithWhereUniqueWithoutOrganizerInput | Prisma.GroupUpdateWithWhereUniqueWithoutOrganizerInput[]
+  updateMany?: Prisma.GroupUpdateManyWithWhereWithoutOrganizerInput | Prisma.GroupUpdateManyWithWhereWithoutOrganizerInput[]
+  deleteMany?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+}
+
+export type GroupUncheckedUpdateManyWithoutOrganizerNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutOrganizerInput, Prisma.GroupUncheckedCreateWithoutOrganizerInput> | Prisma.GroupCreateWithoutOrganizerInput[] | Prisma.GroupUncheckedCreateWithoutOrganizerInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutOrganizerInput | Prisma.GroupCreateOrConnectWithoutOrganizerInput[]
+  upsert?: Prisma.GroupUpsertWithWhereUniqueWithoutOrganizerInput | Prisma.GroupUpsertWithWhereUniqueWithoutOrganizerInput[]
+  createMany?: Prisma.GroupCreateManyOrganizerInputEnvelope
+  set?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  disconnect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  delete?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  update?: Prisma.GroupUpdateWithWhereUniqueWithoutOrganizerInput | Prisma.GroupUpdateWithWhereUniqueWithoutOrganizerInput[]
+  updateMany?: Prisma.GroupUpdateManyWithWhereWithoutOrganizerInput | Prisma.GroupUpdateManyWithWhereWithoutOrganizerInput[]
+  deleteMany?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -389,6 +582,24 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type EnumBillingCycleFieldUpdateOperationsInput = {
+  set?: $Enums.BillingCycle
+}
+
+export type GroupCreateNestedOneWithoutRoundsInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutRoundsInput, Prisma.GroupUncheckedCreateWithoutRoundsInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutRoundsInput
+  connect?: Prisma.GroupWhereUniqueInput
+}
+
+export type GroupUpdateOneRequiredWithoutRoundsNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutRoundsInput, Prisma.GroupUncheckedCreateWithoutRoundsInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutRoundsInput
+  upsert?: Prisma.GroupUpsertWithoutRoundsInput
+  connect?: Prisma.GroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutRoundsInput, Prisma.GroupUpdateWithoutRoundsInput>, Prisma.GroupUncheckedUpdateWithoutRoundsInput>
 }
 
 export type GroupCreateNestedOneWithoutMembershipsInput = {
@@ -405,13 +616,168 @@ export type GroupUpdateOneRequiredWithoutMembershipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutMembershipsInput, Prisma.GroupUpdateWithoutMembershipsInput>, Prisma.GroupUncheckedUpdateWithoutMembershipsInput>
 }
 
+export type GroupCreateWithoutOrganizerInput = {
+  id?: string
+  name: string
+  description?: string | null
+  contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  startDate: Date | string
+  createdAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutGroupInput
+  rounds?: Prisma.RoundCreateNestedManyWithoutGroupInput
+}
+
+export type GroupUncheckedCreateWithoutOrganizerInput = {
+  id?: string
+  name: string
+  description?: string | null
+  contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  startDate: Date | string
+  createdAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutGroupInput
+  rounds?: Prisma.RoundUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type GroupCreateOrConnectWithoutOrganizerInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutOrganizerInput, Prisma.GroupUncheckedCreateWithoutOrganizerInput>
+}
+
+export type GroupCreateManyOrganizerInputEnvelope = {
+  data: Prisma.GroupCreateManyOrganizerInput | Prisma.GroupCreateManyOrganizerInput[]
+  skipDuplicates?: boolean
+}
+
+export type GroupUpsertWithWhereUniqueWithoutOrganizerInput = {
+  where: Prisma.GroupWhereUniqueInput
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutOrganizerInput, Prisma.GroupUncheckedUpdateWithoutOrganizerInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutOrganizerInput, Prisma.GroupUncheckedCreateWithoutOrganizerInput>
+}
+
+export type GroupUpdateWithWhereUniqueWithoutOrganizerInput = {
+  where: Prisma.GroupWhereUniqueInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutOrganizerInput, Prisma.GroupUncheckedUpdateWithoutOrganizerInput>
+}
+
+export type GroupUpdateManyWithWhereWithoutOrganizerInput = {
+  where: Prisma.GroupScalarWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateManyMutationInput, Prisma.GroupUncheckedUpdateManyWithoutOrganizerInput>
+}
+
+export type GroupScalarWhereInput = {
+  AND?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+  OR?: Prisma.GroupScalarWhereInput[]
+  NOT?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+  id?: Prisma.StringFilter<"Group"> | string
+  name?: Prisma.StringFilter<"Group"> | string
+  description?: Prisma.StringNullableFilter<"Group"> | string | null
+  contributionAmount?: Prisma.IntFilter<"Group"> | number
+  billingCycle?: Prisma.EnumBillingCycleFilter<"Group"> | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFilter<"Group"> | number
+  maxMembers?: Prisma.IntFilter<"Group"> | number
+  inviteCode?: Prisma.StringFilter<"Group"> | string
+  organizerId?: Prisma.StringFilter<"Group"> | string
+  startDate?: Prisma.DateTimeFilter<"Group"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
+}
+
+export type GroupCreateWithoutRoundsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  startDate: Date | string
+  createdAt?: Date | string
+  organizer: Prisma.UserCreateNestedOneWithoutOwnedGroupsInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutGroupInput
+}
+
+export type GroupUncheckedCreateWithoutRoundsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  organizerId: string
+  startDate: Date | string
+  createdAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutGroupInput
+}
+
+export type GroupCreateOrConnectWithoutRoundsInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutRoundsInput, Prisma.GroupUncheckedCreateWithoutRoundsInput>
+}
+
+export type GroupUpsertWithoutRoundsInput = {
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutRoundsInput, Prisma.GroupUncheckedUpdateWithoutRoundsInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutRoundsInput, Prisma.GroupUncheckedCreateWithoutRoundsInput>
+  where?: Prisma.GroupWhereInput
+}
+
+export type GroupUpdateToOneWithWhereWithoutRoundsInput = {
+  where?: Prisma.GroupWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutRoundsInput, Prisma.GroupUncheckedUpdateWithoutRoundsInput>
+}
+
+export type GroupUpdateWithoutRoundsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizer?: Prisma.UserUpdateOneRequiredWithoutOwnedGroupsNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutRoundsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  organizerId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutGroupNestedInput
+}
+
 export type GroupCreateWithoutMembershipsInput = {
   id?: string
   name: string
   description?: string | null
   contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
   startDate: Date | string
   createdAt?: Date | string
+  organizer: Prisma.UserCreateNestedOneWithoutOwnedGroupsInput
+  rounds?: Prisma.RoundCreateNestedManyWithoutGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMembershipsInput = {
@@ -419,8 +785,14 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   name: string
   description?: string | null
   contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  organizerId: string
   startDate: Date | string
   createdAt?: Date | string
+  rounds?: Prisma.RoundUncheckedCreateNestedManyWithoutGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMembershipsInput = {
@@ -444,8 +816,14 @@ export type GroupUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organizer?: Prisma.UserUpdateOneRequiredWithoutOwnedGroupsNestedInput
+  rounds?: Prisma.RoundUpdateManyWithoutGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMembershipsInput = {
@@ -453,6 +831,68 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  organizerId?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rounds?: Prisma.RoundUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupCreateManyOrganizerInput = {
+  id?: string
+  name: string
+  description?: string | null
+  contributionAmount: number
+  billingCycle: $Enums.BillingCycle
+  cycleDuration: number
+  maxMembers: number
+  inviteCode: string
+  startDate: Date | string
+  createdAt?: Date | string
+}
+
+export type GroupUpdateWithoutOrganizerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutGroupNestedInput
+  rounds?: Prisma.RoundUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutOrganizerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutGroupNestedInput
+  rounds?: Prisma.RoundUncheckedUpdateManyWithoutGroupNestedInput
+}
+
+export type GroupUncheckedUpdateManyWithoutOrganizerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contributionAmount?: Prisma.IntFieldUpdateOperationsInput | number
+  billingCycle?: Prisma.EnumBillingCycleFieldUpdateOperationsInput | $Enums.BillingCycle
+  cycleDuration?: Prisma.IntFieldUpdateOperationsInput | number
+  maxMembers?: Prisma.IntFieldUpdateOperationsInput | number
+  inviteCode?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -464,10 +904,12 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
 
 export type GroupCountOutputType = {
   memberships: number
+  rounds: number
 }
 
 export type GroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | GroupCountOutputTypeCountMembershipsArgs
+  rounds?: boolean | GroupCountOutputTypeCountRoundsArgs
 }
 
 /**
@@ -487,15 +929,29 @@ export type GroupCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.MembershipWhereInput
 }
 
+/**
+ * GroupCountOutputType without action
+ */
+export type GroupCountOutputTypeCountRoundsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RoundWhereInput
+}
+
 
 export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   description?: boolean
   contributionAmount?: boolean
+  billingCycle?: boolean
+  cycleDuration?: boolean
+  maxMembers?: boolean
+  inviteCode?: boolean
+  organizerId?: boolean
   startDate?: boolean
   createdAt?: boolean
+  organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Group$membershipsArgs<ExtArgs>
+  rounds?: boolean | Prisma.Group$roundsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
 
@@ -504,8 +960,14 @@ export type GroupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   name?: boolean
   description?: boolean
   contributionAmount?: boolean
+  billingCycle?: boolean
+  cycleDuration?: boolean
+  maxMembers?: boolean
+  inviteCode?: boolean
+  organizerId?: boolean
   startDate?: boolean
   createdAt?: boolean
+  organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
 
 export type GroupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -513,8 +975,14 @@ export type GroupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   name?: boolean
   description?: boolean
   contributionAmount?: boolean
+  billingCycle?: boolean
+  cycleDuration?: boolean
+  maxMembers?: boolean
+  inviteCode?: boolean
+  organizerId?: boolean
   startDate?: boolean
   createdAt?: boolean
+  organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
 
 export type GroupSelectScalar = {
@@ -522,28 +990,46 @@ export type GroupSelectScalar = {
   name?: boolean
   description?: boolean
   contributionAmount?: boolean
+  billingCycle?: boolean
+  cycleDuration?: boolean
+  maxMembers?: boolean
+  inviteCode?: boolean
+  organizerId?: boolean
   startDate?: boolean
   createdAt?: boolean
 }
 
-export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "contributionAmount" | "startDate" | "createdAt", ExtArgs["result"]["group"]>
+export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "contributionAmount" | "billingCycle" | "cycleDuration" | "maxMembers" | "inviteCode" | "organizerId" | "startDate" | "createdAt", ExtArgs["result"]["group"]>
 export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   memberships?: boolean | Prisma.Group$membershipsArgs<ExtArgs>
+  rounds?: boolean | Prisma.Group$roundsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type GroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type GroupIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type GroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type GroupIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  organizer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Group"
   objects: {
+    organizer: Prisma.$UserPayload<ExtArgs>
     memberships: Prisma.$MembershipPayload<ExtArgs>[]
+    rounds: Prisma.$RoundPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     description: string | null
     contributionAmount: number
+    billingCycle: $Enums.BillingCycle
+    cycleDuration: number
+    maxMembers: number
+    inviteCode: string
+    organizerId: string
     startDate: Date
     createdAt: Date
   }, ExtArgs["result"]["group"]>
@@ -940,7 +1426,9 @@ readonly fields: GroupFieldRefs;
  */
 export interface Prisma__GroupClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  organizer<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   memberships<T extends Prisma.Group$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  rounds<T extends Prisma.Group$roundsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$roundsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RoundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -974,6 +1462,11 @@ export interface GroupFieldRefs {
   readonly name: Prisma.FieldRef<"Group", 'String'>
   readonly description: Prisma.FieldRef<"Group", 'String'>
   readonly contributionAmount: Prisma.FieldRef<"Group", 'Int'>
+  readonly billingCycle: Prisma.FieldRef<"Group", 'BillingCycle'>
+  readonly cycleDuration: Prisma.FieldRef<"Group", 'Int'>
+  readonly maxMembers: Prisma.FieldRef<"Group", 'Int'>
+  readonly inviteCode: Prisma.FieldRef<"Group", 'String'>
+  readonly organizerId: Prisma.FieldRef<"Group", 'String'>
   readonly startDate: Prisma.FieldRef<"Group", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Group", 'DateTime'>
 }
@@ -1230,6 +1723,10 @@ export type GroupCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.GroupCreateManyInput | Prisma.GroupCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GroupIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1300,6 +1797,10 @@ export type GroupUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Groups to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GroupIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1390,6 +1891,30 @@ export type Group$membershipsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
+}
+
+/**
+ * Group.rounds
+ */
+export type Group$roundsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Round
+   */
+  select?: Prisma.RoundSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Round
+   */
+  omit?: Prisma.RoundOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RoundInclude<ExtArgs> | null
+  where?: Prisma.RoundWhereInput
+  orderBy?: Prisma.RoundOrderByWithRelationInput | Prisma.RoundOrderByWithRelationInput[]
+  cursor?: Prisma.RoundWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RoundScalarFieldEnum | Prisma.RoundScalarFieldEnum[]
 }
 
 /**

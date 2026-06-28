@@ -10,5 +10,6 @@
  */
 export type * from './models/User.js'
 export type * from './models/Group.js'
+export type * from './models/Round.js'
 export type * from './models/Membership.js'
 export type * from './commonInputTypes.js'

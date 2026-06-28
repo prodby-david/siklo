@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type Group = Prisma.GroupModel
 /**
+ * Model Round
+ * 
+ */
+export type Round = Prisma.RoundModel
+/**
  * Model Membership
  * 
  */

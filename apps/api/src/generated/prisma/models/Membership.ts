@@ -39,6 +39,7 @@ export type MembershipMinAggregateOutputType = {
   userId: string | null
   groupId: string | null
   position: number | null
+  joinedAt: Date | null
 }
 
 export type MembershipMaxAggregateOutputType = {
@@ -46,6 +47,7 @@ export type MembershipMaxAggregateOutputType = {
   userId: string | null
   groupId: string | null
   position: number | null
+  joinedAt: Date | null
 }
 
 export type MembershipCountAggregateOutputType = {
@@ -53,6 +55,7 @@ export type MembershipCountAggregateOutputType = {
   userId: number
   groupId: number
   position: number
+  joinedAt: number
   _all: number
 }
 
@@ -70,6 +73,7 @@ export type MembershipMinAggregateInputType = {
   userId?: true
   groupId?: true
   position?: true
+  joinedAt?: true
 }
 
 export type MembershipMaxAggregateInputType = {
@@ -77,6 +81,7 @@ export type MembershipMaxAggregateInputType = {
   userId?: true
   groupId?: true
   position?: true
+  joinedAt?: true
 }
 
 export type MembershipCountAggregateInputType = {
@@ -84,6 +89,7 @@ export type MembershipCountAggregateInputType = {
   userId?: true
   groupId?: true
   position?: true
+  joinedAt?: true
   _all?: true
 }
 
@@ -178,6 +184,7 @@ export type MembershipGroupByOutputType = {
   userId: string
   groupId: string
   position: number
+  joinedAt: Date
   _count: MembershipCountAggregateOutputType | null
   _avg: MembershipAvgAggregateOutputType | null
   _sum: MembershipSumAggregateOutputType | null
@@ -208,6 +215,7 @@ export type MembershipWhereInput = {
   userId?: Prisma.StringFilter<"Membership"> | string
   groupId?: Prisma.StringFilter<"Membership"> | string
   position?: Prisma.IntFilter<"Membership"> | number
+  joinedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
 }
@@ -217,6 +225,7 @@ export type MembershipOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  joinedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   group?: Prisma.GroupOrderByWithRelationInput
 }
@@ -230,6 +239,7 @@ export type MembershipWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Membership"> | string
   groupId?: Prisma.StringFilter<"Membership"> | string
   position?: Prisma.IntFilter<"Membership"> | number
+  joinedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
 }, "id" | "userId_groupId">
@@ -239,6 +249,7 @@ export type MembershipOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  joinedAt?: Prisma.SortOrder
   _count?: Prisma.MembershipCountOrderByAggregateInput
   _avg?: Prisma.MembershipAvgOrderByAggregateInput
   _max?: Prisma.MembershipMaxOrderByAggregateInput
@@ -254,11 +265,13 @@ export type MembershipScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Membership"> | string
   groupId?: Prisma.StringWithAggregatesFilter<"Membership"> | string
   position?: Prisma.IntWithAggregatesFilter<"Membership"> | number
+  joinedAt?: Prisma.DateTimeWithAggregatesFilter<"Membership"> | Date | string
 }
 
 export type MembershipCreateInput = {
   id?: string
   position: number
+  joinedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
 }
@@ -268,11 +281,13 @@ export type MembershipUncheckedCreateInput = {
   userId: string
   groupId: string
   position: number
+  joinedAt?: Date | string
 }
 
 export type MembershipUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
 }
@@ -282,6 +297,7 @@ export type MembershipUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MembershipCreateManyInput = {
@@ -289,11 +305,13 @@ export type MembershipCreateManyInput = {
   userId: string
   groupId: string
   position: number
+  joinedAt?: Date | string
 }
 
 export type MembershipUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MembershipUncheckedUpdateManyInput = {
@@ -301,6 +319,7 @@ export type MembershipUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MembershipListRelationFilter = {
@@ -323,6 +342,7 @@ export type MembershipCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  joinedAt?: Prisma.SortOrder
 }
 
 export type MembershipAvgOrderByAggregateInput = {
@@ -334,6 +354,7 @@ export type MembershipMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  joinedAt?: Prisma.SortOrder
 }
 
 export type MembershipMinOrderByAggregateInput = {
@@ -341,6 +362,7 @@ export type MembershipMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   groupId?: Prisma.SortOrder
   position?: Prisma.SortOrder
+  joinedAt?: Prisma.SortOrder
 }
 
 export type MembershipSumOrderByAggregateInput = {
@@ -434,6 +456,7 @@ export type MembershipUncheckedUpdateManyWithoutGroupNestedInput = {
 export type MembershipCreateWithoutUserInput = {
   id?: string
   position: number
+  joinedAt?: Date | string
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
 }
 
@@ -441,6 +464,7 @@ export type MembershipUncheckedCreateWithoutUserInput = {
   id?: string
   groupId: string
   position: number
+  joinedAt?: Date | string
 }
 
 export type MembershipCreateOrConnectWithoutUserInput = {
@@ -477,11 +501,13 @@ export type MembershipScalarWhereInput = {
   userId?: Prisma.StringFilter<"Membership"> | string
   groupId?: Prisma.StringFilter<"Membership"> | string
   position?: Prisma.IntFilter<"Membership"> | number
+  joinedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
 }
 
 export type MembershipCreateWithoutGroupInput = {
   id?: string
   position: number
+  joinedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
 }
 
@@ -489,6 +515,7 @@ export type MembershipUncheckedCreateWithoutGroupInput = {
   id?: string
   userId: string
   position: number
+  joinedAt?: Date | string
 }
 
 export type MembershipCreateOrConnectWithoutGroupInput = {
@@ -521,11 +548,13 @@ export type MembershipCreateManyUserInput = {
   id?: string
   groupId: string
   position: number
+  joinedAt?: Date | string
 }
 
 export type MembershipUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
 }
 
@@ -533,23 +562,27 @@ export type MembershipUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MembershipUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   groupId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MembershipCreateManyGroupInput = {
   id?: string
   userId: string
   position: number
+  joinedAt?: Date | string
 }
 
 export type MembershipUpdateWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
 }
 
@@ -557,12 +590,14 @@ export type MembershipUncheckedUpdateWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MembershipUncheckedUpdateManyWithoutGroupInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   position?: Prisma.IntFieldUpdateOperationsInput | number
+  joinedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -572,6 +607,7 @@ export type MembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  joinedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["membership"]>
@@ -581,6 +617,7 @@ export type MembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  joinedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["membership"]>
@@ -590,6 +627,7 @@ export type MembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  joinedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["membership"]>
@@ -599,9 +637,10 @@ export type MembershipSelectScalar = {
   userId?: boolean
   groupId?: boolean
   position?: boolean
+  joinedAt?: boolean
 }
 
-export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "groupId" | "position", ExtArgs["result"]["membership"]>
+export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "groupId" | "position" | "joinedAt", ExtArgs["result"]["membership"]>
 export type MembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
@@ -626,6 +665,7 @@ export type $MembershipPayload<ExtArgs extends runtime.Types.Extensions.Internal
     userId: string
     groupId: string
     position: number
+    joinedAt: Date
   }, ExtArgs["result"]["membership"]>
   composites: {}
 }
@@ -1055,6 +1095,7 @@ export interface MembershipFieldRefs {
   readonly userId: Prisma.FieldRef<"Membership", 'String'>
   readonly groupId: Prisma.FieldRef<"Membership", 'String'>
   readonly position: Prisma.FieldRef<"Membership", 'Int'>
+  readonly joinedAt: Prisma.FieldRef<"Membership", 'DateTime'>
 }
     
 

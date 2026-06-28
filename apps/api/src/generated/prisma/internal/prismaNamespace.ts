@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   User: 'User',
   Group: 'Group',
+  Round: 'Round',
   Membership: 'Membership'
 } as const
 
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "group" | "membership"
+    modelProps: "user" | "group" | "round" | "membership"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -554,6 +555,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Round: {
+      payload: Prisma.$RoundPayload<ExtArgs>
+      fields: Prisma.RoundFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RoundFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RoundFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>
+        }
+        findFirst: {
+          args: Prisma.RoundFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RoundFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>
+        }
+        findMany: {
+          args: Prisma.RoundFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>[]
+        }
+        create: {
+          args: Prisma.RoundCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>
+        }
+        createMany: {
+          args: Prisma.RoundCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RoundCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>[]
+        }
+        delete: {
+          args: Prisma.RoundDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>
+        }
+        update: {
+          args: Prisma.RoundUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>
+        }
+        deleteMany: {
+          args: Prisma.RoundDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RoundUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RoundUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>[]
+        }
+        upsert: {
+          args: Prisma.RoundUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RoundPayload>
+        }
+        aggregate: {
+          args: Prisma.RoundAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRound>
+        }
+        groupBy: {
+          args: Prisma.RoundGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RoundGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RoundCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RoundCountAggregateOutputType> | number
+        }
+      }
+    }
     Membership: {
       payload: Prisma.$MembershipPayload<ExtArgs>
       fields: Prisma.MembershipFieldRefs
@@ -684,6 +759,11 @@ export const GroupScalarFieldEnum = {
   name: 'name',
   description: 'description',
   contributionAmount: 'contributionAmount',
+  billingCycle: 'billingCycle',
+  cycleDuration: 'cycleDuration',
+  maxMembers: 'maxMembers',
+  inviteCode: 'inviteCode',
+  organizerId: 'organizerId',
   startDate: 'startDate',
   createdAt: 'createdAt'
 } as const
@@ -691,11 +771,25 @@ export const GroupScalarFieldEnum = {
 export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
 
 
+export const RoundScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  cycleNumber: 'cycleNumber',
+  roundNumber: 'roundNumber',
+  recipientId: 'recipientId',
+  targetDate: 'targetDate',
+  status: 'status'
+} as const
+
+export type RoundScalarFieldEnum = (typeof RoundScalarFieldEnum)[keyof typeof RoundScalarFieldEnum]
+
+
 export const MembershipScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   groupId: 'groupId',
-  position: 'position'
+  position: 'position',
+  joinedAt: 'joinedAt'
 } as const
 
 export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
@@ -770,6 +864,34 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BillingCycle'
+ */
+export type EnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle'>
+    
+
+
+/**
+ * Reference to a field of type 'BillingCycle[]'
+ */
+export type ListEnumBillingCycleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BillingCycle[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RoundStatus'
+ */
+export type EnumRoundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RoundStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RoundStatus[]'
+ */
+export type ListEnumRoundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RoundStatus[]'>
     
 
 
@@ -898,6 +1020,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   group?: Prisma.GroupOmit
+  round?: Prisma.RoundOmit
   membership?: Prisma.MembershipOmit
 }
 

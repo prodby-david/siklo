@@ -9,7 +9,20 @@
 * 🟢 You can import this file directly.
 */
 
+export const BillingCycle = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  BIMONTHLY: 'BIMONTHLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY'
+} as const
+
+export type BillingCycle = (typeof BillingCycle)[keyof typeof BillingCycle]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const RoundStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID'
+} as const
+
+export type RoundStatus = (typeof RoundStatus)[keyof typeof RoundStatus]
