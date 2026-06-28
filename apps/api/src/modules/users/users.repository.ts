@@ -12,6 +12,15 @@ export class UsersRepository {
     });
   }
 
+  async findUserById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        name: true,
+      },
+    });
+  }
+
   async createUser(data: CreateUserDTO) {
     return this.prisma.user.create({
       data,
