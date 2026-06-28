@@ -1,9 +1,10 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
-import { CreateGroupDTO } from './schema/create-group.schema';
+import { CreateGroupData } from './schema/create-group.schema';
 import { JoinGroupDTO } from './schema/join-group.schema';
 import { GroupRepository } from './groups.repository';
 import { Prisma } from '@prisma/client/extension';
+import generateInviteCode from '@/commons/utils/generateInviteCode';
 
 @Injectable()
 export class GroupsService {
@@ -26,15 +27,31 @@ export class GroupsService {
     }
   }
 
-  async createGroup(dto: CreateGroupDTO) {
-    return this.prisma.$transaction(async (tx) => {
-      const group = await this.groupRepository.createGroup(tx, dto);
-      await this.groupRepository.createMembership(tx, {
-        userId: dto.userId,
-        groupId: group.id,
+  async createGroup(dto: CreateGroupData, userId: string) {
+    const checkGroup = await this.groupRepository.checkGroupExist(
+      dto.name,
+      dto.startDate,
+    );
+
+    if (checkGroup) {
+      throw new ConflictException('Group name already exist');
+    }
+
+    return await this.prisma.$transaction(async (tx) => {
+      const inviteCode = generateInviteCode();
+      const group = await this.groupRepository.createGroup(tx, {
+        ...dto,
+        inviteCode,
+        organizerId: userId,
       });
+      await this.groupRepository.createMembership(tx, {
+        groupId: group.id,
+        userId,
+      });
+
       return {
         message: 'Group created successfully',
+        group,
       };
     });
   }
