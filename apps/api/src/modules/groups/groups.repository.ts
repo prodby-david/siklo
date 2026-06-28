@@ -8,14 +8,18 @@ import { Prisma } from '@prisma/client/extension';
 export class GroupRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  async checkGroupExist(name: string, startDate: Date) {
+    return this.prisma.group.findFirst({
+      where: {
+        name,
+        startDate,
+      },
+    });
+  }
+
   async createGroup(tx: Prisma.TransactionClient, dto: CreateGroupDTO) {
     return tx.group.create({
-      data: {
-        name: dto.name,
-        description: dto.description,
-        contributionAmount: dto.contributionAmount,
-        startDate: dto.startDate,
-      },
+      data: dto,
     });
   }
 
@@ -49,12 +53,20 @@ export class GroupRepository {
   }
 
   async getUserGroup(userId: string) {
-    return this.prisma.membership.findMany({
+    return this.prisma.group.findMany({
       where: {
-        userId: userId,
+        memberships: {
+          some: {
+            userId,
+          },
+        },
       },
       include: {
-        group: true,
+        _count: {
+          select: {
+            memberships: true,
+          },
+        },
       },
     });
   }
@@ -67,6 +79,26 @@ export class GroupRepository {
             memberships: true,
           },
         },
+      },
+    });
+  }
+
+  async isUserAMember(userId: string, groupId: string) {
+    return this.prisma.membership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId,
+        },
+      },
+    });
+  }
+
+  async getPaidRoundsCount(groupId: string) {
+    return this.prisma.round.count({
+      where: {
+        groupId,
+        status: 'PAID',
       },
     });
   }
