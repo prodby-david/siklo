@@ -1,47 +1,90 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+  // This is your Prisma schema file,
+  // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
+  // Get a free hosted Postgres database in seconds: `npx create-db`
 
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-  moduleFormat = "cjs"
-}
+  generator client {
+    provider = "prisma-client"
+    output   = "../src/generated/prisma"
+    moduleFormat = "cjs"
+  }
 
-datasource db {
-  provider = "postgresql"
-}
+  datasource db {
+    provider = "postgresql"
+  }
 
-model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  password      String
-  name          String
-  contactNumber String
-  createdAt     DateTime @default(now())
-  memberships   Membership[]
-}
+  model User {
+    id            String   @id @default(uuid())
+    email         String   @unique
+    password      String
+    name          String
+    contactNumber String   @unique
+    createdAt     DateTime @default(now())
 
-model Group {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  contributionAmount Int
-  startDate   DateTime
-  createdAt   DateTime @default(now())
-  memberships   Membership[]
-}
+    memberships   Membership[]
+    ownedGroups   Group[] @relation("GroupOwner")
+    payouts       Round[]  @relation("RoundRecipient")
 
-model Membership {
-  id        String @id @default(cuid())
-  userId    String
-  groupId   String
-  position  Int
-  user      User @relation(fields: [userId], references: [id])
-  group     Group @relation(fields: [groupId], references: [id])
+  }
 
-  @@unique([userId, groupId])
-}
+  model Group {
+    id                 String   @id @default(cuid())
+    name               String   @unique
+    description        String?
+    contributionAmount Int
+    billingCycle       BillingCycle
+    cycleDuration      Int
+    maxMembers         Int
+    inviteCode         String @unique
+    organizerId        String
+    startDate          DateTime
+    createdAt          DateTime @default(now())
+
+    organizer          User @relation("GroupOwner", fields: [organizerId], references: [id])
+    memberships        Membership[]
+    rounds             Round[]
+  }
+  
+  model Round {
+    id           String @id @default(cuid())
+    groupId      String
+    cycleNumber  Int
+    roundNumber  Int
+    recipientId  String
+    targetDate   DateTime
+    status       RoundStatus @default(PENDING)
+
+    group        Group @relation(fields: [groupId], references: [id])
+    recipient    User  @relation("RoundRecipient", fields: [recipientId], references: [id])
+
+    @@unique([groupId, cycleNumber, roundNumber])
+  }
+
+  model Membership {
+    id        String @id @default(cuid())
+    userId    String
+    groupId   String
+    position  Int
+    joinedAt  DateTime @default(now())
+
+    user      User  @relation(fields: [userId], references: [id])
+    group     Group @relation(fields: [groupId], references: [id])
+
+    @@unique([userId, groupId])
+  }
+
+  enum BillingCycle {
+    DAILY
+    WEEKLY
+    BIMONTHLY
+    MONTHLY
+    QUARTERLY
+  }
+
+  enum RoundStatus {
+    PENDING
+    PAID
+  }
+    
 
 
