@@ -1,4 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDTO } from './schema/user.schema';
@@ -26,5 +30,13 @@ export class UsersService {
     return {
       message: 'Account successfully created.',
     };
+  }
+
+  async getCurrentUserName(userId: string) {
+    const user = await this.usersRepository.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    return user;
   }
 }
