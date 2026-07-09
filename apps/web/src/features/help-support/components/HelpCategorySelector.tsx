@@ -1,5 +1,5 @@
 import * as Icons from "lucide-react";
-import { HelpCategory } from "../types/help.types";
+import { HelpCategory } from "../types/help.type";
 
 type HelpCategorySelectorProps = {
   categories: HelpCategory[];

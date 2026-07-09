@@ -1,4 +1,4 @@
-import { PolicySection } from "../types/policy.types";
+import { PolicySection } from "../types/policy.type";
 
 type PolicyTableOfContentsProps = {
   sections: PolicySection[];

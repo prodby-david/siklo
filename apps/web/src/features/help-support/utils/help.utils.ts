@@ -1,4 +1,4 @@
-import { HelpCategory, FaqItem } from "../types/help.types";
+import { HelpCategory, FaqItem } from "../types/help.type";
 
 export type FilteredFaqResult = {
   categoryName: string;

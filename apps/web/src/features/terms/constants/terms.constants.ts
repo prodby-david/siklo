@@ -1,4 +1,4 @@
-import { PolicySection } from "../types/terms.types";
+import { PolicySection } from "../types/terms.type";
 
 export const termsSections: PolicySection[] = [
   {

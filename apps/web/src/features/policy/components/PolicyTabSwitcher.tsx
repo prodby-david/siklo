@@ -1,5 +1,5 @@
 import { ShieldCheck, FileText } from "lucide-react";
-import { PolicyTab } from "../types/policy.types";
+import { PolicyTab } from "../types/policy.type";
 
 type PolicyTabSwitcherProps = {
   activeTab: PolicyTab;

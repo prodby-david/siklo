@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { PolicyTab } from "../types/policy.types";
+import { PolicyTab } from "../types/policy.type";
 import { privacySections } from "../constants/policy.constants";
 import { termsSections } from "@/features/terms/constants/terms.constants";
 import { filterSections, scrollToSection } from "../utils/policy.utils";
