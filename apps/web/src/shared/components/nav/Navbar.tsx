@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/shared/components/theme/ThemeToggle";
+import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -19,8 +20,13 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-2 text-base font-bold text-foreground"
         >
-          <span className="h-2 w-2 rounded-sm bg-brand-accent" />
-          <span>Siklo</span>
+          <Image
+            src={"/images/logo.svg"}
+            width={70}
+            height={70}
+            alt="Logo"
+            priority
+          />
         </Link>
 
         <nav className="flex items-center gap-6">
@@ -41,7 +47,7 @@ export default function Navbar() {
 
           <Link
             href={"/signin"}
-            className="flex h-8 px-3 items-center justify-center rounded bg-brand-accent text-xs font-bold text-white hover:opacity-90 cursor-pointer"
+            className="flex h-8 px-3 items-center justify-center rounded-2xl bg-brand-accent text-xs font-bold text-white hover:opacity-90 cursor-pointer"
           >
             Get Started
           </Link>
