@@ -33,11 +33,12 @@
     description        String?
     contributionAmount Int
     billingCycle       BillingCycle
+    payoutSequence     PayoutSequence @default(RANDOM)
     cycleDuration      Int
     maxMembers         Int
     inviteCode         String @unique
     organizerId        String
-    startDate          DateTime
+    startDate          DateTime?
     createdAt          DateTime @default(now())
 
     organizer          User @relation("GroupOwner", fields: [organizerId], references: [id])
@@ -71,6 +72,7 @@
     group     Group @relation(fields: [groupId], references: [id])
 
     @@unique([userId, groupId])
+    @@unique([groupId, position])
   }
 
   enum BillingCycle {
@@ -84,6 +86,12 @@
   enum RoundStatus {
     PENDING
     PAID
+  }
+
+  enum PayoutSequence {
+    RANDOM
+    MANUAL
+    FREECHOOSING 
   }
     
 
