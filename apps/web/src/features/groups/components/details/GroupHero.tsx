@@ -8,10 +8,7 @@ interface GroupHeroProps {
   inviteCode: string;
   copied: boolean;
   onCopyInviteCode: () => void;
-  isOrganizer?: boolean;
   hasStarted?: boolean;
-  isStarting?: boolean;
-  onStartCycle?: () => void;
 }
 
 export default function GroupHero({
@@ -21,10 +18,7 @@ export default function GroupHero({
   inviteCode,
   copied,
   onCopyInviteCode,
-  isOrganizer,
   hasStarted,
-  isStarting,
-  onStartCycle,
 }: GroupHeroProps) {
   const billingLabel =
     BILLING_CYCLE_LABELS[billingCycle as keyof typeof BILLING_CYCLE_LABELS] ||
@@ -89,15 +83,6 @@ export default function GroupHero({
           <span className="text-[10px] text-neutral-subtext leading-normal mb-2">
             Share this code with others to let them join.
           </span>
-          {isOrganizer && !hasStarted && (
-            <button
-              onClick={onStartCycle}
-              disabled={isStarting}
-              className="w-full flex items-center justify-center gap-2 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 disabled:pointer-events-none px-4 py-2.5 rounded-2xl transition-all duration-150 active:scale-95 cursor-pointer shadow-sm mt-1"
-            >
-              {isStarting ? "Starting..." : "Start Group Cycle"}
-            </button>
-          )}
         </div>
       </div>
     </div>
