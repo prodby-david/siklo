@@ -20,14 +20,14 @@ export const StatsCard = ({
 }: StatsCardProps) => {
   return (
     <div
-      className={`rounded-lg border border-neutral-border bg-background p-4 ${className}`}
+      className={`rounded-2xl border border-neutral-border bg-background p-4 ${className}`}
     >
       <p className="text-xs font-bold text-neutral-subtext">{title}</p>
       <div className="mt-1 flex items-baseline gap-1.5">
         <span className="text-xl font-bold text-foreground">{value}</span>
         {trend && (
           <span
-            className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-bold ${
+            className={`inline-flex items-center gap-0.5 rounded-2xl px-1.5 py-0.5 text-xs font-bold ${
               trend.positive
                 ? "bg-success-bg text-success"
                 : "bg-danger-bg text-danger"

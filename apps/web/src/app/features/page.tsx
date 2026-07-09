@@ -1,4 +1,3 @@
-import React from "react";
 import Navbar from "@/shared/components/nav/Navbar";
 import FeaturesSection from "@/features/features/ui/FeaturesSection";
 

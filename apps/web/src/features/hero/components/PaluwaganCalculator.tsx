@@ -16,7 +16,7 @@ export const PaluwaganCalculator = () => {
   } = useCalculator();
 
   return (
-    <div className="w-full bg-background rounded-lg border border-neutral-border p-6 flex flex-col gap-6">
+    <div className="w-full bg-background rounded-2xl border border-neutral-border p-6 flex flex-col gap-6">
       <div>
         <h3 className="text-lg font-bold text-foreground">
           Interactive Payout Calculator
@@ -42,7 +42,7 @@ export const PaluwaganCalculator = () => {
               step="500"
               value={contribution}
               onChange={(e) => setContribution(Number(e.target.value))}
-              className="w-full h-1.5 bg-neutral-table-stripe rounded-lg appearance-none cursor-pointer accent-brand-accent"
+              className="w-full h-1.5 bg-neutral-table-stripe rounded-2xl appearance-none cursor-pointer accent-brand-accent"
             />
             <div className="flex justify-between text-xs text-neutral-subtext">
               <span>₱500</span>
@@ -65,7 +65,7 @@ export const PaluwaganCalculator = () => {
               step="1"
               value={membersCount}
               onChange={(e) => setMembersCount(Number(e.target.value))}
-              className="w-full h-1.5 bg-neutral-table-stripe rounded-lg appearance-none cursor-pointer accent-brand-accent"
+              className="w-full h-1.5 bg-neutral-table-stripe rounded-2xl appearance-none cursor-pointer accent-brand-accent"
             />
             <div className="flex justify-between text-xs text-neutral-subtext">
               <span>4 members</span>
@@ -83,7 +83,7 @@ export const PaluwaganCalculator = () => {
                 <button
                   key={freq}
                   onClick={() => setInterval(freq)}
-                  className={`py-1.5 text-xs font-semibold border rounded ${
+                  className={`py-1.5 text-xs font-semibold border rounded-2xl ${
                     interval === freq
                       ? "bg-brand-accent/10 border-brand-accent text-brand-accent"
                       : "bg-background border-neutral-border text-neutral-subtext hover:bg-neutral-table-stripe"
@@ -98,7 +98,7 @@ export const PaluwaganCalculator = () => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-4 rounded-lg bg-neutral-table-stripe/50 p-4 border border-neutral-border">
+        <div className="flex flex-col gap-4 rounded-2xl bg-neutral-table-stripe/50 p-4 border border-neutral-border">
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
               <span className="text-xs font-medium text-neutral-subtext">

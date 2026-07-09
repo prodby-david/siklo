@@ -40,13 +40,13 @@ export const HeroSection = ({
             <div className="flex flex-row items-center gap-3 w-full sm:w-auto mt-2">
               <Link
                 href="/signin"
-                className="flex h-10 px-5 items-center justify-center rounded bg-brand-accent text-xs font-semibold text-white hover:bg-brand-accent-hover cursor-pointer"
+                className="flex h-10 px-5 items-center justify-center rounded-2xl bg-brand-accent text-xs font-semibold text-white hover:bg-brand-accent-hover cursor-pointer"
               >
                 {primaryCtaText}
               </Link>
               <Link
                 href="/how-it-works"
-                className="flex h-10 px-5 items-center justify-center rounded border border-neutral-border bg-background text-xs font-semibold text-neutral-subtext hover:bg-neutral-table-stripe cursor-pointer"
+                className="flex h-10 px-5 items-center justify-center rounded-2xl border border-neutral-border bg-background text-xs font-semibold text-neutral-subtext hover:bg-neutral-table-stripe cursor-pointer"
               >
                 {secondaryCtaText}
               </Link>

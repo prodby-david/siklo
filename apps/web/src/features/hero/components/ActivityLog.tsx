@@ -6,7 +6,7 @@ import { mockActivities } from "../constants/hero.constants";
 
 export const ActivityLog = () => {
   return (
-    <div className="w-full bg-background rounded-lg border border-neutral-border p-6 flex flex-col gap-4">
+    <div className="w-full bg-background rounded-2xl border border-neutral-border p-6 flex flex-col gap-4">
       <div>
         <h3 className="text-lg font-bold text-foreground">
           Circle Activity Feed

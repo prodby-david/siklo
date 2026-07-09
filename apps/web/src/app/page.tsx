@@ -3,6 +3,7 @@ import PaluwaganCalculator from "@/features/hero/components/PaluwaganCalculator"
 import ActivityLog from "@/features/hero/components/ActivityLog";
 import Navbar from "@/shared/components/nav/Navbar";
 import FeaturesSection from "@/features/features/ui/FeaturesSection";
+import Footer from "@/shared/components/footer/Footer";
 
 export default function Home() {
   return (
@@ -25,6 +26,8 @@ export default function Home() {
         </section>
 
         <FeaturesSection />
+
+        <Footer />
       </main>
     </div>
   );

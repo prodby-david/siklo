@@ -19,7 +19,7 @@ export const CycleVisualizer = ({
   );
 
   return (
-    <div className="rounded-lg border border-neutral-border bg-background p-5 w-full">
+    <div className="rounded-2xl border border-neutral-border bg-background p-5 w-full">
       <div className="flex items-center justify-between border-b border-neutral-border pb-3 mb-4">
         <div>
           <h3 className="text-sm font-bold text-foreground">
@@ -30,7 +30,7 @@ export const CycleVisualizer = ({
             {stats.activeMembersCount}
           </p>
         </div>
-        <div className="rounded bg-success-bg px-2 py-0.5 text-xs font-bold text-success">
+        <div className="rounded-2xl bg-success-bg px-2 py-0.5 text-xs font-bold text-success">
           Collected: ₱{stats.totalPool.toLocaleString()}
         </div>
       </div>
@@ -48,12 +48,14 @@ export const CycleVisualizer = ({
               <div
                 key={member.id}
                 className={`flex items-center justify-between py-2.5 ${
-                  isCurrent ? "bg-neutral-table-stripe/50 px-2 -mx-2 rounded" : ""
+                  isCurrent
+                    ? "bg-neutral-table-stripe/50 px-2 -mx-2 rounded-2xl"
+                    : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <span
-                    className={`flex h-6 px-1.5 shrink-0 items-center justify-center rounded text-xs font-bold ${
+                    className={`flex h-6 px-1.5 shrink-0 items-center justify-center rounded-2xl text-xs font-bold ${
                       isCurrent
                         ? "bg-brand-accent text-white"
                         : isPaid
@@ -78,7 +80,7 @@ export const CycleVisualizer = ({
 
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-xs font-bold px-1.5 py-0.5 rounded flex items-center gap-1 ${
+                    className={`text-xs font-bold px-1.5 py-0.5 rounded-2xl flex items-center gap-1 ${
                       isPaid
                         ? "text-success bg-success-bg border border-success/30"
                         : isCurrent
