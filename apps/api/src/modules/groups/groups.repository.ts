@@ -119,4 +119,10 @@ export class GroupsRepository {
       },
     });
   }
+
+  async countUserMemberships(tx: Prisma.TransactionClient, userId: string) {
+    return tx.membership.count({
+      where: { userId },
+    });
+  }
 }
