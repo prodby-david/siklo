@@ -28,24 +28,34 @@ export default function FaqSection() {
           return (
             <div
               key={index}
-              className="border border-neutral-border rounded-2xl overflow-hidden"
+              className={`border rounded-2xl overflow-hidden transition-all duration-300 ease-in-out ${
+                isOpen
+                  ? "border-brand-accent bg-neutral-table-stripe/10"
+                  : "border-neutral-border"
+              }`}
             >
               <button
                 onClick={() => toggleFaq(index)}
-                className="w-full flex justify-between items-center p-4 text-left text-xs font-semibold text-foreground hover:bg-neutral-table-stripe/50 cursor-pointer"
+                className="w-full flex justify-between items-center p-4 text-left text-xs font-semibold text-foreground hover:bg-neutral-table-stripe/50 cursor-pointer transition-colors duration-300 ease-in-out"
               >
                 <span>{faq.question}</span>
                 <ChevronDown
-                  className={`h-4 w-4 text-neutral-subtext ${
+                  className={`h-4 w-4 text-neutral-subtext transition-transform duration-300 ease-in-out ${
                     isOpen ? "rotate-180" : ""
                   }`}
                 />
               </button>
-              {isOpen && (
-                <div className="px-4 pb-4 text-xs text-neutral-subtext leading-relaxed border-t border-neutral-border pt-3 bg-neutral-table-stripe/20">
-                  {faq.answer}
+              <div
+                className={`grid transition-all duration-300 ease-in-out ${
+                  isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                }`}
+              >
+                <div className="overflow-hidden">
+                  <div className="px-4 pb-4 text-xs text-neutral-subtext leading-relaxed border-t border-neutral-border pt-3">
+                    {faq.answer}
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           );
         })}
