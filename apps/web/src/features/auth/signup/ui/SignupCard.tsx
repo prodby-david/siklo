@@ -6,14 +6,14 @@ import { Users, TrendingUp, Sparkles } from "lucide-react";
 
 export default function SignupCard() {
   return (
-    <div className="w-full max-w-4xl bg-background border border-neutral-border rounded-xl shadow-sm flex flex-col md:flex-row overflow-hidden animate-fade-in">
+    <div className="w-full max-w-4xl bg-background border border-neutral-border rounded-2xl shadow-sm flex flex-col md:flex-row overflow-hidden animate-fade-in">
       <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-primary/5 via-brand-accent/5 to-transparent border-r border-neutral-border p-8 flex-col">
         <div className="flex flex-col gap-8">
           <Link
             href="/"
             className="flex items-center gap-2 text-lg font-bold text-foreground"
           >
-            <span className="h-3 w-3 rounded-sm bg-brand-accent" />
+            <span className="h-3 w-3 rounded-2xl bg-brand-accent" />
             <span>Siklo</span>
           </Link>
 
@@ -29,7 +29,7 @@ export default function SignupCard() {
 
           <div className="flex flex-col gap-4 mt-2">
             <div className="flex gap-3 items-start">
-              <div className="h-8 w-8 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
+              <div className="h-8 w-8 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
                 <Users className="h-4 w-4" />
               </div>
               <div>
@@ -44,7 +44,7 @@ export default function SignupCard() {
             </div>
 
             <div className="flex gap-3 items-start">
-              <div className="h-8 w-8 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
+              <div className="h-8 w-8 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div>
@@ -59,7 +59,7 @@ export default function SignupCard() {
             </div>
 
             <div className="flex gap-3 items-start">
-              <div className="h-8 w-8 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
+              <div className="h-8 w-8 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
                 <Sparkles className="h-4 w-4" />
               </div>
               <div>
@@ -82,7 +82,7 @@ export default function SignupCard() {
             href="/"
             className="flex md:hidden items-center gap-2 text-lg font-bold text-foreground mb-2"
           >
-            <span className="h-3 w-3 rounded-sm bg-brand-accent" />
+            <span className="h-3 w-3 rounded-2xl bg-brand-accent" />
             <span>Siklo</span>
           </Link>
 

@@ -1,10 +1,9 @@
-import { z } from "zod";
+export {
+  signInSchema as signinSchema,
+  type SignInDTO as SigninFormData,
+} from '@siklo/shared-schemas';
 
-export const signinSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required"),
-});
+import type { SignInDTO } from '@siklo/shared-schemas';
 
-export type SigninFormData = z.infer<typeof signinSchema>;
+export type SigninErrors = Partial<Record<keyof SignInDTO, string>>;
 
-export type SigninErrors = Partial<Record<keyof SigninFormData, string>>;

@@ -1,8 +1,11 @@
+"use client";
+
 import axios from "axios";
-import { toast } from "sonner";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/shared/lib/axios";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { SigninFormData, signinSchema } from "../types/signin.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -24,15 +27,19 @@ export function useSignin() {
 
   const router = useRouter();
 
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const onSubmit = async (data: SigninFormData) => {
     try {
       await api.post("/auth/signin", data);
       reset();
-      toast.success("Login success, redirecting to dashboard...");
+      setIsRedirecting(true);
       setTimeout(() => {
         router.push("/dashboard");
-      }, 3000);
+      }, 2000);
     } catch (err: unknown) {
+      setIsRedirecting(false);
       if (axios.isAxiosError(err)) {
         const message = err.response?.data.message;
 
@@ -47,7 +54,10 @@ export function useSignin() {
   return {
     register,
     errors,
+    isRedirecting,
     isSubmitting,
+    showPassword,
+    setShowPassword,
     handleSubmit: handleSubmit(onSubmit),
   };
 }
