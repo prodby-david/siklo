@@ -5,7 +5,7 @@ import type { CreateGroupDTO } from './schema/create-group.schema';
 import type { JoinGroupDTO } from './schema/join-group.schema';
 
 @Injectable()
-export class GroupRepository {
+export class GroupsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findGroupByName(tx: Prisma.TransactionClient, name: string) {

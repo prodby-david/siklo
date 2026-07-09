@@ -7,7 +7,7 @@ import {
 import { Prisma } from '@prisma/client/extension';
 import { PrismaService } from '@/database/prisma.service';
 import generateInviteCode from '@/commons/utils/generateInviteCode';
-import { GroupRepository } from './groups.repository';
+import { GroupsRepository } from './groups.repository';
 import { CreateGroupData } from './schema/create-group.schema';
 import { JoinGroupBodyDTO, JoinGroupDTO } from '@siklo/shared-schemas';
 
@@ -15,11 +15,11 @@ import { JoinGroupBodyDTO, JoinGroupDTO } from '@siklo/shared-schemas';
 export class GroupsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly groupRepository: GroupRepository,
+    private readonly groupsRepository: GroupsRepository,
   ) {}
 
   private async getExistingGroup(groupId: string, userId: string) {
-    const group = await this.groupRepository.getGroupById(groupId, userId);
+    const group = await this.groupsRepository.getGroupById(groupId, userId);
 
     if (!group) {
       throw new NotFoundException('Group not found');
@@ -32,7 +32,7 @@ export class GroupsService {
     tx: Prisma.TransactionClient,
     dto: JoinGroupDTO,
   ) {
-    const existingMembership = await this.groupRepository.findMembership(
+    const existingMembership = await this.groupsRepository.findMembership(
       tx,
       dto,
     );
@@ -44,7 +44,7 @@ export class GroupsService {
 
   async createGroup(dto: CreateGroupData, userId: string) {
     return this.prisma.$transaction(async (tx) => {
-      const existingGroup = await this.groupRepository.findGroupByName(
+      const existingGroup = await this.groupsRepository.findGroupByName(
         tx,
         dto.name,
       );
@@ -53,15 +53,15 @@ export class GroupsService {
         throw new ConflictException('Group name already exist');
       }
       const inviteCode = generateInviteCode();
-      const group = await this.groupRepository.createGroup(tx, {
+      const group = await this.groupsRepository.createGroup(tx, {
         ...dto,
         inviteCode,
         organizerId: userId,
       });
 
-      const count = await this.groupRepository.countMembers(tx, group.id);
+      const count = await this.groupsRepository.countMembers(tx, group.id);
       const position = count + 1;
-      await this.groupRepository.createMembership(
+      await this.groupsRepository.createMembership(
         tx,
         {
           groupId: group.id,
@@ -79,7 +79,7 @@ export class GroupsService {
 
   async joinGroup(dto: JoinGroupBodyDTO, userId: string) {
     return this.prisma.$transaction(async (tx) => {
-      const group = await this.groupRepository.findGroupByInviteCode(
+      const group = await this.groupsRepository.findGroupByInviteCode(
         tx,
         dto.inviteCode,
       );
@@ -95,7 +95,7 @@ export class GroupsService {
         );
       }
 
-      const count = await this.groupRepository.countMembers(tx, group.id);
+      const count = await this.groupsRepository.countMembers(tx, group.id);
 
       if (count >= group.maxMembers) {
         throw new ConflictException('Group is already full');
@@ -106,7 +106,7 @@ export class GroupsService {
         groupId: group.id,
         userId,
       });
-      await this.groupRepository.createMembership(
+      await this.groupsRepository.createMembership(
         tx,
         {
           groupId: group.id,
@@ -121,11 +121,11 @@ export class GroupsService {
   }
 
   async getAllGroups() {
-    return this.groupRepository.getAllGroups();
+    return this.groupsRepository.getAllGroups();
   }
 
   async getUsersGroup(userId: string) {
-    return this.groupRepository.getUserGroup(userId);
+    return this.groupsRepository.getUserGroup(userId);
   }
 
   async getGroupById(groupId: string, userId: string) {
@@ -147,6 +147,6 @@ export class GroupsService {
       );
     }
 
-    return this.groupRepository.updateGroupStartDate(groupId, new Date());
+    return this.groupsRepository.updateGroupStartDate(groupId, new Date());
   }
 }

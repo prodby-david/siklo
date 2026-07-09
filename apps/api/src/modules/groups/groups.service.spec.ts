@@ -5,7 +5,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { GroupsService } from './groups.service';
-import { GroupRepository } from './groups.repository';
+import { GroupsRepository } from './groups.repository';
 import { PrismaService } from '@/database/prisma.service';
 
 jest.mock('@/commons/utils/generateInviteCode', () => ({
@@ -15,7 +15,7 @@ jest.mock('@/commons/utils/generateInviteCode', () => ({
 
 describe('GroupsService', () => {
   let service: GroupsService;
-  let groupRepository: {
+  let groupsRepository: {
     findGroupByName: jest.Mock;
     createGroup: jest.Mock;
     getAllGroups: jest.Mock;
@@ -30,7 +30,7 @@ describe('GroupsService', () => {
   let prisma: { $transaction: jest.Mock };
 
   beforeEach(async () => {
-    groupRepository = {
+    groupsRepository = {
       findGroupByName: jest.fn(),
       createGroup: jest.fn(),
       getAllGroups: jest.fn(),
@@ -50,7 +50,7 @@ describe('GroupsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GroupsService,
-        { provide: GroupRepository, useValue: groupRepository },
+        { provide: GroupsRepository, useValue: groupsRepository },
         { provide: PrismaService, useValue: prisma },
       ],
     }).compile();
@@ -79,7 +79,7 @@ describe('GroupsService', () => {
         const tx = {};
         return cb(tx);
       });
-      groupRepository.findGroupByName.mockResolvedValue({
+      groupsRepository.findGroupByName.mockResolvedValue({
         id: 'existing-group',
       });
 
@@ -93,7 +93,7 @@ describe('GroupsService', () => {
 
     it('should create a group and membership inside a transaction', async () => {
       const mockGroup = { id: 'group-123', ...createGroupDto };
-      groupRepository.findGroupByName.mockResolvedValue(null);
+      groupsRepository.findGroupByName.mockResolvedValue(null);
 
       // Mock $transaction to execute the callback with a mock tx
       prisma.$transaction.mockImplementation(async (cb: Function) => {
@@ -101,9 +101,9 @@ describe('GroupsService', () => {
         return cb(tx);
       });
 
-      groupRepository.createGroup.mockResolvedValue(mockGroup);
-      groupRepository.countMembers.mockResolvedValue(0);
-      groupRepository.createMembership.mockResolvedValue(undefined);
+      groupsRepository.createGroup.mockResolvedValue(mockGroup);
+      groupsRepository.countMembers.mockResolvedValue(0);
+      groupsRepository.createMembership.mockResolvedValue(undefined);
 
       const result = await service.createGroup(createGroupDto, userId);
 
@@ -111,11 +111,11 @@ describe('GroupsService', () => {
         message: 'Group created successfully',
         group: mockGroup,
       });
-      expect(groupRepository.findGroupByName).toHaveBeenCalledWith(
+      expect(groupsRepository.findGroupByName).toHaveBeenCalledWith(
         expect.anything(),
         createGroupDto.name,
       );
-      expect(groupRepository.createGroup).toHaveBeenCalledWith(
+      expect(groupsRepository.createGroup).toHaveBeenCalledWith(
         expect.anything(),
         {
           ...createGroupDto,
@@ -123,7 +123,7 @@ describe('GroupsService', () => {
           organizerId: userId,
         },
       );
-      expect(groupRepository.createMembership).toHaveBeenCalledWith(
+      expect(groupsRepository.createMembership).toHaveBeenCalledWith(
         expect.anything(),
         {
           groupId: mockGroup.id,
@@ -145,7 +145,7 @@ describe('GroupsService', () => {
         const tx = {};
         return cb(tx);
       });
-      groupRepository.findGroupByInviteCode.mockResolvedValue(null);
+      groupsRepository.findGroupByInviteCode.mockResolvedValue(null);
 
       await expect(service.joinGroup(joinGroupBodyDto, userId)).rejects.toThrow(
         NotFoundException,
@@ -157,7 +157,7 @@ describe('GroupsService', () => {
         const tx = {};
         return cb(tx);
       });
-      groupRepository.findGroupByInviteCode.mockResolvedValue({
+      groupsRepository.findGroupByInviteCode.mockResolvedValue({
         id: 'group-123',
         startDate: new Date(),
       });
@@ -172,12 +172,12 @@ describe('GroupsService', () => {
         const tx = {};
         return cb(tx);
       });
-      groupRepository.findGroupByInviteCode.mockResolvedValue({
+      groupsRepository.findGroupByInviteCode.mockResolvedValue({
         id: 'group-123',
         maxMembers: 5,
         startDate: null,
       });
-      groupRepository.countMembers.mockResolvedValue(5);
+      groupsRepository.countMembers.mockResolvedValue(5);
 
       await expect(service.joinGroup(joinGroupBodyDto, userId)).rejects.toThrow(
         ConflictException,
@@ -189,13 +189,13 @@ describe('GroupsService', () => {
         const tx = {};
         return cb(tx);
       });
-      groupRepository.findGroupByInviteCode.mockResolvedValue({
+      groupsRepository.findGroupByInviteCode.mockResolvedValue({
         id: 'group-123',
         maxMembers: 5,
         startDate: null,
       });
-      groupRepository.countMembers.mockResolvedValue(2);
-      groupRepository.findMembership.mockResolvedValue({
+      groupsRepository.countMembers.mockResolvedValue(2);
+      groupsRepository.findMembership.mockResolvedValue({
         id: 'existing-membership',
       });
 
@@ -209,23 +209,23 @@ describe('GroupsService', () => {
         const tx = {};
         return cb(tx);
       });
-      groupRepository.findGroupByInviteCode.mockResolvedValue({
+      groupsRepository.findGroupByInviteCode.mockResolvedValue({
         id: 'group-123',
         maxMembers: 5,
         startDate: null,
       });
-      groupRepository.countMembers.mockResolvedValue(2);
-      groupRepository.findMembership.mockResolvedValue(null);
-      groupRepository.createMembership.mockResolvedValue(undefined);
+      groupsRepository.countMembers.mockResolvedValue(2);
+      groupsRepository.findMembership.mockResolvedValue(null);
+      groupsRepository.createMembership.mockResolvedValue(undefined);
 
       const result = await service.joinGroup(joinGroupBodyDto, userId);
 
       expect(result).toEqual({ message: 'Group joined successfully' });
-      expect(groupRepository.findGroupByInviteCode).toHaveBeenCalledWith(
+      expect(groupsRepository.findGroupByInviteCode).toHaveBeenCalledWith(
         expect.anything(),
         joinGroupBodyDto.inviteCode,
       );
-      expect(groupRepository.createMembership).toHaveBeenCalledWith(
+      expect(groupsRepository.createMembership).toHaveBeenCalledWith(
         expect.anything(),
         {
           groupId: 'group-123',
@@ -241,12 +241,12 @@ describe('GroupsService', () => {
       const mockGroups = [
         { id: 'group-1', name: 'Group 1', _count: { memberships: 3 } },
       ];
-      groupRepository.getUserGroup.mockResolvedValue(mockGroups);
+      groupsRepository.getUserGroup.mockResolvedValue(mockGroups);
 
       const result = await service.getUsersGroup('user-123');
 
       expect(result).toEqual(mockGroups);
-      expect(groupRepository.getUserGroup).toHaveBeenCalledWith('user-123');
+      expect(groupsRepository.getUserGroup).toHaveBeenCalledWith('user-123');
     });
   });
 
@@ -255,18 +255,18 @@ describe('GroupsService', () => {
       const mockGroups = [
         { id: 'group-1', name: 'Group 1', _count: { memberships: 3 } },
       ];
-      groupRepository.getAllGroups.mockResolvedValue(mockGroups);
+      groupsRepository.getAllGroups.mockResolvedValue(mockGroups);
 
       const result = await service.getAllGroups();
 
       expect(result).toEqual(mockGroups);
-      expect(groupRepository.getAllGroups).toHaveBeenCalled();
+      expect(groupsRepository.getAllGroups).toHaveBeenCalled();
     });
   });
 
   describe('getGroupById', () => {
     it('should throw NotFoundException if group is not found', async () => {
-      groupRepository.getGroupById.mockResolvedValue(null);
+      groupsRepository.getGroupById.mockResolvedValue(null);
 
       await expect(service.getGroupById('group-123', 'user-123')).rejects.toThrow(
         NotFoundException,
@@ -275,12 +275,12 @@ describe('GroupsService', () => {
 
     it('should return the group if found', async () => {
       const mockGroup = { id: 'group-123', name: 'Group 1' };
-      groupRepository.getGroupById.mockResolvedValue(mockGroup);
+      groupsRepository.getGroupById.mockResolvedValue(mockGroup);
 
       const result = await service.getGroupById('group-123', 'user-123');
 
       expect(result).toEqual(mockGroup);
-      expect(groupRepository.getGroupById).toHaveBeenCalledWith('group-123', 'user-123');
+      expect(groupsRepository.getGroupById).toHaveBeenCalledWith('group-123', 'user-123');
     });
   });
 
@@ -289,7 +289,7 @@ describe('GroupsService', () => {
     const userId = 'organizer-123';
 
     it('should throw ForbiddenException if user is not the organizer', async () => {
-      groupRepository.getGroupById.mockResolvedValue({
+      groupsRepository.getGroupById.mockResolvedValue({
         id: groupId,
         organizerId: 'different-user',
       });
@@ -300,7 +300,7 @@ describe('GroupsService', () => {
     });
 
     it('should throw ConflictException if group cycle already started', async () => {
-      groupRepository.getGroupById.mockResolvedValue({
+      groupsRepository.getGroupById.mockResolvedValue({
         id: groupId,
         organizerId: userId,
         startDate: new Date(),
@@ -312,7 +312,7 @@ describe('GroupsService', () => {
     });
 
     it('should throw ConflictException if group has fewer than 3 members', async () => {
-      groupRepository.getGroupById.mockResolvedValue({
+      groupsRepository.getGroupById.mockResolvedValue({
         id: groupId,
         organizerId: userId,
         startDate: null,
@@ -325,13 +325,13 @@ describe('GroupsService', () => {
     });
 
     it('should start the group cycle successfully', async () => {
-      groupRepository.getGroupById.mockResolvedValue({
+      groupsRepository.getGroupById.mockResolvedValue({
         id: groupId,
         organizerId: userId,
         startDate: null,
         _count: { memberships: 3 },
       });
-      groupRepository.updateGroupStartDate.mockResolvedValue({
+      groupsRepository.updateGroupStartDate.mockResolvedValue({
         id: groupId,
         startDate: new Date(),
       });
@@ -339,7 +339,7 @@ describe('GroupsService', () => {
       const result = await service.startGroupCycle(groupId, userId);
 
       expect(result).toBeDefined();
-      expect(groupRepository.updateGroupStartDate).toHaveBeenCalledWith(
+      expect(groupsRepository.updateGroupStartDate).toHaveBeenCalledWith(
         groupId,
         expect.any(Date),
       );
