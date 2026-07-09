@@ -4,7 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "web:dev": "pnpm --filter web run dev",
+    "web:build": "pnpm --filter web run build",
+    "web:lint": "pnpm --filter web run lint",
+    "api:dev": "pnpm --filter api start:dev",
+    "api:build": "pnpm --filter api run build",
+    "api:lint": "pnpm --filter api run lint",
+    "shared:build": "pnpm --filter shared-schemas run build"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +18,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "^11.5.1",
+      "version": "11.5.1",
       "onFail": "download"
     }
   },
