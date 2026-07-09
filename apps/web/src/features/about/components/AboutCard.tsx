@@ -8,9 +8,9 @@ interface AboutCardProps {
 
 export default function AboutCard({ item }: AboutCardProps) {
   return (
-    <div className="group rounded-r-lg border border-l-4 border-neutral-border bg-background p-5 flex flex-col gap-2.5 hover:border-l-brand-accent hover:bg-neutral-table-stripe/30">
+    <div className="group rounded-r-2xl border border-l-4 border-neutral-border bg-background p-5 flex flex-col gap-2.5 hover:border-l-brand-accent hover:bg-neutral-table-stripe/30">
       <div className="flex items-center gap-2.5">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-brand-accent/10 text-brand-accent group-hover:bg-brand-accent group-hover:text-white">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-2xl bg-brand-accent/10 text-brand-accent group-hover:bg-brand-accent group-hover:text-white">
           <Check className="h-4 w-4" />
         </span>
         <h4 className="text-xs font-bold text-foreground group-hover:text-foreground">

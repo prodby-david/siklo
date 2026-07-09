@@ -31,7 +31,7 @@ export const RulesPlanner = () => {
   };
 
   return (
-    <div className="w-full bg-background rounded-lg border border-neutral-border p-6 flex flex-col gap-6">
+    <div className="w-full bg-background rounded-2xl border border-neutral-border p-6 flex flex-col gap-6">
       <div>
         <h3 className="text-lg font-bold text-foreground">
           Paluwagan Rules Planner

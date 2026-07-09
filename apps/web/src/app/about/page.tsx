@@ -2,6 +2,7 @@ import AboutSection from "@/features/about/ui/AboutSection";
 import TrustCards from "@/features/about/components/TrustCards";
 import FaqSection from "@/features/about/components/FaqSection";
 import Navbar from "@/shared/components/nav/Navbar";
+import Footer from "@/shared/components/footer/Footer";
 import { defaultAboutItems } from "@/features/about/constants/about.constants";
 
 export default function AboutPage() {
@@ -21,6 +22,7 @@ export default function AboutPage() {
             <FaqSection />
           </div>
         </section>
+        <Footer />
       </main>
     </div>
   );

@@ -41,7 +41,7 @@ export default function PaluwaganGuide() {
               return (
                 <div
                   key={scheme.id}
-                  className="p-4 rounded-lg border border-neutral-border bg-neutral-table-stripe/20 flex flex-col gap-2"
+                  className="p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/20 flex flex-col gap-2"
                 >
                   <div className="flex items-center gap-2">
                     <Icon className="h-4 w-4 text-brand-accent shrink-0" />
@@ -73,7 +73,7 @@ export default function PaluwaganGuide() {
             {bestPractices.map((practice, idx) => (
               <div
                 key={idx}
-                className="p-4 rounded-lg border border-neutral-border bg-background flex flex-col gap-1.5"
+                className="p-4 rounded-2xl border border-neutral-border bg-background flex flex-col gap-1.5"
               >
                 <div className="flex items-center gap-2">
                   <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-accent/10 text-xs font-bold text-brand-accent">

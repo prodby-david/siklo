@@ -12,7 +12,7 @@ export default function FaqSection() {
   };
 
   return (
-    <div className="w-full bg-background rounded-lg border border-neutral-border p-6 flex flex-col gap-6">
+    <div className="w-full bg-background rounded-2xl border border-neutral-border p-6 flex flex-col gap-6">
       <div>
         <h3 className="text-lg font-bold text-foreground">
           Frequently Asked Questions
@@ -28,7 +28,7 @@ export default function FaqSection() {
           return (
             <div
               key={index}
-              className="border border-neutral-border rounded-lg overflow-hidden"
+              className="border border-neutral-border rounded-2xl overflow-hidden"
             >
               <button
                 onClick={() => toggleFaq(index)}

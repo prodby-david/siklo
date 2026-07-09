@@ -29,7 +29,7 @@ export const SelectField = <T extends string | number>({
             typeof value === "number" ? (Number(raw) as T) : (raw as T);
           onChange(parsed);
         }}
-        className="w-full text-xs p-2 border border-neutral-border rounded text-foreground bg-background font-medium focus:border-brand-accent focus:outline-hidden"
+        className="w-full text-xs p-2 border border-neutral-border rounded-2xl text-foreground bg-background font-medium focus:border-brand-accent focus:outline-hidden"
       >
         {options.map((opt) => (
           <option key={String(opt.value)} value={opt.value}>

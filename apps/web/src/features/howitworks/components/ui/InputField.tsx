@@ -22,7 +22,7 @@ export const InputField = ({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full text-xs p-2 border border-neutral-border rounded text-foreground bg-background font-medium focus:border-brand-accent focus:outline-hidden"
+        className="w-full text-xs p-2 border border-neutral-border rounded-2xl text-foreground bg-background font-medium focus:border-brand-accent focus:outline-hidden"
         placeholder={placeholder}
       />
     </div>

@@ -2,6 +2,7 @@ import HowItWorksSection from "@/features/howitworks/ui/HowItWorksSection";
 import RulesPlanner from "@/features/howitworks/components/RulesPlanner";
 import PaluwaganGuide from "@/features/howitworks/components/PaluwaganGuide";
 import Navbar from "@/shared/components/nav/Navbar";
+import Footer from "@/shared/components/footer/Footer";
 
 export default function HowItWorksPage() {
   return (
@@ -16,6 +17,7 @@ export default function HowItWorksPage() {
             <PaluwaganGuide />
           </div>
         </section>
+        <Footer />
       </main>
     </div>
   );

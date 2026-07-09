@@ -23,7 +23,7 @@ export default function AboutSection({
               </p>
             </div>
 
-            <div className="border border-neutral-border rounded-lg p-4 bg-neutral-table-stripe/30 flex flex-col gap-2.5 max-w-md">
+            <div className="border border-neutral-border rounded-2xl p-4 bg-neutral-table-stripe/30 flex flex-col gap-2.5 max-w-md">
               <div className="flex justify-between items-center text-xs text-neutral-subtext font-bold">
                 <span>Notebook Status</span>
                 <span className="h-1.5 w-1.5 rounded-full bg-brand-accent" />

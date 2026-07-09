@@ -31,7 +31,7 @@ export const ButtonGroup = <T extends string | number>({
           <button
             key={String(opt.value)}
             onClick={() => onChange(opt.value)}
-            className={`py-1.5 text-xs border rounded font-semibold ${
+            className={`py-1.5 text-xs border rounded-2xl font-semibold ${
               value === opt.value
                 ? "bg-brand-accent/10 border-brand-accent text-brand-accent"
                 : "bg-background border-neutral-border text-neutral-subtext hover:bg-neutral-table-stripe"

@@ -12,7 +12,7 @@ export const HowItWorksSection = ({
     <section className="w-full bg-background py-12 md:py-20 flex items-center">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
         <div className="max-w-2xl mb-12 text-center flex flex-col items-center gap-3">
-          <span className="text-xs font-bold text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded">
+          <span className="text-xs font-bold text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded-2xl">
             Operational Workflow
           </span>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground">

@@ -15,9 +15,9 @@ export default function TrustCards() {
         {trustItems.map((item, index) => (
           <div
             key={index}
-            className="p-5 rounded-lg border border-neutral-border bg-background flex flex-col gap-3 hover:border-brand-accent"
+            className="p-5 rounded-2xl border border-neutral-border bg-background flex flex-col gap-3 hover:border-brand-accent"
           >
-            <div className="h-9 w-9 rounded-md bg-brand-accent/10 flex items-center justify-center">
+            <div className="h-9 w-9 rounded-2xl bg-brand-accent/10 flex items-center justify-center">
               {getIcon(item.id)}
             </div>
             <div className="flex flex-col gap-1">
