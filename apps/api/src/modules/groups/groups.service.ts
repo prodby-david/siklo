@@ -1,10 +1,15 @@
-import { Injectable, ConflictException } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma.service';
-import { CreateGroupData } from './schema/create-group.schema';
-import { JoinGroupDTO } from './schema/join-group.schema';
-import { GroupRepository } from './groups.repository';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client/extension';
+import { PrismaService } from '@/database/prisma.service';
 import generateInviteCode from '@/commons/utils/generateInviteCode';
+import { GroupRepository } from './groups.repository';
+import { CreateGroupData } from './schema/create-group.schema';
+import { JoinGroupBodyDTO, JoinGroupDTO } from '@siklo/shared-schemas';
 
 @Injectable()
 export class GroupsService {
@@ -13,11 +18,21 @@ export class GroupsService {
     private readonly groupRepository: GroupRepository,
   ) {}
 
-  private async validateMembership(
+  private async getExistingGroup(groupId: string, userId: string) {
+    const group = await this.groupRepository.getGroupById(groupId, userId);
+
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    return group;
+  }
+
+  private async ensureNotMemeber(
     tx: Prisma.TransactionClient,
     dto: JoinGroupDTO,
   ) {
-    const existingMembership = await this.groupRepository.validateMembership(
+    const existingMembership = await this.groupRepository.findMembership(
       tx,
       dto,
     );
@@ -28,26 +43,32 @@ export class GroupsService {
   }
 
   async createGroup(dto: CreateGroupData, userId: string) {
-    const checkGroup = await this.groupRepository.checkGroupExist(
-      dto.name,
-      dto.startDate,
-    );
+    return this.prisma.$transaction(async (tx) => {
+      const existingGroup = await this.groupRepository.findGroupByName(
+        tx,
+        dto.name,
+      );
 
-    if (checkGroup) {
-      throw new ConflictException('Group name already exist');
-    }
-
-    return await this.prisma.$transaction(async (tx) => {
+      if (existingGroup) {
+        throw new ConflictException('Group name already exist');
+      }
       const inviteCode = generateInviteCode();
       const group = await this.groupRepository.createGroup(tx, {
         ...dto,
         inviteCode,
         organizerId: userId,
       });
-      await this.groupRepository.createMembership(tx, {
-        groupId: group.id,
-        userId,
-      });
+
+      const count = await this.groupRepository.countMembers(tx, group.id);
+      const position = count + 1;
+      await this.groupRepository.createMembership(
+        tx,
+        {
+          groupId: group.id,
+          userId,
+        },
+        position,
+      );
 
       return {
         message: 'Group created successfully',
@@ -56,21 +77,76 @@ export class GroupsService {
     });
   }
 
-  async joinGroup(dto: JoinGroupDTO) {
+  async joinGroup(dto: JoinGroupBodyDTO, userId: string) {
     return this.prisma.$transaction(async (tx) => {
-      await this.validateMembership(tx, dto);
-      await this.groupRepository.createMembership(tx, dto);
+      const group = await this.groupRepository.findGroupByInviteCode(
+        tx,
+        dto.inviteCode,
+      );
+      if (!group) {
+        throw new NotFoundException(
+          "Group doesn't exist. Please check the invite code and try again.",
+        );
+      }
+
+      if (group.startDate) {
+        throw new ConflictException(
+          'Cannot join a group whose cycle has already started',
+        );
+      }
+
+      const count = await this.groupRepository.countMembers(tx, group.id);
+
+      if (count >= group.maxMembers) {
+        throw new ConflictException('Group is already full');
+      }
+      const nextPosition = count + 1;
+
+      await this.ensureNotMemeber(tx, {
+        groupId: group.id,
+        userId,
+      });
+      await this.groupRepository.createMembership(
+        tx,
+        {
+          groupId: group.id,
+          userId,
+        },
+        nextPosition,
+      );
       return {
         message: 'Group joined successfully',
       };
     });
   }
 
-  async getUserGroup(userId: string) {
+  async getAllGroups() {
+    return this.groupRepository.getAllGroups();
+  }
+
+  async getUsersGroup(userId: string) {
     return this.groupRepository.getUserGroup(userId);
   }
 
-  async getAllGroups() {
-    return this.groupRepository.getAllGroups();
+  async getGroupById(groupId: string, userId: string) {
+    return this.getExistingGroup(groupId, userId);
+  }
+
+  async startGroupCycle(groupId: string, userId: string) {
+    const group = await this.getExistingGroup(groupId, userId);
+    if (group.organizerId !== userId) {
+      throw new ForbiddenException('Only the organizer can start the cycle');
+    }
+    if (group.startDate) {
+      throw new ConflictException('Group cycle has already started');
+    }
+
+    if (group._count.memberships < 3) {
+      throw new ConflictException(
+        'At least 3 members are required to start a cycle',
+      );
+    }
+
+    return this.groupRepository.updateGroupStartDate(groupId, new Date());
   }
 }
