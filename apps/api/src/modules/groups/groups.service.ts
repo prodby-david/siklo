@@ -52,6 +52,16 @@ export class GroupsService {
       if (existingGroup) {
         throw new ConflictException('Group name already exist');
       }
+
+      const MAX_GROUPS_PER_USER = 3;
+      const membershipCount =
+        await this.groupsRepository.countUserMemberships(tx, userId);
+      if (membershipCount >= MAX_GROUPS_PER_USER) {
+        throw new ConflictException(
+          `You can only be part of up to ${MAX_GROUPS_PER_USER} groups`,
+        );
+      }
+
       const inviteCode = generateInviteCode();
       const group = await this.groupsRepository.createGroup(tx, {
         ...dto,
@@ -106,6 +116,15 @@ export class GroupsService {
         groupId: group.id,
         userId,
       });
+
+      const MAX_GROUPS_PER_USER = 3;
+      const membershipCount =
+        await this.groupsRepository.countUserMemberships(tx, userId);
+      if (membershipCount >= MAX_GROUPS_PER_USER) {
+        throw new ConflictException(
+          `You can only be part of up to ${MAX_GROUPS_PER_USER} groups`,
+        );
+      }
       await this.groupsRepository.createMembership(
         tx,
         {
