@@ -1,0 +1,94 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  createGroupSchema,
+  type CreateGroupInput,
+  type CreateGroupData,
+} from "@/features/groups/validator/create-group.validator";
+import useCreateGroup from "@/features/groups/hooks/useCreateGroup";
+import { toast } from "sonner";
+import CreateGroupFormFields from "@/features/groups/components/forms/CreateGroupFormFields";
+import CreateGroupPreview from "@/features/groups/components/forms/CreateGroupPreview";
+import { BILLING_CYCLE_DAYS } from "@/features/groups/constants/billing-cycle.constants";
+import { useRouter } from "next/navigation";
+
+export default function CreateGroupPage() {
+  const router = useRouter();
+  const { mutateAsync: createGroup, isPending } = useCreateGroup();
+
+  const {
+    handleSubmit,
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<CreateGroupInput>({
+    resolver: zodResolver(createGroupSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      contributionAmount: 0,
+      billingCycle: "DAILY",
+      payoutSequence: "RANDOM",
+      cycleDuration: 0,
+      totalPayout: 0,
+      maxMembers: 0,
+    },
+  });
+
+  const contribution = watch("contributionAmount");
+  const members = watch("maxMembers");
+  const cycleDuration = watch("cycleDuration");
+  const billingCycle = watch("billingCycle");
+
+  const totalPayout = Number(contribution || 0) * Number(members || 0);
+
+  const totalRounds = Number(members || 0) * Number(cycleDuration || 0);
+
+  const totalDays = totalRounds * BILLING_CYCLE_DAYS[billingCycle];
+
+  useEffect(() => {
+    const payout = Number(contribution || 0) * Number(members || 0);
+    setValue("totalPayout", payout);
+  }, [contribution, members, setValue]);
+
+  const watchAllFields = watch();
+
+  const onSubmit = async (data: CreateGroupInput) => {
+    try {
+      await createGroup(data as CreateGroupData);
+      toast.success("Paluwagan group created successfully!");
+      router.push("/group");
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to create group";
+      toast.error(message);
+    }
+  };
+
+  return (
+    <main className="flex-1 bg-neutral-subtext/5 p-10">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto p-2">
+        <CreateGroupFormFields
+          register={register}
+          errors={errors}
+          payoutSequence={watchAllFields.payoutSequence || "RANDOM"}
+          setValue={setValue}
+          isPending={isPending}
+          onSubmit={handleSubmit(onSubmit)}
+        />
+        <CreateGroupPreview
+          watchedFields={watchAllFields}
+          totalPayout={totalPayout}
+          totalRounds={totalRounds}
+          totalDays={totalDays}
+        />
+      </div>
+    </main>
+  );
+}
