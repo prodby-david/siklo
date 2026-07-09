@@ -21,6 +21,8 @@ export default function GroupPage() {
 
   const isOrganizer = currentUser?.id === data?.organizerId;
   const hasStarted = !!data?.startDate;
+  const isMembersFull =
+    (data?._count?.memberships || 0) >= (data?.maxMembers || 0);
 
   const handleStartCycle = async () => {
     if (!data?.id) return;
@@ -84,10 +86,7 @@ export default function GroupPage() {
           inviteCode={data.inviteCode}
           copied={copied}
           onCopyInviteCode={handleCopyInviteCode}
-          isOrganizer={isOrganizer}
           hasStarted={hasStarted}
-          isStarting={isStarting}
-          onStartCycle={handleStartCycle}
         />
 
         <GroupStatsGrid
@@ -118,10 +117,16 @@ export default function GroupPage() {
               payoutSequence={data.payoutSequence}
               organizerId={data.organizerId}
             />
-            <button className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer">
-              <RefreshCw size={16} />
-              Start Cycle
-            </button>
+            {isOrganizer && !hasStarted ? (
+              <button
+                disabled={!isMembersFull || isStarting}
+                onClick={handleStartCycle}
+                className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+              >
+                <RefreshCw size={16} />
+                {isStarting ? "Starting..." : "Start Cycle"}
+              </button>
+            ) : null}
           </div>
         </div>
       </div>
