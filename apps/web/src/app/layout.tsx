@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Footer from "@/shared/components/footer/Footer";
 import ThemeProvider from "@/shared/providers/ThemeProvider";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -24,10 +23,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} min-h-full flex flex-col`}>
         <TanstackQueryProvider>
-          <ThemeProvider>
-            {children}
-            <Footer />
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </TanstackQueryProvider>
         <Toaster
           richColors
