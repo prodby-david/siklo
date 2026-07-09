@@ -1,9 +1,9 @@
 import generateInviteCode from './generateInviteCode';
 
 describe('generateInviteCode', () => {
-  it('should generate a 6-character uppercase hex code', () => {
+  it('should generate a 12-character uppercase hex code', () => {
     const code = generateInviteCode();
-    expect(code).toHaveLength(6);
+    expect(code).toHaveLength(12);
   });
 
   it('should generate different codes on different calls', () => {
