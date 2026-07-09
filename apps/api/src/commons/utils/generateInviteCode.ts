@@ -1,5 +1,5 @@
 import { randomBytes } from 'crypto';
 
 export default function generateInviteCode() {
-  return randomBytes(3).toString('hex').toUpperCase();
+  return randomBytes(6).toString('hex').toUpperCase();
 }
