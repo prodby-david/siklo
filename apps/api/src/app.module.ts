@@ -8,6 +8,7 @@ import { PrismaModule } from './database/prisma.module';
 import { GroupsModule } from './modules/groups/groups.module';
 import { TokenModule } from './modules/token/token.module';
 import { RoundModule } from './modules/round/round.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RoundModule } from './modules/round/round.module';
     GroupsModule,
     TokenModule,
     RoundModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
