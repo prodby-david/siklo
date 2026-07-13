@@ -3,7 +3,6 @@
 import useGetGroup from "../../../groups/hooks/useGetGroup";
 import { Group, ExtendedGroup } from "../../types/groups";
 import { PhilippinePeso, ArrowRight, Users } from "lucide-react";
-import formatDate from "@/shared/utils/formatDate";
 import Link from "next/link";
 import EmptyGroupState from "../EmptyGroupState";
 import Loader from "@/shared/components/loader/Loader";

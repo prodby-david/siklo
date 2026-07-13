@@ -21,6 +21,9 @@ import {
   Layers,
   ArrowRight,
   ChevronDown,
+  Dices,
+  UserCheck,
+  MousePointerClick,
 } from "lucide-react";
 
 interface CreateGroupFormFieldsProps {
@@ -262,15 +265,41 @@ export default function CreateGroupFormFields({
                     <button
                       key={option.value}
                       type="button"
-                      onClick={() =>
-                        setValue("payoutSequence", option.value)
-                      }
+                      onClick={() => setValue("payoutSequence", option.value)}
                       className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all duration-150 cursor-pointer active:scale-95 ${
                         isSelected
                           ? "border-brand-accent/35 bg-brand-accent/5 text-foreground shadow-sm ring-1 ring-brand-accent/20"
                           : "border-neutral-border bg-background hover:bg-neutral-subtext/5 text-neutral-subtext"
                       }`}
                     >
+                      {option.value === "MANUAL" && (
+                        <UserCheck
+                          className={`w-5 h-5 mb-2 ${
+                            isSelected
+                              ? "text-brand-accent"
+                              : "text-neutral-subtext/75"
+                          }`}
+                        />
+                      )}
+                      {option.value === "RANDOM" && (
+                        <Dices
+                          className={`w-5 h-5 mb-2 ${
+                            isSelected
+                              ? "text-brand-accent"
+                              : "text-neutral-subtext/75"
+                          }`}
+                        />
+                      )}
+
+                      {option.value === "FREECHOOSING" && (
+                        <MousePointerClick
+                          className={`w-5 h-5 mb-2 ${
+                            isSelected
+                              ? "text-brand-accent"
+                              : "text-neutral-subtext/75"
+                          }`}
+                        />
+                      )}
                       <span
                         className={`text-xs font-bold ${isSelected ? "text-brand-accent" : ""}`}
                       >

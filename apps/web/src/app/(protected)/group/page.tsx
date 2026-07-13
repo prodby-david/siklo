@@ -4,11 +4,7 @@ import Link from "next/link";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
 import formatDate from "@/shared/utils/formatDate";
 import { Group } from "@/features/dashboard/types/groups";
-import {
-  PhilippinePeso,
-  ArrowRight,
-  Users,
-} from "lucide-react";
+import { PhilippinePeso, ArrowRight, Users } from "lucide-react";
 import Loader from "@/shared/components/loader/Loader";
 import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
 import EmptyGroupState from "@/features/dashboard/components/EmptyGroupState";
@@ -61,6 +57,9 @@ export default function ShowGroup() {
               100,
               (membershipsCount / extendedGroup.maxMembers) * 100,
             );
+            const isDateNull = extendedGroup.startDate
+              ? formatDate(extendedGroup.startDate)
+              : "Not yet started.";
 
             return (
               <div
@@ -105,7 +104,7 @@ export default function ShowGroup() {
                         Start Date
                       </span>
                       <p className="font-bold text-sm text-foreground mt-0.5">
-                        {formatDate(extendedGroup.startDate)}
+                        {isDateNull}
                       </p>
                     </div>
                   </div>

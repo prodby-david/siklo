@@ -3,21 +3,21 @@
 import Link from "next/link";
 import SigninForm from "../components/SigninForm";
 import { Coins, ShieldCheck, RefreshCw } from "lucide-react";
+import Image from "next/image";
 
 export default function SigninCard() {
   return (
     <div className="w-full max-w-4xl bg-background border border-neutral-border rounded-2xl shadow-sm flex flex-col md:flex-row overflow-hidden animate-fade-in">
       <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-primary/5 via-brand-accent/5 to-transparent border-r border-neutral-border p-8 flex-col">
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-3 relative">
           <Link
             href="/"
-            className="flex items-center gap-2 text-lg font-bold text-foreground"
+            className="flex items-center text-lg font-bold text-foreground absolute"
           >
-            <span className="h-3 w-3 rounded-2xl bg-brand-accent" />
-            <span>Siklo</span>
+            <Image src="/images/logo.svg" alt="Siklo" width={60} height={60} />
           </Link>
 
-          <div className="flex flex-col gap-2 mt-4">
+          <div className="flex flex-col gap-2 mt-15">
             <h2 className="text-2xl font-bold tracking-tight text-foreground">
               Manage your funds, together.
             </h2>

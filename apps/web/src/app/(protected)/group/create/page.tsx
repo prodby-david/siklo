@@ -14,6 +14,7 @@ import CreateGroupFormFields from "@/features/groups/components/forms/CreateGrou
 import CreateGroupPreview from "@/features/groups/components/forms/CreateGroupPreview";
 import { BILLING_CYCLE_DAYS } from "@/features/groups/constants/billing-cycle.constants";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function CreateGroupPage() {
   const router = useRouter();
@@ -30,12 +31,12 @@ export default function CreateGroupPage() {
     defaultValues: {
       name: "",
       description: "",
-      contributionAmount: 0,
+      contributionAmount: 100,
       billingCycle: "DAILY",
-      payoutSequence: "RANDOM",
-      cycleDuration: 0,
+      payoutSequence: "MANUAL",
+      cycleDuration: 1,
       totalPayout: 0,
-      maxMembers: 0,
+      maxMembers: 3,
     },
   });
 
@@ -62,11 +63,13 @@ export default function CreateGroupPage() {
       await createGroup(data as CreateGroupData);
       toast.success("Paluwagan group created successfully!");
       router.push("/group");
-    } catch (err: any) {
-      const message =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Failed to create group";
+    } catch (err: unknown) {
+      let message = "Failed to create group";
+      if (axios.isAxiosError(err)) {
+        message = err.response?.data?.message || err.message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
       toast.error(message);
     }
   };
