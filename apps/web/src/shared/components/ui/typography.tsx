@@ -35,7 +35,6 @@ export function Typography({
   className,
   ...props
 }: TypographyProps) {
-  // Map variant to a semantic HTML tag if 'as' prop isn't passed
   const Component = as || (variant === "lead" ? "p" : variant);
 
   return (

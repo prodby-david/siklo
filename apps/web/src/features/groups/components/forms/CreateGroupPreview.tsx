@@ -36,7 +36,6 @@ export default function CreateGroupPreview({
             </p>
           </div>
 
-          {/* Financial Summary */}
           <div className="grid grid-cols-2 gap-5 border-t border-neutral-border/20 pt-5">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw, Trash2 } from "lucide-react";
 import { useGroupDetails } from "@/features/groups/hooks/useGroupDetails";
 import GroupHero from "@/features/groups/components/details/GroupHero";
 import GroupStatsGrid from "@/features/groups/components/details/GroupStatsGrid";
@@ -10,14 +10,31 @@ import GroupRotationSlots from "@/features/groups/components/details/GroupRotati
 import Loader from "@/shared/components/loader/Loader";
 import useGetCurrentName from "@/features/users/hooks/useGetCurrentName";
 import useStartGroupCycle from "@/features/groups/hooks/useStartGroupCycle";
+import useDeleteGroup from "@/features/groups/hooks/useDeleteGroup";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/shared/components/ui/alert-dialog";
 
 export default function GroupPage() {
+  const router = useRouter();
   const { data, isLoading, copied, handleCopyInviteCode, timeline } =
     useGroupDetails();
   const { data: currentUser } = useGetCurrentName();
   const { mutateAsync: startCycle, isPending: isStarting } =
     useStartGroupCycle();
+  const { mutateAsync: deleteGroup, isPending: isDeleting } =
+    useDeleteGroup();
 
   const isOrganizer = currentUser?.id === data?.organizerId;
   const hasStarted = !!data?.startDate;
@@ -29,10 +46,31 @@ export default function GroupPage() {
     try {
       await startCycle(data.id);
       toast.success("Group cycle started successfully!");
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.message || "Failed to start cycle",
-      );
+    } catch (err: unknown) {
+      let message = "Failed to start cycle";
+      if (axios.isAxiosError(err)) {
+        message = err.response?.data?.message || err.message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+      toast.error(message);
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!data?.id) return;
+    try {
+      await deleteGroup(data.id);
+      toast.success("Group deleted successfully!");
+      router.push("/group");
+    } catch (err: unknown) {
+      let message = "Failed to delete group";
+      if (axios.isAxiosError(err)) {
+        message = err.response?.data?.message || err.message;
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+      toast.error(message);
     }
   };
 
@@ -118,14 +156,47 @@ export default function GroupPage() {
               organizerId={data.organizerId}
             />
             {isOrganizer && !hasStarted ? (
-              <button
-                disabled={!isMembersFull || isStarting}
-                onClick={handleStartCycle}
-                className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
-              >
-                <RefreshCw size={16} />
-                {isStarting ? "Starting..." : "Start Cycle"}
-              </button>
+              <div className="flex flex-col gap-2.5 w-full">
+                <button
+                  disabled={!isMembersFull || isStarting || isDeleting}
+                  onClick={handleStartCycle}
+                  className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                >
+                  <RefreshCw size={16} className={isStarting ? "animate-spin" : ""} />
+                  {isStarting ? "Starting..." : "Start Cycle"}
+                </button>
+                <AlertDialog>
+                  <AlertDialogTrigger
+                    render={
+                      <button
+                        disabled={isStarting || isDeleting}
+                        className="w-full text-xs flex items-center justify-center gap-2 bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 px-4 py-2.5 rounded-2xl font-semibold active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+                      />
+                    }
+                  >
+                    <Trash2 size={16} />
+                    {isDeleting ? "Deleting..." : "Delete Group"}
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Group</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete this group? This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="cursor-pointer text-xs rounded-2xl">Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        variant="destructive"
+                        onClick={handleDeleteGroup}
+                        className="cursor-pointer text-xs rounded-2xl"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             ) : null}
           </div>
         </div>
