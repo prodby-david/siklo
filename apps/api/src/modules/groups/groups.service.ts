@@ -112,6 +112,33 @@ export class GroupsService {
       }
       const nextPosition = count + 1;
 
+      let position: number;
+      if (group.payoutSequence === 'FREECHOOSING') {
+        if (dto.position === undefined || dto.position === null) {
+          throw new ConflictException(
+            'Choosing a slot position is required for this group',
+          );
+        }
+        if (dto.position < 1 || dto.position > group.maxMembers) {
+          throw new ConflictException(
+            `Invalid position. Must be between 1 and ${group.maxMembers}`,
+          );
+        }
+        const occupied = await this.groupsRepository.findMembershipByPosition(
+          tx,
+          group.id,
+          dto.position,
+        );
+        if (occupied) {
+          throw new ConflictException(
+            'This slot has already been chosen by another member',
+          );
+        }
+        position = dto.position;
+      } else {
+        position = nextPosition;
+      }
+
       await this.ensureNotMemeber(tx, {
         groupId: group.id,
         userId,
@@ -131,7 +158,7 @@ export class GroupsService {
           groupId: group.id,
           userId,
         },
-        nextPosition,
+        position,
       );
       return {
         message: 'Group joined successfully',
@@ -166,6 +193,82 @@ export class GroupsService {
       );
     }
 
-    return this.groupsRepository.updateGroupStartDate(groupId, new Date());
+    return this.prisma.$transaction(async (tx) => {
+      if (group.payoutSequence === 'RANDOM') {
+        const memberships = await tx.membership.findMany({
+          where: { groupId },
+        });
+
+        const shuffle = (array: number[]) => {
+          let currentIndex = array.length;
+          let randomIndex: number;
+          while (currentIndex !== 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [
+              array[randomIndex],
+              array[currentIndex],
+            ];
+          }
+          return array;
+        };
+
+        for (let i = 0; i < memberships.length; i++) {
+          await tx.membership.update({
+            where: { id: memberships[i].id },
+            data: { position: -(i + 1) },
+          });
+        }
+
+        const positions = Array.from({ length: memberships.length }, (_, i) => i + 1);
+        const shuffled = shuffle(positions);
+
+        for (let i = 0; i < memberships.length; i++) {
+          await tx.membership.update({
+            where: { id: memberships[i].id },
+            data: { position: shuffled[i] },
+          });
+        }
+      }
+
+      return tx.group.update({
+        where: { id: groupId },
+        data: { startDate: new Date() },
+      });
+    });
+  }
+
+  async getGroupByInviteCodePreview(inviteCode: string) {
+    const group = await this.groupsRepository.getGroupPreviewByInviteCode(inviteCode);
+    if (!group) {
+      throw new NotFoundException(
+        "Group doesn't exist. Please check the invite code and try again.",
+      );
+    }
+    return group;
+  }
+
+  async deleteGroup(groupId: string, userId: string) {
+    const group = await this.getExistingGroup(groupId, userId);
+    if (group.organizerId !== userId) {
+      throw new ForbiddenException('Only the organizer can delete the group');
+    }
+    if (group.startDate) {
+      throw new ConflictException(
+        'Cannot delete a group whose cycle has already started',
+      );
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.membership.deleteMany({
+        where: { groupId },
+      });
+      await tx.group.delete({
+        where: { id: groupId },
+      });
+      return {
+        message: 'Group deleted successfully',
+      };
+    });
   }
 }

@@ -4,10 +4,7 @@ import { PAYOUT_SEQUENCES } from "../enums/payout-sequence.js";
 
 export const createGroupFullSchema = z.object({
   name: z.string().min(3, "Group name must be at least 3 characters"),
-  description: z
-    .string()
-    .min(3, "Description must be at least 3 characters")
-    .optional(),
+  description: z.string().optional(),
   contributionAmount: z.coerce
     .number()
     .min(1, "Contribution amount is required"),

@@ -7,6 +7,7 @@ export const joinGroupSchema = z.object({
 
 export const joinGroupBodySchema = z.object({
   inviteCode: z.string().trim().length(12),
+  position: z.coerce.number().optional(),
 });
 
 export type JoinGroupBodyDTO = z.infer<typeof joinGroupBodySchema>;

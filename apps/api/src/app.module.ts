@@ -9,6 +9,7 @@ import { GroupsModule } from './modules/groups/groups.module';
 import { TokenModule } from './modules/token/token.module';
 import { RoundModule } from './modules/round/round.module';
 import { SettingsModule } from './modules/settings/settings.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SettingsModule } from './modules/settings/settings.module';
     TokenModule,
     RoundModule,
     SettingsModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

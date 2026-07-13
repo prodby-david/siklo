@@ -33,7 +33,7 @@
     description        String?
     contributionAmount Int
     billingCycle       BillingCycle
-    payoutSequence     PayoutSequence @default(RANDOM)
+    payoutSequence     PayoutSequence @default(MANUAL)
     cycleDuration      Int
     maxMembers         Int
     inviteCode         String @unique

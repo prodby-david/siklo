@@ -1,8 +1,4 @@
-export const PAYOUT_SEQUENCES = [
-  "RANDOM",
-  "MANUAL",
-  "FREECHOOSING",
-] as const;
+export const PAYOUT_SEQUENCES = ["MANUAL", "RANDOM", "FREECHOOSING"] as const;
 
 export type PayoutSequence = (typeof PAYOUT_SEQUENCES)[number];
 

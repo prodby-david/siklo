@@ -125,4 +125,34 @@ export class GroupsRepository {
       where: { userId },
     });
   }
+
+  async findMembershipByPosition(
+    tx: Prisma.TransactionClient,
+    groupId: string,
+    position: number,
+  ) {
+    return tx.membership.findFirst({
+      where: {
+        groupId,
+        position,
+      },
+    });
+  }
+
+  async getGroupPreviewByInviteCode(inviteCode: string) {
+    return this.prisma.group.findUnique({
+      where: { inviteCode },
+      select: {
+        id: true,
+        name: true,
+        maxMembers: true,
+        payoutSequence: true,
+        memberships: {
+          select: {
+            position: true,
+          },
+        },
+      },
+    });
+  }
 }

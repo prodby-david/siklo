@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards, Delete } from '@nestjs/common';
 import { JwtAuthGuard } from '@/commons/guards/jwt-auth';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
 import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
@@ -54,5 +54,20 @@ export class GroupsController {
     @CurrentUser('sub') userId: string,
   ) {
     return this.groupsService.getGroupById(groupId, userId);
+  }
+
+  @Get('invite/:inviteCode')
+  @UseGuards(JwtAuthGuard)
+  async getGroupByInviteCodePreview(@Param('inviteCode') inviteCode: string) {
+    return this.groupsService.getGroupByInviteCodePreview(inviteCode);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteGroup(
+    @Param('id') groupId: string,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.deleteGroup(groupId, userId);
   }
 }
