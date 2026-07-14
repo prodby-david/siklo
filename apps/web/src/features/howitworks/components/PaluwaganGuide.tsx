@@ -1,4 +1,3 @@
-import { CheckCircle2, ShieldAlert, Sparkles, HelpCircle } from "lucide-react";
 import { schemesData } from "../constants/schemes.constants";
 
 export default function PaluwaganGuide() {
@@ -30,7 +29,7 @@ export default function PaluwaganGuide() {
               Understanding Payout Schemes
             </h3>
             <p className="text-xs text-neutral-subtext mt-1">
-              Select the best turn order system that matches your circle's
+              Select the best turn order system that matches your circle&apos;s
               goals.
             </p>
           </div>

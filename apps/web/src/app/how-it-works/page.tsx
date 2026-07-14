@@ -1,5 +1,5 @@
 import HowItWorksSection from "@/features/howitworks/ui/HowItWorksSection";
-import RulesPlanner from "@/features/howitworks/components/RulesPlanner";
+import PaluwaganSimulator from "@/features/howitworks/components/simulator/PaluwaganSimulator";
 import PaluwaganGuide from "@/features/howitworks/components/PaluwaganGuide";
 import Navbar from "@/shared/components/nav/Navbar";
 import Footer from "@/shared/components/footer/Footer";
@@ -13,7 +13,7 @@ export default function HowItWorksPage() {
 
         <section className="w-full border-t border-neutral-border py-12 bg-neutral-table-stripe/40">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <RulesPlanner />
+            <PaluwaganSimulator />
             <PaluwaganGuide />
           </div>
         </section>
