@@ -8,8 +8,9 @@ import PasswordInput from "./ui/PasswordInput";
 import ContactNumberInput from "./ui/ContactNumberInput";
 import Submit from "./buttons/SubmitButton";
 
-export default function SignupForm() {
-  const { register, errors, isSubmitting, handleSubmit } = useSignup();
+export default function SignupFormInputs() {
+  const { register, errors, isSubmitting, handleSubmit, isRedirecting } =
+    useSignup();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -74,7 +75,11 @@ export default function SignupForm() {
           />
         </div>
 
-        <Submit isSubmitting={isSubmitting} text="Create Account" />
+        <Submit
+          isSubmitting={isSubmitting}
+          text="Create Account"
+          isRedirecting={isRedirecting}
+        />
       </div>
     </form>
   );

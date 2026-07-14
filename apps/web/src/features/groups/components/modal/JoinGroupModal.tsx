@@ -7,8 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/shared/components/ui/dialog";
-import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
+import Input from "@/features/auth/signup/components/ui/Input";
 import useInviteCode from "../../hooks/useInviteCode";
 import { LogIn, ArrowLeft } from "lucide-react";
 
@@ -38,21 +37,15 @@ export default function JoinGroupModal() {
               <DialogHeader>
                 <DialogTitle>Join Group</DialogTitle>
                 <DialogDescription>
-                  <Label htmlFor="inviteCode">
-                    Please enter the group invite code to join.
-                  </Label>
                   <Input
-                    id="inviteCode"
+                    label="inviteCode"
+                    labelText="Please enter the group invite code to join."
                     placeholder="Invite Code"
                     className="mt-4"
-                    {...register("inviteCode")}
+                    register={register}
+                    errors={errors}
                   />
                 </DialogDescription>
-                {errors.inviteCode && (
-                  <p className="text-xs font-semibold mt-3 text-danger">
-                    {errors.inviteCode.message}
-                  </p>
-                )}
               </DialogHeader>
               <button
                 type="submit"

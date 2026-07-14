@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Lock, ShieldCheck } from "lucide-react";
+import PasswordInput from "@/features/auth/signup/components/ui/PasswordInput";
 
 export default function SecuritySettings() {
   const [passwords, setPasswords] = useState({
@@ -28,59 +29,29 @@ export default function SecuritySettings() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="currentPassword" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-            Current Password
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70">
-              <Lock className="w-4 h-4" />
-            </span>
-            <input
-              id="currentPassword"
-              type="password"
-              value={passwords.currentPassword}
-              onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-            />
-          </div>
-        </div>
+        <PasswordInput
+          id="currentPassword"
+          labelText="Current Password"
+          value={passwords.currentPassword}
+          onChange={(e) => setPasswords({ ...passwords, currentPassword: e.target.value })}
+          icon={<Lock className="w-4 h-4" />}
+        />
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="newPassword" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-            New Password
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70">
-              <Lock className="w-4 h-4" />
-            </span>
-            <input
-              id="newPassword"
-              type="password"
-              value={passwords.newPassword}
-              onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-            />
-          </div>
-        </div>
+        <PasswordInput
+          id="newPassword"
+          labelText="New Password"
+          value={passwords.newPassword}
+          onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
+          icon={<Lock className="w-4 h-4" />}
+        />
 
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="confirmPassword" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-            Confirm New Password
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70">
-              <Lock className="w-4 h-4" />
-            </span>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={passwords.confirmPassword}
-              onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
-              className="w-full pl-9 pr-4 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-            />
-          </div>
-        </div>
+        <PasswordInput
+          id="confirmPassword"
+          labelText="Confirm New Password"
+          value={passwords.confirmPassword}
+          onChange={(e) => setPasswords({ ...passwords, confirmPassword: e.target.value })}
+          icon={<Lock className="w-4 h-4" />}
+        />
 
         <div className="pt-2 flex items-center gap-3">
           <button

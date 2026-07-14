@@ -62,7 +62,9 @@ export default function GroupPage() {
     try {
       await deleteGroup(data.id);
       toast.success("Group deleted successfully!");
-      router.push("/group");
+      setTimeout(() => {
+        router.push('/group')
+      }, 1000);
     } catch (err: unknown) {
       let message = "Failed to delete group";
       if (axios.isAxiosError(err)) {

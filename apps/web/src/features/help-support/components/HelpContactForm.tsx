@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import Input from "@/features/auth/signup/components/ui/Input";
 
 export default function HelpContactForm() {
   const [name, setName] = useState("");
@@ -51,41 +52,32 @@ export default function HelpContactForm() {
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-foreground">Name</label>
-              <input
-                type="text"
-                placeholder="Juan Dela Cruz"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="px-3 py-2 text-xs border border-neutral-border/60 rounded-2xl bg-background text-foreground focus:outline-none focus:border-brand-accent transition-colors"
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-foreground">Email</label>
-              <input
-                type="email"
-                placeholder="juan@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="px-3 py-2 text-xs border border-neutral-border/60 rounded-2xl bg-background text-foreground focus:outline-none focus:border-brand-accent transition-colors"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-foreground">Subject</label>
-            <input
-              type="text"
-              placeholder="e.g., Payout verification issue"
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="px-3 py-2 text-xs border border-neutral-border/60 rounded-2xl bg-background text-foreground focus:outline-none focus:border-brand-accent transition-colors"
+            <Input
+              labelText="Name"
+              placeholder="Juan Dela Cruz"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               required
+              type="text"
+            />
+            <Input
+              labelText="Email"
+              placeholder="juan@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              type="email"
             />
           </div>
+
+          <Input
+            labelText="Subject"
+            placeholder="e.g., Payout verification issue"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            required
+            type="text"
+          />
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-foreground">Message</label>

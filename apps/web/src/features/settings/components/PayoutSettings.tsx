@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { CreditCard, Landmark } from "lucide-react";
+import Input from "@/features/auth/signup/components/ui/Input";
 
 export default function PayoutSettings() {
   const [payouts, setPayouts] = useState({
@@ -72,48 +73,33 @@ export default function PayoutSettings() {
           </div>
 
           <div className="space-y-4">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="bankName" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-                Bank Name
-              </label>
-              <input
-                id="bankName"
-                type="text"
-                value={payouts.bankName}
-                onChange={(e) => setPayouts({ ...payouts, bankName: e.target.value })}
-                placeholder="e.g. BDO, BPI, Metrobank"
-                className="w-full px-3 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-              />
-            </div>
+            <Input
+              id="bankName"
+              labelText="Bank Name"
+              type="text"
+              value={payouts.bankName}
+              onChange={(e) => setPayouts({ ...payouts, bankName: e.target.value })}
+              placeholder="e.g. BDO, BPI, Metrobank"
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="accountNumber" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-                  Account Number
-                </label>
-                <input
-                  id="accountNumber"
-                  type="text"
-                  value={payouts.bankAccountNumber}
-                  onChange={(e) => setPayouts({ ...payouts, bankAccountNumber: e.target.value })}
-                  placeholder="e.g. 1234567890"
-                  className="w-full px-3 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-                />
-              </div>
+              <Input
+                id="accountNumber"
+                labelText="Account Number"
+                type="text"
+                value={payouts.bankAccountNumber}
+                onChange={(e) => setPayouts({ ...payouts, bankAccountNumber: e.target.value })}
+                placeholder="e.g. 1234567890"
+              />
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="accountHolder" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-                  Account Holder Name
-                </label>
-                <input
-                  id="accountHolder"
-                  type="text"
-                  value={payouts.bankAccountHolderName}
-                  onChange={(e) => setPayouts({ ...payouts, bankAccountHolderName: e.target.value })}
-                  placeholder="e.g. Juan dela Cruz"
-                  className="w-full px-3 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-                />
-              </div>
+              <Input
+                id="accountHolder"
+                labelText="Account Holder Name"
+                type="text"
+                value={payouts.bankAccountHolderName}
+                onChange={(e) => setPayouts({ ...payouts, bankAccountHolderName: e.target.value })}
+                placeholder="e.g. Juan dela Cruz"
+              />
             </div>
           </div>
         </div>

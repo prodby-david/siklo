@@ -25,6 +25,7 @@ import {
   UserCheck,
   MousePointerClick,
 } from "lucide-react";
+import Input from "@/features/auth/signup/components/ui/Input";
 
 interface CreateGroupFormFieldsProps {
   register: UseFormRegister<CreateGroupInput>;
@@ -61,34 +62,16 @@ export default function CreateGroupFormFields({
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label
-                htmlFor="name"
-                className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider"
-              >
-                Group Name
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70 pointer-events-none">
-                  <Layers className="w-4 h-4" />
-                </span>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="e.g. Siklo Alpha Savings"
-                  className={`w-full pl-9 pr-4 py-2 text-xs bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-200 text-foreground ${
-                    errors.name
-                      ? "border-danger focus:ring-danger/20 focus:border-danger bg-danger-bg/5"
-                      : "border-neutral-border"
-                  }`}
-                  {...register("name")}
-                />
-              </div>
-              {errors.name && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.name.message}
-                </p>
-              )}
+            <div className="md:col-span-2">
+              <Input
+                label="name"
+                labelText="Group Name"
+                placeholder="e.g. Siklo Alpha Savings"
+                register={register}
+                errors={errors}
+                icon={<Layers className="w-4 h-4" />}
+                type="text"
+              />
             </div>
 
             <div className="flex flex-col gap-1.5 md:col-span-2">
@@ -121,96 +104,39 @@ export default function CreateGroupFormFields({
               )}
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="contributionAmount"
-                className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider"
-              >
-                Contribution Amount
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70 pointer-events-none font-semibold text-xs">
-                  ₱
-                </span>
-                <input
-                  id="contributionAmount"
-                  type="number"
-                  placeholder="0.00"
-                  step="any"
-                  className={`w-full pl-8 pr-4 py-2 text-xs bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-200 text-foreground [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                    errors.contributionAmount
-                      ? "border-danger focus:ring-danger/20 focus:border-danger bg-danger-bg/5"
-                      : "border-neutral-border"
-                  }`}
-                  {...register("contributionAmount")}
-                />
-              </div>
-              {errors.contributionAmount && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.contributionAmount.message}
-                </p>
-              )}
-            </div>
+            <Input
+              label="contributionAmount"
+              labelText="Contribution Amount"
+              placeholder="0.00"
+              step="any"
+              register={register}
+              errors={errors}
+              icon={<span className="font-semibold text-xs text-neutral-subtext/70">₱</span>}
+              type="number"
+              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="cycleDuration"
-                className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider"
-              >
-                Cycle Duration (Rounds)
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70 pointer-events-none">
-                  <Clock className="w-4 h-4" />
-                </span>
-                <input
-                  id="cycleDuration"
-                  type="number"
-                  placeholder="10"
-                  className={`w-full pl-9 pr-4 py-2 text-xs bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-200 text-foreground [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                    errors.cycleDuration
-                      ? "border-danger focus:ring-danger/20 focus:border-danger bg-danger-bg/5"
-                      : "border-neutral-border"
-                  }`}
-                  {...register("cycleDuration")}
-                />
-              </div>
-              {errors.cycleDuration && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.cycleDuration.message}
-                </p>
-              )}
-            </div>
+            <Input
+              label="cycleDuration"
+              labelText="Cycle Duration (Rounds)"
+              placeholder="10"
+              register={register}
+              errors={errors}
+              icon={<Clock className="w-4 h-4" />}
+              type="number"
+              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="maxMembers"
-                className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider"
-              >
-                Max Members
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70 pointer-events-none">
-                  <Users className="w-4 h-4" />
-                </span>
-                <input
-                  id="maxMembers"
-                  type="number"
-                  placeholder="10"
-                  className={`w-full pl-9 pr-4 py-2 text-xs bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-200 text-foreground [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                    errors.maxMembers
-                      ? "border-danger focus:ring-danger/20 focus:border-danger bg-danger-bg/5"
-                      : "border-neutral-border"
-                  }`}
-                  {...register("maxMembers")}
-                />
-              </div>
-              {errors.maxMembers && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.maxMembers.message}
-                </p>
-              )}
-            </div>
+            <Input
+              label="maxMembers"
+              labelText="Max Members"
+              placeholder="10"
+              register={register}
+              errors={errors}
+              icon={<Users className="w-4 h-4" />}
+              type="number"
+              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            />
 
             <div className="flex flex-col gap-1.5">
               <label
