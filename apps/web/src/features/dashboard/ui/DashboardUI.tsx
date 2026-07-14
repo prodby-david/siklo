@@ -31,12 +31,13 @@ export default function DashboardUI() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="flex items-center gap-4">
             <div className="relative shrink-0 select-none -my-2 md:-my-4">
-              <div className="relative w-30 h-30">
+              <div className="relative w-35 h-35">
                 <Image
                   src="/images/siklo-waving.png"
                   alt="Siklo Mascot"
                   fill
-                  className="object-contain"
+                  sizes="140px"
+                  className="object-cover"
                   priority
                 />
               </div>

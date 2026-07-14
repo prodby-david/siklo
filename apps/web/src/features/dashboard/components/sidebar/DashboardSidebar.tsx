@@ -2,11 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard, Users, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Button } from "@/shared/components/ui/button";
+import { useSignOut } from "@/features/auth/signout/hooks/useSignOut";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { mutateAsync: signOut } = useSignOut();
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -44,6 +47,17 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      <Button
+        variant="outline"
+        onClick={() => signOut()}
+        className={
+          "cursor-pointer hover:text-danger hover:bg-danger-bg hover:border-danger-border"
+        }
+      >
+        <LogOut className="w-5 h-5" />
+        <span className="text-xs font-medium">Sign out</span>
+      </Button>
     </aside>
   );
 }
