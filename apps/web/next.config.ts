@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   devIndicators: false,
-  output: "standalone",
+  ...(process.env.BUILD_STANDALONE === "true" && { output: "standalone" }),
 };
 
 export default nextConfig;
