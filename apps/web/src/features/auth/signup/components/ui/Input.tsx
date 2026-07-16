@@ -26,6 +26,14 @@ export default function Input({
 
   return (
     <div className="flex flex-col gap-1 flex-1">
+      {labelText !== "" && (
+        <label
+          htmlFor={label || props.id}
+          className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
+        >
+          {labelText || label}
+        </label>
+      )}
       <div className="relative">
         {icon && (
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext">
