@@ -83,8 +83,13 @@ export default function SigninCard() {
             href="/"
             className="flex md:hidden items-center gap-2 text-lg font-bold text-foreground mb-2"
           >
-            <span className="h-3 w-3 rounded-2xl bg-brand-accent" />
-            <span>Siklo</span>
+            <Image
+              src="/images/logo.svg"
+              alt="Siklo"
+              width={40}
+              height={40}
+              priority
+            />
           </Link>
 
           <div className="flex flex-col gap-1">
