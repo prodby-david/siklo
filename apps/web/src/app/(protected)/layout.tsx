@@ -20,9 +20,7 @@ export default function DashboardLayout({
       .catch(() => router.push("/signin"));
   }, [router]);
 
-  if (!checked) return null; // or a loading spinner/skeleton
-
-  return <>{children}</>;
+  if (!checked) return null;
 
   return <DashboardClientLayout>{children}</DashboardClientLayout>;
 }
