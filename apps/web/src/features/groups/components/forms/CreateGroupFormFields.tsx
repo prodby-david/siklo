@@ -77,7 +77,7 @@ export default function CreateGroupFormFields({
             <div className="flex flex-col gap-1.5 md:col-span-2">
               <label
                 htmlFor="description"
-                className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider"
+                className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
               >
                 Description (Optional)
               </label>
@@ -141,7 +141,7 @@ export default function CreateGroupFormFields({
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="billingCycle"
-                className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider"
+                className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
               >
                 Billing Cycle
               </label>
@@ -176,7 +176,7 @@ export default function CreateGroupFormFields({
             </div>
 
             <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
+              <label className="text-xs font-bold text-neutral-subtext uppercase tracking-wider">
                 Payout Sequence
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
