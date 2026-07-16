@@ -5,11 +5,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-
   --brand-primary: #0f172a;
   --brand-accent: #0d9488;
   --brand-accent-hover: #0f766e;
-
   --color-winner-payout: #6366f1;
   --color-winner-payout-bg: #e0e7ff;
   --color-success: #10b981;
