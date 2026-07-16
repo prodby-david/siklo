@@ -37,11 +37,15 @@ export default function JoinGroupModal() {
               <DialogHeader>
                 <DialogTitle>Join Group</DialogTitle>
                 <DialogDescription>
-                  Please enter the group invite code to join.
+                  <span className="text-xs text-neutral-subtext block">
+                    Please enter the group invite code to join.
+                  </span>
                 </DialogDescription>
               </DialogHeader>
               <Input
                 label="inviteCode"
+                labelText=""
+                placeholder="Invite Code"
                 className="mt-4"
                 register={register}
                 errors={errors}
@@ -52,7 +56,7 @@ export default function JoinGroupModal() {
                 className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer mt-5 disabled:opacity-50 disabled:pointer-events-none"
               >
                 <LogIn size={14} />
-                {isSubmitting ? "Joining group..." : "Join group"}
+                {isSubmitting ? "Searching..." : "Next"}
               </button>
             </>
           ) : (
