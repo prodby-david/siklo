@@ -19,7 +19,7 @@ export default function TotalSavingsCard({
           <p className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
             ₱{totalPayoutPool.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
-          <div className="flex items-center gap-1.5 mt-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2 py-0.5 rounded-2xl text-[11px] font-semibold">
+          <div className="flex items-center gap-1.5 mt-2 bg-brand-accent/10 text-brand-accent px-2 py-0.5 rounded-2xl text-[11px] font-semibold">
             <ArrowUpRight className="w-3.5 h-3.5" />
             <span>₱{totalMonthlyContributions.toLocaleString()} monthly equivalent</span>
           </div>

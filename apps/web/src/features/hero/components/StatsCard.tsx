@@ -29,7 +29,7 @@ export const StatsCard = ({
           <span
             className={`inline-flex items-center gap-0.5 rounded-2xl px-1.5 py-0.5 text-xs font-bold ${
               trend.positive
-                ? "bg-success-bg text-success"
+                ? "bg-brand-accent/10 text-brand-accent"
                 : "bg-danger-bg text-danger"
             }`}
           >

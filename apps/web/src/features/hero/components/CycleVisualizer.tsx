@@ -30,7 +30,7 @@ export const CycleVisualizer = ({
             {stats.activeMembersCount}
           </p>
         </div>
-        <div className="rounded-2xl bg-success-bg px-2 py-0.5 text-xs font-bold text-success">
+        <div className="rounded-2xl bg-brand-accent/10 px-2 py-0.5 text-xs font-bold text-brand-accent">
           Collected: ₱{stats.totalPool.toLocaleString()}
         </div>
       </div>
@@ -59,7 +59,7 @@ export const CycleVisualizer = ({
                       isCurrent
                         ? "bg-brand-accent text-white"
                         : isPaid
-                          ? "bg-success-bg text-success"
+                          ? "bg-brand-accent/15 text-brand-accent"
                           : "bg-neutral-table-stripe text-neutral-subtext"
                     }`}
                   >
@@ -82,7 +82,7 @@ export const CycleVisualizer = ({
                   <span
                     className={`text-xs font-bold px-1.5 py-0.5 rounded-2xl flex items-center gap-1 ${
                       isPaid
-                        ? "text-success bg-success-bg border border-success/30"
+                        ? "text-brand-accent bg-brand-accent/10 border border-brand-accent/30"
                         : isCurrent
                           ? "text-brand-accent bg-brand-accent/10 border border-brand-accent/30"
                           : "text-neutral-subtext bg-neutral-table-stripe border border-neutral-border"
@@ -90,7 +90,7 @@ export const CycleVisualizer = ({
                   >
                     {isPaid ? (
                       <>
-                        <CheckCircle2 className="h-3 w-3 text-success" />
+                        <CheckCircle2 className="h-3 w-3 text-brand-accent" />
                         <span>Paid</span>
                       </>
                     ) : isCurrent ? (

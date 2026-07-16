@@ -62,8 +62,8 @@ export default function GroupStatsGrid({
             Due {billingLabel.toLowerCase()}
           </span>
         </div>
-        <div className="flex items-center justify-center w-11 h-11 bg-emerald-500/10 rounded-full shrink-0">
-          <PhilippinePeso className="w-5 h-5 text-emerald-600" />
+        <div className="flex items-center justify-center w-11 h-11 bg-brand-accent/10 rounded-full shrink-0">
+          <PhilippinePeso className="w-5 h-5 text-brand-accent" />
         </div>
       </div>
 
