@@ -1,3 +1,3 @@
 export default function ForgotPassword() {
-  return <p>ForgotPassword</p>;
+  return <p>ForgotPassword Initial setup</p>;
 }
