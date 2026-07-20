@@ -14,7 +14,10 @@ export class AiController {
     @Body('messages') messages: UIMessage[],
     @CurrentUser('sub') userId: string,
   ) {
-    const { text, toolResults } = await this.aiService.handleMessage(messages, userId);
+    const { text, toolResults } = await this.aiService.handleMessage(
+      messages,
+      userId,
+    );
     return { reply: text, toolResults };
   }
 }
