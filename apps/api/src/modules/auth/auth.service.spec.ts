@@ -60,9 +60,7 @@ describe('AuthService', () => {
       };
       prisma.user.findUnique.mockResolvedValue(mockUser);
 
-      jest
-        .spyOn(service, 'comparePassword')
-        .mockResolvedValue(false);
+      jest.spyOn(service, 'comparePassword').mockResolvedValue(false);
 
       await expect(service.signIn(signInDto)).rejects.toThrow(
         UnauthorizedException,
@@ -84,9 +82,7 @@ describe('AuthService', () => {
       };
 
       prisma.user.findUnique.mockResolvedValue(mockUser);
-      jest
-        .spyOn(service, 'comparePassword')
-        .mockResolvedValue(true);
+      jest.spyOn(service, 'comparePassword').mockResolvedValue(true);
       tokenService.generateToken.mockResolvedValue(mockTokens);
 
       const result = await service.signIn(signInDto);

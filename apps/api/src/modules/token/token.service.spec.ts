@@ -34,7 +34,10 @@ describe('TokenService', () => {
         .mockResolvedValueOnce('mock-access-token')
         .mockResolvedValueOnce('mock-refresh-token');
 
-      const result = await service.generateToken('user-123', 'test@example.com');
+      const result = await service.generateToken(
+        'user-123',
+        'test@example.com',
+      );
 
       expect(result).toEqual({
         accessToken: 'mock-access-token',

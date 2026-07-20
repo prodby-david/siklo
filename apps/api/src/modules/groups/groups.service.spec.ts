@@ -268,9 +268,9 @@ describe('GroupsService', () => {
     it('should throw NotFoundException if group is not found', async () => {
       groupsRepository.getGroupById.mockResolvedValue(null);
 
-      await expect(service.getGroupById('group-123', 'user-123')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.getGroupById('group-123', 'user-123'),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should return the group if found', async () => {
@@ -280,7 +280,10 @@ describe('GroupsService', () => {
       const result = await service.getGroupById('group-123', 'user-123');
 
       expect(result).toEqual(mockGroup);
-      expect(groupsRepository.getGroupById).toHaveBeenCalledWith('group-123', 'user-123');
+      expect(groupsRepository.getGroupById).toHaveBeenCalledWith(
+        'group-123',
+        'user-123',
+      );
     });
   });
 

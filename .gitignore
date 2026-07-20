@@ -14,5 +14,8 @@ src/generated/
 .expo
 .expo-shared
 
+# typescript
+*.tsbuildinfo
+
 # nestjs
 coverage

@@ -35,6 +35,7 @@
     "@siklo/shared-schemas": "workspace:*",
     "ai": "^7.0.19",
     "bcrypt": "^6.0.0",
+    "cookie": "^2.0.1",
     "cookie-parser": "^1.4.7",
     "ollama-ai-provider-v2": "^4.0.1",
     "passport": "^0.7.0",

@@ -10,7 +10,8 @@ import { TokenModule } from './modules/token/token.module';
 import { RoundModule } from './modules/round/round.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { AiModule } from './modules/ai/ai.module';
-
+import { WebsocketModule } from './modules/websocket/websocket.module';
+import { ActivityModule } from './modules/activity/activity.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
@@ -22,6 +23,8 @@ import { AiModule } from './modules/ai/ai.module';
     RoundModule,
     SettingsModule,
     AiModule,
+    WebsocketModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

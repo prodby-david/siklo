@@ -10,12 +10,14 @@ import generateInviteCode from '@/commons/utils/generateInviteCode';
 import { GroupsRepository } from './groups.repository';
 import { CreateGroupData } from './schema/create-group.schema';
 import { JoinGroupBodyDTO, JoinGroupDTO } from '@siklo/shared-schemas';
+import { ActivityService } from '../activity/activity.service';
 
 @Injectable()
 export class GroupsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly groupsRepository: GroupsRepository,
+    private readonly activityService: ActivityService,
   ) {}
 
   private async getExistingGroup(groupId: string, userId: string) {
@@ -54,8 +56,10 @@ export class GroupsService {
       }
 
       const MAX_GROUPS_PER_USER = 3;
-      const membershipCount =
-        await this.groupsRepository.countUserMemberships(tx, userId);
+      const membershipCount = await this.groupsRepository.countUserMemberships(
+        tx,
+        userId,
+      );
       if (membershipCount >= MAX_GROUPS_PER_USER) {
         throw new ConflictException(
           `You can only be part of up to ${MAX_GROUPS_PER_USER} groups`,
@@ -88,7 +92,7 @@ export class GroupsService {
   }
 
   async joinGroup(dto: JoinGroupBodyDTO, userId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    const result = this.prisma.$transaction(async (tx) => {
       const group = await this.groupsRepository.findGroupByInviteCode(
         tx,
         dto.inviteCode,
@@ -145,8 +149,10 @@ export class GroupsService {
       });
 
       const MAX_GROUPS_PER_USER = 3;
-      const membershipCount =
-        await this.groupsRepository.countUserMemberships(tx, userId);
+      const membershipCount = await this.groupsRepository.countUserMemberships(
+        tx,
+        userId,
+      );
       if (membershipCount >= MAX_GROUPS_PER_USER) {
         throw new ConflictException(
           `You can only be part of up to ${MAX_GROUPS_PER_USER} groups`,
@@ -161,6 +167,7 @@ export class GroupsService {
         position,
       );
       return {
+        ...result,
         message: 'Group joined successfully',
       };
     });
@@ -220,7 +227,10 @@ export class GroupsService {
           });
         }
 
-        const positions = Array.from({ length: memberships.length }, (_, i) => i + 1);
+        const positions = Array.from(
+          { length: memberships.length },
+          (_, i) => i + 1,
+        );
         const shuffled = shuffle(positions);
 
         for (let i = 0; i < memberships.length; i++) {
@@ -239,7 +249,8 @@ export class GroupsService {
   }
 
   async getGroupByInviteCodePreview(inviteCode: string) {
-    const group = await this.groupsRepository.getGroupPreviewByInviteCode(inviteCode);
+    const group =
+      await this.groupsRepository.getGroupPreviewByInviteCode(inviteCode);
     if (!group) {
       throw new NotFoundException(
         "Group doesn't exist. Please check the invite code and try again.",
