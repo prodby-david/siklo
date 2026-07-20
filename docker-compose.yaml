@@ -1,10 +1,18 @@
 name: siklo
 
 services:
-  web:
-    image: siklo-web
-    build: 
-      context: .
-      dockerfile: apps/web/Dockerfile
+  postgres:
+    image: postgres:16-alpine
+    container_name: siklo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: siklo
+      POSTGRES_PASSWORD: softwaredev
+      POSTGRES_DB: siklo_dev
     ports:
-      - "3000:3000"
+      - "5433:5432"
+    volumes:
+      - siklo_pgdata:/var/lib/postgresql/data
+
+volumes:
+  siklo_pgdata:
