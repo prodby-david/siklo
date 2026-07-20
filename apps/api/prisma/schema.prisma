@@ -24,7 +24,7 @@
     memberships   Membership[]
     ownedGroups   Group[] @relation("GroupOwner")
     payouts       Round[]  @relation("RoundRecipient")
-
+    activities    Activity[]
   }
 
   model Group {
@@ -44,6 +44,7 @@
     organizer          User @relation("GroupOwner", fields: [organizerId], references: [id])
     memberships        Membership[]
     rounds             Round[]
+    activities         Activity[]
   }
   
   model Round {
@@ -73,6 +74,31 @@
 
     @@unique([userId, groupId])
     @@unique([groupId, position])
+  }
+
+  model Activity {
+    id        String @id @default(cuid())
+    userId    String
+    groupId   String
+    activity  ActivityType
+    description String
+    createdAt  DateTime @default(now())
+
+    user      User  @relation(fields: [userId], references: [id])
+    group     Group @relation(fields: [groupId], references: [id])
+
+    @@unique([userId, groupId])
+  }
+
+  enum ActivityType {
+    PAYMENT
+    PAYMENT_OVERDUE
+    PAYMENT_VERIFIED
+    PAYOUT_DISBURSED
+    PENALTY_APPLIED
+    CYCLE_STARTED
+    CYCLE_CLOSED
+    ROTATED
   }
 
   enum BillingCycle {
