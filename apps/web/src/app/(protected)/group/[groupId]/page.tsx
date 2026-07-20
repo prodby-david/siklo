@@ -7,6 +7,8 @@ import GroupHero from "@/features/groups/components/details/GroupHero";
 import GroupStatsGrid from "@/features/groups/components/details/GroupStatsGrid";
 import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
 import GroupRotationSlots from "@/features/groups/components/details/GroupRotationSlots";
+import GroupCycleMembers from "@/features/groups/components/details/GroupCycleMembers";
+import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
 import Loader from "@/shared/components/loader/Loader";
 import useGetCurrentName from "@/features/users/hooks/useGetCurrentName";
 import useStartGroupCycle from "@/features/groups/hooks/useStartGroupCycle";
@@ -33,8 +35,7 @@ export default function GroupPage() {
   const { data: currentUser } = useGetCurrentName();
   const { mutateAsync: startCycle, isPending: isStarting } =
     useStartGroupCycle();
-  const { mutateAsync: deleteGroup, isPending: isDeleting } =
-    useDeleteGroup();
+  const { mutateAsync: deleteGroup, isPending: isDeleting } = useDeleteGroup();
 
   const isOrganizer = currentUser?.id === data?.organizerId;
   const hasStarted = !!data?.startDate;
@@ -63,7 +64,7 @@ export default function GroupPage() {
       await deleteGroup(data.id);
       toast.success("Group deleted successfully!");
       setTimeout(() => {
-        router.push('/group')
+        router.push("/group");
       }, 1000);
     } catch (err: unknown) {
       let message = "Failed to delete group";
@@ -140,15 +141,23 @@ export default function GroupPage() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8 flex flex-col gap-6">
+          <div className="lg:col-span-7 flex flex-col gap-6">
             <GroupRotationSlots
               maxMembers={data.maxMembers}
               membershipsCount={data._count?.memberships || 1}
               memberships={data.memberships}
             />
+            {hasStarted && (
+              <div>
+                <GroupActivityLogs
+                  group={data}
+                  memberships={data.memberships}
+                />
+              </div>
+            )}
           </div>
 
-          <div className="lg:col-span-4 flex flex-col gap-3">
+          <div className="lg:col-span-5 flex flex-col gap-3">
             <GroupInfoCard
               startDate={data.startDate}
               endDate={timeline.endDate}
@@ -157,6 +166,12 @@ export default function GroupPage() {
               payoutSequence={data.payoutSequence}
               organizerId={data.organizerId}
             />
+            <GroupCycleMembers
+              memberships={data.memberships}
+              organizerId={data.organizerId}
+              startDate={data.startDate}
+              billingCycle={data.billingCycle}
+            />
             {isOrganizer && !hasStarted ? (
               <div className="flex flex-col gap-2.5 w-full">
                 <button
@@ -164,7 +179,10 @@ export default function GroupPage() {
                   onClick={handleStartCycle}
                   className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
                 >
-                  <RefreshCw size={16} className={isStarting ? "animate-spin" : ""} />
+                  <RefreshCw
+                    size={16}
+                    className={isStarting ? "animate-spin" : ""}
+                  />
                   {isStarting ? "Starting..." : "Start Cycle"}
                 </button>
                 <AlertDialog>
@@ -183,11 +201,14 @@ export default function GroupPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Group</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete this group? This action cannot be undone.
+                        Are you sure you want to delete this group? This action
+                        cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel className="cursor-pointer text-xs rounded-2xl">Cancel</AlertDialogCancel>
+                      <AlertDialogCancel className="cursor-pointer text-xs rounded-2xl">
+                        Cancel
+                      </AlertDialogCancel>
                       <AlertDialogAction
                         variant="destructive"
                         onClick={handleDeleteGroup}
