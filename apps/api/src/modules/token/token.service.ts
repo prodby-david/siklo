@@ -27,7 +27,7 @@ export class TokenService {
     };
   }
 
-  async verifyToken(token: string) {
+  async verifyAccessToken(token: string) {
     return await this.token.verifyAsync(token);
   }
 
