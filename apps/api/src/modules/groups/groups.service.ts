@@ -4,13 +4,14 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client/extension';
+import { Prisma } from '@/generated/prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import generateInviteCode from '@/commons/utils/generateInviteCode';
 import { GroupsRepository } from './groups.repository';
 import { CreateGroupData } from './schema/create-group.schema';
 import { JoinGroupBodyDTO, JoinGroupDTO } from '@siklo/shared-schemas';
 import { ActivityService } from '../activity/activity.service';
+import { shuffle } from './utils/shuffle.members';
 
 @Injectable()
 export class GroupsService {
@@ -30,7 +31,7 @@ export class GroupsService {
     return group;
   }
 
-  private async ensureNotMemeber(
+  private async ensureNotMember(
     tx: Prisma.TransactionClient,
     dto: JoinGroupDTO,
   ) {
@@ -92,7 +93,7 @@ export class GroupsService {
   }
 
   async joinGroup(dto: JoinGroupBodyDTO, userId: string) {
-    const result = this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       const group = await this.groupsRepository.findGroupByInviteCode(
         tx,
         dto.inviteCode,
@@ -143,7 +144,7 @@ export class GroupsService {
         position = nextPosition;
       }
 
-      await this.ensureNotMemeber(tx, {
+      await this.ensureNotMember(tx, {
         groupId: group.id,
         userId,
       });
@@ -167,7 +168,6 @@ export class GroupsService {
         position,
       );
       return {
-        ...result,
         message: 'Group joined successfully',
       };
     });
@@ -206,20 +206,6 @@ export class GroupsService {
           where: { groupId },
         });
 
-        const shuffle = (array: number[]) => {
-          let currentIndex = array.length;
-          let randomIndex: number;
-          while (currentIndex !== 0) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [array[currentIndex], array[randomIndex]] = [
-              array[randomIndex],
-              array[currentIndex],
-            ];
-          }
-          return array;
-        };
-
         for (let i = 0; i < memberships.length; i++) {
           await tx.membership.update({
             where: { id: memberships[i].id },
@@ -231,6 +217,7 @@ export class GroupsService {
           { length: memberships.length },
           (_, i) => i + 1,
         );
+
         const shuffled = shuffle(positions);
 
         for (let i = 0; i < memberships.length; i++) {
@@ -241,10 +228,22 @@ export class GroupsService {
         }
       }
 
-      return tx.group.update({
+      const updatedGroup = await tx.group.update({
         where: { id: groupId },
         data: { startDate: new Date() },
       });
+
+      await this.activityService.createActivity(
+        {
+          userId,
+          groupId,
+          activityType: 'CYCLE_STARTED',
+          description: 'Cycle started by the organizer',
+        },
+        tx,
+      );
+
+      return updatedGroup;
     });
   }
 

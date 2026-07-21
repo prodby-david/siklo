@@ -3,25 +3,7 @@
 import { Users, Shield, Calendar, Lock } from "lucide-react";
 import formatDate from "@/shared/utils/formatDate";
 import { BILLING_CYCLE_DAYS } from "../../constants/billing-cycle.constants";
-
-interface User {
-  id: string;
-  name: string;
-}
-
-interface Membership {
-  userId: string;
-  position: number;
-  joinedAt?: string | Date;
-  user: User;
-}
-
-interface GroupCycleMembersProps {
-  memberships?: Membership[];
-  organizerId: string;
-  startDate?: string | Date | null;
-  billingCycle: string;
-}
+import { GroupCycleMembersProps } from "../../types/group.cycle.members";
 
 export default function GroupCycleMembers({
   memberships,
@@ -36,7 +18,8 @@ export default function GroupCycleMembers({
   const getPayoutDate = (position: number) => {
     if (!startDate) return null;
     const start = new Date(startDate);
-    const daysPerCycle = BILLING_CYCLE_DAYS[billingCycle as keyof typeof BILLING_CYCLE_DAYS] || 1;
+    const daysPerCycle =
+      BILLING_CYCLE_DAYS[billingCycle as keyof typeof BILLING_CYCLE_DAYS] || 1;
     const addedDays = (position - 1) * daysPerCycle;
     return new Date(start.getTime() + addedDays * 24 * 60 * 60 * 1000);
   };
@@ -94,7 +77,10 @@ export default function GroupCycleMembers({
                     )}
                   </div>
                   <span className="text-[10px] text-neutral-subtext flex items-center gap-1 mt-0.5">
-                    <Calendar className="w-3.5 h-3.5" /> Joined {membership.joinedAt ? formatDate(membership.joinedAt) : "N/A"}
+                    <Calendar className="w-3.5 h-3.5" /> Joined{" "}
+                    {membership.joinedAt
+                      ? formatDate(membership.joinedAt)
+                      : "N/A"}
                   </span>
                 </div>
               </div>

@@ -87,7 +87,8 @@
     user      User  @relation(fields: [userId], references: [id])
     group     Group @relation(fields: [groupId], references: [id])
 
-    @@unique([userId, groupId])
+    @@index([groupId])
+    @@index([userId])
   }
 
   enum ActivityType {
