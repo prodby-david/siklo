@@ -1,19 +1,5 @@
-import { Users, Info, RefreshCw } from "lucide-react";
-
-interface Membership {
-  userId: string;
-  position: number;
-  user: {
-    id: string;
-    name: string;
-  };
-}
-
-interface GroupRotationSlotsProps {
-  maxMembers: number;
-  membershipsCount: number;
-  memberships?: Membership[];
-}
+import { Users, Info } from "lucide-react";
+import { GroupRotationSlotsProps } from "../../types/group.types";
 
 export default function GroupRotationSlots({
   maxMembers,

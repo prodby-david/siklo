@@ -12,9 +12,9 @@ import useCreateGroup from "@/features/groups/hooks/useCreateGroup";
 import { toast } from "sonner";
 import CreateGroupFormFields from "@/features/groups/components/forms/CreateGroupFormFields";
 import CreateGroupPreview from "@/features/groups/components/forms/CreateGroupPreview";
-import { BILLING_CYCLE_DAYS } from "@/features/groups/constants/billing-cycle.constants";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { calculateCycleDetails } from "@/features/groups/utils/group.calculations";
 
 export default function CreateGroupPage() {
   const router = useRouter();
@@ -45,16 +45,16 @@ export default function CreateGroupPage() {
   const cycleDuration = watch("cycleDuration");
   const billingCycle = watch("billingCycle");
 
-  const totalPayout = Number(contribution || 0) * Number(members || 0);
-
-  const totalRounds = Number(members || 0) * Number(cycleDuration || 0);
-
-  const totalDays = totalRounds * BILLING_CYCLE_DAYS[billingCycle];
+  const { totalPayout, totalRounds, totalDays } = calculateCycleDetails(
+    contribution,
+    members,
+    cycleDuration,
+    billingCycle,
+  );
 
   useEffect(() => {
-    const payout = Number(contribution || 0) * Number(members || 0);
-    setValue("totalPayout", payout);
-  }, [contribution, members, setValue]);
+    setValue("totalPayout", totalPayout);
+  }, [totalPayout, setValue]);
 
   const watchAllFields = watch();
 

@@ -1,15 +1,6 @@
 import { PhilippinePeso, Users, Clock, Sparkles } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
-
-interface GroupStatsGridProps {
-  contributionAmount: number;
-  maxMembers: number;
-  cycleDuration: number;
-  billingCycle: string;
-  membershipsCount: number;
-  totalPayout: number;
-  totalRounds: number;
-}
+import { GroupStatsGridProps } from "../../types/group.types";
 
 export default function GroupStatsGrid({
   contributionAmount,
