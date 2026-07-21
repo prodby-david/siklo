@@ -1,15 +1,6 @@
 import { Sparkles, Check, Copy } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
-
-interface GroupHeroProps {
-  name: string;
-  description: string | null;
-  billingCycle: string;
-  inviteCode: string;
-  copied: boolean;
-  onCopyInviteCode: () => void;
-  hasStarted?: boolean;
-}
+import { GroupHeroProps } from "../../types/group.types";
 
 export default function GroupHero({
   name,

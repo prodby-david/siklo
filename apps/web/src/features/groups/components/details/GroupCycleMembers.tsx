@@ -2,8 +2,8 @@
 
 import { Users, Shield, Calendar, Lock } from "lucide-react";
 import formatDate from "@/shared/utils/formatDate";
-import { BILLING_CYCLE_DAYS } from "../../constants/billing-cycle.constants";
 import { GroupCycleMembersProps } from "../../types/group.cycle.members";
+import { getPayoutDate } from "../../utils/group.calculations";
 
 export default function GroupCycleMembers({
   memberships,
@@ -14,15 +14,6 @@ export default function GroupCycleMembers({
   const sortedMemberships = memberships
     ? [...memberships].sort((a, b) => a.position - b.position)
     : [];
-
-  const getPayoutDate = (position: number) => {
-    if (!startDate) return null;
-    const start = new Date(startDate);
-    const daysPerCycle =
-      BILLING_CYCLE_DAYS[billingCycle as keyof typeof BILLING_CYCLE_DAYS] || 1;
-    const addedDays = (position - 1) * daysPerCycle;
-    return new Date(start.getTime() + addedDays * 24 * 60 * 60 * 1000);
-  };
 
   return (
     <div className="p-6 border border-neutral-border rounded-2xl bg-background shadow-sm space-y-4">
@@ -44,7 +35,7 @@ export default function GroupCycleMembers({
             .join("")
             .substring(0, 2)
             .toUpperCase();
-          const payoutDate = getPayoutDate(membership.position);
+          const payoutDate = getPayoutDate(startDate, membership.position, billingCycle);
 
           return (
             <div
