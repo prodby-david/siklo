@@ -17,4 +17,17 @@ export class ActivityRepository {
       },
     });
   }
+
+  async getGroupActivities(groupId: string) {
+    return this.prisma.activity.findMany({
+      where: { groupId },
+      include: {
+        user: {
+          select: { id: true, name: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+  }
 }
