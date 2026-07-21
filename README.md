@@ -30,6 +30,8 @@ Siklo is a full-stack monorepo application that helps organizers and members man
 - **Group management** — organizers create paluwagan groups with configurable billing cycles (daily, weekly, biweekly, monthly, quarterly)
 - **Membership handling** — members join groups, with position tracking for payout order
 - **Payout rounds** — automatic round generation with `RANDOM`, `MANUAL`, or `FREECHOOSING` payout sequencing, and per-round status tracking (`PENDING` / `PAID`)
+- **Real-time synchronization** — instant updates on the frontend for group activities and schedules powered by WebSockets (Socket.io)
+- **Activity tracking** — automated feed logs for major actions (`PAYMENT`, `PENALTY_APPLIED`, `CYCLE_STARTED`, `ROTATED`, etc.) displayed dynamically in the UI
 - **Authentication** — secure signup/signin with JWT access + refresh token pairs, hashed passwords (bcrypt)
 - **Shared validation** — a single set of Zod schemas used by both frontend and backend, so client and server can never drift out of sync
 - **Modern stack** — Next.js App Router + React Server Components on the frontend, NestJS + Prisma on the backend
@@ -45,9 +47,9 @@ Siklo is a full-stack monorepo application that helps organizers and members man
 
 **Monorepo:** pnpm workspaces, Node.js ≥22.13, TypeScript 5.x
 
-**Frontend (`apps/web`):** Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui, React Hook Form + Zod, TanStack Query, Axios
+**Frontend (`apps/web`):** Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui, React Hook Form + Zod, TanStack Query, Axios, Socket.io-client
 
-**Backend (`apps/api`):** NestJS 11, Prisma 7 (with `@prisma/adapter-pg`), PostgreSQL, Passport JWT, bcrypt, Jest + Supertest
+**Backend (`apps/api`):** NestJS 11, Prisma 7 (with `@prisma/adapter-pg`), PostgreSQL, Passport JWT, bcrypt, Jest + Supertest, Socket.io (WebSocket gateway)
 
 **Shared:** `@siklo/shared-schemas` — Zod v4 validation schemas shared across both apps
 
@@ -76,12 +78,14 @@ Siklo/
 │   │   │   │   ├── (protected)/    # Auth-guarded routes (dashboard, group, settings)
 │   │   │   │   ├── signin/ signup/ about/ features/ help/ how-it-works/ policy/
 │   │   │   ├── features/           # Feature modules (auth, dashboard, groups, etc.)
+│   │   │   │   ├── groups/
+│   │   │   │   │   ├── api/ hooks/ types/ utils/ constants/ components/
 │   │   │   └── shared/             # Shared components, lib, providers, utils
 │   │   └── Dockerfile
 │   │
 │   └── api/                        # NestJS backend
 │       ├── src/
-│       │   ├── modules/            # auth, users, groups, round, token, settings
+│       │   ├── modules/            # auth, users, groups, round, token, settings, activity, websocket
 │       │   ├── commons/            # Shared guards, pipes, decorators
 │       │   ├── configs/
 │       │   └── database/           # Prisma service & module
@@ -218,9 +222,9 @@ The Dockerfile uses a multi-stage build (`node:24-alpine`): a builder stage that
 
 ## 🗄 Database
 
-**Models:** `User`, `Group`, `Membership`, `Round`
+**Models:** `User`, `Group`, `Membership`, `Round`, `Activity`
 
-**Enums:** `BillingCycle` (`DAILY`, `WEEKLY`, `BIMONTHLY`, `MONTHLY`, `QUARTERLY`) · `RoundStatus` (`PENDING`, `PAID`) · `PayoutSequence` (`RANDOM`, `MANUAL`, `FREECHOOSING`)
+**Enums:** `BillingCycle` (`DAILY`, `WEEKLY`, `BIMONTHLY`, `MONTHLY`, `QUARTERLY`) · `RoundStatus` (`PENDING`, `PAID`) · `PayoutSequence` (`RANDOM`, `MANUAL`, `FREECHOOSING`) · `ActivityType` (`PAYMENT`, `PAYMENT_OVERDUE`, `PAYMENT_VERIFIED`, `PAYOUT_DISBURSED`, `PENALTY_APPLIED`, `CYCLE_STARTED`, `CYCLE_CLOSED`, `ROTATED`)
 
 ```bash
 # Generate Prisma client after schema changes
