@@ -1,18 +1,26 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
+
+import { api } from "@/shared/lib/axios";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import DashboardClientLayout from "@/features/dashboard/layout/DashboardClientLayout";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
+  const router = useRouter();
+  const [checked, setChecked] = useState(false);
 
-  if (!accessToken) {
-    redirect("/signin");
-  }
+  useEffect(() => {
+    api
+      .get("/users/me")
+      .then(() => setChecked(true))
+      .catch(() => router.push("/signin"));
+  }, [router]);
+
+  if (!checked) return null;
 
   return <DashboardClientLayout>{children}</DashboardClientLayout>;
 }

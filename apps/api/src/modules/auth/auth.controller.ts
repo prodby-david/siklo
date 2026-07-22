@@ -4,6 +4,14 @@ import { signInSchema, type SignInDTO } from './schema/signin.schema';
 import type { Response } from 'express';
 import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? ('none' as const) : ('lax' as const),
+};
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -16,16 +24,12 @@ export class AuthController {
     const user = await this.authService.signIn(data);
 
     res.cookie('access_token', user.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      ...cookieOptions,
       maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.cookie('refresh_token', user.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      ...cookieOptions,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -36,8 +40,8 @@ export class AuthController {
 
   @Post('signout')
   async signOut(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token');
-    res.clearCookie('refresh_token');
+    res.clearCookie('access_token', cookieOptions);
+    res.clearCookie('refresh_token', cookieOptions);
 
     return {
       message: 'Logout successful',
