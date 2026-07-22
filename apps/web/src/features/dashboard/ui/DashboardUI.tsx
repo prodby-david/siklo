@@ -33,7 +33,7 @@ export default function DashboardUI() {
             <div className="relative shrink-0 select-none -my-2 md:-my-4">
               <div className="relative w-35 h-35">
                 <Image
-                  src="/images/siklo-waving.png"
+                  src="/images/siklo-waving.svg"
                   alt="Siklo Mascot"
                   fill
                   sizes="140px"

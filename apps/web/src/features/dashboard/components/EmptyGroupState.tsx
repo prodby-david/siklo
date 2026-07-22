@@ -8,7 +8,7 @@ export default function EmptyGroupState() {
     <div className="flex flex-col items-center justify-center p-10 text-center border border-neutral-border border-dashed rounded-2xl bg-background mt-3">
       <div className="mb-4">
         <Image
-          src="/images/siklo-looking.png"
+          src="/images/siklo-looking.svg"
           alt="Siklo Mascot"
           width={180}
           height={180}
