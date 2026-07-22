@@ -7,13 +7,8 @@ interface FeaturePillProps {
 
 export const FeaturePill = ({ label }: FeaturePillProps) => {
   return (
-<<<<<<< HEAD
-    <div className="flex items-center gap-2 rounded-2xl border border-neutral-border/60 bg-neutral-table-stripe/50 px-3.5 py-2 text-xs md:text-sm font-medium text-neutral-subtext backdrop-blur-sm">
-      <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
-=======
     <div className="flex items-center gap-2 rounded-2xl border border-neutral-border/60 bg-neutral-table-stripe/50 px-3.5 py-2 text-xs md:text-sm font-medium text-neutral-subtext backdrop-blur-sm shadow-xs">
       <CheckCircle2 className="h-4 w-4 text-brand-accent shrink-0" />
->>>>>>> master
       <span>{label}</span>
     </div>
   );

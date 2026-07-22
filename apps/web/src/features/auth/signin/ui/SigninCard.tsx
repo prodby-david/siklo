@@ -82,17 +82,7 @@ export default function SigninCard() {
             href="/"
             className="flex md:hidden items-center gap-2 text-lg font-bold text-foreground mb-2"
           >
-<<<<<<< HEAD
             <Image src="/images/logo.svg" alt="Siklo" width={56} height={56} priority />
-=======
-            <Image
-              src="/images/logo.svg"
-              alt="Siklo"
-              width={40}
-              height={40}
-              priority
-            />
->>>>>>> master
           </Link>
 
           <div className="flex flex-col gap-1.5 items-center">

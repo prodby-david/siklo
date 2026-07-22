@@ -49,15 +49,9 @@ export default function Input({
             icon ? "pl-10" : "px-3.5"
           } ${
             hasError
-<<<<<<< HEAD
               ? "border-danger focus:ring-2 focus:ring-danger/20 focus:border-danger bg-danger-bg/10 text-foreground"
               : "border-neutral-border focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent bg-background/60 hover:border-brand-accent/30 focus:bg-background text-foreground placeholder:text-neutral-subtext/60"
-          } ${props.className || ""}`}
-=======
-              ? "border-danger focus:ring-danger focus:border-danger bg-danger-bg/5"
-              : "border-neutral-border focus:ring-brand-accent focus:border-brand-accent bg-background"
           } ${className || ""}`}
->>>>>>> master
           {...registerProps}
           {...props}
         />

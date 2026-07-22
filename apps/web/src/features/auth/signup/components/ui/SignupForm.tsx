@@ -10,24 +10,11 @@ export default function SignUpForm() {
           href="/"
           className="flex md:hidden items-center gap-2 text-lg font-bold text-foreground mb-2"
         >
-<<<<<<< HEAD
           <Image src="/images/logo.svg" alt="Siklo" width={56} height={56} priority />
         </Link>
 
         <div className="flex flex-col gap-1.5 items-center">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
-=======
-          <Image
-            src="/images/logo.svg"
-            alt="Siklo"
-            width={40}
-            height={40}
-            priority
-          />
-        </Link>
-        <div className="flex flex-col gap-1">
-          <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
->>>>>>> master
             Create your Account
           </h2>
           <p className="text-xs text-neutral-subtext max-w-sm">
