@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Lock, Loader2 } from "lucide-react";
+import { Mail, Lock, Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useSignin } from "../hooks/useSignin";
-import { CheckCircle2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -42,13 +41,13 @@ export default function SigninForm() {
           <div className="flex justify-between items-center mb-1">
             <label
               htmlFor="password"
-              className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
+              className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider"
             >
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="text-xs font-semibold text-brand-accent hover:text-brand-accent-hover"
+              className="text-xs font-semibold text-brand-accent hover:text-brand-accent-hover transition-colors"
             >
               Forgot password?
             </Link>
@@ -68,21 +67,24 @@ export default function SigninForm() {
         <button
           type="submit"
           disabled={isSubmitting || isRedirecting}
-          className="w-full flex h-10 items-center justify-center rounded-2xl bg-brand-accent text-xs font-bold text-white hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-2"
+          className="w-full flex h-11 items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs sm:text-sm font-extrabold text-white hover:bg-brand-accent-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-2 transition-all duration-200"
         >
           {isSubmitting ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            "Sign In"
+            <>
+              <span>Sign In</span>
+              <ArrowRight className="h-4 w-4" />
+            </>
           )}
         </button>
 
         <AlertDialog open={isRedirecting}>
           <AlertDialogContent
             size="sm"
-            className="flex flex-col items-center text-center p-6"
+            className="flex flex-col items-center text-center p-6 rounded-3xl border border-brand-accent/20"
           >
-            <CheckCircle2 className="h-6 w-6 text-brand-accent" />
+            <CheckCircle2 className="h-7 w-7 text-brand-accent animate-bounce" />
             <AlertDialogHeader className="items-center">
               <AlertDialogTitle className="text-base font-bold text-foreground">
                 Sign in Success!

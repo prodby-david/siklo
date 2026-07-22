@@ -32,18 +32,18 @@ export default function PasswordInput({
   const hasError = label && errors && errors[label];
 
   return (
-    <div className="flex flex-col gap-1 flex-1">
+    <div className="flex flex-col gap-1.5 flex-1">
       {labelText !== "" && (
         <label
           htmlFor={label || props.id}
-          className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
+          className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider"
         >
           {labelText || label}
         </label>
       )}
-      <div className="relative">
+      <div className="relative flex items-center">
         {icon && (
-          <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext">
+          <span className="absolute left-3.5 text-neutral-subtext pointer-events-none transition-colors duration-150">
             {icon}
           </span>
         )}
@@ -52,12 +52,12 @@ export default function PasswordInput({
           name={label || props.name}
           placeholder={placeholder}
           type={showPassword ? "text" : "password"}
-          className={`w-full py-2 text-xs border rounded-2xl focus:outline-none focus:ring-1 ${
-            icon ? "pl-9" : "px-3"
+          className={`w-full py-2.5 text-xs font-medium border rounded-2xl transition-all duration-200 focus:outline-none ${
+            icon ? "pl-10" : "px-3.5"
           } pr-10 ${
             hasError
-              ? "border-danger focus:ring-danger focus:border-danger bg-danger-bg/5"
-              : "border-neutral-border focus:ring-brand-accent focus:border-brand-accent bg-background"
+              ? "border-danger focus:ring-2 focus:ring-danger/20 focus:border-danger bg-danger-bg/10 text-foreground"
+              : "border-neutral-border focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent bg-background/60 hover:border-brand-accent/30 focus:bg-background text-foreground placeholder:text-neutral-subtext/60"
           } ${props.className || ""}`}
           {...registerProps}
           {...props}
@@ -66,7 +66,7 @@ export default function PasswordInput({
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-subtext hover:text-foreground focus:outline-none cursor-pointer"
+          className="absolute right-3 text-neutral-subtext hover:text-foreground focus:outline-none cursor-pointer transition-colors p-1 rounded-lg hover:bg-neutral-border/40"
         >
           {showPassword ? (
             <EyeOff className="h-4 w-4" />
@@ -76,8 +76,9 @@ export default function PasswordInput({
         </button>
       </div>
       {hasError && (
-        <p className="text-danger text-xs">{errors[label]?.message}</p>
+        <p className="text-danger text-[11px] font-medium mt-0.5">{errors[label]?.message}</p>
       )}
     </div>
   );
 }
+

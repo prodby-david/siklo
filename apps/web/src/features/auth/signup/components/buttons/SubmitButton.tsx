@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 
 type ButtonProps = {
   isSubmitting: boolean;
@@ -15,9 +15,16 @@ export default function Submit({
     <button
       type="submit"
       disabled={isSubmitting || isRedirecting}
-      className="w-full flex h-10 items-center justify-center rounded-2xl bg-brand-accent text-xs font-bold text-white hover:opacity-90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-2"
+      className="w-full flex h-11 items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs sm:text-sm font-extrabold text-white hover:bg-brand-accent-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-2 transition-all duration-200"
     >
-      {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : text}
+      {isSubmitting ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <>
+          <span>{text}</span>
+          <ArrowRight className="h-4 w-4" />
+        </>
+      )}
     </button>
   );
 }
