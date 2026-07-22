@@ -1,29 +1,29 @@
 import React from "react";
-import { trustItems } from "../constants/about.constants";
-import TrustCardItem from "./TrustCardItem";
-import { ShieldCheck } from "lucide-react";
+import { coreValues } from "../constants/about.constants";
+import CoreValueCardItem from "./CoreValueCardItem";
+import { Target } from "lucide-react";
 
-export default function TrustCards() {
+export default function AboutCoreValues() {
   return (
     <div className="w-full flex flex-col gap-10">
       <div className="flex flex-col items-center text-center gap-3 max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-bold">
-          <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Guaranteed Transparency</span>
+          <Target className="w-3.5 h-3.5" />
+          <span>Our Core Pillars</span>
         </div>
 
         <h3 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-          Why Trust Siklo?
+          Built on Trust, Fairness & Clarity
         </h3>
 
         <p className="text-xs sm:text-sm text-neutral-subtext leading-relaxed font-normal">
-          How we ensure transparency, clarity, and reliability in all your Paluwagan cycles.
+          The guiding principles behind Siklo to ensure every savings circle runs smoothly without stress.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {trustItems.map((item) => (
-          <TrustCardItem key={item.id} item={item} />
+        {coreValues.map((item) => (
+          <CoreValueCardItem key={item.id} item={item} />
         ))}
       </div>
     </div>

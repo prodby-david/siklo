@@ -18,3 +18,10 @@ export interface PaluwaganRules {
   latePenalty: number;
   paymentChannel: string;
 }
+
+export interface BestPracticeItem {
+  id: string;
+  stepNumber: number;
+  title: string;
+  description: string;
+}

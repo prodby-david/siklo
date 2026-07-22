@@ -21,3 +21,11 @@ export type TrustItem = {
   title: string;
   description: string;
 };
+
+export type CoreValueItem = {
+  id: string;
+  title: string;
+  description: string;
+  highlightText: string;
+  iconName: string;
+};

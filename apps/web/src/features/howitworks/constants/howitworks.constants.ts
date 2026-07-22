@@ -1,4 +1,4 @@
-import { HowItWorksStep, PaluwaganRules } from "../types/howitworks.types";
+import { HowItWorksStep, PaluwaganRules, BestPracticeItem } from "../types/howitworks.types";
 
 export const defaultSteps: HowItWorksStep[] = [
   {
@@ -46,3 +46,30 @@ export const gracePeriodOptions = [
   { label: "3 Days Grace", value: 3 },
   { label: "5 Days Grace", value: 5 },
 ] as const;
+
+export const bestPractices: BestPracticeItem[] = [
+  {
+    id: "1",
+    stepNumber: 1,
+    title: "Choose a Trusted Organizer",
+    description: "Since Siklo handles record keeping and not funds, choose an organizer who is highly trustworthy, accessible, and organized.",
+  },
+  {
+    id: "2",
+    stepNumber: 2,
+    title: "Agree on Late Fees Early",
+    description: "Late payments delay everyone's payouts. Setting up a small late penalty per day encourages members to contribute on time.",
+  },
+  {
+    id: "3",
+    stepNumber: 3,
+    title: "Keep a Small Backup Fund",
+    description: "Veteran saving circles often contribute a small extra amount as a reserve to cover temporary delays.",
+  },
+  {
+    id: "4",
+    stepNumber: 4,
+    title: "Use Clear Payment Channels",
+    description: "Standardize GCash, Maya, or bank transfers. Instruct members to send references or receipts directly to the organizer.",
+  },
+];

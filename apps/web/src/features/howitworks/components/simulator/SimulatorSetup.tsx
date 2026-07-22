@@ -1,4 +1,5 @@
 import React from "react";
+import { Play } from "lucide-react";
 import { SimulationConfig } from "../../types/simulator.types";
 import {
   CONTRIBUTION_OPTIONS,
@@ -93,7 +94,8 @@ export default function SimulatorSetup({
         onClick={onStart}
         className="w-full mt-4 bg-brand-accent hover:opacity-95 text-white py-3 rounded-2xl font-semibold active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 text-xs cursor-pointer"
       >
-        Initialize Paluwagan Simulation
+        <Play className="w-3.5 h-3.5 fill-current" />
+        <span>Initialize Paluwagan Simulation</span>
       </button>
     </div>
   );

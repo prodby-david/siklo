@@ -1,4 +1,4 @@
-import { AboutItem, FaqItem, TrustItem } from "../types/about.types";
+import { AboutItem, FaqItem, TrustItem, CoreValueItem } from "../types/about.types";
 
 export const defaultAboutItems: AboutItem[] = [
   {
@@ -78,5 +78,29 @@ export const trustItems: TrustItem[] = [
     id: "responsive",
     title: "Mobile-Responsive Design",
     description: "Easily track contributions and payouts on any device, from smartphones to laptops, anywhere you are.",
+  },
+];
+
+export const coreValues: CoreValueItem[] = [
+  {
+    id: "transparency",
+    title: "Radical Transparency",
+    description: "Every payment log and turn schedule is visible to all group members, eliminating secret records or misunderstandings.",
+    highlightText: "100% Open Ledger",
+    iconName: "Eye",
+  },
+  {
+    id: "equity",
+    title: "Automated Equity",
+    description: "Turn order math, payout totals, and payment deadlines are calculated automatically so everyone gets treated fairly.",
+    highlightText: "Zero Bias Math",
+    iconName: "RotateCw",
+  },
+  {
+    id: "security",
+    title: "Community Protection",
+    description: "Built specifically to preserve trust in Filipino saving circles without holding your money or charging middleman fees.",
+    highlightText: "Zero Fee Guarantee",
+    iconName: "ShieldCheck",
   },
 ];
