@@ -58,7 +58,7 @@
 }
 
 .dark {
-  --background: oklch(0.129 0.015 255.5);
+  --background: #0f172a;
   --foreground: oklch(0.985 0.005 255.5);
 
   --brand-primary: #f8fafc;
@@ -77,8 +77,8 @@
 
   --neutral-subtext: #94a3b8;
   --neutral-border: #1e293b;
-  --neutral-table-stripe: #0f172a;
-  --card: oklch(0.16 0.018 255.5);
+  --neutral-table-stripe: #1e293b;
+  --card: #0f172a;
   --card-foreground: oklch(0.985 0.005 255.5);
   --popover: oklch(0.16 0.018 255.5);
   --popover-foreground: oklch(0.985 0.005 255.5);
@@ -170,14 +170,57 @@
   --radius-3xl: var(--radius);
   --radius-4xl: var(--radius);
 
-  --animate-siklo-float: float 2.5s ease-in-out infinite;
+  --animate-siklo-float: float 5.5s ease-in-out infinite;
+  --animate-float-delayed: float-delayed 6s ease-in-out 0.8s infinite;
+  --animate-float-reverse: float-reverse 5.8s ease-in-out 0.4s infinite;
+  --animate-float-slow: float-slow 6.5s ease-in-out 1.2s infinite;
+  --animate-bell-shake: bell-shake 1.8s ease-in-out infinite;
+  --animate-slow-pulse: slow-pulse 4s ease-in-out infinite;
+  --animate-icon-bounce: icon-bounce 4.5s ease-in-out infinite;
+  --animate-spin-slow: spin 12s linear infinite;
 
   @keyframes float {
     0%, 100% {
-      transform: translateY(0px) scale(1);
+      transform: translateY(0px) rotate(0deg);
     }
     50% {
-      transform: translateY(-4px) scale(1.02);
+      transform: translateY(-10px) rotate(1.5deg);
+    }
+  }
+
+  @keyframes float-delayed {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-12px) rotate(-1.5deg);
+    }
+  }
+
+  @keyframes float-reverse {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(8px) rotate(1deg);
+    }
+  }
+
+  @keyframes float-slow {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-9px) rotate(-1deg);
+    }
+  }
+
+  @keyframes icon-bounce {
+    0%, 100% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scale(1.12) rotate(6deg);
     }
   }
 }
