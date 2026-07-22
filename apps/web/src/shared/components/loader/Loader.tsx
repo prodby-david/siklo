@@ -13,7 +13,7 @@ export default function Loader({ text = "Loading...", variant = "fullScreen" }: 
         <div className="absolute inset-0 border border-brand-accent border-t-transparent rounded-full animate-spin [animation-duration:1.6s]"></div>
         <div className="relative w-20 h-20 animate-siklo-float flex items-center justify-center">
           <Image
-            src="/images/siklo-loading.png"
+            src="/images/siklo-loading.svg"
             alt="Siklo Loading Mascot"
             width={80}
             height={80}
@@ -38,7 +38,7 @@ export default function Loader({ text = "Loading...", variant = "fullScreen" }: 
           <div className="absolute inset-0 border border-brand-accent border-t-transparent rounded-full animate-spin [animation-duration:1.2s]"></div>
           <div className="relative w-4 h-4 animate-siklo-float flex items-center justify-center">
             <Image
-              src="/images/siklo-loading.png"
+              src="/images/siklo-loading.svg"
               alt="Siklo Loading Mascot"
               width={16}
               height={16}
