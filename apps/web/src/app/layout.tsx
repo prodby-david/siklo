@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import ThemeProvider from "@/shared/providers/ThemeProvider";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import TanstackQueryProvider from "@/shared/providers/TanstackQueryProvider";
 
-const inter = Inter({
+const inter = Plus_Jakarta_Sans({
   subsets: ["latin"],
 });
 
