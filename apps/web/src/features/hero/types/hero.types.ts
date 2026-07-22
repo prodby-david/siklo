@@ -29,6 +29,9 @@ export interface HeroProps {
   onSecondaryCtaClick?: () => void;
   members?: Member[];
   stats?: CycleStats;
+  enableSplashScreen?: boolean;
+  splashDuration?: number;
+  showOncePerSession?: boolean;
 }
 
 export interface ActivityItem {

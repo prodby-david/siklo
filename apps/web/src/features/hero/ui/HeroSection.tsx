@@ -1,10 +1,11 @@
 "use client";
 
 import Badge from "../components/Badge";
-import StatsCard from "../components/StatsCard";
 import CycleVisualizer from "../components/CycleVisualizer";
 import Link from "next/link";
+import Image from "next/image";
 import { HeroProps } from "../types/hero.types";
+import { ArrowRight, BookOpen } from "lucide-react";
 
 export const HeroSection = ({
   badgeText = "Paluwagan Savings Notebook",
@@ -23,51 +24,46 @@ export const HeroSection = ({
   stats,
 }: HeroProps) => {
   return (
-    <section className="w-full bg-background py-12 md:py-16 flex items-center ">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          <div className="lg:col-span-6 flex flex-col items-start text-left gap-5">
-            <Badge text={badgeText} linkText={badgeLink} />
+    <section className="w-full min-h-[calc(100vh-3.5rem)] bg-background flex items-center justify-center relative overflow-hidden py-12 sm:py-16">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 w-full z-10 flex flex-col items-center justify-center text-center">
+        <div className="relative w-full max-w-3xl flex flex-col items-center justify-center text-center gap-6 my-auto">
+          <CycleVisualizer members={members} stats={stats} />
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              {title}
-            </h1>
-
-            <p className="max-w-lg text-sm sm:text-base text-neutral-subtext leading-relaxed font-normal">
-              {subtitle}
-            </p>
-
-            <div className="flex flex-row items-center gap-3 w-full sm:w-auto mt-2">
-              <Link
-                href="/signin"
-                className="flex h-10 px-5 items-center justify-center rounded-2xl bg-brand-accent text-xs font-semibold text-white hover:bg-brand-accent-hover cursor-pointer"
-              >
-                {primaryCtaText}
-              </Link>
-              <Link
-                href="/how-it-works"
-                className="flex h-10 px-5 items-center justify-center rounded-2xl border border-neutral-border bg-background text-xs font-semibold text-neutral-subtext hover:bg-neutral-table-stripe cursor-pointer"
-              >
-                {secondaryCtaText}
-              </Link>
-            </div>
+          <div className="flex sm:hidden justify-center my-1 animate-siklo-float">
+            <Image
+              src="/images/siklo-waving.svg"
+              alt="Siklo Mascot Waving"
+              width={120}
+              height={120}
+              priority
+            />
           </div>
 
-          <div className="lg:col-span-6 flex flex-col gap-4 w-full">
-            <CycleVisualizer members={members} stats={stats} />
+          <Badge text={badgeText} linkText={badgeLink} />
 
-            <div className="grid grid-cols-2 gap-4">
-              <StatsCard
-                title="Total Group Money"
-                value="₱180,000"
-                trend={{ value: "Saved Together", positive: true }}
-              />
-              <StatsCard
-                title="Payment Status"
-                value="99.4% On Time"
-                trend={{ value: "Very Honest", positive: true }}
-              />
-            </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight tracking-tight relative z-10">
+            {title}
+          </h1>
+
+          <p className="max-w-2xl text-base sm:text-lg text-neutral-subtext leading-relaxed font-normal relative z-10">
+            {subtitle}
+          </p>
+
+          <div className="flex flex-row items-center justify-center gap-4 w-full sm:w-auto mt-2 relative z-10">
+            <Link
+              href="/signin"
+              className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs sm:text-sm font-extrabold text-white hover:bg-brand-accent-hover cursor-pointer transition-all duration-150 active:scale-95 shadow-md hover:shadow-brand-accent/20"
+            >
+              <span>{primaryCtaText}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/how-it-works"
+              className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl border border-neutral-border bg-background text-xs sm:text-sm font-extrabold text-neutral-subtext hover:bg-neutral-table-stripe hover:text-foreground cursor-pointer transition-all duration-150 active:scale-95"
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>{secondaryCtaText}</span>
+            </Link>
           </div>
         </div>
       </div>
