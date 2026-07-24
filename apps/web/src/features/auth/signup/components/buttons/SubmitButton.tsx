@@ -1,4 +1,4 @@
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, UserPlus } from "lucide-react";
 
 type ButtonProps = {
   isSubmitting: boolean;
@@ -21,8 +21,8 @@ export default function Submit({
         <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
         <>
+          <UserPlus className="h-4 w-4" />
           <span>{text}</span>
-          <ArrowRight className="h-4 w-4" />
         </>
       )}
     </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Lock, Loader2, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Mail, Lock, Loader2, LogIn, CheckCircle2 } from "lucide-react";
 import { useSignin } from "../hooks/useSignin";
 import {
   AlertDialog,
@@ -73,8 +73,8 @@ export default function SigninForm() {
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
             <>
+              <LogIn className="h-4 w-4" />
               <span>Sign In</span>
-              <ArrowRight className="h-4 w-4" />
             </>
           )}
         </button>
@@ -84,7 +84,7 @@ export default function SigninForm() {
             size="sm"
             className="flex flex-col items-center text-center p-6 rounded-3xl border border-brand-accent/20"
           >
-            <CheckCircle2 className="h-7 w-7 text-brand-accent animate-bounce" />
+            <CheckCircle2 className="h-7 w-7 text-brand-accent" />
             <AlertDialogHeader className="items-center">
               <AlertDialogTitle className="text-base font-bold text-foreground">
                 Sign in Success!
@@ -94,7 +94,6 @@ export default function SigninForm() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <div className="flex items-center gap-2 mt-4 text-xs font-medium text-brand-accent">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
               Redirecting...
             </div>
           </AlertDialogContent>
