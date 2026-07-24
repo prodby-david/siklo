@@ -5,15 +5,21 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "@/shared/components/theme/ThemeToggle";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, Coins } from "lucide-react";
+import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
 
-export default function Navbar() {
+interface NavbarProps {
+  isSplashFinished?: boolean;
+}
+
+export default function Navbar({ isSplashFinished = true }: NavbarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
+    { name: "Features", href: "/features" },
     { name: "How it works", href: "/how-it-works" },
   ];
 
@@ -28,7 +34,11 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-all duration-500 ease-out ${
+        isSplashFinished
+          ? "opacity-100 translate-y-0 pointer-events-auto"
+          : "opacity-0 -translate-y-4 pointer-events-none"
+      } ${
         isScrolled || isOpen
           ? "bg-background/80 backdrop-blur-xl border-b border-neutral-border shadow-xs"
           : "bg-transparent border-b border-transparent"
@@ -64,13 +74,11 @@ export default function Navbar() {
             );
           })}
 
-          <Link
-            href={"/signin"}
-            className="flex h-8 px-3.5 items-center justify-center gap-1.5 rounded-2xl bg-brand-accent text-xs font-bold text-white hover:bg-brand-accent-hover cursor-pointer transition-all duration-150 active:scale-95 shadow-xs"
-          >
-            <span>Get Started</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <GetStartedButton
+            size="sm"
+            text="Get Started"
+            icon={<Coins className="w-3.5 h-3.5" />}
+          />
 
           <ThemeToggle />
         </nav>
@@ -110,18 +118,17 @@ export default function Navbar() {
               );
             })}
 
-            <Link
-              href={"/signin"}
+            <GetStartedButton
+              size="md"
+              text="Get Started"
+              icon={<Coins className="w-4 h-4" />}
+              className="w-full"
               onClick={() => setIsOpen(false)}
-              className="flex h-10 w-full items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs font-bold text-white hover:bg-brand-accent-hover cursor-pointer transition-all duration-150"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            />
 
             <div className="flex flex-col items-center justify-center pt-2 border-t border-neutral-border/50">
               <Image
-                src="/images/siklo-waving.svg"
+                src="/images/siklo-waving.png"
                 alt="Siklo Mobile Menu Mascot"
                 width={80}
                 height={80}

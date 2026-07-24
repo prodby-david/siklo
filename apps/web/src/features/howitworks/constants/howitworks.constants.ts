@@ -24,7 +24,7 @@ export const defaultPlannerRules: PaluwaganRules = {
   payoutScheme: "draw-lots",
   gracePeriodDays: 3,
   latePenalty: 100,
-  paymentChannel: "GCash",
+  paymentChannel: "Mobile Wallet",
 };
 
 export const frequencyOptions = [
@@ -70,6 +70,6 @@ export const bestPractices: BestPracticeItem[] = [
     id: "4",
     stepNumber: 4,
     title: "Use Clear Payment Channels",
-    description: "Standardize GCash, Maya, or bank transfers. Instruct members to send references or receipts directly to the organizer.",
+    description: "Standardize mobile wallets or bank transfers. Instruct members to send references or receipts directly to the organizer.",
   },
 ];

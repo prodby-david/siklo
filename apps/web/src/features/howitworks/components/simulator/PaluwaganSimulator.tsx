@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { RotateCw } from "lucide-react";
 import { usePaluwaganSimulator } from "../../hooks/usePaluwaganSimulator";
 import SimulatorSetup from "./SimulatorSetup";
@@ -18,7 +19,13 @@ export default function PaluwaganSimulator() {
   } = usePaluwaganSimulator();
 
   return (
-    <div className="w-full bg-background rounded-3xl border border-brand-accent/30 p-6 sm:p-10 flex flex-col gap-8">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      className="w-full bg-background rounded-3xl border border-brand-accent/30 p-6 sm:p-10 flex flex-col gap-8"
+    >
       <div className="flex flex-col gap-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-bold self-start">
           <RotateCw className="w-3.5 h-3.5 animate-spin-slow" />
@@ -48,6 +55,6 @@ export default function PaluwaganSimulator() {
           onBack={goBackToSetup}
         />
       )}
-    </div>
+    </motion.div>
   );
 }

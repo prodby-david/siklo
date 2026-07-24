@@ -2,7 +2,7 @@
 
 import useGetGroup from "../../../groups/hooks/useGetGroup";
 import { Group, ExtendedGroup } from "../../types/groups";
-import { PhilippinePeso, ArrowRight, Users } from "lucide-react";
+import { PhilippinePeso, FolderOpen, Users } from "lucide-react";
 import Link from "next/link";
 import EmptyGroupState from "../EmptyGroupState";
 import Loader from "@/shared/components/loader/Loader";
@@ -97,7 +97,8 @@ export default function CycleCards() {
               href={`/group/${extendedGroup.id}`}
               className="mt-2 flex items-center justify-center gap-1 text-[11px] font-bold text-background bg-brand-accent hover:bg-brand-accent-hover px-4 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 text-center cursor-pointer shadow-sm"
             >
-              Open Group <ArrowRight className="w-3.5 h-3.5" />
+              <FolderOpen className="w-3.5 h-3.5" />
+              <span>Open Group</span>
             </Link>
           </div>
         );

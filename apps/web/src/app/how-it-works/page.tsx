@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import HowItWorksSection from "@/features/howitworks/ui/HowItWorksSection";
 import PaluwaganSimulator from "@/features/howitworks/components/simulator/PaluwaganSimulator";
 import PaluwaganGuide from "@/features/howitworks/components/PaluwaganGuide";
 import Navbar from "@/shared/components/nav/Navbar";
 import Footer from "@/shared/components/footer/Footer";
+
+export const metadata: Metadata = {
+  title: "How It Works | Siklo - 3-Step Rotation Savings Guide",
+  description: "Learn how Siklo simplifies Paluwagan rotation savings in 3 easy steps. Simulate contributions, preview payout turns, and follow circle best practices.",
+};
 
 export default function HowItWorksPage() {
   return (

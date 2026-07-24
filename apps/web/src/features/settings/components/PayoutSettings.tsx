@@ -6,8 +6,7 @@ import Input from "@/features/auth/signup/components/ui/Input";
 
 export default function PayoutSettings() {
   const [payouts, setPayouts] = useState({
-    gcashNumber: "09171234567",
-    paymayaNumber: "",
+    mobileWalletNumber: "09171234567",
     bankName: "",
     bankAccountNumber: "",
     bankAccountHolderName: "",
@@ -35,34 +34,18 @@ export default function PayoutSettings() {
             <h4 className="text-xs font-bold text-foreground">E-Wallets</h4>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="gcash" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-                G-Cash Number
-              </label>
-              <input
-                id="gcash"
-                type="text"
-                value={payouts.gcashNumber}
-                onChange={(e) => setPayouts({ ...payouts, gcashNumber: e.target.value })}
-                placeholder="e.g. 09171234567"
-                className="w-full px-3 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="paymaya" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-                Maya Number
-              </label>
-              <input
-                id="paymaya"
-                type="text"
-                value={payouts.paymayaNumber}
-                onChange={(e) => setPayouts({ ...payouts, paymayaNumber: e.target.value })}
-                placeholder="e.g. 09171234567"
-                className="w-full px-3 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
-              />
-            </div>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="mobileWallet" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
+              Mobile Wallet / E-Wallet Number
+            </label>
+            <input
+              id="mobileWallet"
+              type="text"
+              value={payouts.mobileWalletNumber}
+              onChange={(e) => setPayouts({ ...payouts, mobileWalletNumber: e.target.value })}
+              placeholder="e.g. 09171234567"
+              className="w-full px-3 py-2 text-xs bg-background border border-neutral-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all text-foreground"
+            />
           </div>
         </div>
 

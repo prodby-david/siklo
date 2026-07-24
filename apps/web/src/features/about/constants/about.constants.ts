@@ -29,7 +29,7 @@ export const faqs: FaqItem[] = [
   },
   {
     question: "Is there any financial transaction processed on Siklo?",
-    answer: "No, Siklo is strictly a record-keeping and tracking tool. Members still hand over contributions or send them via mobile wallets (like GCash or Maya) manually. Siklo only tracks who has paid and who gets paid next to ensure honesty and organization.",
+    answer: "No, Siklo is strictly a record-keeping and tracking tool. Members still hand over contributions or send them via mobile wallets manually. Siklo only tracks who has paid and who gets paid next to ensure honesty and organization.",
   },
   {
     question: "What happens if a member pays late?",
@@ -40,8 +40,8 @@ export const faqs: FaqItem[] = [
     answer: "Only the designated group creator/organizer has permissions to mark contributions as paid, update penalties, and advance payout turns. Other circle members are given read-only access links to verify their statuses.",
   },
   {
-    question: "How do members coordinate GCash/Maya receipts?",
-    answer: "Siklo has a real-time activity feed where organizers can post transaction updates. Many groups use this list to reconcile their GCash and Maya transaction logs manually.",
+    question: "How do members coordinate payment receipts?",
+    answer: "Siklo has a real-time activity feed where organizers can post transaction updates. Many groups use this list to reconcile their mobile wallet transaction logs manually.",
   },
   {
     question: "How many members can save together in a single cycle?",
@@ -67,7 +67,7 @@ export const trustItems: TrustItem[] = [
   {
     id: "philippine",
     title: "Philippine-Centric Setup",
-    description: "Built tailored for Pinoy savings culture, honoring turns, GCash receipts, and community contributions.",
+    description: "Built tailored for Pinoy savings culture, honoring turns, digital receipts, and community contributions.",
   },
   {
     id: "no-fees",

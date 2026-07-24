@@ -46,7 +46,7 @@ export const helpCategories: HelpCategory[] = [
     items: [
       {
         question: "How does payment verification work?",
-        answer: "Siklo is a ledger-only app. Contributions are sent directly between members using GCash, Maya, bank transfer, or cash. Once sent, the administrator verifies the payment and marks the member as 'Paid' in Siklo."
+        answer: "Siklo is a ledger-only app. Contributions are sent directly between members using mobile wallets, bank transfer, or cash. Once sent, the administrator verifies the payment and marks the member as 'Paid' in Siklo."
       },
       {
         question: "What happens if a member defaults on a payment?",

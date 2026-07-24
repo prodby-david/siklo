@@ -1,266 +1,216 @@
-import type {
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
-import type { CreateGroupInput } from "@/features/groups/validator/create-group.validator";
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UseFormRegister, FieldErrors, UseFormSetValue } from "react-hook-form";
 import {
-  BILLING_CYCLES,
-  BILLING_CYCLE_LABELS,
-} from "@/features/groups/constants/billing-cycle.constants";
-import {
-  PAYOUT_SEQUENCES,
-  PAYOUT_SEQUENCE_LABELS,
-  PAYOUT_SEQUENCE_DESCRIPTIONS,
-} from "@/features/groups/constants/payout-sequence.constants";
+  createGroupSchema,
+  CreateGroupData,
+  CreateGroupInput,
+} from "../../validator/create-group.validator";
+import useCreateGroup from "../../hooks/useCreateGroup";
+import Input from "@/features/auth/signup/components/ui/Input";
 import {
   Users,
-  Clock,
+  Calendar,
+  PhilippinePeso,
   FileText,
   Loader2,
-  Layers,
-  ArrowRight,
-  ChevronDown,
-  Dices,
-  UserCheck,
-  MousePointerClick,
+  Plus,
+  RefreshCw,
 } from "lucide-react";
-import Input from "@/features/auth/signup/components/ui/Input";
+
+const MEMBERS_OPTIONS = [4, 6, 8, 10, 12, 15];
+
+const BILLING_CYCLES = [
+  { value: "MONTHLY", label: "Monthly" },
+  { value: "BIMONTHLY", label: "Semi-Monthly" },
+  { value: "WEEKLY", label: "Weekly" },
+] as const;
 
 interface CreateGroupFormFieldsProps {
-  register: UseFormRegister<CreateGroupInput>;
-  errors: FieldErrors<CreateGroupInput>;
-  payoutSequence: string;
-  setValue: UseFormSetValue<CreateGroupInput>;
-  isPending: boolean;
-  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
+  register?: UseFormRegister<CreateGroupInput | CreateGroupData>;
+  errors?: FieldErrors<CreateGroupInput | CreateGroupData>;
+  payoutSequence?: string;
+  setValue?: UseFormSetValue<CreateGroupInput | CreateGroupData>;
+  isPending?: boolean;
+  onSubmit?: (e?: React.BaseSyntheticEvent) => Promise<void> | void;
 }
 
-export default function CreateGroupFormFields({
-  register,
-  errors,
-  payoutSequence,
-  setValue,
-  isPending,
-  onSubmit,
-}: CreateGroupFormFieldsProps) {
+export default function CreateGroupFormFields(props: CreateGroupFormFieldsProps) {
+  const internalForm = useForm<CreateGroupData>({
+    resolver: zodResolver(createGroupSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      maxMembers: 4,
+      billingCycle: "MONTHLY",
+      contributionAmount: 1000,
+      cycleDuration: 1,
+      payoutSequence: "MANUAL",
+    },
+  });
+
+  const internalMutation = useCreateGroup();
+
+  const register = (props.register || internalForm.register) as unknown as UseFormRegister<CreateGroupData>;
+  const errors = (props.errors || internalForm.formState.errors) as unknown as FieldErrors<CreateGroupData>;
+  const setValue = (props.setValue || internalForm.setValue) as unknown as UseFormSetValue<CreateGroupData>;
+  const isPending = props.isPending ?? internalMutation.isPending;
+
+  const handleSubmit = props.onSubmit
+    ? (e: React.FormEvent) => {
+        e.preventDefault();
+        props.onSubmit?.(e);
+      }
+    : internalForm.handleSubmit((data: CreateGroupData) => internalMutation.mutate(data));
+
+  const selectedMaxMembers = (internalForm.watch("maxMembers") || 4);
+  const selectedBillingCycle = (internalForm.watch("billingCycle") || "MONTHLY");
+
+  const handleMaxMembersSelect = (val: number) => {
+    setValue("maxMembers", val, { shouldValidate: true });
+  };
+
+  const handleBillingCycleSelect = (val: "MONTHLY" | "BIMONTHLY" | "WEEKLY") => {
+    setValue("billingCycle", val, { shouldValidate: true });
+  };
+
   return (
-    <div className="lg:col-span-7 bg-background border border-neutral-border rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-      <div>
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-1">
-            <Users className="w-5 h-5 text-brand-accent animate-pulse" />
-            <h2 className="text-xl font-bold tracking-tight text-foreground">
-              Create New Group
-            </h2>
-          </div>
-          <p className="text-xs text-neutral-subtext">
-            Set up your rotating savings and credit group (paluwagan). Define
-            terms, cycles, and contributions.
+    <div className="w-full flex justify-center py-6 px-4">
+      <div className="w-full max-w-xl bg-background border border-neutral-border rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="mb-6 pb-4 border-b border-neutral-border/60">
+          <h2 className="text-xl font-bold text-foreground">Create New Group</h2>
+          <p className="text-xs text-neutral-subtext mt-1">
+            Set up your Paluwagan cycle rules, contribution amount, and total members.
           </p>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="md:col-span-2">
-              <Input
-                label="name"
-                labelText="Group Name"
-                placeholder="e.g. Siklo Alpha Savings"
-                register={register}
-                errors={errors}
-                icon={<Layers className="w-4 h-4" />}
-                type="text"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <Input
+            label="name"
+            labelText="Group Name"
+            placeholder="e.g. Family Savings 2026"
+            register={register}
+            errors={errors}
+            icon={<Users className="w-4 h-4 text-neutral-subtext" />}
+          />
+
+          <div className="space-y-1.5">
+            <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+              Description (Optional)
+            </label>
+            <div className="relative flex items-start">
+              <span className="absolute left-3.5 top-3 text-neutral-subtext pointer-events-none">
+                <FileText className="w-4 h-4" />
+              </span>
+              <textarea
+                {...register("description")}
+                placeholder="Briefly describe the goal or rules for this savings group..."
+                rows={3}
+                className="w-full py-2.5 pl-10 pr-3.5 text-xs font-medium border border-neutral-border rounded-2xl bg-background/60 focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent focus:bg-background text-foreground transition-all duration-200 resize-none"
               />
             </div>
+            {errors.description && (
+              <p className="text-danger text-[10px] font-medium mt-0.5">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
 
-            <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label
-                htmlFor="description"
-                className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
-              >
-                Description (Optional)
-              </label>
-              <div className="relative">
-                <span className="absolute top-3 left-0 pl-3 flex items-start text-neutral-subtext/70 pointer-events-none">
-                  <FileText className="w-4 h-4" />
-                </span>
-                <textarea
-                  id="description"
-                  placeholder="Describe the group goals, payout rules, etc."
-                  rows={3}
-                  className={`w-full pl-9 pr-4 py-2 text-xs bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-200 resize-none text-foreground ${
-                    errors.description
-                      ? "border-danger focus:ring-danger/20 focus:border-danger bg-danger-bg/5"
-                      : "border-neutral-border"
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+              Maximum Members
+            </label>
+            <div className="grid grid-cols-6 gap-2">
+              {MEMBERS_OPTIONS.map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => handleMaxMembersSelect(val)}
+                  className={`py-2 text-xs font-bold rounded-2xl border transition-all cursor-pointer ${
+                    selectedMaxMembers === val
+                      ? "bg-brand-accent text-white border-brand-accent shadow-xs"
+                      : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40 hover:text-foreground"
                   }`}
-                  {...register("description")}
-                />
-              </div>
-              {errors.description && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.description.message}
-                </p>
-              )}
+                >
+                  {val}
+                </button>
+              ))}
             </div>
+            <input type="hidden" {...register("maxMembers", { valueAsNumber: true })} />
+            {errors.maxMembers && (
+              <p className="text-danger text-[10px] font-medium">
+                {errors.maxMembers.message}
+              </p>
+            )}
+          </div>
 
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+              Billing Cycle
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              {BILLING_CYCLES.map((cycle) => (
+                <button
+                  key={cycle.value}
+                  type="button"
+                  onClick={() => handleBillingCycleSelect(cycle.value)}
+                  className={`py-2.5 text-xs font-bold rounded-2xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                    selectedBillingCycle === cycle.value
+                      ? "bg-brand-accent text-white border-brand-accent shadow-xs"
+                      : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40 hover:text-foreground"
+                  }`}
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>{cycle.label}</span>
+                </button>
+              ))}
+            </div>
+            <input type="hidden" {...register("billingCycle")} />
+            {errors.billingCycle && (
+              <p className="text-danger text-[10px] font-medium">
+                {errors.billingCycle.message}
+              </p>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="contributionAmount"
-              labelText="Contribution Amount"
-              placeholder="0.00"
-              step="any"
+              labelText="Contribution Amount (₱)"
+              placeholder="1000"
+              type="number"
               register={register}
               errors={errors}
-              icon={<span className="font-semibold text-xs text-neutral-subtext/70">₱</span>}
-              type="number"
-              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              icon={<PhilippinePeso className="w-4 h-4 text-neutral-subtext" />}
             />
 
             <Input
               label="cycleDuration"
-              labelText="Cycle Duration (Rounds)"
-              placeholder="10"
+              labelText="Cycle Duration (Rotations)"
+              placeholder="1"
+              type="number"
               register={register}
               errors={errors}
-              icon={<Clock className="w-4 h-4" />}
-              type="number"
-              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              icon={<RefreshCw className="w-4 h-4 text-neutral-subtext" />}
             />
-
-            <Input
-              label="maxMembers"
-              labelText="Max Members"
-              placeholder="10"
-              register={register}
-              errors={errors}
-              icon={<Users className="w-4 h-4" />}
-              type="number"
-              className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-
-            <div className="flex flex-col gap-1.5">
-              <label
-                htmlFor="billingCycle"
-                className="text-xs font-bold text-neutral-subtext uppercase tracking-wider"
-              >
-                Billing Cycle
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-subtext/70 pointer-events-none">
-                  <Clock className="w-4 h-4" />
-                </span>
-                <select
-                  id="billingCycle"
-                  className={`w-full pl-9 pr-10 py-2 text-xs bg-background border rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent transition-all duration-200 text-foreground appearance-none cursor-pointer ${
-                    errors.billingCycle
-                      ? "border-danger focus:ring-danger/20 focus:border-danger bg-danger-bg/5"
-                      : "border-neutral-border"
-                  }`}
-                  {...register("billingCycle")}
-                >
-                  {BILLING_CYCLES.map((cycle) => (
-                    <option key={cycle} value={cycle}>
-                      {BILLING_CYCLE_LABELS[cycle]}
-                    </option>
-                  ))}
-                </select>
-                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-subtext/70 pointer-events-none">
-                  <ChevronDown className="w-4 h-4" />
-                </span>
-              </div>
-              {errors.billingCycle && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.billingCycle.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label className="text-xs font-bold text-neutral-subtext uppercase tracking-wider">
-                Payout Sequence
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {PAYOUT_SEQUENCES.map((value) => {
-                  const option = {
-                    value,
-                    label: PAYOUT_SEQUENCE_LABELS[value],
-                    description: PAYOUT_SEQUENCE_DESCRIPTIONS[value],
-                  };
-                  const isSelected = payoutSequence === option.value;
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => setValue("payoutSequence", option.value)}
-                      className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all duration-150 cursor-pointer active:scale-95 ${
-                        isSelected
-                          ? "border-brand-accent/35 bg-brand-accent/5 text-foreground shadow-sm ring-1 ring-brand-accent/20"
-                          : "border-neutral-border bg-background hover:bg-neutral-subtext/5 text-neutral-subtext"
-                      }`}
-                    >
-                      {option.value === "MANUAL" && (
-                        <UserCheck
-                          className={`w-5 h-5 mb-2 ${
-                            isSelected
-                              ? "text-brand-accent"
-                              : "text-neutral-subtext/75"
-                          }`}
-                        />
-                      )}
-                      {option.value === "RANDOM" && (
-                        <Dices
-                          className={`w-5 h-5 mb-2 ${
-                            isSelected
-                              ? "text-brand-accent"
-                              : "text-neutral-subtext/75"
-                          }`}
-                        />
-                      )}
-
-                      {option.value === "FREECHOOSING" && (
-                        <MousePointerClick
-                          className={`w-5 h-5 mb-2 ${
-                            isSelected
-                              ? "text-brand-accent"
-                              : "text-neutral-subtext/75"
-                          }`}
-                        />
-                      )}
-                      <span
-                        className={`text-xs font-bold ${isSelected ? "text-brand-accent" : ""}`}
-                      >
-                        {option.label}
-                      </span>
-                      <span className="text-[9px] mt-1 opacity-70 leading-normal">
-                        {option.description}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              <input type="hidden" {...register("payoutSequence")} />
-              {errors.payoutSequence && (
-                <p className="text-danger text-[10px] font-medium">
-                  {errors.payoutSequence.message}
-                </p>
-              )}
-            </div>
           </div>
 
           <button
             type="submit"
             disabled={isPending}
-            className="w-full mt-6 bg-slate-900 hover:bg-slate-800 dark:bg-slate-50 dark:hover:bg-slate-200 dark:text-slate-900 text-white py-3 rounded-2xl font-semibold active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 text-xs cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+            className="w-full mt-6 bg-brand-accent hover:bg-brand-accent-hover text-white py-3 rounded-2xl font-extrabold active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
           >
             {isPending ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-brand-accent" />
-                Creating Group...
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
+                <span>Creating Group...</span>
               </>
             ) : (
               <>
-                Create Group
-                <ArrowRight className="w-4 h-4 text-brand-accent" />
+                <Plus className="w-4 h-4 text-white" />
+                <span>Create Group</span>
               </>
             )}
           </button>
