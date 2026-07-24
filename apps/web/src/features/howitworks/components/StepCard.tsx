@@ -22,7 +22,7 @@ const getStepIcon = (stepNumber: number) => {
 
 export const StepCard = ({ step }: StepCardProps) => {
   return (
-    <div className="group rounded-3xl border border-neutral-border/80 bg-neutral-table-stripe/80 p-6 sm:p-7 flex flex-col gap-4 hover:border-brand-accent/40 hover:bg-neutral-table-stripe transition-all duration-300">
+    <div className="group rounded-3xl border border-neutral-border/80 bg-neutral-table-stripe/80 p-6 sm:p-7 flex flex-col justify-between gap-4 hover:border-brand-accent/40 hover:bg-neutral-table-stripe transition-all duration-300 h-full min-h-[220px] flex-1">
       <div className="flex items-center justify-between">
         <span className="rounded-full bg-brand-accent/10 px-3 py-1 text-xs font-extrabold text-brand-accent group-hover:bg-brand-accent group-hover:text-white transition-all duration-300 border border-brand-accent/20">
           Step 0{step.stepNumber}

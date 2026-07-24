@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { motion } from "framer-motion";
 import StepCard from "../components/StepCard";
 import { HowItWorksProps } from "../types/howitworks.types";
 import { defaultSteps } from "../constants/howitworks.constants";
@@ -12,7 +15,13 @@ export const HowItWorksSection = ({
   return (
     <section className="w-full bg-background py-16 sm:py-24 flex items-center">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
-        <div className="max-w-2xl mb-12 sm:mb-16 text-center flex flex-col items-center gap-3.5">
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.55, ease: "easeOut" }}
+          className="max-w-2xl mb-12 sm:mb-16 text-center flex flex-col items-center gap-3.5"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-bold">
             <Sliders className="w-3.5 h-3.5" />
             <span>Operational Workflow</span>
@@ -25,11 +34,20 @@ export const HowItWorksSection = ({
           <p className="text-xs sm:text-sm text-neutral-subtext leading-relaxed font-normal max-w-lg">
             {description}
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full">
-          {steps.map((step) => (
-            <StepCard key={step.stepNumber} step={step} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 w-full items-stretch">
+          {steps.map((step, index) => (
+            <motion.div
+              key={step.stepNumber}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.45, delay: index * 0.1, ease: "easeOut" }}
+              className="h-full flex flex-col"
+            >
+              <StepCard step={step} />
+            </motion.div>
           ))}
         </div>
       </div>
