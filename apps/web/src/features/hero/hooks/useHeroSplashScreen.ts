@@ -12,7 +12,7 @@ import type {
 } from "../types/splash.types";
 
 export function useHeroSplashScreen(
-  options: UseHeroSplashScreenOptions = {}
+  options: UseHeroSplashScreenOptions = {},
 ): UseHeroSplashScreenReturn {
   const {
     duration = DEFAULT_SPLASH_DURATION_MS,
@@ -26,10 +26,14 @@ export function useHeroSplashScreen(
   useEffect(() => {
     if (typeof window !== "undefined" && showOncePerSession) {
       const alreadySeen = sessionStorage.getItem(storageKey);
-      if (alreadySeen) return;
+      if (alreadySeen) {
+        setIsVisible(false);
+        if (onDismiss) onDismiss();
+        return;
+      }
     }
     setIsVisible(true);
-  }, [showOncePerSession, storageKey]);
+  }, [showOncePerSession, storageKey, onDismiss]);
 
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
@@ -43,6 +47,7 @@ export function useHeroSplashScreen(
     if (timerRef.current) clearTimeout(timerRef.current);
 
     setIsFadingOut(true);
+    if (onDismiss) onDismiss();
 
     fadeTimerRef.current = setTimeout(() => {
       setIsVisible(false);
@@ -50,7 +55,6 @@ export function useHeroSplashScreen(
       if (typeof window !== "undefined" && showOncePerSession) {
         sessionStorage.setItem(storageKey, "true");
       }
-      if (onDismiss) onDismiss();
     }, DEFAULT_FADE_OUT_DURATION_MS);
   }, [onDismiss, showOncePerSession, storageKey]);
 

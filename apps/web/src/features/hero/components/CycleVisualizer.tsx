@@ -8,13 +8,21 @@ import { FloatingTrackerVisualizer } from "./FloatingTrackerVisualizer";
 interface CycleVisualizerProps {
   members?: Member[];
   stats?: CycleStats;
+  isSplashFinished?: boolean;
 }
 
 export const CycleVisualizer = ({
   members = defaultMembers,
   stats = defaultStats,
+  isSplashFinished = true,
 }: CycleVisualizerProps) => {
-  return <FloatingTrackerVisualizer members={members} stats={stats} />;
+  return (
+    <FloatingTrackerVisualizer
+      members={members}
+      stats={stats}
+      isSplashFinished={isSplashFinished}
+    />
+  );
 };
 
 export default CycleVisualizer;

@@ -32,6 +32,7 @@ export interface HeroProps {
   enableSplashScreen?: boolean;
   splashDuration?: number;
   showOncePerSession?: boolean;
+  isSplashFinished?: boolean;
 }
 
 export interface ActivityItem {

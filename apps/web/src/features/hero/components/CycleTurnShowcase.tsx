@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   RotateCw,
   CheckCircle2,
@@ -16,7 +17,13 @@ export const CycleTurnShowcase = () => {
   const [selectedTurn, setSelectedTurn] = useState<number>(3);
 
   return (
-    <div className="w-full rounded-3xl border border-brand-accent/30 bg-background p-4 sm:p-8 relative overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="w-full rounded-3xl border border-brand-accent/30 bg-background p-4 sm:p-8 relative overflow-hidden"
+    >
       <div className="absolute top-0 right-0 w-80 h-80 bg-brand-accent/10 rounded-full blur-3xl -z-10 pointer-events-none" />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-border/60 pb-5 sm:pb-6 mb-6 sm:mb-8 gap-3 sm:gap-4">
@@ -51,14 +58,18 @@ export const CycleTurnShowcase = () => {
           </span>
 
           <div className="flex flex-col gap-2.5">
-            {defaultMembers.map((member) => {
+            {defaultMembers.map((member, index) => {
               const isSelected = selectedTurn === member.payoutTurn;
               const isPaid = member.status === "paid";
               const isCurrent = member.status === "current";
 
               return (
-                <div
+                <motion.div
                   key={member.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.06 }}
                   onClick={() => setSelectedTurn(member.payoutTurn)}
                   className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer gap-2.5 sm:gap-0 ${
                     isSelected
@@ -115,14 +126,20 @@ export const CycleTurnShowcase = () => {
                     </span>
                     <ChevronRight className="w-4 h-4 text-neutral-subtext" />
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         </div>
 
         <div className="lg:col-span-5 w-full">
-          <div className="rounded-3xl bg-neutral-table-stripe p-5 sm:p-6 border border-neutral-border/80 flex flex-col gap-4 sm:gap-5">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="rounded-3xl bg-neutral-table-stripe p-5 sm:p-6 border border-neutral-border/80 flex flex-col gap-4 sm:gap-5"
+          >
             <div className="flex items-center justify-between border-b border-neutral-border/60 pb-3.5 sm:pb-4">
               <div className="flex items-center gap-2">
                 <Award className="w-4 h-4 sm:w-5 sm:h-5 text-brand-accent" />
@@ -161,10 +178,10 @@ export const CycleTurnShowcase = () => {
             <div className="p-3.5 sm:p-4 rounded-2xl bg-background border border-neutral-border/80 text-[11px] sm:text-xs text-neutral-subtext leading-relaxed">
               In Siklo, turns rotate automatically after every member contribution is verified. No manual calculations required.
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

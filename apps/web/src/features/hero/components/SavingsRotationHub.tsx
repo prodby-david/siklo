@@ -1,15 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { Parallax } from "react-scroll-parallax";
 import {
   Calculator,
   History,
   TrendingUp,
-  Users,
   CheckCircle2,
-  Calendar,
-  ArrowRight,
   ShieldCheck,
   Zap,
 } from "lucide-react";
@@ -39,7 +35,7 @@ export const SavingsRotationHub = () => {
   return (
     <div className="w-full relative">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <Parallax speed={-3} className="lg:col-span-7 w-full">
+        <div className="lg:col-span-7 w-full">
           <div className="rounded-3xl border border-neutral-border/80 bg-background/90 backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl -z-10 pointer-events-none" />
 
@@ -187,9 +183,9 @@ export const SavingsRotationHub = () => {
               </div>
             </div>
           </div>
-        </Parallax>
+        </div>
 
-        <Parallax speed={3} className="lg:col-span-5 w-full">
+        <div className="lg:col-span-5 w-full">
           <div className="rounded-3xl border border-neutral-border/80 bg-background/90 backdrop-blur-xl p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
 
@@ -275,7 +271,7 @@ export const SavingsRotationHub = () => {
               ))}
             </div>
           </div>
-        </Parallax>
+        </div>
       </div>
     </div>
   );
