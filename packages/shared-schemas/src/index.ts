@@ -6,6 +6,10 @@ export {
   type SignupBaseDTO,
   type CreateUserDTO,
 } from "./auth/signup.schema.js";
+export {
+  changePasswordSchema,
+  type ChangePasswordDTO,
+} from "./auth/password.schema.js";
 
 // ─── Group Schemas ───────────────────────────────────────────────
 export {
