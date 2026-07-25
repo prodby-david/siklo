@@ -39,4 +39,16 @@ export class UsersService {
     }
     return user;
   }
+
+  async changeUserPassword(id: string, password: string) {
+    const user = await this.usersRepository.findUserById(id);
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    const hashedPassword = await this.authService.hashPassword(password);
+    await this.usersRepository.changePassword(id, hashedPassword);
+    return {
+      message: 'Password changed successfully.',
+    };
+  }
 }
