@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 import { useGroupDetails } from "@/features/groups/hooks/useGroupDetails";
 import GroupHero from "@/features/groups/components/details/GroupHero";
 import GroupStatsGrid from "@/features/groups/components/details/GroupStatsGrid";
@@ -9,24 +9,14 @@ import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
 import GroupRotationSlots from "@/features/groups/components/details/GroupRotationSlots";
 import GroupCycleMembers from "@/features/groups/components/details/GroupCycleMembers";
 import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
+import DeleteGroupDialog from "@/features/groups/components/details/DeleteGroupDialog";
 import Loader from "@/shared/components/loader/Loader";
-import useGetCurrentName from "@/features/users/hooks/useGetCurrentName";
+import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import useStartGroupCycle from "@/features/groups/hooks/useStartGroupCycle";
 import useDeleteGroup from "@/features/groups/hooks/useDeleteGroup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/shared/components/ui/alert-dialog";
 
 export default function GroupPage() {
   const router = useRouter();
@@ -48,12 +38,11 @@ export default function GroupPage() {
       await startCycle(data.id);
       toast.success("Group cycle started successfully!");
     } catch (err: unknown) {
-      let message = "Failed to start cycle";
-      if (axios.isAxiosError(err)) {
-        message = err.response?.data?.message || err.message;
-      } else if (err instanceof Error) {
-        message = err.message;
-      }
+      const message = axios.isAxiosError(err)
+        ? err.response?.data?.message || err.message
+        : err instanceof Error
+        ? err.message
+        : "Failed to start cycle";
       toast.error(message);
     }
   };
@@ -67,12 +56,11 @@ export default function GroupPage() {
         router.push("/group");
       }, 1000);
     } catch (err: unknown) {
-      let message = "Failed to delete group";
-      if (axios.isAxiosError(err)) {
-        message = err.response?.data?.message || err.message;
-      } else if (err instanceof Error) {
-        message = err.message;
-      }
+      const message = axios.isAxiosError(err)
+        ? err.response?.data?.message || err.message
+        : err instanceof Error
+        ? err.message
+        : "Failed to delete group";
       toast.error(message);
     }
   };
@@ -185,40 +173,11 @@ export default function GroupPage() {
                   />
                   {isStarting ? "Starting..." : "Start Cycle"}
                 </button>
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    render={
-                      <button
-                        disabled={isStarting || isDeleting}
-                        className="w-full text-xs flex items-center justify-center gap-2 bg-destructive/10 hover:bg-destructive/20 text-destructive border border-destructive/20 px-4 py-2.5 rounded-2xl font-semibold active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
-                      />
-                    }
-                  >
-                    <Trash2 size={16} />
-                    {isDeleting ? "Deleting..." : "Delete Group"}
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Group</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete this group? This action
-                        cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="cursor-pointer text-xs rounded-2xl">
-                        Cancel
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        variant="destructive"
-                        onClick={handleDeleteGroup}
-                        className="cursor-pointer text-xs rounded-2xl"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DeleteGroupDialog
+                  isDeleting={isDeleting}
+                  isStarting={isStarting}
+                  onDelete={handleDeleteGroup}
+                />
               </div>
             ) : null}
           </div>
