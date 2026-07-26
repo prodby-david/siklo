@@ -24,9 +24,10 @@ export function useHeroParallax(
     if (typeof window === "undefined") return;
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    const rafId = requestAnimationFrame(() => handleScroll());
 
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);

@@ -21,19 +21,13 @@ export function useHeroSplashScreen(
     onDismiss,
   } = options;
 
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-
-  useEffect(() => {
+  const [isVisible, setIsVisible] = useState<boolean>(() => {
     if (typeof window !== "undefined" && showOncePerSession) {
       const alreadySeen = sessionStorage.getItem(storageKey);
-      if (alreadySeen) {
-        setIsVisible(false);
-        if (onDismiss) onDismiss();
-        return;
-      }
+      if (alreadySeen) return false;
     }
-    setIsVisible(true);
-  }, [showOncePerSession, storageKey, onDismiss]);
+    return true;
+  });
 
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
@@ -81,10 +75,14 @@ export function useHeroSplashScreen(
 
     startProgressAnimation();
 
+    const currentAnim = animRef.current;
+    const currentTimer = timerRef.current;
+    const currentFadeTimer = fadeTimerRef.current;
+
     return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+      if (currentAnim) cancelAnimationFrame(currentAnim);
+      if (currentTimer) clearTimeout(currentTimer);
+      if (currentFadeTimer) clearTimeout(currentFadeTimer);
     };
   }, [isVisible, isFadingOut, startProgressAnimation]);
 

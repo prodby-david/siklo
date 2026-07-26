@@ -24,7 +24,7 @@ export const HeroSection = ({
     <>
       Organize your{" "}
       <span className="text-brand-accent font-extrabold">rotation savings</span>{" "}
-      with total clarity
+      with total clarity.
     </>
   ),
   subtitle = "Siklo is a simple online notebook for your saving group. Easily see who has paid, who gets paid next, and keep your savings organized without any stress.",
@@ -43,8 +43,15 @@ export const HeroSection = ({
           initial="hidden"
           animate={isSplashFinished ? "visible" : "hidden"}
         >
-          <motion.div variants={heroVisualizerVariants} className="w-full flex flex-col items-center">
-            <CycleVisualizer members={members} stats={stats} isSplashFinished={isSplashFinished} />
+          <motion.div
+            variants={heroVisualizerVariants}
+            className="w-full flex flex-col items-center"
+          >
+            <CycleVisualizer
+              members={members}
+              stats={stats}
+              isSplashFinished={isSplashFinished}
+            />
           </motion.div>
 
           <motion.div variants={heroBadgeVariants}>
