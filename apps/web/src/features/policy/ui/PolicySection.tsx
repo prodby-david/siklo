@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { PolicyTab } from "../types/policy.type";
 import { privacySections } from "../constants/policy.constants";
@@ -12,19 +12,18 @@ import PolicyTableOfContents from "../components/PolicyTableOfContents";
 import PolicyContent from "../components/PolicyContent";
 
 export default function PolicySection() {
-  const [activeTab, setActiveTab] = useState<PolicyTab>("privacy");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeSection, setActiveSection] = useState("");
-
-  useEffect(() => {
+  const [activeTab, setActiveTab] = useState<PolicyTab>(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get("tab");
       if (tab === "privacy" || tab === "terms") {
-        setActiveTab(tab);
+        return tab;
       }
     }
-  }, []);
+    return "privacy";
+  });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeSection, setActiveSection] = useState("");
 
   const sections = activeTab === "privacy" ? privacySections : termsSections;
   const filteredSections = filterSections(sections, searchQuery);

@@ -8,6 +8,29 @@ type PolicyContentProps = {
   onClearSearch: () => void;
 };
 
+function HighlightedText({ text, query }: { text: string; query: string }) {
+  if (!query) return <>{text}</>;
+
+  const parts = text.split(new RegExp(`(${query})`, "gi"));
+
+  return (
+    <span>
+      {parts.map((part, index) =>
+        part.toLowerCase() === query.toLowerCase() ? (
+          <mark
+            key={index}
+            className="bg-yellow-200 dark:bg-yellow-800 text-foreground px-0.5 rounded-2xl"
+          >
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </span>
+  );
+}
+
 export default function PolicyContent({
   activeTab,
   sections,
@@ -47,27 +70,7 @@ export default function PolicyContent({
                     key={i}
                     className="text-xs sm:text-sm text-neutral-subtext leading-relaxed"
                   >
-                    {searchQuery ? (
-                      <span>
-                        {para
-                          .split(new RegExp(`(${searchQuery})`, "gi"))
-                          .map((part, index) =>
-                            part.toLowerCase() ===
-                            searchQuery.toLowerCase() ? (
-                              <mark
-                                key={index}
-                                className="bg-yellow-200 dark:bg-yellow-800 text-foreground px-0.5 rounded-2xl"
-                              >
-                                {part}
-                              </mark>
-                            ) : (
-                              part
-                            )
-                          )}
-                      </span>
-                    ) : (
-                      para
-                    )}
+                    <HighlightedText text={para} query={searchQuery} />
                   </p>
                 ))}
               </div>
