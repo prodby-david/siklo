@@ -1,22 +1,7 @@
-export interface User {
-  id: string;
-  name: string;
-}
+import React from "react";
+import { User, Membership, Group } from "./group.types";
 
-export interface Membership {
-  userId: string;
-  position: number;
-  joinedAt?: string | Date;
-  user: User;
-}
-
-export interface Group {
-  id: string;
-  name: string;
-  organizerId: string;
-  createdAt: string | Date;
-  startDate?: string | Date | null;
-}
+export type { User, Membership, Group };
 
 export interface ApiActivity {
   id: string;

@@ -50,39 +50,38 @@ export default function ShowGroup() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.map((group: any) => {
-            const extendedGroup = group as ExtendedGroup;
-            const membershipsCount = extendedGroup._count?.memberships || 1;
+          {data.map((group: ExtendedGroup) => {
+            const membershipsCount = group._count?.memberships || 1;
             const percentFilled = Math.min(
               100,
-              (membershipsCount / extendedGroup.maxMembers) * 100,
+              (membershipsCount / group.maxMembers) * 100,
             );
-            const isDateNull = extendedGroup.startDate
-              ? formatDate(extendedGroup.startDate)
+            const isDateNull = group.startDate
+              ? formatDate(group.startDate)
               : "Not yet started.";
 
             return (
               <div
-                key={extendedGroup.id}
+                key={group.id}
                 className="flex flex-col justify-between gap-4 border border-neutral-border rounded-2xl p-6 bg-background shadow-sm hover:border-brand-accent/30 hover:shadow-md transition-all duration-300 group hover:-translate-y-1"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="rounded-full bg-brand-accent/15 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-brand-accent">
-                      {extendedGroup.billingCycle} Cycle
+                      {group.billingCycle} Cycle
                     </span>
                     <span className="text-[10px] text-neutral-subtext font-medium bg-neutral-subtext/5 px-2 py-0.5 rounded-2xl border border-neutral-border/50">
-                      {extendedGroup.cycleDuration} rotation(s)
+                      {group.cycleDuration} rotation(s)
                     </span>
                   </div>
 
                   <div className="space-y-1">
                     <p className="font-extrabold text-base text-foreground group-hover:text-brand-accent transition-colors duration-200">
-                      {extendedGroup.name}
+                      {group.name}
                     </p>
-                    {extendedGroup.description && (
+                    {group.description && (
                       <p className="text-xs text-neutral-subtext line-clamp-1">
-                        {extendedGroup.description}
+                        {group.description}
                       </p>
                     )}
                   </div>
@@ -95,7 +94,7 @@ export default function ShowGroup() {
                       <p className="flex items-center gap-0.5 font-bold text-sm text-foreground mt-0.5">
                         <PhilippinePeso className="w-3.5 h-3.5" />
                         {Number(
-                          extendedGroup.contributionAmount,
+                          group.contributionAmount,
                         ).toLocaleString()}
                       </p>
                     </div>
@@ -116,7 +115,7 @@ export default function ShowGroup() {
                         Joined Members
                       </span>
                       <span className="font-bold text-foreground">
-                        {membershipsCount} / {extendedGroup.maxMembers}
+                        {membershipsCount} / {group.maxMembers}
                       </span>
                     </div>
                     <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -129,7 +128,7 @@ export default function ShowGroup() {
                 </div>
 
                 <Link
-                  href={`/group/${extendedGroup.id}`}
+                  href={`/group/${group.id}`}
                   className="mt-2 flex items-center justify-center gap-1 text-[11px] font-bold text-background bg-brand-accent hover:bg-brand-accent-hover px-4 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 text-center cursor-pointer shadow-sm"
                 >
                   Open Group <ArrowRight className="w-3.5 h-3.5" />

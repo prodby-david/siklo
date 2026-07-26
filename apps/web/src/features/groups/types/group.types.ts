@@ -13,6 +13,8 @@ export interface Membership {
 export interface Group {
   id: string;
   name: string;
+  description?: string | null;
+  inviteCode?: string;
   organizerId: string;
   createdAt: string | Date;
   startDate?: string | Date | null;

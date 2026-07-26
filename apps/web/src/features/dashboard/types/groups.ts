@@ -1,16 +1,10 @@
-export type Group = {
-  id: string;
-  name: string;
-  description?: string;
-  contributionAmount: number;
-  totalPayout: number;
-  cycleDuration: number;
-  maxMembers: number;
-  billingCycle: "DAILY" | "WEEKLY" | "MONTHLY" | "BIMONTHLY" | "QUARTERLY";
-  startDate: string;
-};
+import { Group } from "@/features/groups/types/group.types";
+
+export type { Group };
 
 export interface ExtendedGroup extends Group {
+  description?: string;
+  totalPayout?: number;
   _count?: {
     memberships: number;
   };
