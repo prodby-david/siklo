@@ -47,7 +47,10 @@ export default function SettingsUI() {
         </aside>
 
         <main className="md:col-span-8 lg:col-span-9 bg-background border border-neutral-border rounded-2xl p-6 md:p-8 shadow-sm min-h-[450px] transition-all duration-200">
-          {SETTINGS_COMPONENTS[activeTab]}
+          {(() => {
+            const ActiveComponent = SETTINGS_COMPONENTS[activeTab];
+            return ActiveComponent ? <ActiveComponent /> : null;
+          })()}
         </main>
       </div>
     </div>
