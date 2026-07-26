@@ -14,12 +14,17 @@ export const signupBaseSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   contactNumber: z
     .string()
-    .min(11, "Contact number must be at least 11 numbers")
-    .max(11, "Contact number must be at most 11 numbers"),
+    .min(1, "Contact number must not be empty.")
+    .regex(/^\d{11}$/, "Contact number must be exactly 11 digits."),
 });
 
 /** Alias for API usage — same schema, named to match the existing API type */
 export const createUserSchema = signupBaseSchema;
 
+export const userProfileSettingSchema = signupBaseSchema.omit({
+  password: true,
+});
+
 export type SignupBaseDTO = z.infer<typeof signupBaseSchema>;
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
+export type UserProfileSettingDTO = z.infer<typeof userProfileSettingSchema>;

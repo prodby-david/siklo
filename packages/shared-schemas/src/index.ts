@@ -3,8 +3,10 @@ export { signInSchema, type SignInDTO } from "./auth/signin.schema.js";
 export {
   signupBaseSchema,
   createUserSchema,
+  userProfileSettingSchema,
   type SignupBaseDTO,
   type CreateUserDTO,
+  type UserProfileSettingDTO,
 } from "./auth/signup.schema.js";
 export {
   changePasswordSchema,
