@@ -1,13 +1,26 @@
 import React from "react";
-import * as Icons from "lucide-react";
+import {
+  ShieldCheck,
+  Zap,
+  Users,
+  Lock,
+  LucideIcon,
+} from "lucide-react";
 import { CoreValueItem } from "../types/about.types";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  ShieldCheck,
+  Zap,
+  Users,
+  Lock,
+};
 
 interface CoreValueCardItemProps {
   item: CoreValueItem;
 }
 
 export default function CoreValueCardItem({ item }: CoreValueCardItemProps) {
-  const IconComponent = (Icons as any)[item.iconName] || Icons.ShieldCheck;
+  const IconComponent = ICON_MAP[item.iconName] || ShieldCheck;
 
   return (
     <div className="flex flex-col gap-4 p-6 sm:p-7 rounded-3xl border border-brand-accent/20 bg-background hover:border-brand-accent/50 transition-all duration-300">

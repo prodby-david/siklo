@@ -1,5 +1,20 @@
-import * as Icons from "lucide-react";
+import {
+  HelpCircle,
+  ShieldCheck,
+  CreditCard,
+  UserCheck,
+  Zap,
+  LucideIcon,
+} from "lucide-react";
 import { HelpCategory } from "../types/help.type";
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  ShieldCheck,
+  CreditCard,
+  UserCheck,
+  Zap,
+  HelpCircle,
+};
 
 type HelpCategorySelectorProps = {
   categories: HelpCategory[];
@@ -15,7 +30,7 @@ export default function HelpCategorySelector({
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
       {categories.map((category) => {
-        const IconComponent = (Icons as any)[category.icon] || Icons.HelpCircle;
+        const IconComponent = ICON_MAP[category.icon] || HelpCircle;
         const isActive = category.id === activeCategoryId;
 
         return (
