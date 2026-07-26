@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Mail, Loader2, SendHorizontal, LogIn, Undo2, CheckCircle2, RotateCcw } from "lucide-react";
-import Input from "@/features/auth/signup/components/ui/Input";
+import { Input } from "@/shared/components/inputs";
 import { useForgotPassword } from "../hooks/useForgotPassword";
 
 export default function ForgotPasswordForm() {

@@ -24,7 +24,6 @@ export default function useSignup() {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   const onSubmit = async (data: SignupFormData) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...updatedData } = data;
 
     try {

@@ -10,8 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
-import Input from "@/features/auth/signup/components/ui/Input";
-import PasswordInput from "@/features/auth/signup/components/ui/PasswordInput";
+import { Input, PasswordInput } from "@/shared/components/inputs";
 
 export default function SigninForm() {
   const {

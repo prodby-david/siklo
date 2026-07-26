@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { User, Mail, Lock, Phone } from "lucide-react";
 import useSignup from "../hooks/useSignup";
-import Input from "./ui/Input";
-import PasswordInput from "./ui/PasswordInput";
-import ContactNumberInput from "./ui/ContactNumberInput";
+import { Input, PasswordInput, ContactNumberInput } from "@/shared/components/inputs";
 import Submit from "./buttons/SubmitButton";
 
 export default function SignupFormInputs() {
