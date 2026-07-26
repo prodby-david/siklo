@@ -1,22 +1,14 @@
-import useGetCurrentName from "@/features/users/hooks/useGetCurrentName";
+import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
+import { ExtendedGroup as Group } from "../types/groups";
 
-interface Group {
-  id: string;
-  name: string;
-  description: string | null;
-  contributionAmount: number;
-  billingCycle: "DAILY" | "WEEKLY" | "BIMONTHLY" | "MONTHLY" | "QUARTERLY";
-  cycleDuration: number;
-  maxMembers: number;
-  inviteCode: string;
-  organizerId: string;
-  startDate: string;
-  createdAt: string;
-  _count: {
-    memberships: number;
-  };
-}
+const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
+  DAILY: 30,
+  WEEKLY: 4,
+  BIMONTHLY: 2,
+  MONTHLY: 1,
+  QUARTERLY: 1 / 3,
+};
 
 export function useDashboardData() {
   const { data: user, isLoading: isUserLoading } = useGetCurrentName();
@@ -27,34 +19,23 @@ export function useDashboardData() {
   const totalPayoutPool = groups.reduce(
     (sum: number, group: Group) =>
       sum + group.contributionAmount * group.maxMembers * group.cycleDuration,
-    0
+    0,
   );
 
   const totalMonthlyContributions = groups.reduce(
     (sum: number, group: Group) => {
       const amt = group.contributionAmount;
-      switch (group.billingCycle) {
-        case "DAILY":
-          return sum + amt * 30;
-        case "WEEKLY":
-          return sum + amt * 4;
-        case "BIMONTHLY":
-          return sum + amt * 2;
-        case "MONTHLY":
-          return sum + amt;
-        case "QUARTERLY":
-          return sum + amt / 3;
-        default:
-          return sum + amt;
-      }
+      const multiplier = MONTHLY_MULTIPLIER[group.billingCycle] ?? 1;
+      return sum + amt * multiplier;
     },
-    0
+    0,
   );
 
-  const sortedActiveGroups = [...groups].sort(
-    (a: Group, b: Group) =>
-      new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-  );
+  const sortedActiveGroups = [...groups].sort((a: Group, b: Group) => {
+    const timeA = a.startDate ? new Date(a.startDate).getTime() : 0;
+    const timeB = b.startDate ? new Date(b.startDate).getTime() : 0;
+    return timeA - timeB;
+  });
 
   const nearestGroup = sortedActiveGroups[0] || null;
 
@@ -62,7 +43,7 @@ export function useDashboardData() {
     ? nearestGroup.contributionAmount * nearestGroup.maxMembers
     : 0;
 
-  const nextPayoutDate = nearestGroup
+  const nextPayoutDate = nearestGroup && nearestGroup.startDate
     ? new Date(nearestGroup.startDate).toLocaleDateString("en-US", {
         month: "long",
         day: "numeric",
