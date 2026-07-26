@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
 import { CreateUserDTO } from './schema/user.schema';
+import { UserProfileSettingDTO } from '@siklo/shared-schemas';
 
 @Injectable()
 export class UsersRepository {
@@ -15,10 +16,6 @@ export class UsersRepository {
   async findUserById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
-      select: {
-        id: true,
-        name: true,
-      },
     });
   }
 
@@ -32,6 +29,13 @@ export class UsersRepository {
     return this.prisma.user.update({
       where: { id },
       data: { password },
+    });
+  }
+
+  async updateUserProfile(id: string, data: UserProfileSettingDTO) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
     });
   }
 }
