@@ -75,9 +75,7 @@ const sikloAdvantages: ComparisonItem[] = [
   },
   {
     text: "Pre-calculated turn rotation & transparent payout calendar",
-    icon: (
-      <CalendarCheck className="h-4 w-4 text-brand-accent shrink-0 mt-0.5" />
-    ),
+    icon: <CalendarCheck className="h-4 w-4 text-brand-accent shrink-0 mt-0.5" />,
   },
   {
     text: "Mobile wallet friendly & digital proof logs",
@@ -85,11 +83,85 @@ const sikloAdvantages: ComparisonItem[] = [
   },
   {
     text: "Built-in group chat & instant activity notifications",
-    icon: (
-      <MessageSquare className="h-4 w-4 text-brand-accent shrink-0 mt-0.5" />
-    ),
+    icon: <MessageSquare className="h-4 w-4 text-brand-accent shrink-0 mt-0.5" />,
   },
 ];
+
+function ComparisonCard({
+  title,
+  subtitle,
+  icon,
+  items,
+  variant,
+  direction,
+  rotation,
+}: {
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  items: ComparisonItem[];
+  variant: "danger" | "brand";
+  direction: number;
+  rotation: string;
+}) {
+  const isBrand = variant === "brand";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: direction }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`flex flex-col gap-6 p-7 sm:p-8 rounded-3xl border relative overflow-hidden transition-transform duration-300 ease-in-out ${rotation} hover:rotate-0 ${
+        isBrand
+          ? "bg-brand-accent/10 border-brand-accent/30 shadow-lg shadow-brand-accent/5"
+          : "bg-neutral-table-stripe/60 border-neutral-border/80"
+      }`}
+    >
+      <div
+        className={`flex items-center justify-between pb-4 border-b ${
+          isBrand ? "border-brand-accent/20" : "border-neutral-border/60"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
+              isBrand
+                ? "bg-brand-accent text-white shadow-sm"
+                : "bg-danger/10 border border-danger/20 text-danger"
+            }`}
+          >
+            {icon}
+          </div>
+          <div>
+            <h3 className="text-lg font-extrabold text-foreground">{title}</h3>
+            <span
+              className={`text-xs font-bold ${
+                isBrand ? "text-brand-accent font-extrabold" : "text-neutral-subtext"
+              }`}
+            >
+              {subtitle}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 flex-1 relative z-10">
+        {items.map((item, index) => (
+          <div
+            key={index}
+            className={`flex items-start gap-3 text-xs sm:text-sm ${
+              isBrand ? "text-foreground font-semibold" : "text-neutral-subtext font-medium"
+            }`}
+          >
+            {item.icon}
+            <span>{item.text}</span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
 
 export default function PaluwaganComparisonSection() {
   return (
@@ -116,75 +188,24 @@ export default function PaluwaganComparisonSection() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-6 p-7 sm:p-8 rounded-3xl bg-neutral-table-stripe/60 border border-neutral-border/80 relative overflow-hidden transition-transform duration-300 ease-in-out -rotate-1 hover:rotate-0"
-          >
-            <div className="flex items-center gap-3 pb-4 border-b border-neutral-border/60">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-danger/10 border border-danger/20 text-danger">
-                <FileWarning className="h-5 w-5" />
-              </div>
-              <div>
-                <h3 className="text-lg font-extrabold text-foreground">
-                  Traditional Paper Notebook
-                </h3>
-                <span className="text-xs font-bold text-neutral-subtext">
-                  Manual & Vulnerable to Errors
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 flex-1">
-              {traditionalDrawbacks.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3 text-xs sm:text-sm text-neutral-subtext font-medium"
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-6 p-7 sm:p-8 rounded-3xl bg-brand-accent/10 border border-brand-accent/30 relative overflow-hidden shadow-lg shadow-brand-accent/5 transition-transform duration-300 ease-in-out rotate-1 hover:rotate-0"
-          >
-            <div className="flex items-center justify-between pb-4 border-b border-brand-accent/20 relative z-10">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-accent text-white shadow-sm ">
-                  <ShieldCheck className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-extrabold text-foreground">
-                    Siklo
-                  </h3>
-                  <span className="text-xs font-extrabold text-brand-accent">
-                    Automated & 100% Transparent
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-4 flex-1 relative z-10">
-              {sikloAdvantages.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-3 text-xs sm:text-sm text-foreground font-semibold"
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+          <ComparisonCard
+            title="Traditional Paper Notebook"
+            subtitle="Manual & Vulnerable to Errors"
+            icon={<FileWarning className="h-5 w-5" />}
+            items={traditionalDrawbacks}
+            variant="danger"
+            direction={-30}
+            rotation="-rotate-1"
+          />
+          <ComparisonCard
+            title="Siklo"
+            subtitle="Automated & 100% Transparent"
+            icon={<ShieldCheck className="h-5 w-5" />}
+            items={sikloAdvantages}
+            variant="brand"
+            direction={30}
+            rotation="rotate-1"
+          />
         </div>
       </div>
     </section>
