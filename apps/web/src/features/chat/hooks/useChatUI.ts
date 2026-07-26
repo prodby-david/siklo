@@ -66,7 +66,7 @@ export default function useChatUI() {
     setStatus("submitted");
 
     try {
-      const response = await api.post("http://localhost:3001/chat", {
+      const response = await api.post("/chat", {
         messages: updatedMessages,
       });
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { SimulationState } from "../../types/simulator.types";
 import SimulatorMemberRow from "./SimulatorMemberRow";
 import { Play, RotateCcw, ArrowLeft, Landmark } from "lucide-react";
@@ -18,10 +18,16 @@ export default function SimulatorDashboard({
 }: SimulatorDashboardProps) {
   const { currentRound, config, members } = state;
   const simulationFinished = currentRound > config.membersCount;
-  const currentRecipient = members.find(
-    (m) => m.payoutRound === currentRound
+
+  const currentRecipient = useMemo(
+    () => members.find((m) => m.payoutRound === currentRound),
+    [members, currentRound],
   );
-  const potSize = config.contributionAmount * config.membersCount;
+
+  const potSize = useMemo(
+    () => config.contributionAmount * config.membersCount,
+    [config.contributionAmount, config.membersCount],
+  );
 
   return (
     <div className="flex flex-col gap-6">
