@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   RotateCw,
@@ -11,10 +11,14 @@ import {
   ShieldCheck,
   Coins,
 } from "lucide-react";
-import { defaultMembers } from "@/shared/constants/sampleData";
+import { defaultMembers } from "@/features/hero/constants/hero.mocks";
 
 export const CycleTurnShowcase = () => {
   const [selectedTurn, setSelectedTurn] = useState<number>(3);
+
+  const handleSelectTurn = useCallback((turn: number) => {
+    setSelectedTurn(turn);
+  }, []);
 
   return (
     <motion.div
@@ -70,7 +74,7 @@ export const CycleTurnShowcase = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: index * 0.06 }}
-                  onClick={() => setSelectedTurn(member.payoutTurn)}
+                  onClick={() => handleSelectTurn(member.payoutTurn)}
                   className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer gap-2.5 sm:gap-0 ${
                     isSelected
                       ? "bg-brand-accent/10 border-brand-accent scale-[1.01]"
