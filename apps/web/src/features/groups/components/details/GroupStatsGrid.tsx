@@ -15,6 +15,12 @@ export default function GroupStatsGrid({
     BILLING_CYCLE_LABELS[billingCycle as keyof typeof BILLING_CYCLE_LABELS] ||
     billingCycle;
 
+  const filledPercentage = Math.min(
+    100,
+    (membershipsCount / maxMembers) * 100,
+  );
+  const formattedContribution = Number(contributionAmount).toLocaleString();
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
       <div className="p-6 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
@@ -29,8 +35,7 @@ export default function GroupStatsGrid({
             })}
           </p>
           <span className="text-[10px] text-neutral-subtext">
-            ₱{Number(contributionAmount).toLocaleString()} × {maxMembers}{" "}
-            members
+            ₱{formattedContribution} × {maxMembers} members
           </span>
         </div>
         <div className="flex items-center justify-center w-11 h-11 bg-brand-accent/10 rounded-full shrink-0">
@@ -73,7 +78,7 @@ export default function GroupStatsGrid({
             <div
               className="bg-brand-accent h-1.5 rounded-full transition-all duration-500"
               style={{
-                width: `${Math.min(100, (membershipsCount / maxMembers) * 100)}%`,
+                width: `${filledPercentage}%`,
               }}
             />
           </div>

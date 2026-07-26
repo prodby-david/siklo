@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   type JoinGroupBodyDTO,
@@ -22,7 +22,7 @@ export default function useInviteCode() {
     watch,
     formState: { errors, isSubmitting },
   } = useForm<JoinGroupBodyDTO>({
-    resolver: zodResolver(joinGroupBodySchema) as any,
+    resolver: zodResolver(joinGroupBodySchema) as Resolver<JoinGroupBodyDTO>,
     defaultValues: {
       inviteCode: "",
     },

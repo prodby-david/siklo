@@ -1,4 +1,4 @@
-import { BILLING_CYCLE_DAYS } from "../constants/billing-cycle.constants";
+import { calculateCycleDetails } from "./group.calculations";
 
 interface GroupTimelineInput {
   contributionAmount: number;
@@ -15,17 +15,20 @@ export function calculateGroupTimeline({
   billingCycle,
   startDate,
 }: GroupTimelineInput) {
-  const totalPayout = contributionAmount * maxMembers;
-  const totalRounds = maxMembers * cycleDuration;
-  const totalDays = totalRounds * (BILLING_CYCLE_DAYS[billingCycle as keyof typeof BILLING_CYCLE_DAYS] || 1);
+  const details = calculateCycleDetails(
+    contributionAmount,
+    maxMembers,
+    cycleDuration,
+    billingCycle,
+  );
 
   const start = startDate ? new Date(startDate) : null;
-  const end = start ? new Date(start.getTime() + totalDays * 24 * 60 * 60 * 1000) : null;
+  const end = start
+    ? new Date(start.getTime() + details.totalDays * 24 * 60 * 60 * 1000)
+    : null;
 
   return {
-    totalPayout,
-    totalRounds,
-    totalDays,
+    ...details,
     endDate: end,
   };
 }
