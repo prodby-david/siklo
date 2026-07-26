@@ -64,12 +64,11 @@ export default function CreateGroupPage() {
       toast.success("Paluwagan group created successfully!");
       router.push("/group");
     } catch (err: unknown) {
-      let message = "Failed to create group";
-      if (axios.isAxiosError(err)) {
-        message = err.response?.data?.message || err.message;
-      } else if (err instanceof Error) {
-        message = err.message;
-      }
+      const message = axios.isAxiosError(err)
+        ? err.response?.data?.message || err.message
+        : err instanceof Error
+        ? err.message
+        : "Failed to create group";
       toast.error(message);
     }
   };
@@ -80,6 +79,8 @@ export default function CreateGroupPage() {
         <CreateGroupFormFields
           register={register}
           errors={errors}
+          watch={watch}
+          selectedBillingCycle={watchAllFields.billingCycle}
           payoutSequence={watchAllFields.payoutSequence || "RANDOM"}
           setValue={setValue}
           isPending={isPending}
