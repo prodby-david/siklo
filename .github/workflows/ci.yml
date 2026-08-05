@@ -1,7 +1,9 @@
-name: Siklo_CI
+name: Siklo CI Pipeline
 
 on:
   push:
+    branches: [master, features/*]
+  pull_request:
     branches: [master]
 
 jobs:
@@ -11,3 +13,38 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install workspace dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Shared Schemas
+        run: pnpm shared:build
+
+      - name: Generate Prisma Client
+        run: pnpm --filter api exec prisma generate
+
+      - name: Lint Frontend (Next.js)
+        run: pnpm web:lint
+
+      - name: Build Frontend (Next.js)
+        run: pnpm web:build
+
+      - name: Lint Backend (NestJS)
+        run: pnpm api:lint
+
+      - name: Run Backend Unit Tests (Jest)
+        run: pnpm --filter api test
+
+      - name: Build Backend (NestJS)
+        run: pnpm api:build

@@ -7,12 +7,16 @@ import { CreateActivityDTO } from './schema/create-activity.schema';
 export class ActivityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createActivity(tx: Prisma.TransactionClient, dto: CreateActivityDTO) {
-    return tx.activity.create({
+  async createActivity(
+    tx: Prisma.TransactionClient | PrismaService | any,
+    dto: CreateActivityDTO,
+  ) {
+    const client = tx ?? this.prisma;
+    return client.activity.create({
       data: {
         userId: dto.userId,
         groupId: dto.groupId,
-        activity: dto.activityType,
+        activity: dto.activityType as any,
         description: dto.description,
       },
     });

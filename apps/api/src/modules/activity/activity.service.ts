@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 import { ActivityRepository } from './activity.repository';
 import { CreateActivityDTO } from './schema/create-activity.schema';
 import { Prisma } from '@/generated/prisma/client';
@@ -32,7 +32,23 @@ export class ActivityService {
     return newActivity;
   }
 
-  async getGroupActivities(groupId: string) {
+  async getGroupActivities(groupId: string, userId: string) {
+    const group = await this.prisma.group.findFirst({
+      where: {
+        id: groupId,
+        OR: [
+          { organizerId: userId },
+          { memberships: { some: { userId } } },
+        ],
+      },
+    });
+
+    if (!group) {
+      throw new ForbiddenException(
+        'You do not have access to this group activity log',
+      );
+    }
+
     return this.activityRepo.getGroupActivities(groupId);
   }
 }

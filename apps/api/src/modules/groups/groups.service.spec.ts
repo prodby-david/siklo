@@ -8,6 +8,8 @@ import { GroupsService } from './groups.service';
 import { GroupsRepository } from './groups.repository';
 import { PrismaService } from '@/database/prisma.service';
 
+import { ActivityService } from '../activity/activity.service';
+
 jest.mock('@/commons/utils/generateInviteCode', () => ({
   __esModule: true,
   default: jest.fn(() => 'ABC123'),
@@ -18,7 +20,6 @@ describe('GroupsService', () => {
   let groupsRepository: {
     findGroupByName: jest.Mock;
     createGroup: jest.Mock;
-    getAllGroups: jest.Mock;
     getUserGroup: jest.Mock;
     getGroupById: jest.Mock;
     findGroupByInviteCode: jest.Mock;
@@ -26,14 +27,17 @@ describe('GroupsService', () => {
     createMembership: jest.Mock;
     findMembership: jest.Mock;
     countMembers: jest.Mock;
+    countUserMemberships: jest.Mock;
+    findMembershipByPosition: jest.Mock;
+    findMembershipsByGroupId: jest.Mock;
   };
+  let activityService: { createActivity: jest.Mock };
   let prisma: { $transaction: jest.Mock };
 
   beforeEach(async () => {
     groupsRepository = {
       findGroupByName: jest.fn(),
       createGroup: jest.fn(),
-      getAllGroups: jest.fn(),
       getUserGroup: jest.fn(),
       getGroupById: jest.fn(),
       findGroupByInviteCode: jest.fn(),
@@ -41,6 +45,13 @@ describe('GroupsService', () => {
       createMembership: jest.fn(),
       findMembership: jest.fn(),
       countMembers: jest.fn(),
+      countUserMemberships: jest.fn().mockResolvedValue(0),
+      findMembershipByPosition: jest.fn(),
+      findMembershipsByGroupId: jest.fn().mockResolvedValue([]),
+    };
+
+    activityService = {
+      createActivity: jest.fn().mockResolvedValue({}),
     };
 
     prisma = {
@@ -51,6 +62,7 @@ describe('GroupsService', () => {
       providers: [
         GroupsService,
         { provide: GroupsRepository, useValue: groupsRepository },
+        { provide: ActivityService, useValue: activityService },
         { provide: PrismaService, useValue: prisma },
       ],
     }).compile();
@@ -177,7 +189,13 @@ describe('GroupsService', () => {
         maxMembers: 5,
         startDate: null,
       });
-      groupsRepository.countMembers.mockResolvedValue(5);
+      groupsRepository.findMembershipsByGroupId.mockResolvedValue([
+        { position: 1 },
+        { position: 2 },
+        { position: 3 },
+        { position: 4 },
+        { position: 5 },
+      ]);
 
       await expect(service.joinGroup(joinGroupBodyDto, userId)).rejects.toThrow(
         ConflictException,
@@ -194,7 +212,10 @@ describe('GroupsService', () => {
         maxMembers: 5,
         startDate: null,
       });
-      groupsRepository.countMembers.mockResolvedValue(2);
+      groupsRepository.findMembershipsByGroupId.mockResolvedValue([
+        { position: 1 },
+        { position: 2 },
+      ]);
       groupsRepository.findMembership.mockResolvedValue({
         id: 'existing-membership',
       });
@@ -214,13 +235,19 @@ describe('GroupsService', () => {
         maxMembers: 5,
         startDate: null,
       });
-      groupsRepository.countMembers.mockResolvedValue(2);
+      groupsRepository.findMembershipsByGroupId.mockResolvedValue([
+        { position: 1 },
+        { position: 2 },
+      ]);
       groupsRepository.findMembership.mockResolvedValue(null);
       groupsRepository.createMembership.mockResolvedValue(undefined);
 
       const result = await service.joinGroup(joinGroupBodyDto, userId);
 
-      expect(result).toEqual({ message: 'Group joined successfully' });
+      expect(result).toEqual({
+        message: 'Group joined successfully',
+        groupId: 'group-123',
+      });
       expect(groupsRepository.findGroupByInviteCode).toHaveBeenCalledWith(
         expect.anything(),
         joinGroupBodyDto.inviteCode,
@@ -245,22 +272,16 @@ describe('GroupsService', () => {
 
       const result = await service.getUsersGroup('user-123');
 
-      expect(result).toEqual(mockGroups);
+      expect(result).toEqual([
+        {
+          id: 'group-1',
+          name: 'Group 1',
+          _count: { memberships: 3 },
+          isCycleDone: false,
+          status: 'UPCOMING',
+        },
+      ]);
       expect(groupsRepository.getUserGroup).toHaveBeenCalledWith('user-123');
-    });
-  });
-
-  describe('getAllGroups', () => {
-    it('should return all groups', async () => {
-      const mockGroups = [
-        { id: 'group-1', name: 'Group 1', _count: { memberships: 3 } },
-      ];
-      groupsRepository.getAllGroups.mockResolvedValue(mockGroups);
-
-      const result = await service.getAllGroups();
-
-      expect(result).toEqual(mockGroups);
-      expect(groupsRepository.getAllGroups).toHaveBeenCalled();
     });
   });
 
@@ -328,24 +349,29 @@ describe('GroupsService', () => {
     });
 
     it('should start the group cycle successfully', async () => {
+      const mockUpdatedGroup = { id: groupId, startDate: new Date() };
       groupsRepository.getGroupById.mockResolvedValue({
         id: groupId,
         organizerId: userId,
         startDate: null,
         _count: { memberships: 3 },
       });
-      groupsRepository.updateGroupStartDate.mockResolvedValue({
-        id: groupId,
-        startDate: new Date(),
+      prisma.$transaction.mockImplementation(async (cb: Function) => {
+        const tx = {
+          group: {
+            update: jest.fn().mockResolvedValue(mockUpdatedGroup),
+          },
+          membership: {
+            findMany: jest.fn().mockResolvedValue([]),
+            update: jest.fn(),
+          },
+        };
+        return cb(tx);
       });
 
       const result = await service.startGroupCycle(groupId, userId);
 
-      expect(result).toBeDefined();
-      expect(groupsRepository.updateGroupStartDate).toHaveBeenCalledWith(
-        groupId,
-        expect.any(Date),
-      );
+      expect(result).toEqual(mockUpdatedGroup);
     });
   });
 });

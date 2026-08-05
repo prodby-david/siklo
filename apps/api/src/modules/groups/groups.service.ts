@@ -74,15 +74,23 @@ export class GroupsService {
         organizerId: userId,
       });
 
-      const count = await this.groupsRepository.countMembers(tx, group.id);
-      const position = count + 1;
       await this.groupsRepository.createMembership(
         tx,
         {
           groupId: group.id,
           userId,
         },
-        position,
+        1,
+      );
+
+      await this.activityService.createActivity(
+        {
+          userId,
+          groupId: group.id,
+          activityType: 'ROTATED',
+          description: 'Joined the group as Organizer at Slot #1',
+        },
+        tx,
       );
 
       return {
@@ -106,42 +114,46 @@ export class GroupsService {
 
       if (group.startDate) {
         throw new ConflictException(
-          'Cannot join a group whose cycle has already started',
+          'Group invite is closed because the cycle has already started or completed.',
         );
       }
 
-      const count = await this.groupsRepository.countMembers(tx, group.id);
+      const existingMemberships =
+        await this.groupsRepository.findMembershipsByGroupId(tx, group.id);
 
-      if (count >= group.maxMembers) {
+      if (existingMemberships.length >= group.maxMembers) {
         throw new ConflictException('Group is already full');
       }
-      const nextPosition = count + 1;
+
+      const takenPositions = new Set(
+        existingMemberships.map((m) => m.position),
+      );
 
       let position: number;
-      if (group.payoutSequence === 'FREECHOOSING') {
-        if (dto.position === undefined || dto.position === null) {
-          throw new ConflictException(
-            'Choosing a slot position is required for this group',
-          );
-        }
+      if (group.payoutSequence === 'FREECHOOSING' && dto.position) {
         if (dto.position < 1 || dto.position > group.maxMembers) {
           throw new ConflictException(
             `Invalid position. Must be between 1 and ${group.maxMembers}`,
           );
         }
-        const occupied = await this.groupsRepository.findMembershipByPosition(
-          tx,
-          group.id,
-          dto.position,
-        );
-        if (occupied) {
+        if (takenPositions.has(dto.position)) {
           throw new ConflictException(
             'This slot has already been chosen by another member',
           );
         }
         position = dto.position;
       } else {
-        position = nextPosition;
+        let firstFree = 1;
+        while (
+          firstFree <= group.maxMembers &&
+          takenPositions.has(firstFree)
+        ) {
+          firstFree++;
+        }
+        if (firstFree > group.maxMembers) {
+          throw new ConflictException('Group is already full');
+        }
+        position = firstFree;
       }
 
       await this.ensureNotMember(tx, {
@@ -167,18 +179,59 @@ export class GroupsService {
         },
         position,
       );
+
+      await this.activityService.createActivity(
+        {
+          userId,
+          groupId: group.id,
+          activityType: 'ROTATED',
+          description: `Joined the group at Slot #${position}`,
+        },
+        tx,
+      );
+
       return {
         message: 'Group joined successfully',
+        groupId: group.id,
       };
     });
   }
 
-  async getAllGroups() {
-    return this.groupsRepository.getAllGroups();
-  }
+  async getUsersGroup(userId: string, status?: string) {
+    const groups = await this.groupsRepository.getUserGroup(userId);
 
-  async getUsersGroup(userId: string) {
-    return this.groupsRepository.getUserGroup(userId);
+    const processedGroups = groups.map((group) => {
+      const verifiedPayments = (group.activities || []).filter(
+        (a) => a.activity === 'PAYMENT_VERIFIED',
+      ).length;
+      const requiredPayments = group.maxMembers || 0;
+      const isCycleDone =
+        !!group.startDate &&
+        requiredPayments > 0 &&
+        verifiedPayments >= requiredPayments;
+
+      const computedStatus = isCycleDone
+        ? 'COMPLETED'
+        : group.startDate
+        ? 'ACTIVE'
+        : 'UPCOMING';
+
+      return {
+        ...group,
+        isCycleDone,
+        status: computedStatus,
+      };
+    });
+
+    if (status === 'COMPLETED') {
+      return processedGroups.filter((g) => g.isCycleDone);
+    }
+
+    if (status === 'ACTIVE') {
+      return processedGroups.filter((g) => !g.isCycleDone);
+    }
+
+    return processedGroups;
   }
 
   async getGroupById(groupId: string, userId: string) {
@@ -255,7 +308,186 @@ export class GroupsService {
         "Group doesn't exist. Please check the invite code and try again.",
       );
     }
+    if (group.startDate) {
+      throw new ConflictException(
+        'Group invite is closed because the cycle has already started or completed.',
+      );
+    }
     return group;
+  }
+
+  async markMemberPaid(
+    groupId: string,
+    memberUserId: string,
+    organizerUserId: string,
+    cycleNumber?: number,
+  ) {
+    const group = await this.getExistingGroup(groupId, organizerUserId);
+    if (group.organizerId !== organizerUserId) {
+      throw new ForbiddenException('Only the organizer can mark members as paid');
+    }
+    if (!group.startDate) {
+      throw new ConflictException('Group cycle has not started yet');
+    }
+
+    const targetMember = group.memberships?.find(
+      (m) => m.userId === memberUserId,
+    );
+    if (!targetMember) {
+      throw new NotFoundException('Member not found in this group');
+    }
+
+    const cycleInfo = cycleNumber ? ` (Cycle ${cycleNumber})` : '';
+    const description = `${targetMember.user.name}'s payment for Turn #${targetMember.position}${cycleInfo} was verified and marked as paid by the organizer.`;
+
+    await this.activityService.createActivity({
+      userId: organizerUserId,
+      groupId,
+      activityType: 'PAYMENT_VERIFIED',
+      description,
+    });
+
+    return {
+      message: 'Member marked as paid successfully',
+      memberUserId,
+      cycleNumber,
+    };
+  }
+
+  async sendAnnouncement(
+    groupId: string,
+    message: string,
+    organizerUserId: string,
+  ) {
+    const group = await this.getExistingGroup(groupId, organizerUserId);
+    if (group.organizerId !== organizerUserId) {
+      throw new ForbiddenException(
+        'Only the organizer can post announcements',
+      );
+    }
+
+    const activity = await this.activityService.createActivity({
+      userId: organizerUserId,
+      groupId,
+      activityType: 'ANNOUNCEMENT' as any,
+      description: message,
+    });
+
+    return {
+      message: 'Announcement posted successfully',
+      activity,
+    };
+  }
+
+  async removeMember(
+    groupId: string,
+    memberUserId: string,
+    organizerUserId: string,
+  ) {
+    const group = await this.getExistingGroup(groupId, organizerUserId);
+    if (group.organizerId !== organizerUserId) {
+      throw new ForbiddenException('Only the organizer can remove members');
+    }
+    if (memberUserId === organizerUserId) {
+      throw new ForbiddenException(
+        'Organizer cannot be removed from the group',
+      );
+    }
+    if (group.startDate) {
+      throw new ConflictException(
+        'Cannot remove members after group cycle has started',
+      );
+    }
+
+    const targetMember = group.memberships?.find(
+      (m) => m.userId === memberUserId,
+    );
+    if (!targetMember) {
+      throw new NotFoundException('Member not found in this group');
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      await tx.membership.delete({
+        where: {
+          userId_groupId: {
+            userId: memberUserId,
+            groupId,
+          },
+        },
+      });
+
+      await this.activityService.createActivity(
+        {
+          userId: organizerUserId,
+          groupId,
+          activityType: 'ROTATED',
+          description: `${targetMember.user.name} was removed from the group by the organizer.`,
+        },
+        tx,
+      );
+
+      return {
+        message: 'Member removed successfully',
+        memberUserId,
+      };
+    });
+  }
+
+  async selectSlot(groupId: string, position: number, userId: string) {
+    const group = await this.getExistingGroup(groupId, userId);
+    if (group.startDate) {
+      throw new ConflictException(
+        'Cannot select slot after group cycle has started',
+      );
+    }
+    if (group.payoutSequence !== 'FREECHOOSING') {
+      throw new ConflictException(
+        'Slot selection is only available for Free Choice groups',
+      );
+    }
+    if (position < 1 || position > group.maxMembers) {
+      throw new ConflictException(
+        `Invalid position. Must be between 1 and ${group.maxMembers}`,
+      );
+    }
+
+    return this.prisma.$transaction(async (tx) => {
+      const occupied = await this.groupsRepository.findMembershipByPosition(
+        tx,
+        groupId,
+        position,
+      );
+      if (occupied && occupied.userId !== userId) {
+        throw new ConflictException(
+          'This slot has already been claimed by another member',
+        );
+      }
+
+      await tx.membership.update({
+        where: {
+          userId_groupId: {
+            userId,
+            groupId,
+          },
+        },
+        data: { position },
+      });
+
+      await this.activityService.createActivity(
+        {
+          userId,
+          groupId,
+          activityType: 'ROTATED',
+          description: `Selected Slot #${position}`,
+        },
+        tx,
+      );
+
+      return {
+        message: 'Slot selected successfully',
+        position,
+      };
+    });
   }
 
   async deleteGroup(groupId: string, userId: string) {
@@ -280,5 +512,35 @@ export class GroupsService {
         message: 'Group deleted successfully',
       };
     });
+  }
+
+  async updateGroupDescription(
+    groupId: string,
+    description: string | undefined,
+    userId: string,
+  ) {
+    const group = await this.getExistingGroup(groupId, userId);
+    if (group.organizerId !== userId) {
+      throw new ForbiddenException(
+        'Only the organizer can update the group description',
+      );
+    }
+
+    const updatedGroup = await this.groupsRepository.updateGroupDescription(
+      groupId,
+      description,
+    );
+
+    await this.activityService.createActivity({
+      userId,
+      groupId,
+      activityType: 'ROTATED',
+      description: 'Group description was updated by the organizer',
+    });
+
+    return {
+      message: 'Group description updated successfully',
+      group: updatedGroup,
+    };
   }
 }

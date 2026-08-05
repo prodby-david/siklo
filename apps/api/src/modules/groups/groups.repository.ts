@@ -20,26 +20,32 @@ export class GroupsRepository {
     });
   }
 
-  async getAllGroups() {
-    return this.prisma.group.findMany({
-      include: {
-        _count: {
-          select: { memberships: true },
-        },
-      },
-    });
-  }
-
   async getUserGroup(userId: string) {
     return this.prisma.group.findMany({
       where: {
-        memberships: {
-          some: { userId },
-        },
+        OR: [
+          { organizerId: userId },
+          {
+            memberships: {
+              some: { userId },
+            },
+          },
+        ],
       },
       include: {
         _count: {
           select: { memberships: true },
+        },
+        memberships: {
+          select: {
+            id: true,
+            userId: true,
+            position: true,
+            user: { select: { id: true, name: true } },
+          },
+        },
+        activities: {
+          where: { activity: 'PAYMENT_VERIFIED' },
         },
       },
     });
@@ -49,13 +55,25 @@ export class GroupsRepository {
     return this.prisma.group.findFirst({
       where: {
         id: groupId,
-        memberships: {
-          some: { userId },
-        },
+        OR: [
+          { organizerId: userId },
+          {
+            memberships: {
+              some: { userId },
+            },
+          },
+        ],
       },
       include: {
         _count: {
           select: { memberships: true },
+        },
+        organizer: {
+          select: {
+            id: true,
+            name: true,
+            contactNumber: true,
+          },
         },
         memberships: {
           include: {
@@ -63,6 +81,7 @@ export class GroupsRepository {
               select: {
                 id: true,
                 name: true,
+                contactNumber: true,
               },
             },
           },
@@ -120,6 +139,16 @@ export class GroupsRepository {
     });
   }
 
+  async findMembershipsByGroupId(
+    tx: Prisma.TransactionClient,
+    groupId: string,
+  ) {
+    return tx.membership.findMany({
+      where: { groupId },
+      select: { position: true },
+    });
+  }
+
   async countUserMemberships(tx: Prisma.TransactionClient, userId: string) {
     return tx.membership.count({
       where: { userId },
@@ -147,12 +176,20 @@ export class GroupsRepository {
         name: true,
         maxMembers: true,
         payoutSequence: true,
+        startDate: true,
         memberships: {
           select: {
             position: true,
           },
         },
       },
+    });
+  }
+
+  async updateGroupDescription(groupId: string, description?: string) {
+    return this.prisma.group.update({
+      where: { id: groupId },
+      data: { description },
     });
   }
 }
