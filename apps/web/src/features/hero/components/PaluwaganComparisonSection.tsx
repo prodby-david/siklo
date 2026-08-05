@@ -165,7 +165,7 @@ function ComparisonCard({
 
 export default function PaluwaganComparisonSection() {
   return (
-    <section className="w-full py-16 sm:py-24 bg-background border-y border-neutral-border relative overflow-hidden">
+    <section className="w-full py-16 sm:py-24 bg-transparent relative z-10 border-y border-neutral-border overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center gap-12">
         <motion.div
           initial={{ opacity: 0, y: 25 }}

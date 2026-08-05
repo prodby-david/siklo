@@ -1,69 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RefreshCw } from "lucide-react";
-import { useGroupDetails } from "@/features/groups/hooks/useGroupDetails";
+import { ArrowLeft } from "lucide-react";
 import GroupHero from "@/features/groups/components/details/GroupHero";
 import GroupStatsGrid from "@/features/groups/components/details/GroupStatsGrid";
 import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
-import GroupRotationSlots from "@/features/groups/components/details/GroupRotationSlots";
-import GroupCycleMembers from "@/features/groups/components/details/GroupCycleMembers";
+import GroupPayoutProgress from "@/features/groups/components/details/GroupPayoutProgress";
 import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
-import DeleteGroupDialog from "@/features/groups/components/details/DeleteGroupDialog";
+import GroupTurnShowcase from "@/features/groups/components/details/GroupTurnShowcase";
 import Loader from "@/shared/components/loader/Loader";
-import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
-import useStartGroupCycle from "@/features/groups/hooks/useStartGroupCycle";
-import useDeleteGroup from "@/features/groups/hooks/useDeleteGroup";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import axios from "axios";
+import { useGroupPageController } from "@/features/groups/hooks/useGroupPageController";
 
 export default function GroupPage() {
-  const router = useRouter();
-  const { data, isLoading, copied, handleCopyInviteCode, timeline } =
-    useGroupDetails();
-  const { data: currentUser } = useGetCurrentName();
-  const { mutateAsync: startCycle, isPending: isStarting } =
-    useStartGroupCycle();
-  const { mutateAsync: deleteGroup, isPending: isDeleting } = useDeleteGroup();
-
-  const isOrganizer = currentUser?.id === data?.organizerId;
-  const hasStarted = !!data?.startDate;
-  const isMembersFull =
-    (data?._count?.memberships || 0) >= (data?.maxMembers || 0);
-
-  const handleStartCycle = async () => {
-    if (!data?.id) return;
-    try {
-      await startCycle(data.id);
-      toast.success("Group cycle started successfully!");
-    } catch (err: unknown) {
-      const message = axios.isAxiosError(err)
-        ? err.response?.data?.message || err.message
-        : err instanceof Error
-        ? err.message
-        : "Failed to start cycle";
-      toast.error(message);
-    }
-  };
-
-  const handleDeleteGroup = async () => {
-    if (!data?.id) return;
-    try {
-      await deleteGroup(data.id);
-      toast.success("Group deleted successfully!");
-      setTimeout(() => {
-        router.push("/group");
-      }, 1000);
-    } catch (err: unknown) {
-      const message = axios.isAxiosError(err)
-        ? err.response?.data?.message || err.message
-        : err instanceof Error
-        ? err.message
-        : "Failed to delete group";
-      toast.error(message);
-    }
-  };
+  const {
+    data,
+    isLoading,
+    copied,
+    handleCopyInviteCode,
+    timeline,
+    isOrganizer,
+    hasStarted,
+    isMembersFull,
+    isCycleDone,
+    handleStartCycle,
+    isStarting,
+    handleDeleteGroup,
+    isDeleting,
+    currentUserId,
+  } = useGroupPageController();
 
   if (isLoading) {
     return (
@@ -109,6 +73,7 @@ export default function GroupPage() {
         </div>
 
         <GroupHero
+          groupId={data.id}
           name={data.name}
           description={data.description}
           billingCycle={data.billingCycle}
@@ -116,6 +81,8 @@ export default function GroupPage() {
           copied={copied}
           onCopyInviteCode={handleCopyInviteCode}
           hasStarted={hasStarted}
+          isCycleDone={isCycleDone}
+          isOrganizer={isOrganizer}
         />
 
         <GroupStatsGrid
@@ -123,23 +90,36 @@ export default function GroupPage() {
           maxMembers={data.maxMembers}
           cycleDuration={data.cycleDuration}
           billingCycle={data.billingCycle}
-          membershipsCount={data._count?.memberships || 1}
+          membershipsCount={data._count?.memberships ?? 0}
           totalPayout={timeline.totalPayout}
           totalRounds={timeline.totalRounds}
         />
 
+        <GroupTurnShowcase
+          groupId={data.id}
+          name={data.name}
+          memberships={data.memberships}
+          organizerId={data.organizerId}
+          contributionAmount={data.contributionAmount}
+          maxMembers={data.maxMembers}
+          cycleDuration={data.cycleDuration}
+          billingCycle={data.billingCycle}
+          payoutSequence={data.payoutSequence}
+          startDate={data.startDate}
+          isOrganizer={isOrganizer}
+          hasStarted={hasStarted}
+          currentUserId={currentUserId}
+          isCycleDone={isCycleDone}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-7 flex flex-col gap-6">
-            <GroupRotationSlots
-              maxMembers={data.maxMembers}
-              membershipsCount={data._count?.memberships || 1}
-              memberships={data.memberships}
-            />
             {hasStarted && (
               <div>
                 <GroupActivityLogs
                   group={data}
                   memberships={data.memberships}
+                  isCycleDone={isCycleDone}
                 />
               </div>
             )}
@@ -153,33 +133,30 @@ export default function GroupPage() {
               billingCycle={data.billingCycle}
               payoutSequence={data.payoutSequence}
               organizerId={data.organizerId}
+              organizerName={data.organizer?.name}
+              organizerContact={data.organizer?.contactNumber}
+              isOrganizer={isOrganizer}
+              hasStarted={hasStarted}
+              onStartCycle={handleStartCycle}
+              isStarting={isStarting}
+              isMembersFull={isMembersFull}
+              onDeleteGroup={handleDeleteGroup}
+              isDeleting={isDeleting}
+              membershipsCount={data._count?.memberships ?? 0}
+              isCycleDone={isCycleDone}
             />
-            <GroupCycleMembers
-              memberships={data.memberships}
-              organizerId={data.organizerId}
-              startDate={data.startDate}
-              billingCycle={data.billingCycle}
-            />
-            {isOrganizer && !hasStarted ? (
-              <div className="flex flex-col gap-2.5 w-full">
-                <button
-                  disabled={!isMembersFull || isStarting || isDeleting}
-                  onClick={handleStartCycle}
-                  className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
-                >
-                  <RefreshCw
-                    size={16}
-                    className={isStarting ? "animate-spin" : ""}
-                  />
-                  {isStarting ? "Starting..." : "Start Cycle"}
-                </button>
-                <DeleteGroupDialog
-                  isDeleting={isDeleting}
-                  isStarting={isStarting}
-                  onDelete={handleDeleteGroup}
-                />
-              </div>
-            ) : null}
+            {hasStarted && (
+              <GroupPayoutProgress
+                groupId={data.id}
+                memberships={data.memberships}
+                maxMembers={data.maxMembers}
+                contributionAmount={data.contributionAmount}
+                startDate={data.startDate}
+                billingCycle={data.billingCycle}
+                currentCycle={data.currentCycle}
+                cycleDuration={data.cycleDuration}
+              />
+            )}
           </div>
         </div>
       </div>

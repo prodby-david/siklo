@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LayoutDashboard, Users, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Settings, LogOut, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
 import { useSignOut } from "@/features/auth/signout/hooks/useSignOut";
@@ -14,6 +14,7 @@ export default function Sidebar() {
   const navItems = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "group", label: "Groups", icon: Users },
+    { id: "invites", label: "Invites & Requests", icon: Mail },
     { id: "settings", label: "Settings", icon: Settings },
   ];
 
@@ -22,7 +23,7 @@ export default function Sidebar() {
       <div className="flex items-center justify-center gap-2 mb-6 px-2">
         <Image src={"/images/logo.svg"} width={70} height={70} alt="Logo" />
       </div>
-      <nav className="flex-1 space-y-1">
+      <nav className="flex-1 space-y-1 overflow-y-auto pr-1">
         {navItems.map((item) => {
           const IconComponent = item.icon;
           const isActive =

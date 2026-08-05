@@ -25,4 +25,5 @@ export interface LogEvent {
 export interface GroupActivityLogsProps {
   group: Group;
   memberships?: Membership[];
+  isCycleDone?: boolean;
 }

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { CreditCard, Landmark } from "lucide-react";
-import Input from "@/features/auth/signup/components/ui/Input";
+import { FormInput as Input } from "@/shared/components/inputs";
 
 export default function PayoutSettings() {
   const [payouts, setPayouts] = useState({

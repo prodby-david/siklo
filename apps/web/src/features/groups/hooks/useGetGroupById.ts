@@ -5,7 +5,7 @@ export default function useGetGroupById(id: string) {
   return useQuery({
     queryKey: ["groups", id],
     queryFn: () => getGroupById(id),
-    staleTime: 1000 * 60 * 5,
+    staleTime: 5000,
     retry: 1,
   });
 }

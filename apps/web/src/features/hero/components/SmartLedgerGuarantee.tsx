@@ -33,7 +33,7 @@ export const SmartLedgerGuarantee = () => {
         whileInView="visible"
         viewport={{ once: true, margin: "-30px" }}
         variants={cardVariants}
-        className="rounded-3xl border border-brand-accent/20 bg-background backdrop-blur-xl p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-brand-accent/50 h-full"
+        className="rounded-3xl border border-brand-accent/20 bg-background/80 backdrop-blur-xl relative z-10 p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-brand-accent/50 h-full"
       >
         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/30">
           <Notebook className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -57,7 +57,7 @@ export const SmartLedgerGuarantee = () => {
         whileInView="visible"
         viewport={{ once: true, margin: "-30px" }}
         variants={cardVariants}
-        className="rounded-3xl border border-brand-accent/20 bg-background backdrop-blur-xl p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-brand-accent/50 h-full"
+        className="rounded-3xl border border-brand-accent/20 bg-background/80 backdrop-blur-xl relative z-10 p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-brand-accent/50 h-full"
       >
         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/30">
           <BellRing className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -81,7 +81,7 @@ export const SmartLedgerGuarantee = () => {
         whileInView="visible"
         viewport={{ once: true, margin: "-30px" }}
         variants={cardVariants}
-        className="rounded-3xl border border-emerald-500/20 bg-background backdrop-blur-xl p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-emerald-500/50 h-full sm:col-span-2 lg:col-span-1"
+        className="rounded-3xl border border-emerald-500/20 bg-background/80 backdrop-blur-xl relative z-10 p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-emerald-500/50 h-full sm:col-span-2 lg:col-span-1"
       >
         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
           <Lock className="w-5 h-5 sm:w-6 sm:h-6" />

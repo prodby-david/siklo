@@ -5,15 +5,14 @@ import {
   joinGroupBodySchema,
 } from "@siklo/shared-schemas";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import useJoinGroup from "./useJoinGroup";
-import {
-  getGroupInvitePreview,
-  type GroupPreviewResponse,
-} from "../api/getGroupInvitePreview";
+import type { GroupPreviewResponse } from "../api/getGroupInvitePreview";
 import { toast } from "sonner";
 import axios from "axios";
 
 export default function useInviteCode() {
+  const router = useRouter();
   const joinGroup = useJoinGroup();
   const {
     register,
@@ -52,13 +51,18 @@ export default function useInviteCode() {
 
   const handleJoin = async (code: string, slot?: number) => {
     try {
-      await joinGroup.mutateAsync({
+      const res = await joinGroup.mutateAsync({
         inviteCode: code,
         position: slot,
       });
       toast.success("Group joined successfully");
-      handleReset();
-      setShowModal(false);
+      if (res?.groupId) {
+        router.push(`/group/${res.groupId}`);
+      }
+      setTimeout(() => {
+        handleReset();
+        setShowModal(false);
+      }, 500);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data.message || "Failed to join group");
@@ -69,32 +73,7 @@ export default function useInviteCode() {
   };
 
   const onSubmit = async (data: JoinGroupBodyDTO) => {
-    if (step === "code") {
-      setLoadingPreview(true);
-      try {
-        const previewData = await getGroupInvitePreview(data.inviteCode);
-        setPreview(previewData);
-        if (previewData.payoutSequence === "FREECHOOSING") {
-          setStep("slots");
-        } else {
-          await handleJoin(data.inviteCode);
-        }
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data.message || "Failed to find group");
-        } else {
-          toast.error("An unexpected error occurred. Please try again later.");
-        }
-      } finally {
-        setLoadingPreview(false);
-      }
-    } else if (step === "slots") {
-      if (!selectedSlot) {
-        toast.error("Please select a payout slot position");
-        return;
-      }
-      await handleJoin(data.inviteCode, selectedSlot);
-    }
+    await handleJoin(data.inviteCode);
   };
 
   return {

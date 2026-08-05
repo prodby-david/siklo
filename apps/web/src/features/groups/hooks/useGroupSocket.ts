@@ -24,6 +24,9 @@ export default function useGroupSocket(groupId: string) {
     socket.on("connect", () => {
       setIsConnected(true);
       socket.emit("join-group", groupId);
+      queryClient.invalidateQueries({
+        queryKey: ["groups", groupId],
+      });
     });
 
     socket.on("disconnect", () => {
@@ -33,6 +36,12 @@ export default function useGroupSocket(groupId: string) {
     socket.on("activity.created", () => {
       queryClient.invalidateQueries({
         queryKey: [ACTIVITY_QUERY_KEY, groupId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["groups", groupId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["groups"],
       });
     });
 

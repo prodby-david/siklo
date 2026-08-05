@@ -26,7 +26,7 @@ export const CycleTurnShowcase = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full rounded-3xl border border-brand-accent/30 bg-background p-4 sm:p-8 relative overflow-hidden"
+      className="w-full rounded-3xl border border-brand-accent/30 bg-background/80 backdrop-blur-xl relative z-10 p-4 sm:p-8 relative overflow-hidden"
     >
       <div className="absolute top-0 right-0 w-80 h-80 bg-brand-accent/10 rounded-full blur-3xl -z-10 pointer-events-none" />
 

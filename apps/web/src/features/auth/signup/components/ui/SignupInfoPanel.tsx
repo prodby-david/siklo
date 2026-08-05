@@ -1,4 +1,4 @@
-import { Users, TrendingUp, Sparkles } from "lucide-react";
+import { Users, TrendingUp, ShieldCheck } from "lucide-react";
 import AuthInfoPanel, { FeatureHighlight } from "@/features/auth/shared/components/AuthInfoPanel";
 
 const signupHighlights: FeatureHighlight[] = [
@@ -13,7 +13,7 @@ const signupHighlights: FeatureHighlight[] = [
     description: "Leverage group saving power to hit milestones efficiently.",
   },
   {
-    icon: <Sparkles className="h-4 w-4" />,
+    icon: <ShieldCheck className="h-4 w-4" />,
     title: "Simplify Finance",
     description: "Eliminate manual spreadsheets with automated group logs.",
   },

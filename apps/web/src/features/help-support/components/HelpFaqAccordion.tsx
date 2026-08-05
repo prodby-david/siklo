@@ -21,11 +21,11 @@ export default function HelpFaqAccordion({ items }: HelpFaqAccordionProps) {
         return (
           <div
             key={index}
-            className="border border-neutral-border/50 rounded-2xl bg-background overflow-hidden transition-all shadow-sm"
+            className="border border-neutral-border rounded-2xl bg-background overflow-hidden transition-all shadow-sm relative z-10"
           >
             <button
               onClick={() => toggleIndex(index)}
-              className="w-full flex items-center justify-between p-5 text-left font-bold text-foreground text-xs sm:text-sm hover:bg-neutral-table-stripe/20 cursor-pointer transition-colors"
+              className="w-full flex items-center justify-between p-5 text-left font-bold text-foreground text-xs sm:text-sm hover:bg-neutral-subtext/5 cursor-pointer transition-colors"
             >
               <span>{item.question}</span>
               {isOpen ? (
@@ -37,10 +37,10 @@ export default function HelpFaqAccordion({ items }: HelpFaqAccordionProps) {
 
             <div
               className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                isOpen ? "max-h-[500px] border-t border-neutral-border/30" : "max-h-0"
+                isOpen ? "max-h-[500px] border-t border-neutral-border/60" : "max-h-0"
               }`}
             >
-              <div className="p-5 text-xs sm:text-sm text-neutral-subtext leading-relaxed bg-neutral-table-stripe/10">
+              <div className="p-5 text-xs sm:text-sm text-neutral-subtext leading-relaxed bg-background">
                 {item.answer}
               </div>
             </div>

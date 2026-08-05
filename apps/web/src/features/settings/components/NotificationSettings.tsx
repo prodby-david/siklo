@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, Phone, BellRing, Sparkles } from "lucide-react";
+import { Mail, Phone, BellRing, Zap } from "lucide-react";
 
 export default function NotificationSettings() {
   const [settings, setSettings] = useState({
@@ -109,7 +109,7 @@ export default function NotificationSettings() {
         <div className="flex items-center justify-between gap-4 p-4 border border-neutral-border rounded-2xl bg-background hover:shadow-sm transition-all duration-200">
           <div className="flex gap-3">
             <div className="w-8 h-8 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-accent shrink-0">
-              <Sparkles className="w-4 h-4" />
+              <Zap className="w-4 h-4" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-foreground">

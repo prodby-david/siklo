@@ -7,6 +7,9 @@ import {
   Loader2,
   Plus,
   RefreshCw,
+  Shuffle,
+  ListOrdered,
+  Touchpad,
 } from "lucide-react";
 import { CreateGroupFormFieldsProps } from "@/features/groups/types/create.group.field";
 import useCreateGroupFormFields from "../../hooks/useCreateGroupFormFields";
@@ -22,6 +25,8 @@ export default function CreateGroupFormFields(
     handleSubmit,
     selectedBillingCycle,
     handleBillingCycleSelect,
+    selectedPayoutSequence,
+    handlePayoutSequenceSelect,
   } = useCreateGroupFormFields(props);
 
   const preventDecimal = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -91,6 +96,82 @@ export default function CreateGroupFormFields(
             disabled={isPending}
             icon={<Users className="w-4 h-4 text-neutral-subtext" />}
           />
+
+          <div className="space-y-2">
+            <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+              Payout Sequence Method
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => handlePayoutSequenceSelect("RANDOM")}
+                className={`p-3 text-left rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  selectedPayoutSequence === "RANDOM"
+                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent shadow-xs"
+                    : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Shuffle className="w-4 h-4 text-brand-accent shrink-0" />
+                  <span className="text-xs font-extrabold text-foreground">
+                    Random
+                  </span>
+                </div>
+                <span className="text-[10px] text-neutral-subtext leading-tight block">
+                  Positions are randomly shuffled when cycle starts.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => handlePayoutSequenceSelect("MANUAL")}
+                className={`p-3 text-left rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  selectedPayoutSequence === "MANUAL"
+                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent shadow-xs"
+                    : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <ListOrdered className="w-4 h-4 text-brand-accent shrink-0" />
+                  <span className="text-xs font-extrabold text-foreground">
+                    First Come
+                  </span>
+                </div>
+                <span className="text-[10px] text-neutral-subtext leading-tight block">
+                  First-come, first-served based on order of joining.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => handlePayoutSequenceSelect("FREECHOOSING")}
+                className={`p-3 text-left rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  selectedPayoutSequence === "FREECHOOSING"
+                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent shadow-xs"
+                    : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Touchpad className="w-4 h-4 text-brand-accent shrink-0" />
+                  <span className="text-xs font-extrabold text-foreground">
+                    Free Choice
+                  </span>
+                </div>
+                <span className="text-[10px] text-neutral-subtext leading-tight block">
+                  Members choose their vacant turn slot when joining.
+                </span>
+              </button>
+            </div>
+            <input type="hidden" {...register("payoutSequence")} />
+            {errors.payoutSequence && (
+              <p className="text-danger text-[10px] font-medium mt-0.5">
+                {errors.payoutSequence.message}
+              </p>
+            )}
+          </div>
 
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">

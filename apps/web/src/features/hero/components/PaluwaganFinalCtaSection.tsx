@@ -3,7 +3,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Sparkles,
   ShieldCheck,
   CheckCircle2,
   RefreshCcw,
@@ -12,7 +11,7 @@ import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
 
 export default function PaluwaganFinalCtaSection() {
   return (
-    <section className="w-full py-16 sm:py-24 bg-background border-b border-neutral-border relative overflow-hidden">
+    <section className="w-full py-16 sm:py-24 bg-transparent relative z-10 border-b border-neutral-border overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
@@ -25,7 +24,7 @@ export default function PaluwaganFinalCtaSection() {
           <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-brand-accent/20 rounded-full blur-3xl pointer-events-none" />
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-accent/20 border border-brand-accent/35 text-brand-accent text-xs font-extrabold relative z-10">
-            <Sparkles className="w-3.5 h-3.5" />
+            <RefreshCcw className="w-3.5 h-3.5" />
             <span>Ready to Start?</span>
           </div>
 

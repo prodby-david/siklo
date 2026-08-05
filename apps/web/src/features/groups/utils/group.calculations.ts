@@ -9,7 +9,7 @@ export function getPayoutDate(
   const start = new Date(startDate);
   const daysPerCycle =
     BILLING_CYCLE_DAYS[billingCycle as keyof typeof BILLING_CYCLE_DAYS] || 1;
-  const addedDays = (position - 1) * daysPerCycle;
+  const addedDays = 7 + (position - 1) * daysPerCycle;
   return new Date(start.getTime() + addedDays * 24 * 60 * 60 * 1000);
 }
 
@@ -27,7 +27,7 @@ export function calculateCycleDetails(
   const totalRounds = members * duration;
   const daysPerCycle =
     BILLING_CYCLE_DAYS[billingCycle as keyof typeof BILLING_CYCLE_DAYS] || 1;
-  const totalDays = totalRounds * daysPerCycle;
+  const totalDays = 7 + totalRounds * daysPerCycle;
 
   return {
     totalPayout,

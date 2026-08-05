@@ -8,7 +8,7 @@ import EmptyGroupState from "../EmptyGroupState";
 import Loader from "@/shared/components/loader/Loader";
 
 export default function CycleCards() {
-  const { data, isLoading } = useGetGroup();
+  const { data = [], isLoading } = useGetGroup("ACTIVE");
 
   if (isLoading) {
     return <Loader text="Retrieving your groups..." />;
@@ -22,7 +22,7 @@ export default function CycleCards() {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full mt-3">
       {data.slice(0, 2).map((group: Group) => {
         const extendedGroup = group as ExtendedGroup;
-        const membershipsCount = extendedGroup._count?.memberships || 1;
+        const membershipsCount = extendedGroup._count?.memberships ?? 0;
         const percentFilled = Math.min(
           100,
           (membershipsCount / extendedGroup.maxMembers) * 100,

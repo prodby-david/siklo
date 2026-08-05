@@ -1,6 +1,7 @@
 export interface User {
   id: string;
   name: string;
+  contactNumber?: string;
 }
 
 export interface Membership {
@@ -16,6 +17,11 @@ export interface Group {
   description?: string | null;
   inviteCode?: string;
   organizerId: string;
+  organizer?: {
+    id: string;
+    name: string;
+    contactNumber: string;
+  };
   createdAt: string | Date;
   startDate?: string | Date | null;
   billingCycle: string;
@@ -26,6 +32,7 @@ export interface Group {
 }
 
 export interface GroupHeroProps {
+  groupId?: string;
   name: string;
   description: string | null;
   billingCycle: string;
@@ -33,6 +40,8 @@ export interface GroupHeroProps {
   copied: boolean;
   onCopyInviteCode: () => void;
   hasStarted?: boolean;
+  isCycleDone?: boolean;
+  isOrganizer?: boolean;
 }
 
 export interface GroupRotationSlotsProps {

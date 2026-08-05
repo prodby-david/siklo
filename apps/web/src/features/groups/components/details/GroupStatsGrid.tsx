@@ -1,4 +1,4 @@
-import { PhilippinePeso, Users, Clock, Sparkles } from "lucide-react";
+import { PhilippinePeso, Users, Clock, Coins } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { GroupStatsGridProps } from "../../types/group.types";
 
@@ -23,12 +23,12 @@ export default function GroupStatsGrid({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      <div className="p-6 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+      <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
         <div className="flex flex-col gap-1">
-          <span className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
             Payout Per Round
           </span>
-          <p className="text-2xl font-bold text-brand-accent flex items-center gap-0.5">
+          <p className="text-xl sm:text-2xl font-bold text-brand-accent flex items-center gap-0.5">
             <PhilippinePeso className="w-5 h-5 shrink-0" />
             {totalPayout.toLocaleString(undefined, {
               minimumFractionDigits: 2,
@@ -38,17 +38,17 @@ export default function GroupStatsGrid({
             ₱{formattedContribution} × {maxMembers} members
           </span>
         </div>
-        <div className="flex items-center justify-center w-11 h-11 bg-brand-accent/10 rounded-full shrink-0">
-          <Sparkles className="w-5 h-5 text-brand-accent" />
+        <div className="flex items-center justify-center w-10 h-10 bg-brand-accent/10 rounded-2xl shrink-0">
+          <Coins className="w-5 h-5 text-brand-accent" />
         </div>
       </div>
 
-      <div className="p-6 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+      <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
         <div className="flex flex-col gap-1">
-          <span className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
             Contribution
           </span>
-          <p className="text-2xl font-bold text-foreground flex items-center gap-0.5">
+          <p className="text-xl sm:text-2xl font-bold text-foreground flex items-center gap-0.5">
             <PhilippinePeso className="w-5 h-5 shrink-0" />
             {Number(contributionAmount).toLocaleString(undefined, {
               minimumFractionDigits: 2,
@@ -58,19 +58,19 @@ export default function GroupStatsGrid({
             Due {billingLabel.toLowerCase()}
           </span>
         </div>
-        <div className="flex items-center justify-center w-11 h-11 bg-brand-accent/10 rounded-full shrink-0">
+        <div className="flex items-center justify-center w-10 h-10 bg-brand-accent/10 rounded-2xl shrink-0">
           <PhilippinePeso className="w-5 h-5 text-brand-accent" />
         </div>
       </div>
 
-      <div className="p-6 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+      <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
         <div className="flex flex-col gap-1 w-full mr-2">
-          <span className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
             Members Joined
           </span>
-          <p className="text-2xl font-bold text-foreground">
+          <p className="text-xl sm:text-2xl font-bold text-foreground">
             {membershipsCount}{" "}
-            <span className="text-sm font-normal text-neutral-subtext">
+            <span className="text-xs font-normal text-neutral-subtext">
               / {maxMembers}
             </span>
           </p>
@@ -83,19 +83,19 @@ export default function GroupStatsGrid({
             />
           </div>
         </div>
-        <div className="flex items-center justify-center w-11 h-11 bg-sky-500/10 rounded-full shrink-0">
+        <div className="flex items-center justify-center w-10 h-10 bg-sky-500/10 rounded-2xl shrink-0">
           <Users className="w-5 h-5 text-sky-600" />
         </div>
       </div>
 
-      <div className="p-6 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+      <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
         <div className="flex flex-col gap-1">
-          <span className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
+          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
             Rotations
           </span>
-          <p className="text-2xl font-bold text-foreground">
+          <p className="text-xl sm:text-2xl font-bold text-foreground">
             {cycleDuration}{" "}
-            <span className="text-sm font-normal text-neutral-subtext">
+            <span className="text-xs font-normal text-neutral-subtext">
               {cycleDuration === 1 ? "Cycle" : "Cycles"}
             </span>
           </p>
@@ -103,7 +103,7 @@ export default function GroupStatsGrid({
             {totalRounds} total payout rounds
           </span>
         </div>
-        <div className="flex items-center justify-center w-11 h-11 bg-indigo-500/10 rounded-full shrink-0">
+        <div className="flex items-center justify-center w-10 h-10 bg-indigo-500/10 rounded-2xl shrink-0">
           <Clock className="w-5 h-5 text-indigo-600" />
         </div>
       </div>

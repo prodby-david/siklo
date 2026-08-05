@@ -50,6 +50,17 @@ export default function useCreateGroupFormFields(
     });
   };
 
+  const selectedPayoutSequence =
+    props.payoutSequence || watch("payoutSequence") || "RANDOM";
+
+  const handlePayoutSequenceSelect = (val: string) => {
+    setValue("payoutSequence", val as CreateGroupData["payoutSequence"], {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
+
   return {
     register,
     errors,
@@ -59,5 +70,7 @@ export default function useCreateGroupFormFields(
     handleSubmit,
     selectedBillingCycle,
     handleBillingCycleSelect,
+    selectedPayoutSequence,
+    handlePayoutSequenceSelect,
   };
 }

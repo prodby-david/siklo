@@ -7,6 +7,7 @@ import {
   Play,
   XCircle,
   RefreshCw,
+  Megaphone,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -56,6 +57,11 @@ export const ACTIVITY_TYPE_CONFIG: Record<string, ActivityConfig> = {
     icon: RefreshCw,
     iconColor: "text-sky-500 bg-sky-500/10 border-sky-500/20",
     label: "Rotated",
+  },
+  ANNOUNCEMENT: {
+    icon: Megaphone,
+    iconColor: "text-brand-accent bg-brand-accent/10 border-brand-accent/30",
+    label: "Organizer Announcement",
   },
 } as const;
 

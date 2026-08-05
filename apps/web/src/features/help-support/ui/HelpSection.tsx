@@ -22,7 +22,7 @@ export default function HelpSection() {
   const currentFaqs = currentCategory ? currentCategory.items : [];
 
   return (
-    <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-8">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-3">
           Help & Support Center

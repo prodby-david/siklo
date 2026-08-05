@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Send, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
-import Input from "@/features/auth/signup/components/ui/Input";
+import { FormInput as Input } from "@/shared/components/inputs";
 
 export default function HelpContactForm() {
   const [name, setName] = useState("");
@@ -29,7 +29,7 @@ export default function HelpContactForm() {
   };
 
   return (
-    <div className="border border-neutral-border/50 rounded-2xl bg-background p-6 sm:p-8 shadow-sm">
+    <div className="border border-neutral-border rounded-2xl bg-background p-6 sm:p-8 shadow-sm relative z-10">
       <h2 className="text-lg font-bold text-foreground mb-2">Still need help?</h2>
       <p className="text-xs text-neutral-subtext mb-6">
         Can&apos;t find what you are looking for? Submit a support request and our team will get back to you within 24 hours.

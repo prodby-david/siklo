@@ -24,14 +24,12 @@ import {
 interface FloatingTrackerVisualizerProps {
   members?: Member[];
   stats?: CycleStats;
-  isSplashFinished?: boolean;
 }
 
 export const FloatingTrackerVisualizer = ({
   stats = defaultStats,
-  isSplashFinished = true,
 }: FloatingTrackerVisualizerProps) => {
-  const animateState = isSplashFinished ? "visible" : "hidden";
+  const animateState = "visible";
 
   return (
     <div className="absolute inset-0 pointer-events-none z-20 overflow-visible">

@@ -32,16 +32,15 @@ export const HeroSection = ({
   secondaryCtaText = "How Siklo Works",
   members,
   stats,
-  isSplashFinished = false,
 }: HeroProps) => {
   return (
-    <section className="w-full min-h-[calc(100vh-3.5rem)] bg-background flex items-center justify-center relative overflow-hidden py-12 sm:py-16">
+    <section className="w-full min-h-[calc(100vh-3.5rem)] bg-transparent relative z-10 flex items-center justify-center relative overflow-hidden py-12 sm:py-16">
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 w-full z-10 flex flex-col items-center justify-center text-center">
         <motion.div
           className="relative w-full max-w-3xl flex flex-col items-center justify-center text-center gap-6 my-auto"
           variants={heroContainerVariants}
           initial="hidden"
-          animate={isSplashFinished ? "visible" : "hidden"}
+          animate="visible"
         >
           <motion.div
             variants={heroVisualizerVariants}
@@ -50,7 +49,6 @@ export const HeroSection = ({
             <CycleVisualizer
               members={members}
               stats={stats}
-              isSplashFinished={isSplashFinished}
             />
           </motion.div>
 
@@ -60,14 +58,14 @@ export const HeroSection = ({
 
           <motion.h1
             variants={heroTitleVariants}
-            className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-foreground leading-tight tracking-tight relative z-10"
+            className="text-3xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight relative z-10"
           >
             {title}
           </motion.h1>
 
           <motion.p
             variants={heroSubtitleVariants}
-            className="max-w-2xl text-base sm:text-lg text-neutral-subtext leading-relaxed font-normal relative z-10"
+            className="max-w-2xl text-xs sm:text-sm text-neutral-subtext leading-relaxed font-normal relative z-10"
           >
             {subtitle}
           </motion.p>
@@ -83,9 +81,9 @@ export const HeroSection = ({
             />
             <Link
               href="/how-it-works"
-              className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl border border-neutral-border bg-background text-xs sm:text-sm font-extrabold text-neutral-subtext hover:bg-neutral-table-stripe hover:text-foreground cursor-pointer transition-all duration-150 active:scale-95"
+              className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl border border-neutral-border bg-background text-xs sm:text-sm font-bold text-neutral-subtext hover:bg-neutral-table-stripe hover:text-foreground cursor-pointer transition-all duration-150 active:scale-95"
             >
-              <BookOpen className="w-4 h-4" />
+              <BookOpen className="w-4 h-4 text-brand-accent" />
               <span>{secondaryCtaText}</span>
             </Link>
           </motion.div>
