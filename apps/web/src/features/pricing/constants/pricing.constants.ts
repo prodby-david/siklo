@@ -24,8 +24,8 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: "pro",
     name: "Pro Plan",
     description: "Ideal for active organizers running multiple savings circles and larger teams.",
-    monthlyPrice: 99,
-    yearlyPrice: 79,
+    monthlyPrice: 49,
+    yearlyPrice: 39,
     isPopular: true,
     ctaText: "Choose Pro",
     ctaHref: "/signup",
@@ -44,8 +44,8 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: "premium",
     name: "Premium Plan",
     description: "Designed for community leaders, large cooperatives, and high-volume circles.",
-    monthlyPrice: 199,
-    yearlyPrice: 159,
+    monthlyPrice: 99,
+    yearlyPrice: 79,
     isPopular: false,
     ctaText: "Choose Premium",
     ctaHref: "/signup",
@@ -65,7 +65,7 @@ export const PRICING_PLANS: PricingPlan[] = [
 export const PRICING_FAQS = [
   {
     question: "How does Siklo pricing work?",
-    answer: "Siklo is free to start for your first group. Upgrade to Pro (₱99/mo) or Premium (₱199/mo) anytime to expand your group and member capacity.",
+    answer: "Siklo is free to start for your first group. Upgrade to Pro (₱49/mo) or Premium (₱99/mo) anytime to expand your group and member capacity.",
   },
   {
     question: "Can I switch plans anytime?",

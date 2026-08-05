@@ -1,19 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Check, X, PhilippinePeso, Flame } from "lucide-react";
 import { PricingPlan, BillingInterval } from "../types/pricing.types";
 
 interface PricingCardProps {
   plan: PricingPlan;
   interval: BillingInterval;
+  index?: number;
 }
 
-export default function PricingCard({ plan, interval }: PricingCardProps) {
+export default function PricingCard({ plan, interval, index = 0 }: PricingCardProps) {
   const price = interval === "YEARLY" ? plan.yearlyPrice : plan.monthlyPrice;
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.92 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, delay: index * 0.12, ease: "easeOut" }}
+      whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
       className={`relative flex flex-col justify-between p-6 sm:p-8 rounded-3xl transition-all duration-300 ${
         plan.isPopular
           ? "border-2 border-brand-accent bg-gradient-to-b from-brand-accent/15 via-background/80 to-background/90 backdrop-blur-xl relative z-10 shadow-md scale-102 z-10"
@@ -74,6 +80,6 @@ export default function PricingCard({ plan, interval }: PricingCardProps) {
       >
         {plan.ctaText}
       </Link>
-    </div>
+    </motion.div>
   );
 }
