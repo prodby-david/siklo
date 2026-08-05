@@ -7,7 +7,7 @@ import FeatureCategoryFilter from "../components/FeatureCategoryFilter";
 import { FeaturesSectionProps } from "../types/features.types";
 import { defaultFeatures } from "../constants/features.constants";
 import { useFeatures } from "../hooks/useFeatures";
-import { Sparkles, PiggyBank } from "lucide-react";
+import { RotateCw, PiggyBank } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
 
 export default function FeaturesSection({
@@ -18,7 +18,7 @@ export default function FeaturesSection({
   const { activeCategory, setActiveCategory, filteredFeatures } = useFeatures(features);
 
   return (
-    <section className="w-full bg-background py-16 sm:py-24 flex items-center border-t border-neutral-border relative overflow-hidden">
+    <section className="w-full bg-transparent relative z-10 py-16 sm:py-24 flex items-center border-t border-neutral-border overflow-hidden">
       <div className="absolute top-1/3 -left-32 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/3 -right-32 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -31,7 +31,7 @@ export default function FeaturesSection({
           className="max-w-3xl mb-10 text-center flex flex-col items-center gap-3.5"
         >
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-bold">
-            <Sparkles className="w-3.5 h-3.5" />
+            <RotateCw className="w-3.5 h-3.5" />
             <span>App Capabilities</span>
           </div>
 

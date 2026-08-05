@@ -13,7 +13,7 @@ export default function AboutSection({
   items,
 }: AboutProps) {
   return (
-    <section className="w-full bg-background py-16 sm:py-24 flex items-center justify-center">
+    <section className="w-full bg-transparent relative z-10 py-16 sm:py-24 flex items-center justify-center">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 w-full flex items-center justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center justify-center w-full">
           <motion.div

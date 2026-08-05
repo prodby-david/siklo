@@ -38,8 +38,8 @@ export default function PolicyContent({
   onClearSearch,
 }: PolicyContentProps) {
   return (
-    <div className="lg:col-span-9">
-      <div className="border border-neutral-border/50 rounded-2xl bg-background p-6 sm:p-10 shadow-sm">
+    <div className="lg:col-span-9 relative z-10">
+      <div className="border border-neutral-border rounded-2xl bg-background p-6 sm:p-10 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-neutral-border/60 pb-6 mb-8 gap-2">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-foreground">

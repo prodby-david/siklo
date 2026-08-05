@@ -1,11 +1,11 @@
-import { CheckCircle2, ShieldAlert, Sparkles, HelpCircle } from "lucide-react";
+import { CheckCircle2, ShieldAlert, RotateCw, HelpCircle } from "lucide-react";
 
 export const schemesData = [
   {
     id: 1,
     title: "Draw Lots / Random",
     desc: "Members pull numbers from a hat or use a randomizer to assign turns. This is the fairest method for groups where everyone has similar needs.",
-    icon: Sparkles,
+    icon: RotateCw,
   },
   {
     id: 2,

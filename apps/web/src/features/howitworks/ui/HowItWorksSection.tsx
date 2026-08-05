@@ -13,7 +13,7 @@ export const HowItWorksSection = ({
   steps = defaultSteps,
 }: HowItWorksProps) => {
   return (
-    <section className="w-full bg-background py-16 sm:py-24 flex items-center">
+    <section className="w-full bg-transparent relative z-10 py-16 sm:py-24 flex items-center">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 25 }}

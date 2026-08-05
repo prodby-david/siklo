@@ -54,7 +54,7 @@ export default function PolicySection() {
   };
 
   return (
-    <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground mb-3">
           Legal & Policy Center

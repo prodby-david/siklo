@@ -8,11 +8,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, Coins } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
 
-interface NavbarProps {
-  isSplashFinished?: boolean;
-}
-
-export default function Navbar({ isSplashFinished = true }: NavbarProps) {
+export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -21,6 +17,7 @@ export default function Navbar({ isSplashFinished = true }: NavbarProps) {
     { name: "About", href: "/about" },
     { name: "Features", href: "/features" },
     { name: "How it works", href: "/how-it-works" },
+    { name: "Pricing", href: "/pricing" },
   ];
 
   useEffect(() => {
@@ -35,10 +32,6 @@ export default function Navbar({ isSplashFinished = true }: NavbarProps) {
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-500 ease-out ${
-        isSplashFinished
-          ? "opacity-100 translate-y-0 pointer-events-auto"
-          : "opacity-0 -translate-y-4 pointer-events-none"
-      } ${
         isScrolled || isOpen
           ? "bg-background/80 backdrop-blur-xl border-b border-neutral-border shadow-xs"
           : "bg-transparent border-b border-transparent"

@@ -6,6 +6,7 @@ import AboutCoreValues from "@/features/about/components/AboutCoreValues";
 import Navbar from "@/shared/components/nav/Navbar";
 import Footer from "@/shared/components/footer/Footer";
 import { defaultAboutItems } from "@/features/about/constants/about.constants";
+import DotsBackground from "@/shared/components/ui/DotsBackground";
 
 export const metadata: Metadata = {
   title: "About Us | Siklo - Simple & Clear Paluwagan Savings Notebook",
@@ -16,6 +17,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background overflow-x-clip">
       <Navbar />
+      <DotsBackground />
       <main className="flex-1 flex flex-col w-full items-center overflow-x-clip">
         <AboutSection
           title="A simple, clear way to save together"
@@ -23,19 +25,19 @@ export default function AboutPage() {
           items={defaultAboutItems}
         />
 
-        <section className="w-full bg-brand-accent/10 border-y border-brand-accent/20 py-16 sm:py-24 transition-colors duration-300">
+        <section className="w-full bg-transparent relative z-10 border-y border-brand-accent/20 py-16 sm:py-24 transition-colors duration-300">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AboutCoreValues />
           </div>
         </section>
 
-        <section className="w-full bg-background py-16 sm:py-24 border-b border-neutral-border/80">
+        <section className="w-full bg-transparent relative z-10 py-16 sm:py-24 border-b border-neutral-border/80">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <TrustCards />
           </div>
         </section>
 
-        <section className="w-full bg-brand-accent/10 border-y border-brand-accent/20 py-16 sm:py-24 transition-colors duration-300">
+        <section className="w-full bg-transparent relative z-10 border-y border-brand-accent/20 py-16 sm:py-24 transition-colors duration-300">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <FaqSection />
           </div>

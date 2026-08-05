@@ -23,7 +23,7 @@ export default function CoreValueCardItem({ item }: CoreValueCardItemProps) {
   const IconComponent = ICON_MAP[item.iconName] || ShieldCheck;
 
   return (
-    <div className="flex flex-col gap-4 p-6 sm:p-7 rounded-3xl border border-brand-accent/20 bg-background hover:border-brand-accent/50 transition-all duration-300">
+    <div className="flex flex-col gap-4 p-6 sm:p-7 rounded-3xl border border-brand-accent/20 bg-background/80 backdrop-blur-xl relative z-10 hover:border-brand-accent/50 transition-all duration-300">
       <div className="flex items-center justify-between">
         <div className="h-11 w-11 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center">
           <IconComponent className="h-5 w-5" />

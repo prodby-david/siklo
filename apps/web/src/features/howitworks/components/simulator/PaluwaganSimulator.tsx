@@ -24,7 +24,7 @@ export default function PaluwaganSimulator() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.55, ease: "easeOut" }}
-      className="w-full bg-background rounded-3xl border border-brand-accent/30 p-6 sm:p-10 flex flex-col gap-8"
+      className="w-full bg-background/80 backdrop-blur-xl relative z-10 rounded-3xl border border-brand-accent/30 p-6 sm:p-10 flex flex-col gap-8"
     >
       <div className="flex flex-col gap-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-bold self-start">

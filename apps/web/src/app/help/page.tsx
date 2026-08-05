@@ -12,6 +12,7 @@ export default function HelpPage() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Navbar />
+      <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] dark:bg-[radial-gradient(#30363d_1px,transparent_1px)] [background-size:16px_16px] z-0" />
       <HelpSection />
       <Footer />
     </div>

@@ -12,8 +12,8 @@ export default function PolicyTableOfContents({
   onSectionClick,
 }: PolicyTableOfContentsProps) {
   return (
-    <aside className="lg:col-span-3 hidden lg:block">
-      <div className="sticky top-20 border border-neutral-border/50 rounded-2xl p-5 bg-neutral-table-stripe/20">
+    <aside className="lg:col-span-3 hidden lg:block relative z-10">
+      <div className="sticky top-20 border border-neutral-border rounded-2xl p-5 bg-background shadow-sm">
         <h2 className="text-xs font-bold text-foreground uppercase tracking-wider mb-4">
           Table of Contents
         </h2>
