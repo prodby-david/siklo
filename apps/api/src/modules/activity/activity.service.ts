@@ -36,10 +36,7 @@ export class ActivityService {
     const group = await this.prisma.group.findFirst({
       where: {
         id: groupId,
-        OR: [
-          { organizerId: userId },
-          { memberships: { some: { userId } } },
-        ],
+        OR: [{ organizerId: userId }, { memberships: { some: { userId } } }],
       },
     });
 

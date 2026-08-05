@@ -144,10 +144,7 @@ export class GroupsService {
         position = dto.position;
       } else {
         let firstFree = 1;
-        while (
-          firstFree <= group.maxMembers &&
-          takenPositions.has(firstFree)
-        ) {
+        while (firstFree <= group.maxMembers && takenPositions.has(firstFree)) {
           firstFree++;
         }
         if (firstFree > group.maxMembers) {
@@ -213,8 +210,8 @@ export class GroupsService {
       const computedStatus = isCycleDone
         ? 'COMPLETED'
         : group.startDate
-        ? 'ACTIVE'
-        : 'UPCOMING';
+          ? 'ACTIVE'
+          : 'UPCOMING';
 
       return {
         ...group,
@@ -324,7 +321,9 @@ export class GroupsService {
   ) {
     const group = await this.getExistingGroup(groupId, organizerUserId);
     if (group.organizerId !== organizerUserId) {
-      throw new ForbiddenException('Only the organizer can mark members as paid');
+      throw new ForbiddenException(
+        'Only the organizer can mark members as paid',
+      );
     }
     if (!group.startDate) {
       throw new ConflictException('Group cycle has not started yet');
@@ -361,9 +360,7 @@ export class GroupsService {
   ) {
     const group = await this.getExistingGroup(groupId, organizerUserId);
     if (group.organizerId !== organizerUserId) {
-      throw new ForbiddenException(
-        'Only the organizer can post announcements',
-      );
+      throw new ForbiddenException('Only the organizer can post announcements');
     }
 
     const activity = await this.activityService.createActivity({
