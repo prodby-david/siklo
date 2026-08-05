@@ -26,6 +26,10 @@ export {
   joinGroupBodySchema,
   type JoinGroupBodyDTO,
 } from "./groups/join-group.schema.js";
+export {
+  updateGroupSchema,
+  type UpdateGroupDTO,
+} from "./groups/update-group.schema.js";
 
 // ─── Enums & Constants ──────────────────────────────────────────
 export {
