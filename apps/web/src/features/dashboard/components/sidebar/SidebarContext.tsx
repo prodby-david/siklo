@@ -1,13 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useMemo, ReactNode } from "react";
-
-interface SidebarContextType {
-  isCollapsed: boolean;
-  toggleCollapse: () => void;
-  expandSidebar: () => void;
-  collapseSidebar: () => void;
-}
+import { createContext, useContext, useState, ReactNode } from "react";
+import { SidebarContextType } from "../../types/sidebar.types";
 
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
@@ -18,20 +12,21 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
   const expandSidebar = () => setIsCollapsed(false);
   const collapseSidebar = () => setIsCollapsed(true);
 
-  const value = useMemo(
-    () => ({
-      isCollapsed,
-      toggleCollapse,
-      expandSidebar,
-      collapseSidebar,
-    }),
-    [isCollapsed]
+  return (
+    <SidebarContext.Provider
+      value={{
+        isCollapsed,
+        toggleCollapse,
+        expandSidebar,
+        collapseSidebar,
+      }}
+    >
+      {children}
+    </SidebarContext.Provider>
   );
-
-  return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 }
 
-export function useSidebarContext(): SidebarContextType {
+export function useSidebarContext() {
   const context = useContext(SidebarContext);
   if (!context) {
     throw new Error("useSidebarContext must be used within a SidebarProvider");

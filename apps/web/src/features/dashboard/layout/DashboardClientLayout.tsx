@@ -40,17 +40,7 @@ export default function DashboardClientLayout({
     <NotificationProvider>
       <SidebarProvider>
         <DashboardLayoutContent>{children}</DashboardLayoutContent>
-        <Toaster
-          richColors
-          toastOptions={{
-            classNames: {
-              toast: "bg-brand-accent text-foreground border-neutral-border",
-              success: "text-success bg-success-bg border-success/20",
-              error: "text-danger bg-danger-bg border-color-danger-border",
-            },
-          }}
-          position="bottom-right"
-        />
+        <Toaster position="top-right" richColors />
       </SidebarProvider>
     </NotificationProvider>
   );
