@@ -52,6 +52,7 @@ export default function PaluwaganGuide() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.08 }}
+                className="h-full flex flex-col"
               >
                 <PayoutSchemeItem
                   title={scheme.title}

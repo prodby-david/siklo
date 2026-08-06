@@ -3,18 +3,18 @@ import { HowItWorksStep, PaluwaganRules, BestPracticeItem } from "../types/howit
 export const defaultSteps: HowItWorksStep[] = [
   {
     stepNumber: 1,
-    title: "Set Up Your Group",
-    description: "Enter how much each member saves, add their names, and set the payout turn order.",
+    title: "Set Up Your Paluwagan Group",
+    description: "Enter your group name, contribution amount (₱), billing frequency, member limit (3–15), and select your payout sequence method.",
   },
   {
     stepNumber: 2,
-    title: "Check Off Payments",
-    description: "When a member gives their savings money, click a button to check them off so the whole group can see.",
+    title: "Track Member Contributions",
+    description: "When members send their contributions via GCash, Maya, or bank transfer, mark them as paid in your transparent shared group ledger.",
   },
   {
     stepNumber: 3,
     title: "Hand Over the Payout",
-    description: "Give the collected money to the member whose turn it is. The app moves to the next person automatically.",
+    description: "Give the collected pool money to the member whose turn it is. The app automatically advances your circle to the next payout round.",
   },
 ];
 
@@ -36,7 +36,7 @@ export const frequencyOptions = [
 export const payoutSchemeOptions = [
   { label: "Draw Lots / Random", value: "draw-lots" },
   { label: "Seniority / First-Come", value: "seniority" },
-  { label: "Bidding / Auctions", value: "bidding" },
+  { label: "First-Come Slot Reservation", value: "first-come" },
   { label: "Custom Turn Order", value: "custom" },
 ] as const;
 
