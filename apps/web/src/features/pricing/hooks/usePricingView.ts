@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { BillingInterval, UsePricingViewReturn } from "../types/pricing.types";
 
-export default function usePricingView(): UsePricingViewReturn {
+export function usePricingView(): UsePricingViewReturn {
   const [interval, setInterval] = useState<BillingInterval>("MONTHLY");
 
   const toggleInterval = () => {
@@ -16,3 +16,5 @@ export default function usePricingView(): UsePricingViewReturn {
     toggleInterval,
   };
 }
+
+export default usePricingView;

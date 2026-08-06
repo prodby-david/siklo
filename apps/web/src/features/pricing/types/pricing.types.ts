@@ -23,3 +23,16 @@ export interface UsePricingViewReturn {
   setInterval: (interval: BillingInterval) => void;
   toggleInterval: () => void;
 }
+
+export interface PricingBillingToggleProps {
+  interval: BillingInterval;
+  onToggle: () => void;
+}
+
+export interface PricingFaqItemProps {
+  faq: {
+    question: string;
+    answer: string;
+  };
+  idx: number;
+}
