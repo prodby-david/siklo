@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { PolicySection, PolicyTab } from "../types/policy.type";
+import { PolicySection, PolicyTab } from "../types/policy.types";
 
 type PolicyContentProps = {
   activeTab: PolicyTab;

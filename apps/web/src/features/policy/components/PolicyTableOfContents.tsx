@@ -1,12 +1,7 @@
-import { PolicySection } from "../types/policy.type";
+import React from "react";
+import { PolicyTableOfContentsProps } from "../types/policy.types";
 
-type PolicyTableOfContentsProps = {
-  sections: PolicySection[];
-  activeSection: string;
-  onSectionClick: (id: string) => void;
-};
-
-export default function PolicyTableOfContents({
+export default function policyTableOfContents({
   sections,
   activeSection,
   onSectionClick,
@@ -21,6 +16,7 @@ export default function PolicyTableOfContents({
           {sections.map((section) => (
             <button
               key={section.id}
+              type="button"
               onClick={() => onSectionClick(section.id)}
               className={`text-left text-xs py-1 transition-all cursor-pointer border-l-2 pl-3 ${
                 activeSection === section.id

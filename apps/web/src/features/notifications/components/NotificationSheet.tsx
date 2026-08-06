@@ -7,13 +7,9 @@ import NotificationHeader from "./NotificationHeader";
 import NotificationItemCard from "./NotificationItemCard";
 import NotificationEmptyState from "./NotificationEmptyState";
 import NotificationLoadMore from "./NotificationLoadMore";
+import { NotificationSheetProps } from "../types/notification.types";
 
-interface NotificationSheetProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export default function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
+export default function notificationSheet({ isOpen, onClose }: NotificationSheetProps) {
   const {
     notifications,
     filter,

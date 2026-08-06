@@ -4,20 +4,10 @@ import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, Mail, Phone, X, Save } from "lucide-react";
 import { Input, ContactNumberInput } from "@/shared/components/inputs";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { UserProfileSettingDTO } from "@siklo/shared-schemas";
 import { Button } from "@/shared/components/ui/button";
+import { ProfileEditSheetProps } from "../types/settings.types";
 
-interface ProfileEditSheetProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (e?: React.BaseSyntheticEvent) => Promise<void>;
-  register: UseFormRegister<UserProfileSettingDTO>;
-  errors: FieldErrors<UserProfileSettingDTO>;
-  isSubmitting: boolean;
-}
-
-export default function ProfileEditSheet({
+export default function profileEditSheet({
   isOpen,
   onClose,
   onSubmit,
@@ -61,71 +51,79 @@ export default function ProfileEditSheet({
                   <User className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-black text-foreground">Edit Profile</h3>
-                  <p className="text-xs text-neutral-subtext">Update your personal account details</p>
+                  <h2 className="text-base font-extrabold text-foreground">
+                    Edit Profile Details
+                  </h2>
+                  <p className="text-xs text-neutral-subtext">
+                    Update your account name and contact number
+                  </p>
                 </div>
               </div>
 
               <button
+                type="button"
                 onClick={onClose}
                 className="w-8 h-8 rounded-xl flex items-center justify-center text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/10 transition-colors cursor-pointer"
-                aria-label="Close edit drawer"
+                aria-label="Close edit sheet"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={onSubmit} className="flex-1 flex flex-col justify-between p-5 sm:p-6 overflow-y-auto no-scrollbar space-y-6">
+            <form
+              onSubmit={onSubmit}
+              className="flex-1 flex flex-col justify-between p-5 sm:p-6 overflow-y-auto no-scrollbar"
+            >
               <div className="space-y-4">
                 <Input
-                  id="name"
                   label="name"
-                  errors={errors}
                   labelText="Full Name"
-                  type="text"
+                  placeholder="Juan Dela Cruz"
+                  icon={<User className="w-4 h-4 text-neutral-subtext" />}
                   {...register("name")}
-                  icon={<User className="w-4 h-4" />}
+                  errors={errors}
+                  disabled={isSubmitting}
                 />
 
                 <Input
-                  id="email"
                   label="email"
-                  errors={errors}
                   labelText="Email Address"
+                  placeholder="juan@example.com"
                   type="email"
+                  icon={<Mail className="w-4 h-4 text-neutral-subtext" />}
                   {...register("email")}
-                  icon={<Mail className="w-4 h-4" />}
+                  errors={errors}
+                  disabled={isSubmitting}
                 />
 
                 <ContactNumberInput
-                  id="contact"
                   label="contactNumber"
-                  errors={errors}
-                  labelText="Contact Number"
-                  type="text"
+                  labelText="Phone Number (Optional)"
+                  placeholder="912 345 6789"
+                  icon={<Phone className="w-4 h-4 text-neutral-subtext" />}
                   {...register("contactNumber")}
-                  icon={<Phone className="w-4 h-4" />}
+                  errors={errors}
+                  disabled={isSubmitting}
                 />
               </div>
 
-              <div className="pt-4 border-t border-neutral-border/60 flex items-center justify-end gap-3">
+              <div className="pt-6 border-t border-neutral-border/60 flex items-center justify-end gap-3 mt-6">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={onClose}
                   disabled={isSubmitting}
-                  className="rounded-2xl cursor-pointer"
+                  className="rounded-2xl text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </Button>
-
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-brand-accent text-white hover:bg-brand-accent-hover rounded-2xl flex items-center gap-2 cursor-pointer shadow-xs"
+                  className="bg-brand-accent hover:bg-brand-accent-hover text-white rounded-2xl text-xs font-bold gap-2 cursor-pointer"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{isSubmitting ? "Saving..." : "Save Changes"}</span>
+                  {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>
               </div>
             </form>

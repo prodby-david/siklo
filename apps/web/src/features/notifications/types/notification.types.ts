@@ -22,3 +22,8 @@ export interface UseNotificationsReturn {
   markAllAsRead: () => void;
   deleteNotification: (id: string) => void;
 }
+
+export interface NotificationSheetProps {
+  isOpen: boolean;
+  onClose: () => void;
+}

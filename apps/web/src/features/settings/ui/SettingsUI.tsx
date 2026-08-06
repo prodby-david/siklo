@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Settings } from "lucide-react";
 import { SETTINGS_TABS } from "../constants/settings.constant";
-import { SettingsTabId } from "../types/settings.type";
+import { SettingsTabId } from "../types/settings.types";
 import { SETTINGS_COMPONENTS } from "../utils/renderComponent";
 
 export default function SettingsUI() {

@@ -5,3 +5,9 @@ export type PolicySection = {
 };
 
 export type PolicyTab = "privacy" | "terms";
+
+export interface PolicyTableOfContentsProps {
+  sections: PolicySection[];
+  activeSection: string;
+  onSectionClick: (id: string) => void;
+}
