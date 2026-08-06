@@ -14,3 +14,9 @@ export interface CreateGroupFormFieldsProps {
   isPending?: boolean;
   onSubmit?: (e?: React.BaseSyntheticEvent) => Promise<void> | void;
 }
+
+export interface PayoutSequenceSelectorProps {
+  selectedSequence?: string;
+  isPending?: boolean;
+  onSelectSequence: (sequence: "RANDOM" | "MANUAL" | "FREECHOOSING") => void;
+}

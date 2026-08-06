@@ -7,13 +7,11 @@ import {
   Loader2,
   Plus,
   RefreshCw,
-  Shuffle,
-  ListOrdered,
-  Touchpad,
 } from "lucide-react";
-import { CreateGroupFormFieldsProps } from "@/features/groups/types/create.group.field";
+import { CreateGroupFormFieldsProps } from "@/features/groups/types/create-group-field.types";
 import useCreateGroupFormFields from "../../hooks/useCreateGroupFormFields";
 import { BILLING_CYCLE_LABELS } from "@siklo/shared-schemas";
+import PayoutSequenceSelector from "./PayoutSequenceSelector";
 
 export default function CreateGroupFormFields(
   props: CreateGroupFormFieldsProps,
@@ -21,157 +19,72 @@ export default function CreateGroupFormFields(
   const {
     register,
     errors,
+    selectedPayoutSequence,
+    selectedBillingCycle,
     isPending,
     handleSubmit,
-    selectedBillingCycle,
     handleBillingCycleSelect,
-    selectedPayoutSequence,
     handlePayoutSequenceSelect,
   } = useCreateGroupFormFields(props);
 
-  const preventDecimal = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "." || e.key === "," || e.key === "e" || e.key === "E") {
-      e.preventDefault();
-    }
-  };
-
   return (
-    <div className="lg:col-span-7 w-full">
-      <div className="w-full bg-background border border-neutral-border rounded-3xl p-6 sm:p-8 shadow-xs">
-        <div className="mb-6 pb-4 border-b border-neutral-border/60">
-          <h2 className="text-xl font-bold text-foreground">
-            Create New Group
+    <div className="lg:col-span-7 bg-background border border-neutral-border rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-1 pb-4 border-b border-neutral-border/60">
+          <h2 className="text-xl font-extrabold text-foreground tracking-tight">
+            Create Paluwagan Group
           </h2>
-          <p className="text-xs text-neutral-subtext mt-1">
-            Set up your Paluwagan cycle rules, contribution amount, and total
-            members.
+          <p className="text-xs text-neutral-subtext">
+            Set up your group parameters, contribution amount, and payout rotation rules.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-4">
           <Input
             label="name"
             labelText="Group Name"
-            placeholder="e.g. Family Savings 2026"
+            placeholder="e.g. Office Savings Pool"
+            disabled={isPending}
             {...register("name")}
             errors={errors}
-            disabled={isPending}
-            icon={<Users className="w-4 h-4 text-neutral-subtext" />}
+            icon={<FileText className="w-4 h-4 text-neutral-subtext" />}
           />
 
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
-              Description (Optional)
-            </label>
-            <div className="relative flex items-start">
-              <span className="absolute left-3.5 top-3 text-neutral-subtext pointer-events-none">
-                <FileText className="w-4 h-4" />
-              </span>
-              <textarea
-                {...register("description")}
-                placeholder="Briefly describe the goal or rules for this savings group..."
-                rows={3}
-                disabled={isPending}
-                className="w-full py-2.5 pl-10 pr-3.5 text-xs font-medium border border-neutral-border rounded-2xl bg-background/60 focus:ring-2 focus:ring-brand-accent/20 focus:border-brand-accent focus:bg-background text-foreground transition-all duration-200 resize-none disabled:bg-muted disabled:cursor-not-allowed"
-              />
-            </div>
-            {errors.description && (
-              <p className="text-danger text-[10px] font-medium mt-0.5">
-                {errors.description.message}
-              </p>
-            )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Input
+              label="contributionAmount"
+              labelText="Contribution Amount (₱)"
+              placeholder="5000"
+              type="number"
+              disabled={isPending}
+              {...register("contributionAmount", { valueAsNumber: true })}
+              errors={errors}
+              icon={<PhilippinePeso className="w-4 h-4 text-neutral-subtext" />}
+            />
+
+            <Input
+              label="maxMembers"
+              labelText="Member Capacity (3 - 15)"
+              placeholder="6"
+              type="number"
+              disabled={isPending}
+              {...register("maxMembers", { valueAsNumber: true })}
+              errors={errors}
+              icon={<Users className="w-4 h-4 text-neutral-subtext" />}
+            />
           </div>
 
-          <Input
-            label="maxMembers"
-            labelText="Group Members"
-            placeholder="3 - 15"
-            type="number"
-            min={3}
-            max={15}
-            step={1}
-            onKeyDown={preventDecimal}
-            {...register("maxMembers", { valueAsNumber: true })}
-            errors={errors}
-            disabled={isPending}
-            icon={<Users className="w-4 h-4 text-neutral-subtext" />}
+          <PayoutSequenceSelector
+            selectedSequence={selectedPayoutSequence}
+            isPending={isPending}
+            onSelectSequence={handlePayoutSequenceSelect}
           />
-
-          <div className="space-y-2">
-            <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
-              Payout Sequence Method
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => handlePayoutSequenceSelect("RANDOM")}
-                className={`p-3 text-left rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  selectedPayoutSequence === "RANDOM"
-                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent shadow-xs"
-                    : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Shuffle className="w-4 h-4 text-brand-accent shrink-0" />
-                  <span className="text-xs font-extrabold text-foreground">
-                    Random
-                  </span>
-                </div>
-                <span className="text-[10px] text-neutral-subtext leading-tight block">
-                  Positions are randomly shuffled when cycle starts.
-                </span>
-              </button>
-
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => handlePayoutSequenceSelect("MANUAL")}
-                className={`p-3 text-left rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  selectedPayoutSequence === "MANUAL"
-                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent shadow-xs"
-                    : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <ListOrdered className="w-4 h-4 text-brand-accent shrink-0" />
-                  <span className="text-xs font-extrabold text-foreground">
-                    First Come
-                  </span>
-                </div>
-                <span className="text-[10px] text-neutral-subtext leading-tight block">
-                  First-come, first-served based on order of joining.
-                </span>
-              </button>
-
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => handlePayoutSequenceSelect("FREECHOOSING")}
-                className={`p-3 text-left rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  selectedPayoutSequence === "FREECHOOSING"
-                    ? "bg-brand-accent/10 border-brand-accent text-brand-accent shadow-xs"
-                    : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <Touchpad className="w-4 h-4 text-brand-accent shrink-0" />
-                  <span className="text-xs font-extrabold text-foreground">
-                    Free Choice
-                  </span>
-                </div>
-                <span className="text-[10px] text-neutral-subtext leading-tight block">
-                  Members choose their vacant turn slot when joining.
-                </span>
-              </button>
-            </div>
-            <input type="hidden" {...register("payoutSequence")} />
-            {errors.payoutSequence && (
-              <p className="text-danger text-[10px] font-medium mt-0.5">
-                {errors.payoutSequence.message}
-              </p>
-            )}
-          </div>
+          <input type="hidden" {...register("payoutSequence")} />
+          {errors.payoutSequence && (
+            <p className="text-danger text-[10px] font-medium mt-0.5">
+              {errors.payoutSequence.message}
+            </p>
+          )}
 
           <div className="space-y-2">
             <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
@@ -184,14 +97,13 @@ export default function CreateGroupFormFields(
                   type="button"
                   disabled={isPending}
                   onClick={() => handleBillingCycleSelect(key)}
-                  className={`py-2.5 px-2 text-xs font-bold rounded-2xl border transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`p-2.5 text-center rounded-2xl border text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                     selectedBillingCycle === key
                       ? "bg-brand-accent text-white border-brand-accent shadow-xs"
-                      : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40 hover:text-foreground"
+                      : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
                   }`}
                 >
-                  <Calendar className="w-3.5 h-3.5 shrink-0" />
-                  <span className="truncate">{label}</span>
+                  {label}
                 </button>
               ))}
             </div>
@@ -202,57 +114,26 @@ export default function CreateGroupFormFields(
               </p>
             )}
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Input
-              label="contributionAmount"
-              labelText="Contribution Amount (₱)"
-              placeholder="1000"
-              type="number"
-              min={1}
-              step={1}
-              onKeyDown={preventDecimal}
-              {...register("contributionAmount", { valueAsNumber: true })}
-              errors={errors}
-              disabled={isPending}
-              icon={<PhilippinePeso className="w-4 h-4 text-neutral-subtext" />}
-            />
-
-            <Input
-              label="cycleDuration"
-              labelText="Cycle Duration (Rotations)"
-              placeholder="1 - 10"
-              type="number"
-              min={1}
-              max={10}
-              step={1}
-              onKeyDown={preventDecimal}
-              {...register("cycleDuration", { valueAsNumber: true })}
-              errors={errors}
-              disabled={isPending}
-              icon={<RefreshCw className="w-4 h-4 text-neutral-subtext" />}
-            />
-          </div>
-
+        <div className="pt-4 border-t border-neutral-border/60 flex items-center justify-end gap-3">
           <button
             type="submit"
             disabled={isPending}
-            className="w-full mt-6 bg-brand-accent hover:bg-brand-accent-hover text-white py-3 rounded-2xl font-extrabold active:scale-[0.98] transition-all shadow-xs flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-extrabold rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
           >
             {isPending ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-white" />
-                <span>Creating Group...</span>
+                <Loader2 className="w-4 h-4 animate-spin" /> Creating Group...
               </>
             ) : (
               <>
-                <Plus className="w-4 h-4 text-white" />
-                <span>Create Group</span>
+                <Plus className="w-4 h-4" /> Create Paluwagan Group
               </>
             )}
           </button>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

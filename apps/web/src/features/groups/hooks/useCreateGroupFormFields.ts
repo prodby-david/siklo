@@ -5,7 +5,7 @@ import {
   CreateGroupData,
   createGroupSchema,
 } from "../validator/create-group.validator";
-import { CreateGroupFormFieldsProps } from "../types/create.group.field";
+import { CreateGroupFormFieldsProps } from "../types/create-group-field.types";
 
 export default function useCreateGroupFormFields(
   props: CreateGroupFormFieldsProps,
