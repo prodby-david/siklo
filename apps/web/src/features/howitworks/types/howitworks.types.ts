@@ -25,3 +25,16 @@ export interface BestPracticeItem {
   title: string;
   description: string;
 }
+
+export interface PayoutSchemesGridProps {
+  schemes: Array<{
+    id: number;
+    title: string;
+    desc: string;
+    icon: any;
+  }>;
+}
+
+export interface BestPracticesListProps {
+  practices: BestPracticeItem[];
+}

@@ -30,9 +30,8 @@ export default function HowItWorksPage() {
             <PaluwaganGuide />
           </div>
         </section>
-
-        <Footer />
       </main>
+      <Footer />
     </div>
   );
 }
