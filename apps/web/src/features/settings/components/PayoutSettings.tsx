@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CreditCard, Landmark } from "lucide-react";
+import { Wallet, Landmark, Building2, CreditCard, User } from "lucide-react";
 import { FormInput as Input } from "@/shared/components/inputs";
 
 export default function PayoutSettings() {
@@ -30,13 +30,14 @@ export default function PayoutSettings() {
       <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
         <div className="bg-neutral-subtext/5 border border-neutral-border/50 p-4 rounded-2xl space-y-4">
           <div className="flex items-center gap-2 border-b border-neutral-border/50 pb-2">
-            <CreditCard className="w-4 h-4 text-brand-accent" />
+            <Wallet className="w-4 h-4 text-brand-accent" />
             <h4 className="text-xs font-bold text-foreground">E-Wallets</h4>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="mobileWallet" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
-              Mobile Wallet / E-Wallet Number
+            <label htmlFor="mobileWallet" className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider flex items-center gap-1.5">
+              <Wallet className="w-3.5 h-3.5 text-brand-accent" />
+              <span>Mobile Wallet / E-Wallet Number</span>
             </label>
             <input
               id="mobileWallet"
@@ -63,6 +64,7 @@ export default function PayoutSettings() {
               value={payouts.bankName}
               onChange={(e) => setPayouts({ ...payouts, bankName: e.target.value })}
               placeholder="e.g. BDO, BPI, Metrobank"
+              icon={<Building2 className="w-4 h-4" />}
             />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -73,6 +75,7 @@ export default function PayoutSettings() {
                 value={payouts.bankAccountNumber}
                 onChange={(e) => setPayouts({ ...payouts, bankAccountNumber: e.target.value })}
                 placeholder="e.g. 1234567890"
+                icon={<CreditCard className="w-4 h-4" />}
               />
 
               <Input
@@ -82,6 +85,7 @@ export default function PayoutSettings() {
                 value={payouts.bankAccountHolderName}
                 onChange={(e) => setPayouts({ ...payouts, bankAccountHolderName: e.target.value })}
                 placeholder="e.g. Juan dela Cruz"
+                icon={<User className="w-4 h-4" />}
               />
             </div>
           </div>

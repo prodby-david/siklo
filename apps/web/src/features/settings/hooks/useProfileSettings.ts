@@ -28,28 +28,23 @@ export default function useProfileSettings() {
     },
   });
 
-  const [isAbleToEdit, setIsAbleToEdit] = useState(false);
-  const [showSaveButton, setShowSaveButton] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const handleEdit = () => {
-    setIsAbleToEdit((prev) => !prev);
-    setShowSaveButton((prev) => !prev);
-  };
-
-  const handleCancel = () => {
+  const openDrawer = () => setIsDrawerOpen(true);
+  const closeDrawer = () => {
     reset({
       name: user?.name || "",
       email: user?.email || "",
       contactNumber: user?.contactNumber || "",
     });
-    setIsAbleToEdit(false);
-    setShowSaveButton(false);
+    setIsDrawerOpen(false);
   };
 
   const onSubmit = async (data: UserProfileSettingDTO) => {
     try {
       await updateProfileSettings(data);
       toast.success("Profile updated successfully");
+      setIsDrawerOpen(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const message =
@@ -63,13 +58,13 @@ export default function useProfileSettings() {
   };
 
   return {
+    user,
     handleSubmit: handleSubmit(onSubmit),
     register,
     errors,
     isSubmitting,
-    isAbleToEdit,
-    handleEdit,
-    showSaveButton,
-    handleCancel,
+    isDrawerOpen,
+    openDrawer,
+    closeDrawer,
   };
 }

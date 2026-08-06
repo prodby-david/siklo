@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, ShieldCheck } from "lucide-react";
+import { Lock, KeyRound, ShieldCheck } from "lucide-react";
 import { PasswordInput } from "@/shared/components/inputs";
 import useSecuritySettings from "../hooks/useSecuritySettings";
 
@@ -25,21 +25,21 @@ export default function SecuritySettings() {
         <PasswordInput
           id="currentPassword"
           labelText="Current Password"
-          icon={<Lock className="w-4 h-4" />}
+          icon={<Lock className="w-4 h-4 text-brand-accent" />}
           {...register("currentPassword")}
         />
 
         <PasswordInput
           id="newPassword"
           labelText="New Password"
-          icon={<Lock className="w-4 h-4" />}
+          icon={<KeyRound className="w-4 h-4 text-brand-accent" />}
           {...register("newPassword")}
         />
 
         <PasswordInput
           id="confirmPassword"
           labelText="Confirm New Password"
-          icon={<Lock className="w-4 h-4" />}
+          icon={<KeyRound className="w-4 h-4 text-brand-accent" />}
           {...register("confirmNewPassword")}
         />
 
