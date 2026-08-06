@@ -11,7 +11,7 @@ import Footer from "@/shared/components/footer/Footer";
 import { RotateCw } from "lucide-react";
 import DotsBackground from "@/shared/components/ui/DotsBackground";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen bg-background overflow-x-clip">
       <Navbar />
@@ -40,21 +40,16 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col gap-14">
             <CycleTurnShowcase />
-          </div>
-
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
             <SmartLedgerGuarantee />
           </div>
         </section>
 
         <PaluwaganComparisonSection />
-
         <PaluwaganFinalCtaSection />
-
-        <Footer />
       </main>
+      <Footer />
     </div>
   );
 }

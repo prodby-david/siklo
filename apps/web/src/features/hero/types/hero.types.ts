@@ -39,3 +39,28 @@ export interface ActivityItem {
   time: string;
   type: "payment" | "payout" | "system";
 }
+
+export interface ComparisonItem {
+  text: string;
+  icon: ReactNode;
+}
+
+export interface ComparisonCardProps {
+  title: string;
+  subtitle: string;
+  icon: ReactNode;
+  items: ComparisonItem[];
+  variant: "drawback" | "advantage";
+  direction: number;
+  rotation: number;
+}
+
+export interface ShowcaseTurnCardProps {
+  member: Member;
+  isSelected: boolean;
+  onSelect: (turn: number) => void;
+}
+
+export interface ShowcaseMemberDetailProps {
+  member: Member;
+}
