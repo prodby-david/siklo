@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { Layers, Flame, CheckCircle2 } from "lucide-react";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
 import Loader from "@/shared/components/loader/Loader";
 import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
@@ -50,36 +50,39 @@ export default function ShowGroup() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-neutral-border/60 pb-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border-b border-neutral-border/60 pb-3 w-full">
           <button
             onClick={() => setFilter("ALL")}
-            className={`inline-flex items-center justify-center gap-1.5 h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none ${
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               filter === "ALL"
                 ? "bg-brand-accent text-background border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
             }`}
           >
-            All Groups ({allCount})
+            <Layers className="w-3.5 h-3.5" />
+            <span>All Groups ({allCount})</span>
           </button>
           <button
             onClick={() => setFilter("ACTIVE")}
-            className={`inline-flex items-center justify-center gap-1.5 h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none ${
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               filter === "ACTIVE"
                 ? "bg-brand-accent text-background border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
             }`}
           >
-            Active ({activeCount})
+            <Flame className="w-3.5 h-3.5" />
+            <span>Active ({activeCount})</span>
           </button>
           <button
             onClick={() => setFilter("COMPLETED")}
-            className={`inline-flex items-center justify-center gap-1.5 h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none ${
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               filter === "COMPLETED"
                 ? "bg-brand-accent text-background border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
             }`}
           >
-            Completed ({completedCount})
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            <span>Completed ({completedCount})</span>
           </button>
         </div>
 

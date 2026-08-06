@@ -25,7 +25,7 @@ export default function PolicyTableOfContents({
               className={`text-left text-xs py-1 transition-all cursor-pointer border-l-2 pl-3 ${
                 activeSection === section.id
                   ? "text-brand-accent border-brand-accent font-semibold"
-                  : "text-neutral-subtext border-transparent hover:text-foreground hover:border-neutral-border"
+                  : "text-neutral-subtext border-transparent hover:text-brand-accent hover:border-brand-accent/50"
               }`}
             >
               {section.title}

@@ -4,7 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import {
   ShieldCheck,
-  CheckCircle2,
+  Wallet,
+  CalendarClock,
   RefreshCcw,
 } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
@@ -45,11 +46,11 @@ export default function PaluwaganFinalCtaSection() {
               <span>100% Shared Transparency</span>
             </div>
             <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-              <CheckCircle2 className="h-4 w-4 text-brand-accent shrink-0" />
+              <Wallet className="h-4 w-4 text-brand-accent shrink-0" />
               <span>Mobile Wallet Friendly</span>
             </div>
             <div className="flex items-center gap-2 text-xs font-bold text-foreground">
-              <CheckCircle2 className="h-4 w-4 text-brand-accent shrink-0" />
+              <CalendarClock className="h-4 w-4 text-brand-accent shrink-0" />
               <span>Automated Turn Schedules</span>
             </div>
           </div>

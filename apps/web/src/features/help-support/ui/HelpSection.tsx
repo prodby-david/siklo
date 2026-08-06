@@ -7,6 +7,7 @@ import { searchHelpFaq } from "../utils/help.utils";
 import HelpCategorySelector from "../components/HelpCategorySelector";
 import HelpFaqAccordion from "../components/HelpFaqAccordion";
 import HelpContactForm from "../components/HelpContactForm";
+import HelpSupportSidebarCard from "../components/HelpSupportSidebarCard";
 import HelpToolbar from "../components/HelpToolbar";
 
 export default function HelpSection() {
@@ -82,7 +83,14 @@ export default function HelpSection() {
       )}
 
       <div className="border-t border-neutral-border/60 pt-10">
-        <HelpContactForm />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-7">
+            <HelpContactForm />
+          </div>
+          <div className="lg:col-span-5">
+            <HelpSupportSidebarCard />
+          </div>
+        </div>
       </div>
     </main>
   );

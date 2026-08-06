@@ -25,7 +25,7 @@ export default function InvitesRequestsView() {
   }
 
   return (
-    <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen">
+    <main className="flex-1 bg-neutral-subtext/5 p-4 sm:p-6 md:p-10 min-h-screen">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -38,10 +38,10 @@ export default function InvitesRequestsView() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-b border-neutral-border/60 pb-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 border-b border-neutral-border/60 pb-3 w-full">
           <button
             onClick={() => setTab("ALL")}
-            className={`inline-flex items-center justify-center gap-1.5 h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none ${
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               tab === "ALL"
                 ? "bg-brand-accent text-background border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
@@ -51,7 +51,7 @@ export default function InvitesRequestsView() {
           </button>
           <button
             onClick={() => setTab("INVITES")}
-            className={`inline-flex items-center justify-center gap-1.5 h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none ${
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               tab === "INVITES"
                 ? "bg-brand-accent text-background border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
@@ -61,7 +61,7 @@ export default function InvitesRequestsView() {
           </button>
           <button
             onClick={() => setTab("REQUESTS")}
-            className={`inline-flex items-center justify-center gap-1.5 h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none ${
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               tab === "REQUESTS"
                 ? "bg-brand-accent text-background border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"

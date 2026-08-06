@@ -11,7 +11,7 @@ const categories: { id: FeatureCategory; label: string; icon: React.ReactNode }[
   { id: "all", label: "All Features", icon: <Layers className="w-3.5 h-3.5" /> },
   { id: "rotation", label: "Rotation & Payouts", icon: <RotateCcw className="w-3.5 h-3.5" /> },
   { id: "transparency", label: "Ledger & Security", icon: <ShieldCheck className="w-3.5 h-3.5" /> },
-  { id: "collaboration", label: "Group & Chat", icon: <Users className="w-3.5 h-3.5" /> },
+  { id: "collaboration", label: "Group & Activity Logs", icon: <Users className="w-3.5 h-3.5" /> },
   { id: "customization", label: "Personalization", icon: <Settings className="w-3.5 h-3.5" /> },
 ];
 

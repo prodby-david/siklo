@@ -42,7 +42,7 @@ export const helpCategories: HelpCategory[] = [
   {
     id: "payouts",
     name: "Payouts & Contributions",
-    icon: "DollarSign",
+    icon: "Coins",
     items: [
       {
         question: "How does payment verification work?",
