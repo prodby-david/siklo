@@ -12,6 +12,7 @@ export interface PricingPlan {
   monthlyPrice: number;
   yearlyPrice: number;
   isPopular?: boolean;
+  isComingSoon?: boolean;
   ctaText: string;
   ctaHref: string;
   features: PricingFeature[];

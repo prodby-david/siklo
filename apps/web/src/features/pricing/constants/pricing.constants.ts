@@ -27,8 +27,9 @@ export const PRICING_PLANS: PricingPlan[] = [
     monthlyPrice: 49,
     yearlyPrice: 39,
     isPopular: true,
-    ctaText: "Choose Pro",
-    ctaHref: "/signup",
+    isComingSoon: true,
+    ctaText: "Coming Soon",
+    ctaHref: "#",
     features: [
       { text: "Up to 5 Active Savings Groups", included: true },
       { text: "Up to 15 Members per Group", included: true },
@@ -47,8 +48,9 @@ export const PRICING_PLANS: PricingPlan[] = [
     monthlyPrice: 99,
     yearlyPrice: 79,
     isPopular: false,
-    ctaText: "Choose Premium",
-    ctaHref: "/signup",
+    isComingSoon: true,
+    ctaText: "Coming Soon",
+    ctaHref: "#",
     features: [
       { text: "Unlimited Active Savings Groups", included: true },
       { text: "Unlimited Members Capacity", included: true },
