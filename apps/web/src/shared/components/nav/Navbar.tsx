@@ -33,7 +33,7 @@ export default function Navbar() {
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-500 ease-out ${
         isScrolled || isOpen
-          ? "bg-background/80 backdrop-blur-xl border-b border-neutral-border shadow-xs"
+          ? "bg-background border-b border-neutral-border shadow-xs"
           : "bg-transparent border-b border-transparent"
       }`}
     >
