@@ -149,7 +149,7 @@ export default function GroupTurnShowcase({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-7 flex flex-col gap-3">
+        <div className="lg:col-span-5 flex flex-col gap-3">
           <span className="text-[11px] font-extrabold text-neutral-subtext uppercase tracking-wider flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-brand-accent" /> Group Member Turn Queue
           </span>
