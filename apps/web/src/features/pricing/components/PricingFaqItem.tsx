@@ -9,7 +9,7 @@ export default function PricingFaqItem({ faq, idx }: PricingFaqItemProps) {
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: idx * 0.1 }}
-      className="p-6 bg-background/80 backdrop-blur-md relative z-10 border border-neutral-border/60 rounded-2xl space-y-1.5 shadow-xs"
+      className="p-6 bg-background/80 backdrop-blur-md relative z-10 border border-neutral-border/60 rounded-2xl space-y-1.5"
     >
       <h3 className="font-extrabold text-sm md:text-base text-foreground">
         {faq.question}

@@ -43,9 +43,8 @@ export default function FeatureCard({ feature }: { feature: FeatureItem }) {
   return (
     <motion.div
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative z-10 flex flex-col justify-between gap-5 p-5 sm:p-6 bg-background border border-neutral-border rounded-2xl hover:border-brand-accent/40 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden h-full min-h-[220px] flex-1"
+      className="group relative z-10 flex flex-col justify-between gap-5 p-5 sm:p-6 bg-background border border-neutral-border rounded-2xl hover:border-brand-accent/40 transition-all duration-300 overflow-hidden h-full min-h-[220px] flex-1"
     >
-      <div className="absolute top-0 right-0 w-32 h-32 bg-brand-accent/5 rounded-full blur-2xl pointer-events-none group-hover:bg-brand-accent/10 transition-colors duration-300" />
 
       <div className="flex flex-col gap-4 relative z-10">
         <div className="flex items-center justify-between w-full">

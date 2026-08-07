@@ -21,13 +21,10 @@ export default function ComparisonCard({
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className={`rounded-3xl border p-6 sm:p-8 flex flex-col justify-between h-full transition-all duration-300 relative overflow-hidden ${
         isAdvantage
-          ? "bg-gradient-to-b from-brand-accent/15 via-background to-background border-brand-accent/30 shadow-lg shadow-brand-accent/5"
+          ? "bg-gradient-to-b from-brand-accent/15 via-background to-background border-brand-accent/30"
           : "bg-background/90 border-neutral-border/80"
       }`}
     >
-      {isAdvantage && (
-        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent/10 rounded-full blur-3xl -z-10 pointer-events-none" />
-      )}
 
       <div>
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-neutral-border/60">

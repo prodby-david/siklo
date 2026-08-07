@@ -21,8 +21,6 @@ export default function AuthInfoPanel({
 }: AuthInfoPanelProps) {
   return (
     <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-accent/10 via-brand-accent/5 to-transparent border-r border-brand-accent/15 p-8 flex-col justify-between relative overflow-hidden">
-      <div className="absolute -top-12 -left-12 w-40 h-40 bg-brand-accent/10 rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute -bottom-12 -right-12 w-40 h-40 bg-brand-accent/10 rounded-full blur-2xl pointer-events-none" />
 
       <div className="flex flex-col gap-6 relative z-10">
         <Link

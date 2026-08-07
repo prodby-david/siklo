@@ -10,8 +10,6 @@ export default function SignupPage() {
       <Navbar />
       <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] dark:bg-[radial-gradient(#30363d_1px,transparent_1px)] [background-size:16px_16px] z-0" />
       <main className="flex-1 flex flex-col w-full items-center justify-center relative overflow-hidden py-4 px-4 sm:px-6 lg:px-8">
-        <div className="absolute top-1/4 -left-20 w-80 h-80 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-brand-accent/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-4xl flex flex-col items-center justify-center my-auto">
           <SignupCard />

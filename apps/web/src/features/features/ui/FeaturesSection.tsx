@@ -19,8 +19,6 @@ export default function FeaturesSection({
 
   return (
     <section className="w-full bg-transparent relative z-10 py-16 sm:py-24 flex items-center border-t border-neutral-border overflow-hidden">
-      <div className="absolute top-1/3 -left-32 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/3 -right-32 w-96 h-96 bg-brand-accent/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full flex flex-col items-center z-10">
         <motion.div

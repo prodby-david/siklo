@@ -30,7 +30,7 @@ export default function FeatureCategoryFilter({
             onClick={() => onSelectCategory(cat.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer ${
               isActive
-                ? "bg-brand-accent text-white shadow-md shadow-brand-accent/20 border border-brand-accent"
+                ? "bg-brand-accent text-white border border-brand-accent"
                 : "bg-background/80 text-neutral-subtext border border-neutral-border hover:border-brand-accent/30 hover:text-foreground"
             }`}
           >

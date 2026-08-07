@@ -26,7 +26,6 @@ export default function CycleTurnShowcase() {
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="w-full rounded-3xl border border-brand-accent/30 bg-background/80 backdrop-blur-xl relative z-10 p-4 sm:p-8 overflow-hidden"
     >
-      <div className="absolute top-0 right-0 w-80 h-80 bg-brand-accent/10 rounded-full blur-3xl -z-10 pointer-events-none" />
 
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-border/60 pb-5 sm:pb-6 mb-6 sm:mb-8 gap-3 sm:gap-4">
         <div>

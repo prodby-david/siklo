@@ -22,8 +22,8 @@ export default function PricingCard({ plan, interval, index = 0 }: PricingCardPr
       whileHover={{ scale: plan.isComingSoon ? 1 : 1.03, transition: { duration: 0.2 } }}
       className={`relative flex flex-col justify-between p-6 sm:p-8 rounded-3xl transition-all duration-300 ${
         plan.isPopular
-          ? "border-2 border-brand-accent bg-gradient-to-b from-brand-accent/15 via-background/80 to-background/90 backdrop-blur-xl relative z-10 shadow-md scale-102 z-10"
-          : "border border-neutral-border bg-background/80 backdrop-blur-xl relative z-10 shadow-xs hover:border-brand-accent/30 hover:shadow-md"
+          ? "border-2 border-brand-accent bg-gradient-to-b from-brand-accent/15 via-background/80 to-background/90 backdrop-blur-xl relative z-10 scale-102 z-10"
+          : "border border-neutral-border bg-background/80 backdrop-blur-xl relative z-10 hover:border-brand-accent/30"
       }`}
     >
       {plan.isComingSoon ? (
