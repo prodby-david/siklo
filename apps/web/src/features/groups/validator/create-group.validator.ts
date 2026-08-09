@@ -2,10 +2,12 @@ import { createGroupSchema as baseCreateGroupSchema } from "@siklo/shared-schema
 import { z } from "zod";
 
 export const createGroupSchema = baseCreateGroupSchema.extend({
+  description: z.string().optional(),
   contributionAmount: z
     .number({ message: "Contribution amount is required" })
     .int("Contribution amount must be a whole number without decimals")
-    .min(1, "Contribution amount is required"),
+    .min(50, "Contribution amount must be at least ₱50")
+    .max(10000, "Contribution amount cannot exceed ₱10,000"),
   maxMembers: z
     .number({ message: "Maximum members is required" })
     .int("Maximum members must be a whole number")

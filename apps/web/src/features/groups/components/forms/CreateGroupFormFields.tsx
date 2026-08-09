@@ -1,12 +1,11 @@
 import Input from "@/shared/components/inputs/Input";
 import {
   Users,
-  Calendar,
   PhilippinePeso,
   FileText,
+  AlignLeft,
   Loader2,
   Plus,
-  RefreshCw,
 } from "lucide-react";
 import { CreateGroupFormFieldsProps } from "@/features/groups/types/create-group-field.types";
 import useCreateGroupFormFields from "../../hooks/useCreateGroupFormFields";
@@ -50,11 +49,21 @@ export default function CreateGroupFormFields(
             icon={<FileText className="w-4 h-4 text-neutral-subtext" />}
           />
 
+          <Input
+            label="description"
+            labelText="Group Description (Optional)"
+            placeholder="e.g. Monthly savings circle for team members"
+            disabled={isPending}
+            {...register("description")}
+            errors={errors}
+            icon={<AlignLeft className="w-4 h-4 text-neutral-subtext" />}
+          />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="contributionAmount"
-              labelText="Contribution Amount (₱)"
-              placeholder="5000"
+              labelText="Contribution Amount (₱50 - ₱10,000)"
+              placeholder="1000"
               type="number"
               disabled={isPending}
               {...register("contributionAmount", { valueAsNumber: true })}
