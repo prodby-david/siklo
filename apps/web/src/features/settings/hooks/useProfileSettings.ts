@@ -45,7 +45,7 @@ export default function useProfileSettings() {
       await updateProfileSettings(data);
       toast.success("Profile updated successfully");
       setIsDrawerOpen(false);
-    } catch (error) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data.message || "Failed to update profile";

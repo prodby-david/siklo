@@ -3,7 +3,6 @@
 import Badge from "../components/Badge";
 import CycleVisualizer from "../components/CycleVisualizer";
 import Link from "next/link";
-import Image from "next/image";
 import { HeroProps } from "../types/hero.types";
 import { BookOpen, Coins } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";

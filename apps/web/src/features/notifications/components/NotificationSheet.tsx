@@ -9,7 +9,7 @@ import NotificationEmptyState from "./NotificationEmptyState";
 import NotificationLoadMore from "./NotificationLoadMore";
 import { NotificationSheetProps } from "../types/notification.types";
 
-export default function notificationSheet({ isOpen, onClose }: NotificationSheetProps) {
+export default function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
   const {
     notifications,
     filter,

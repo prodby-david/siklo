@@ -7,7 +7,7 @@ import { Input, ContactNumberInput } from "@/shared/components/inputs";
 import { Button } from "@/shared/components/ui/button";
 import { ProfileEditSheetProps } from "../types/settings.types";
 
-export default function profileEditSheet({
+export default function ProfileEditSheet({
   isOpen,
   onClose,
   onSubmit,

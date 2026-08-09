@@ -13,7 +13,6 @@ type InputProps = {
 export default function Input({
   label = "",
   placeholder = "",
-  register,
   errors = {},
   icon,
   type = "text",

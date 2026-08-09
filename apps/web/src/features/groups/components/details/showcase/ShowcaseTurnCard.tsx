@@ -1,7 +1,7 @@
 "use client";
 
 import formatDate from "@/shared/utils/formatDate";
-import { Check, Clock, User, ShieldCheck, Crown } from "lucide-react";
+import { Clock, User, ShieldCheck, Crown } from "lucide-react";
 import { ShowcaseTurnCardProps } from "@/features/groups/types/showcase.types";
 
 export default function ShowcaseTurnCard({

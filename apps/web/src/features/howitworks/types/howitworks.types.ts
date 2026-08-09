@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export interface HowItWorksStep {
   stepNumber: number;
   title: string;
@@ -31,7 +33,7 @@ export interface PayoutSchemesGridProps {
     id: number;
     title: string;
     desc: string;
-    icon: any;
+    icon: LucideIcon;
   }>;
 }
 

@@ -9,7 +9,7 @@ import {
 } from "@/shared/components/ui/dialog";
 import { FormInput as Input } from "@/shared/components/inputs";
 import useInviteCode from "../../hooks/useInviteCode";
-import { LogIn, ArrowLeft } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 export default function JoinGroupModal() {
   const {
@@ -20,11 +20,6 @@ export default function JoinGroupModal() {
     showModal,
     setShowModal,
     handleShowModal,
-    step,
-    setStep,
-    preview,
-    selectedSlot,
-    setSelectedSlot,
   } = useInviteCode();
 
   return (

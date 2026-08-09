@@ -32,7 +32,6 @@ export default function TurnDetailPanel({
   calculatedPayoutDate,
   group,
   isOrganizer,
-  isCurrentTurn,
   isCycleDone,
   currentCycle,
   onMarkAsPaid,

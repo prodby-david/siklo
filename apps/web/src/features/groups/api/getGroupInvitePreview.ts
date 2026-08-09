@@ -1,5 +1,3 @@
-import { api } from "@/shared/lib/axios";
-
 export interface GroupPreviewResponse {
   id: string;
   name: string;
@@ -9,10 +7,3 @@ export interface GroupPreviewResponse {
     position: number;
   }[];
 }
-
-export const getGroupInvitePreview = async (
-  inviteCode: string,
-): Promise<GroupPreviewResponse> => {
-  const response = await api.get(`/groups/invite/${inviteCode}`);
-  return response.data;
-};

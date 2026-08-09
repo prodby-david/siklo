@@ -1,4 +1,4 @@
-import { User, Lock, Bell, Wallet } from "lucide-react";
+import { User, Lock, Bell } from "lucide-react";
 import { SettingsTab } from "../types/settings.types";
 
 export const SETTINGS_TABS: SettingsTab[] = [

@@ -1,6 +1,6 @@
 "use client";
 
-import formatDate, { formatDateTime12h } from "@/shared/utils/formatDate";
+import { formatDateTime12h } from "@/shared/utils/formatDate";
 import useGetGroupActivities from "@/features/groups/hooks/useGetGroupActivities";
 import useGroupSocket from "@/features/groups/hooks/useGroupSocket";
 import { useMemo } from "react";

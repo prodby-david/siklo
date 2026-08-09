@@ -31,7 +31,7 @@ export default function useInviteCode() {
   const [step, setStep] = useState<"code" | "slots">("code");
   const [preview, setPreview] = useState<GroupPreviewResponse | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
-  const [loadingPreview, setLoadingPreview] = useState(false);
+  const [loadingPreview] = useState(false);
 
   const inviteCodeValue = watch("inviteCode");
 

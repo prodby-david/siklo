@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import { TrendingUp, Calendar, CheckCircle2, Clock, ShieldCheck, Wallet } from "lucide-react";
+import { TrendingUp, Calendar, Clock, ShieldCheck, Wallet } from "lucide-react";
 import { Membership } from "../../types/group.types";
 import { ApiActivity } from "../../types/group.activity.types";
 import { getPayoutDate } from "../../utils/group.calculations";

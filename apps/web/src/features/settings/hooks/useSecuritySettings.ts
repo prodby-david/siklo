@@ -28,7 +28,7 @@ export default function useSecuritySettings() {
       await changeUserPassword(data);
       toast.success("Password changed successfully");
       reset();
-    } catch (error) {
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message =
           error.response?.data.message || "Change password failed";

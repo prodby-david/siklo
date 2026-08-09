@@ -88,22 +88,50 @@ export const FloatingTrackerVisualizer = ({
   const ry = 230;
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20 overflow-visible">
-      {items.map((item) => {
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-visible">
+      {items.map((item, index) => {
         const IconComponent = item.icon;
         const keyframes = getOvalKeyframes(item.startAngle, rx, ry);
+        const entranceDelay = 0.6 + index * 0.15;
 
         return (
           <motion.div
             key={item.id}
+            initial={{
+              opacity: 0,
+              scale: 0.6,
+              x: keyframes.x[0],
+              y: keyframes.y[0],
+            }}
             animate={{
+              opacity: 0.5,
+              scale: 1,
               x: keyframes.x,
               y: keyframes.y,
             }}
             transition={{
-              duration: 65,
-              ease: "linear",
-              repeat: Infinity,
+              opacity: {
+                duration: 0.8,
+                delay: entranceDelay,
+                ease: "easeOut",
+              },
+              scale: {
+                duration: 0.8,
+                delay: entranceDelay,
+                ease: "easeOut",
+              },
+              x: {
+                duration: 65,
+                ease: "linear",
+                repeat: Infinity,
+                delay: entranceDelay,
+              },
+              y: {
+                duration: 65,
+                ease: "linear",
+                repeat: Infinity,
+                delay: entranceDelay,
+              },
             }}
             className="absolute pointer-events-auto shrink-0 flex"
           >

@@ -24,7 +24,7 @@ export default function useSignup() {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   const onSubmit = async (data: SignupFormData) => {
-    const { confirmPassword, ...updatedData } = data;
+    const { confirmPassword: _, ...updatedData } = data;
 
     try {
       await api.post("/users", updatedData);

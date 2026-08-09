@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle2, ShieldCheck, Coins } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { ShowcaseMemberDetailProps } from "../types/hero.types";
 
 export default function ShowcaseMemberDetail({
