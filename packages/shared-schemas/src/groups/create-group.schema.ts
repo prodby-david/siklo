@@ -7,7 +7,8 @@ export const createGroupFullSchema = z.object({
   description: z.string().optional(),
   contributionAmount: z.coerce
     .number()
-    .min(1, "Contribution amount is required"),
+    .min(50, "Contribution amount must be at least ₱50")
+    .max(10000, "Contribution amount cannot exceed ₱10,000"),
   cycleDuration: z.coerce.number().min(1, "Cycle duration must be at least 1"),
   billingCycle: z.enum(BILLING_CYCLES),
   payoutSequence: z.enum(PAYOUT_SEQUENCES),
@@ -19,11 +20,6 @@ export const createGroupFullSchema = z.object({
   organizerId: z.string(),
 });
 
-/**
- * Create-group schema without server-generated fields.
- * Used by the API controller (inviteCode and organizerId are added server-side)
- * and as the base for the web form (which extends with totalPayout).
- */
 export const createGroupSchema = createGroupFullSchema.omit({
   inviteCode: true,
   organizerId: true,
