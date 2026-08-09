@@ -132,6 +132,18 @@ export default function GroupHero({
               This cycle has ended. New members cannot join completed groups.
             </span>
           </div>
+        ) : hasStarted || !inviteCode ? (
+          <div className="flex flex-col gap-1.5 bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl min-w-[240px] shadow-sm">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1">
+              <Lock className="w-3 h-3 text-amber-500" /> Invite Code Unavailable
+            </span>
+            <span className="text-xs font-bold text-foreground">
+              Cycle Has Started
+            </span>
+            <span className="text-[10px] text-neutral-subtext leading-relaxed">
+              Invite codes are disabled once a group cycle is active.
+            </span>
+          </div>
         ) : (
           <div className="flex flex-col gap-2 bg-background/80 backdrop-blur-sm border border-neutral-border p-4 rounded-2xl min-w-[240px] shadow-sm">
             <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">

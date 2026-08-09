@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { Menu, X, Coins } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
 
+import { motion } from "framer-motion";
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +32,10 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header
+    <motion.header
+      initial={{ opacity: 0, y: -15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={`sticky top-0 z-50 w-full transition-all duration-500 ease-out ${
         isScrolled || isOpen
           ? "bg-background border-b border-neutral-border shadow-xs"
@@ -133,6 +138,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }
