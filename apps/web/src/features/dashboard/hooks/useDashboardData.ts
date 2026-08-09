@@ -31,27 +31,57 @@ export function useDashboardData() {
     0,
   );
 
-  const sortedActiveGroups = [...groups].sort((a: Group, b: Group) => {
-    const timeA = a.startDate ? new Date(a.startDate).getTime() : 0;
-    const timeB = b.startDate ? new Date(b.startDate).getTime() : 0;
-    return timeA - timeB;
-  });
+  const perTurnContribution = groups.reduce(
+    (sum: number, group: Group) => sum + group.contributionAmount,
+    0,
+  );
 
-  const nearestGroup = sortedActiveGroups[0] || null;
+  const primaryBillingCycle = groups.length === 1 ? groups[0]?.billingCycle : "";
 
-  const nextPayoutAmount = nearestGroup
-    ? nearestGroup.contributionAmount * nearestGroup.maxMembers
-    : 0;
+  type GroupWithStatus = Group & { isCycleDone?: boolean; status?: string };
 
-  const nextPayoutDate = nearestGroup && nearestGroup.startDate
-    ? new Date(nearestGroup.startDate).toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })
-    : null;
+  const runningActiveGroups = groups.filter(
+    (g: GroupWithStatus) =>
+      !!g.startDate && !g.isCycleDone && g.status !== "COMPLETED",
+  );
 
-  const nearestGroupName = nearestGroup ? nearestGroup.name : "";
+  const sortedActiveGroups = [...runningActiveGroups].sort(
+    (a: Group, b: Group) => {
+      const timeA = a.startDate ? new Date(a.startDate).getTime() : 0;
+      const timeB = b.startDate ? new Date(b.startDate).getTime() : 0;
+      return timeA - timeB;
+    },
+  );
+
+  const nearestGroup = sortedActiveGroups[0] || groups[0] || null;
+  const isNearestGroupActive =
+    !!nearestGroup?.startDate &&
+    !(nearestGroup as GroupWithStatus).isCycleDone &&
+    (nearestGroup as GroupWithStatus).status !== "COMPLETED";
+
+  const nextPayoutAmount =
+    nearestGroup && isNearestGroupActive
+      ? nearestGroup.contributionAmount * nearestGroup.maxMembers
+      : 0;
+
+  const nextPayoutDate =
+    nearestGroup && isNearestGroupActive && nearestGroup.startDate
+      ? new Date(nearestGroup.startDate).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : null;
+
+  const nearestGroupName =
+    nearestGroup && isNearestGroupActive ? nearestGroup.name : "";
+
+  const nearestGroupId = nearestGroup ? nearestGroup.id : "";
+
+  const nextContributionAmount =
+    nearestGroup && isNearestGroupActive
+      ? nearestGroup.contributionAmount
+      : 0;
 
   return {
     firstName,
@@ -60,10 +90,14 @@ export function useDashboardData() {
     stats: {
       totalPayoutPool,
       totalMonthlyContributions,
+      perTurnContribution,
+      primaryBillingCycle,
       nextPayoutAmount,
       nextPayoutDate,
       nearestGroupName,
+      nearestGroupId,
       activeGroupsCount: groups.length,
+      nextContributionAmount,
     },
   };
 }

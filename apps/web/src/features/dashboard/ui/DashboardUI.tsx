@@ -24,13 +24,22 @@ export default function DashboardUI() {
         <TotalSavingsCard
           totalPayoutPool={stats.totalPayoutPool}
           totalMonthlyContributions={stats.totalMonthlyContributions}
+          perTurnContribution={stats.perTurnContribution}
+          primaryBillingCycle={stats.primaryBillingCycle}
+          activeGroupsCount={stats.activeGroupsCount}
         />
         <NextPayoutCard
           expectedAmount={stats.nextPayoutAmount}
           expectedDate={stats.nextPayoutDate}
           groupName={stats.nearestGroupName}
+          groupId={stats.nearestGroupId}
         />
-        <ActiveGroupsCard count={stats.activeGroupsCount} />
+        <ActiveGroupsCard
+          count={stats.activeGroupsCount}
+          nextContributionAmount={stats.nextContributionAmount}
+          groupName={stats.nearestGroupName}
+          groupId={stats.nearestGroupId}
+        />
       </div>
 
       <div className="space-y-4">

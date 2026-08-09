@@ -1,6 +1,5 @@
 "use client";
 
-import { Toaster } from "sonner";
 import { Inter } from "next/font/google";
 import DashboardSidebar from "@/features/dashboard/components/sidebar/DashboardSidebar";
 import DashboardMobileHeader from "@/features/dashboard/components/sidebar/DashboardMobileHeader";
@@ -40,7 +39,6 @@ export default function DashboardClientLayout({
     <NotificationProvider>
       <SidebarProvider>
         <DashboardLayoutContent>{children}</DashboardLayoutContent>
-        <Toaster position="top-right" richColors />
       </SidebarProvider>
     </NotificationProvider>
   );
