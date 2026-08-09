@@ -280,7 +280,7 @@ export class GroupsService {
 
       const updatedGroup = await tx.group.update({
         where: { id: groupId },
-        data: { startDate: new Date() },
+        data: { startDate: new Date(), inviteCode: null },
       });
 
       await this.activityService.createActivity(

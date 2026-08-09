@@ -36,7 +36,7 @@
     payoutSequence     PayoutSequence @default(MANUAL)
     cycleDuration      Int
     maxMembers         Int
-    inviteCode         String @unique
+    inviteCode         String? @unique
     organizerId        String
     startDate          DateTime?
     createdAt          DateTime @default(now())
