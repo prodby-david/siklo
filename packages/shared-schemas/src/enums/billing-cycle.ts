@@ -8,7 +8,6 @@ export const BILLING_CYCLES = [
 
 export type BillingCycle = (typeof BILLING_CYCLES)[number];
 
-/** Human-readable labels for each billing cycle */
 export const BILLING_CYCLE_LABELS: Record<BillingCycle, string> = {
   DAILY: "Daily",
   WEEKLY: "Weekly",
@@ -17,7 +16,6 @@ export const BILLING_CYCLE_LABELS: Record<BillingCycle, string> = {
   QUARTERLY: "Quarterly",
 };
 
-/** Number of days per billing cycle */
 export const BILLING_CYCLE_DAYS: Record<BillingCycle, number> = {
   DAILY: 1,
   WEEKLY: 7,

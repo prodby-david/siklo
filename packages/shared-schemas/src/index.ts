@@ -1,10 +1,8 @@
-// ─── Auth Schemas ────────────────────────────────────────────────
 export { signInSchema, type SignInDTO } from "./auth/signin.schema.js";
 export {
   signupBaseSchema,
   createUserSchema,
   userProfileSettingSchema,
-  type SignupBaseDTO,
   type CreateUserDTO,
   type UserProfileSettingDTO,
 } from "./auth/signup.schema.js";
@@ -13,7 +11,6 @@ export {
   type ChangePasswordDTO,
 } from "./auth/password.schema.js";
 
-// ─── Group Schemas ───────────────────────────────────────────────
 export {
   createGroupFullSchema,
   createGroupSchema,
@@ -31,7 +28,6 @@ export {
   type UpdateGroupDTO,
 } from "./groups/update-group.schema.js";
 
-// ─── Enums & Constants ──────────────────────────────────────────
 export {
   BILLING_CYCLES,
   BILLING_CYCLE_LABELS,

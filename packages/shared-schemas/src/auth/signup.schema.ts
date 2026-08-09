@@ -18,13 +18,11 @@ export const signupBaseSchema = z.object({
     .regex(/^\d{11}$/, "Contact number must be exactly 11 digits."),
 });
 
-/** Alias for API usage — same schema, named to match the existing API type */
 export const createUserSchema = signupBaseSchema;
 
 export const userProfileSettingSchema = signupBaseSchema.omit({
   password: true,
 });
 
-export type SignupBaseDTO = z.infer<typeof signupBaseSchema>;
 export type CreateUserDTO = z.infer<typeof createUserSchema>;
 export type UserProfileSettingDTO = z.infer<typeof userProfileSettingSchema>;
