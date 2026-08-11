@@ -31,7 +31,7 @@ export default function PricingView() {
             >
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-bold">
                 <Tag className="w-3.5 h-3.5" />
-                <span>Simple & Transparent Pricing</span>
+                <span>Transparent & Predictable Pricings</span>
               </div>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-foreground">
@@ -40,7 +40,8 @@ export default function PricingView() {
               </h1>
 
               <p className="text-xs sm:text-sm md:text-base text-neutral-subtext leading-relaxed">
-                Start tracking your savings cycle for free. Upgrade as your group grows with no hidden transaction cuts.
+                Start tracking your savings cycle for free. Upgrade as your
+                group grows with no hidden transaction cuts.
               </p>
 
               <div className="pt-4">
@@ -74,7 +75,8 @@ export default function PricingView() {
               className="text-center space-y-2"
             >
               <h2 className="text-2xl md:text-3xl font-extrabold text-foreground flex items-center justify-center gap-2">
-                <HelpCircle className="w-6 h-6 text-brand-accent" /> Frequently Asked Questions
+                <HelpCircle className="w-6 h-6 text-brand-accent" /> Frequently
+                Asked Questions
               </h2>
               <p className="text-xs md:text-sm text-neutral-subtext">
                 Got questions about Siklo Paluwagan pricing? We have answers.

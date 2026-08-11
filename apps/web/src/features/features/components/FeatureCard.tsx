@@ -42,8 +42,9 @@ export default function FeatureCard({ feature }: { feature: FeatureItem }) {
 
   return (
     <motion.div
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group relative z-10 flex flex-col justify-between gap-5 p-5 sm:p-6 bg-background border border-neutral-border rounded-2xl hover:border-brand-accent/40 transition-all duration-300 overflow-hidden h-full min-h-[220px] flex-1"
+      id={feature.id}
+      whileHover={{ y: -5, transition: { duration: 0.15, ease: "easeOut" } }}
+      className="group relative z-10 flex flex-col justify-between gap-5 p-5 sm:p-6 bg-background border border-neutral-border rounded-2xl hover:border-brand-accent/40 hover:shadow-md transition-all duration-150 ease-out overflow-hidden h-full min-h-[220px] flex-1 scroll-mt-28"
     >
 
       <div className="flex flex-col gap-4 relative z-10">

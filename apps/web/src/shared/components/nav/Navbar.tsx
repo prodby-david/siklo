@@ -5,22 +5,17 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "@/shared/components/theme/ThemeToggle";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Menu, X, Coins } from "lucide-react";
+import { Menu, X, Coins, ChevronDown } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
-
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { NAV_LINKS } from "@/shared/constants/nav.constants";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Features", href: "/features" },
-    { name: "How it works", href: "/how-it-works" },
-    { name: "Pricing", href: "/pricing" },
-  ];
+  const [activeHover, setActiveHover] = useState<string | null>(null);
+  const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,13 +26,17 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const toggleMobileSubmenu = (name: string) => {
+    setExpandedMobile(expandedMobile === name ? null : name);
+  };
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className={`sticky top-0 z-50 w-full transition-all duration-500 ease-out ${
-        isScrolled || isOpen
+        isScrolled || isOpen || activeHover
           ? "bg-background border-b border-neutral-border shadow-xs"
           : "bg-transparent border-b border-transparent"
       }`}
@@ -57,18 +56,70 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((navLink) => {
+          {NAV_LINKS.map((navLink) => {
             const isActive = navLink.href === pathname;
+            const hasSubItems = navLink.subItems && navLink.subItems.length > 0;
+            const isHovered = activeHover === navLink.name;
+
             return (
-              <Link
-                key={navLink.href}
-                href={navLink.href}
-                className={`text-xs font-semibold hover:text-brand-accent transition-colors duration-150 ${
-                  isActive ? "text-brand-accent font-bold" : "text-neutral-subtext"
-                }`}
+              <div
+                key={navLink.name}
+                className="relative py-2"
+                onMouseLeave={() => setActiveHover(null)}
               >
-                {navLink.name}
-              </Link>
+                <Link
+                  href={navLink.href}
+                  onMouseEnter={() => setActiveHover(navLink.name)}
+                  className={`inline-flex items-center gap-1 text-xs font-semibold hover:text-brand-accent transition-colors duration-150 ${
+                    isActive ? "text-brand-accent font-bold" : "text-neutral-subtext"
+                  }`}
+                >
+                  <span>{navLink.name}</span>
+                  {hasSubItems && (
+                    <ChevronDown
+                      className={`w-3 h-3 transition-transform duration-200 ${
+                        isHovered ? "rotate-180 text-brand-accent" : ""
+                      }`}
+                    />
+                  )}
+                </Link>
+
+                <AnimatePresence>
+                  {hasSubItems && isHovered && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.97 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="absolute top-full -left-4 w-72 rounded-3xl border border-neutral-border/80 bg-background/95 backdrop-blur-2xl shadow-xl p-3 flex flex-col gap-1 z-50"
+                    >
+                      {navLink.subItems?.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <Link
+                            key={subItem.id}
+                            href={subItem.href}
+                            onClick={() => setActiveHover(null)}
+                            className="flex items-start gap-3 p-2.5 rounded-2xl hover:bg-brand-accent/10 hover:border-brand-accent/20 border border-transparent transition-all group"
+                          >
+                            <div className="w-8 h-8 rounded-xl bg-brand-accent/10 text-brand-accent group-hover:bg-brand-accent group-hover:text-white flex items-center justify-center shrink-0 transition-colors">
+                              <SubIcon className="w-4 h-4" />
+                            </div>
+                            <div className="flex flex-col text-left">
+                              <span className="text-xs font-bold text-foreground group-hover:text-brand-accent transition-colors">
+                                {subItem.name}
+                              </span>
+                              <span className="text-[10px] text-neutral-subtext leading-tight mt-0.5">
+                                {subItem.description}
+                              </span>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             );
           })}
 
@@ -99,20 +150,58 @@ export default function Navbar() {
         }`}
       >
         <div className="overflow-hidden">
-          <div className="flex flex-col gap-4 p-4">
-            {navLinks.map((navLink) => {
+          <div className="flex flex-col gap-3 p-4">
+            {NAV_LINKS.map((navLink) => {
               const isActive = navLink.href === pathname;
+              const hasSubItems = navLink.subItems && navLink.subItems.length > 0;
+              const isExpanded = expandedMobile === navLink.name;
+
               return (
-                <Link
-                  key={navLink.href}
-                  href={navLink.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`text-xs font-semibold py-2 px-3 rounded-2xl hover:bg-neutral-border/30 transition-colors ${
-                    isActive ? "text-brand-accent bg-brand-accent/10 font-bold" : "text-neutral-subtext"
-                  }`}
-                >
-                  {navLink.name}
-                </Link>
+                <div key={navLink.name} className="flex flex-col">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      href={navLink.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`text-xs font-semibold py-2 px-3 rounded-2xl hover:bg-neutral-border/30 transition-colors flex-1 ${
+                        isActive ? "text-brand-accent bg-brand-accent/10 font-bold" : "text-neutral-subtext"
+                      }`}
+                    >
+                      {navLink.name}
+                    </Link>
+
+                    {hasSubItems && (
+                      <button
+                        onClick={() => toggleMobileSubmenu(navLink.name)}
+                        className="p-2 text-neutral-subtext hover:text-foreground"
+                      >
+                        <ChevronDown
+                          className={`w-4 h-4 transition-transform duration-200 ${
+                            isExpanded ? "rotate-180 text-brand-accent" : ""
+                          }`}
+                        />
+                      </button>
+                    )}
+                  </div>
+
+                  {hasSubItems && isExpanded && (
+                    <div className="flex flex-col gap-1 pl-4 pt-1 pb-2">
+                      {navLink.subItems?.map((subItem) => {
+                        const SubIcon = subItem.icon;
+                        return (
+                          <Link
+                            key={subItem.id}
+                            href={subItem.href}
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-2.5 p-2 rounded-xl text-xs text-neutral-subtext hover:text-foreground hover:bg-neutral-border/20 transition-colors"
+                          >
+                            <SubIcon className="w-3.5 h-3.5 text-brand-accent" />
+                            <span>{subItem.name}</span>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               );
             })}
 
@@ -120,7 +209,7 @@ export default function Navbar() {
               size="md"
               text="Get Started"
               icon={<Coins className="w-4 h-4" />}
-              className="w-full"
+              className="w-full mt-2"
               onClick={() => setIsOpen(false)}
             />
 

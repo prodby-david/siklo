@@ -44,9 +44,17 @@ export default function NotificationHeader({
         </div>
 
         <div className="flex items-center gap-1.5">
+          {unreadCount > 0 && onMarkAllAsRead && (
+            <button
+              onClick={onMarkAllAsRead}
+              className="px-2.5 py-1 rounded-xl text-[11px] font-extrabold bg-brand-accent/10 border border-brand-accent/20 text-brand-accent hover:bg-brand-accent hover:text-white transition-all cursor-pointer"
+            >
+              Mark all read
+            </button>
+          )}
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-xl flex items-center justify-center text-neutral-subtext text-foreground hover:text-brand-accent bg-neutral-subtext/10 transition-colors cursor-pointer"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-neutral-subtext hover:text-foreground bg-neutral-subtext/10 transition-colors cursor-pointer"
             aria-label="Close notifications drawer"
           >
             <X className="w-5 h-5" />

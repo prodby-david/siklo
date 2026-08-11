@@ -34,10 +34,11 @@ export function useSignin() {
     try {
       await api.post("/auth/signin", data);
       reset();
+      toast.success("Sign in success! Redirecting to dashboard...");
       setIsRedirecting(true);
       setTimeout(() => {
         router.push("/dashboard");
-      }, 2000);
+      }, 1200);
     } catch (err: unknown) {
       setIsRedirecting(false);
       if (axios.isAxiosError(err)) {

@@ -1,4 +1,4 @@
-import { Eye, Calculator, Globe, HandCoins, Smartphone } from "lucide-react";
+import { Eye, Calculator, Globe, HandCoins, Lock } from "lucide-react";
 
 export default function getIcon(
   id: string,
@@ -14,8 +14,8 @@ export default function getIcon(
       return <Globe className={className} />;
     case "no-fees":
       return <HandCoins className={className} />;
-    case "responsive":
-      return <Smartphone className={className} />;
+    case "private-access":
+      return <Lock className={className} />;
     default:
       return null;
   }

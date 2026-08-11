@@ -4,7 +4,7 @@ export const defaultSteps: HowItWorksStep[] = [
   {
     stepNumber: 1,
     title: "Set Up Your Paluwagan Group",
-    description: "Enter your group name, contribution amount (₱), billing frequency, member limit (3–15), and select your payout sequence method.",
+    description: "Enter your group name, contribution amount, billing frequency, member capacity, and select your payout sequence method.",
   },
   {
     stepNumber: 2,

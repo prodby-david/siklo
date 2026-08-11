@@ -24,17 +24,18 @@ export default function useSignup() {
   const [isRedirecting, setIsRedirecting] = useState(false);
 
   const onSubmit = async (data: SignupFormData) => {
-    const { confirmPassword: _, ...updatedData } = data;
+    const { confirmPassword, ...updatedData } = data;
+    void confirmPassword;
 
     try {
       await api.post("/users", updatedData);
       reset();
-      toast.success("Signup success, redirecting to signin...");
+      toast.success("Sign up success! Redirecting to sign in...");
       setIsRedirecting(true);
       setTimeout(() => {
         router.push("/signin");
         setIsRedirecting(false);
-      }, 3000);
+      }, 1200);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const message = err.response?.data.message || "Signup failed";
