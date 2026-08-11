@@ -27,6 +27,14 @@ export {
   updateGroupSchema,
   type UpdateGroupDTO,
 } from "./groups/update-group.schema.js";
+export {
+  submitPaymentSchema,
+  rejectPaymentSchema,
+  updateMemberPaymentPreferenceSchema,
+  type SubmitPaymentDTO,
+  type RejectPaymentDTO,
+  type UpdateMemberPaymentPreferenceDTO,
+} from "./groups/payment.schema.js";
 
 export {
   BILLING_CYCLES,
@@ -40,3 +48,9 @@ export {
   PAYOUT_SEQUENCE_DESCRIPTIONS,
   type PayoutSequence,
 } from "./enums/payout-sequence.js";
+export {
+  PAYMENT_METHODS,
+  PAYMENT_METHOD_LABELS,
+  paymentMethodSchema,
+  type PaymentMethodType,
+} from "./enums/payment-method.js";

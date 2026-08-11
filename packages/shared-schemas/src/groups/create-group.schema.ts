@@ -1,21 +1,59 @@
 import { z } from "zod";
 import { BILLING_CYCLES } from "../enums/billing-cycle.js";
 import { PAYOUT_SEQUENCES } from "../enums/payout-sequence.js";
+import { PAYMENT_METHODS } from "../enums/payment-method.js";
 
 export const createGroupFullSchema = z.object({
-  name: z.string().min(3, "Group name must be at least 3 characters"),
+  name: z
+    .string({ message: "Group name is required" })
+    .min(3, "Group name must be at least 3 characters long")
+    .max(50, "Group name cannot exceed 50 characters"),
   description: z.string().optional(),
   contributionAmount: z.coerce
-    .number()
+    .number({ message: "Contribution amount is required" })
     .min(50, "Contribution amount must be at least ₱50")
     .max(10000, "Contribution amount cannot exceed ₱10,000"),
-  cycleDuration: z.coerce.number().min(1, "Cycle duration must be at least 1"),
-  billingCycle: z.enum(BILLING_CYCLES),
-  payoutSequence: z.enum(PAYOUT_SEQUENCES),
+  cycleDuration: z.coerce
+    .number({ message: "Cycle duration is required" })
+    .min(1, "Cycle duration must be at least 1 cycle"),
+  billingCycle: z.enum(BILLING_CYCLES, {
+    message: "Please select a valid billing cycle",
+  }),
+  payoutSequence: z.enum(PAYOUT_SEQUENCES, {
+    message: "Please select a valid payout sequence",
+  }),
   startDate: z.coerce.date().optional(),
   maxMembers: z.coerce
+    .number({ message: "Member capacity is required" })
+    .min(3, "Member capacity must be at least 3 members")
+    .max(50, "Member capacity cannot exceed 50 members"),
+  allowedPaymentMethods: z
+    .array(z.enum(PAYMENT_METHODS), {
+      message: "Please select valid payment methods",
+    })
+    .min(1, "Please select at least 1 allowed payment method for members")
+    .default(["E_WALLET", "BANK_TRANSFER", "CASH"]),
+  paymentDetails: z.string().optional(),
+  gracePeriodDays: z.coerce
     .number()
-    .min(3, "Minimum number of members should be at least 3"),
+    .min(0, "Grace period cannot be negative")
+    .max(7, "Grace period is capped at 7 days maximum")
+    .default(0),
+  latePenaltyAmount: z.coerce
+    .number()
+    .min(0, "Daily penalty rate cannot be negative")
+    .max(10, "Daily penalty rate is capped at 10% per day maximum")
+    .default(0),
+  enableBackupFund: z.boolean().default(false),
+  backupFundPerTurn: z.coerce
+    .number()
+    .min(0, "Backup fund per turn cannot be negative")
+    .optional()
+    .default(0),
+  backupFundAction: z
+    .enum(["EQUAL_REFUND", "CARRY_OVER", "ORGANIZER_REWARD"])
+    .optional()
+    .default("EQUAL_REFUND"),
   inviteCode: z.string().length(12),
   organizerId: z.string(),
 });
