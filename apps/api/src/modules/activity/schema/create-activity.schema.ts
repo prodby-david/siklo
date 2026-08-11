@@ -7,11 +7,13 @@ export const CreateActivitySchema = z.object({
     'PAYMENT',
     'PAYMENT_OVERDUE',
     'PAYMENT_VERIFIED',
+    'PAYMENT_REJECTED',
     'PAYOUT_DISBURSED',
     'PENALTY_APPLIED',
     'CYCLE_STARTED',
     'CYCLE_CLOSED',
     'ROTATED',
+    'ANNOUNCEMENT',
   ]),
   description: z.string(),
 });

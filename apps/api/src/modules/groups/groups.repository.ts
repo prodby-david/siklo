@@ -192,4 +192,11 @@ export class GroupsRepository {
       data: { description },
     });
   }
+
+  async updateGroup(groupId: string, data: Record<string, any>) {
+    return this.prisma.group.update({
+      where: { id: groupId },
+      data,
+    });
+  }
 }

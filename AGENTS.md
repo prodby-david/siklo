@@ -39,6 +39,19 @@ Follow these rules for all code you write:
 - Classes: PascalCase (`UserService`, `DataController`)
 - Constants: UPPER_SNAKE_CASE (`API_KEY`, `MAX_RETRIES`)
 
+**File naming conventions:**
+
+- React Components: PascalCase (`UserCard.tsx`, `DataView.tsx`)
+- Hooks: camelCase (`useUserData.ts`, `useAuth.ts`)
+- Utilities/Helpers: camelCase (`formatDate.ts`, `generateInviteCode.ts`)
+- Types: dot-separated lowercase (`user.types.ts`, `auth.types.ts`)
+- Constants: dot-separated lowercase (`user.constants.ts`, `auth.constants.ts`)
+- NestJS files: dot-separated lowercase (`auth.service.ts`, `auth.controller.ts`, `auth.module.ts`)
+- DTOs: dot-separated lowercase (`create-user.dto.ts`, `update-user.dto.ts`)
+- Guards: dot-separated lowercase (`jwt-auth.guard.ts`, `roles.guard.ts`)
+- Pipes: dot-separated lowercase (`validation.pipe.ts`)
+- Decorators: dot-separated lowercase (`current-user.decorator.ts`)
+
 **Code style example:**
 
 ```typescript
@@ -58,6 +71,6 @@ async function get(x) {
 
 ## Boundaries
 
-- ✅ **Always:** Write to `apps/web/src/`, `apps/api/src/`, `packages/shared-schemas/src/`, run tests/linting checks, and follow proper naming conventions.
-- ⚠️ **Ask first:** Database schema changes (Prisma), adding third-party dependencies, or modifying root environment/config files.
-- 🚫 **Never:** Commit secrets, environment credentials (`.env`), or modify files inside `node_modules/`.
+- ✅ **Always:** Write to `apps/web/src/`, `apps/api/src/`, `packages/shared-schemas/src/`, run tests/linting checks, and follow proper naming conventions. Avoid including comments in your code. Strictly follow SoC. Maintain consistencies across codebases. Use pnpm. Provide a clear and concise explanation of your code. Follow coding style and naming conventions. Provide a high quality PR description. Provide a high quality and clean implementation plan. Always wait for my go signal when implementing the plan. Provide a clear, concise and standard git commit messages and prefixes. The message should be strictly match on what does that specific file changes has.
+- ⚠️ **Ask first:** Database schema changes (Prisma), Modifying backend-related files, adding third-party dependencies, or modifying root environment/config files.
+- 🚫 **Never:** Commit secrets, environment credentials (`.env`), or modify files inside `node_modules/`. Run any destructive commands.

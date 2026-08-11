@@ -15,7 +15,16 @@ import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
 import { GroupsService } from './groups.service';
 import { createGroupSchema } from './schema/create-group.schema';
 import { joinGroupBodySchema } from './schema/join-group.schema';
-import { updateGroupSchema, type UpdateGroupDTO } from '@siklo/shared-schemas';
+import {
+  updateGroupSchema,
+  submitPaymentSchema,
+  rejectPaymentSchema,
+  updateMemberPaymentPreferenceSchema,
+  type UpdateGroupDTO,
+  type SubmitPaymentDTO,
+  type RejectPaymentDTO,
+  type UpdateMemberPaymentPreferenceDTO,
+} from '@siklo/shared-schemas';
 import type { CreateGroupData } from './schema/create-group.schema';
 import type { JoinGroupBodyDTO } from './schema/join-group.schema';
 
@@ -61,6 +70,12 @@ export class GroupsController {
     return this.groupsService.getUsersGroup(userId, status);
   }
 
+  @Get('invite/:inviteCode')
+  @UseGuards(JwtAuthGuard)
+  async getGroupByInviteCodePreview(@Param('inviteCode') inviteCode: string) {
+    return this.groupsService.getGroupByInviteCodePreview(inviteCode);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async getGroupById(
@@ -70,10 +85,65 @@ export class GroupsController {
     return this.groupsService.getGroupById(groupId, userId);
   }
 
-  @Get('invite/:inviteCode')
+  @Post('payments/submit')
   @UseGuards(JwtAuthGuard)
-  async getGroupByInviteCodePreview(@Param('inviteCode') inviteCode: string) {
-    return this.groupsService.getGroupByInviteCodePreview(inviteCode);
+  async submitPayment(
+    @Body(new ZodValidationPipe(submitPaymentSchema)) body: SubmitPaymentDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.submitPayment(body, userId);
+  }
+
+  @Post('payments/:paymentId/verify')
+  @UseGuards(JwtAuthGuard)
+  async verifyPayment(
+    @Param('paymentId') paymentId: string,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.verifyPayment(paymentId, userId);
+  }
+
+  @Post('payments/:paymentId/reject')
+  @UseGuards(JwtAuthGuard)
+  async rejectPayment(
+    @Param('paymentId') paymentId: string,
+    @Body(new ZodValidationPipe(rejectPaymentSchema)) body: RejectPaymentDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.rejectPayment(paymentId, body, userId);
+  }
+
+  @Patch(':id/members/payment-preference')
+  @UseGuards(JwtAuthGuard)
+  async updateMemberPaymentPreference(
+    @Param('id') groupId: string,
+    @Body(new ZodValidationPipe(updateMemberPaymentPreferenceSchema))
+    body: UpdateMemberPaymentPreferenceDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.updateMemberPaymentPreference(
+      groupId,
+      body,
+      userId,
+    );
+  }
+
+  @Get(':id/payments/pending')
+  @UseGuards(JwtAuthGuard)
+  async getPendingPayments(
+    @Param('id') groupId: string,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.getPendingPayments(groupId, userId);
+  }
+
+  @Get(':id/backup-fund/summary')
+  @UseGuards(JwtAuthGuard)
+  async getEqualBackupRefundSummary(
+    @Param('id') groupId: string,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.groupsService.getEqualBackupRefundSummary(groupId, userId);
   }
 
   @Post(':id/mark-paid')
@@ -137,10 +207,6 @@ export class GroupsController {
     @Body(new ZodValidationPipe(updateGroupSchema)) body: UpdateGroupDTO,
     @CurrentUser('sub') userId: string,
   ) {
-    return this.groupsService.updateGroupDescription(
-      groupId,
-      body.description,
-      userId,
-    );
+    return this.groupsService.updateGroup(groupId, body, userId);
   }
 }

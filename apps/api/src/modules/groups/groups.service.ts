@@ -3,13 +3,26 @@ import {
   ConflictException,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
-import { Prisma } from '@/generated/prisma/client';
+import {
+  Prisma,
+  PaymentMethodType,
+  BackupFundAction,
+  PaymentStatus,
+} from '@/generated/prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import generateInviteCode from '@/commons/utils/generateInviteCode';
 import { GroupsRepository } from './groups.repository';
 import { CreateGroupData } from './schema/create-group.schema';
-import { JoinGroupBodyDTO, JoinGroupDTO } from '@siklo/shared-schemas';
+import {
+  JoinGroupBodyDTO,
+  JoinGroupDTO,
+  SubmitPaymentDTO,
+  RejectPaymentDTO,
+  UpdateMemberPaymentPreferenceDTO,
+  UpdateGroupDTO,
+} from '@siklo/shared-schemas';
 import { ActivityService } from '../activity/activity.service';
 import { shuffle } from './utils/shuffle.members';
 
@@ -68,10 +81,26 @@ export class GroupsService {
       }
 
       const inviteCode = generateInviteCode();
-      const group = await this.groupsRepository.createGroup(tx, {
-        ...dto,
-        inviteCode,
-        organizerId: userId,
+      const group = await tx.group.create({
+        data: {
+          name: dto.name,
+          description: dto.description,
+          contributionAmount: dto.contributionAmount,
+          billingCycle: dto.billingCycle,
+          payoutSequence: dto.payoutSequence,
+          cycleDuration: dto.cycleDuration,
+          maxMembers: dto.maxMembers,
+          allowedPaymentMethods: dto.allowedPaymentMethods,
+          paymentDetails: dto.paymentDetails,
+          gracePeriodDays: dto.gracePeriodDays ?? 0,
+          latePenaltyAmount: dto.latePenaltyAmount ?? 0,
+          enableBackupFund: dto.enableBackupFund ?? false,
+          backupFundPerTurn: dto.backupFundPerTurn ?? 0,
+          backupFundAction: dto.backupFundAction ?? 'EQUAL_REFUND',
+          inviteCode,
+          organizerId: userId,
+          startDate: dto.startDate,
+        },
       });
 
       await this.groupsRepository.createMembership(
@@ -313,6 +342,242 @@ export class GroupsService {
     return group;
   }
 
+  async submitPayment(dto: SubmitPaymentDTO, userId: string) {
+    const group = await this.prisma.group.findUnique({
+      where: { id: dto.groupId },
+    });
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    const round = await this.prisma.round.findUnique({
+      where: { id: dto.roundId },
+    });
+    if (!round) {
+      throw new NotFoundException('Round not found');
+    }
+
+    const membership = await this.prisma.membership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId: dto.groupId,
+        },
+      },
+      include: { user: true },
+    });
+    if (!membership) {
+      throw new ForbiddenException('You are not a member of this group');
+    }
+
+    const now = new Date();
+    const dueDateWithGrace = new Date(round.targetDate);
+    dueDateWithGrace.setDate(
+      dueDateWithGrace.getDate() + group.gracePeriodDays,
+    );
+
+    let penaltyAmount = 0;
+    if (now > dueDateWithGrace) {
+      const daysOverdue = Math.ceil(
+        (now.getTime() - dueDateWithGrace.getTime()) / (1000 * 3600 * 24),
+      );
+      penaltyAmount =
+        Math.max(0, daysOverdue) *
+        (group.contributionAmount * (group.latePenaltyAmount / 100));
+    }
+
+    const backupFundAmount = group.enableBackupFund
+      ? (group.backupFundPerTurn ?? 0)
+      : 0;
+    const totalAmount =
+      group.contributionAmount + penaltyAmount + backupFundAmount;
+
+    const payment = await this.prisma.payment.create({
+      data: {
+        groupId: dto.groupId,
+        roundId: dto.roundId,
+        userId,
+        paymentMethod: dto.paymentMethod,
+        baseAmount: group.contributionAmount,
+        penaltyAmount,
+        backupFundAmount,
+        totalAmount,
+        referenceNumber: dto.referenceNumber,
+        proofUrl: dto.proofUrl,
+        status: PaymentStatus.PENDING,
+      },
+    });
+
+    await this.activityService.createActivity({
+      userId: group.organizerId,
+      groupId: dto.groupId,
+      activityType: 'PAYMENT',
+      description: `${membership.user.name} submitted payment proof for Round #${round.roundNumber} (Ref: ${dto.referenceNumber || 'N/A'})`,
+    });
+
+    return {
+      message: 'Payment proof submitted successfully',
+      payment,
+    };
+  }
+
+  async verifyPayment(paymentId: string, organizerUserId: string) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: { group: true, user: true, round: true },
+    });
+    if (!payment) {
+      throw new NotFoundException('Payment record not found');
+    }
+
+    if (payment.group.organizerId !== organizerUserId) {
+      throw new ForbiddenException('Only the organizer can verify payments');
+    }
+
+    const updatedPayment = await this.prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        status: PaymentStatus.VERIFIED,
+        verifiedAt: new Date(),
+      },
+    });
+
+    await this.activityService.createActivity({
+      userId: payment.userId,
+      groupId: payment.groupId,
+      activityType: 'PAYMENT_VERIFIED',
+      description: `Payment for Round #${payment.round.roundNumber} was verified and approved by organizer.`,
+    });
+
+    return {
+      message: 'Payment verified successfully',
+      payment: updatedPayment,
+    };
+  }
+
+  async rejectPayment(
+    paymentId: string,
+    dto: RejectPaymentDTO,
+    organizerUserId: string,
+  ) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: { group: true, user: true, round: true },
+    });
+    if (!payment) {
+      throw new NotFoundException('Payment record not found');
+    }
+
+    if (payment.group.organizerId !== organizerUserId) {
+      throw new ForbiddenException('Only the organizer can reject payments');
+    }
+
+    const updatedPayment = await this.prisma.payment.update({
+      where: { id: paymentId },
+      data: {
+        status: PaymentStatus.REJECTED,
+        rejectionReason: dto.rejectionReason,
+        rejectionProofUrl: dto.rejectionProofUrl,
+      },
+    });
+
+    await this.activityService.createActivity({
+      userId: payment.userId,
+      groupId: payment.groupId,
+      activityType: 'PAYMENT_REJECTED',
+      description: `Payment for Round #${payment.round.roundNumber} was rejected by organizer. Reason: ${dto.rejectionReason}`,
+    });
+
+    return {
+      message: 'Payment rejected successfully',
+      payment: updatedPayment,
+    };
+  }
+
+  async updateMemberPaymentPreference(
+    groupId: string,
+    dto: UpdateMemberPaymentPreferenceDTO,
+    userId: string,
+  ) {
+    const membership = await this.prisma.membership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId,
+        },
+      },
+    });
+    if (!membership) {
+      throw new NotFoundException('Membership not found');
+    }
+
+    const updatedMembership = await this.prisma.membership.update({
+      where: { id: membership.id },
+      data: {
+        preferredPaymentMethod: dto.preferredPaymentMethod,
+        paymentAccountDetails: dto.paymentAccountDetails,
+      },
+    });
+
+    return {
+      message: 'Payout receiving preference updated successfully',
+      membership: updatedMembership,
+    };
+  }
+
+  async getPendingPayments(groupId: string, organizerUserId: string) {
+    const group = await this.getExistingGroup(groupId, organizerUserId);
+    if (group.organizerId !== organizerUserId) {
+      throw new ForbiddenException(
+        'Only the organizer can view pending verification queue',
+      );
+    }
+
+    return this.prisma.payment.findMany({
+      where: {
+        groupId,
+        status: PaymentStatus.PENDING,
+      },
+      include: {
+        user: true,
+        round: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async getEqualBackupRefundSummary(groupId: string, userId: string) {
+    const group = await this.getExistingGroup(groupId, userId);
+    const payments = await this.prisma.payment.findMany({
+      where: { groupId },
+    });
+    const memberships = await this.prisma.membership.findMany({
+      where: { groupId },
+    });
+
+    const totalBackupCollected = payments.reduce(
+      (acc, p) => acc + p.backupFundAmount,
+      0,
+    );
+    const totalPenaltiesCollected = payments.reduce(
+      (acc, p) => acc + p.penaltyAmount,
+      0,
+    );
+    const totalMembers = memberships.length;
+
+    const refundPerMember =
+      totalMembers > 0 ? Math.floor(totalBackupCollected / totalMembers) : 0;
+
+    return {
+      enableBackupFund: group.enableBackupFund,
+      totalBackupCollected,
+      totalPenaltiesCollected,
+      totalMembers,
+      refundPerMember,
+      hasZeroDefaults: totalPenaltiesCollected === 0,
+    };
+  }
+
   async markMemberPaid(
     groupId: string,
     memberUserId: string,
@@ -366,7 +631,7 @@ export class GroupsService {
     const activity = await this.activityService.createActivity({
       userId: organizerUserId,
       groupId,
-      activityType: 'ANNOUNCEMENT' as any,
+      activityType: 'ANNOUNCEMENT',
       description: message,
     });
 
@@ -511,32 +776,42 @@ export class GroupsService {
     });
   }
 
-  async updateGroupDescription(
-    groupId: string,
-    description: string | undefined,
-    userId: string,
-  ) {
+  async updateGroup(groupId: string, dto: UpdateGroupDTO, userId: string) {
     const group = await this.getExistingGroup(groupId, userId);
     if (group.organizerId !== userId) {
-      throw new ForbiddenException(
-        'Only the organizer can update the group description',
-      );
+      throw new ForbiddenException('Only the organizer can edit this group');
     }
 
-    const updatedGroup = await this.groupsRepository.updateGroupDescription(
-      groupId,
-      description,
-    );
+    if (group.startDate) {
+      const hasCoreEdits =
+        dto.name !== undefined ||
+        dto.contributionAmount !== undefined ||
+        dto.maxMembers !== undefined ||
+        dto.billingCycle !== undefined ||
+        dto.payoutSequence !== undefined ||
+        dto.gracePeriodDays !== undefined ||
+        dto.latePenaltyAmount !== undefined ||
+        dto.enableBackupFund !== undefined ||
+        dto.backupFundPerTurn !== undefined;
+
+      if (hasCoreEdits) {
+        throw new BadRequestException(
+          'Group parameters cannot be modified once the cycle has started',
+        );
+      }
+    }
+
+    const updatedGroup = await this.groupsRepository.updateGroup(groupId, dto);
 
     await this.activityService.createActivity({
       userId,
       groupId,
-      activityType: 'ROTATED',
-      description: 'Group description was updated by the organizer',
+      activityType: 'ANNOUNCEMENT',
+      description: 'Group settings were updated by the organizer',
     });
 
     return {
-      message: 'Group description updated successfully',
+      message: 'Group updated successfully',
       group: updatedGroup,
     };
   }

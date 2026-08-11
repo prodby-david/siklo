@@ -12,9 +12,17 @@ import { SettingsModule } from './modules/settings/settings.module';
 import { AiModule } from './modules/ai/ai.module';
 import { WebsocketModule } from './modules/websocket/websocket.module';
 import { ActivityModule } from './modules/activity/activity.module';
+import { EmailService } from './modules/email/email.service';
+import { EmailModule } from './modules/email/email.module';
+import { envSchema } from './configs/env.schema';
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+      validate: (config) => envSchema.parse(config),
+    }),
     UsersModule,
     AuthModule,
     PrismaModule,
@@ -25,8 +33,9 @@ import { ActivityModule } from './modules/activity/activity.module';
     AiModule,
     WebsocketModule,
     ActivityModule,
+    EmailModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EmailService],
 })
 export class AppModule {}

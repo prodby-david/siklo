@@ -1,126 +1,172 @@
-  // This is your Prisma schema file,
-  // learn more about it in the docs: https://pris.ly/d/prisma-schema
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
 
-  // Get a free hosted Postgres database in seconds: `npx create-db`
+datasource db {
+  provider = "postgresql"
+}
 
-  generator client {
-    provider = "prisma-client"
-    output   = "../src/generated/prisma"
-    moduleFormat = "cjs"
-  }
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  name          String
+  contactNumber String   @unique
+  createdAt     DateTime @default(now())
 
-  datasource db {
-    provider = "postgresql"
-  }
+  memberships Membership[]
+  ownedGroups Group[]      @relation("GroupOwner")
+  payouts     Round[]      @relation("RoundRecipient")
+  activities  Activity[]
+  payments    Payment[]
+}
 
-  model User {
-    id            String   @id @default(uuid())
-    email         String   @unique
-    password      String
-    name          String
-    contactNumber String   @unique
-    createdAt     DateTime @default(now())
+model Group {
+  id                    String              @id @default(cuid())
+  name                  String              @unique
+  description           String?
+  contributionAmount    Int
+  billingCycle          BillingCycle
+  payoutSequence        PayoutSequence      @default(MANUAL)
+  cycleDuration         Int
+  maxMembers            Int
+  inviteCode            String?             @unique
+  organizerId           String
+  startDate             DateTime?
+  gracePeriodDays       Int                 @default(0)
+  latePenaltyAmount     Int                 @default(0)
+  enableBackupFund      Boolean             @default(false)
+  backupFundPerTurn     Int?                @default(0)
+  backupFundAction      BackupFundAction?   @default(EQUAL_REFUND)
+  allowedPaymentMethods PaymentMethodType[]
+  paymentDetails        String?
+  createdAt             DateTime            @default(now())
 
-    memberships   Membership[]
-    ownedGroups   Group[] @relation("GroupOwner")
-    payouts       Round[]  @relation("RoundRecipient")
-    activities    Activity[]
-  }
+  organizer   User         @relation("GroupOwner", fields: [organizerId], references: [id])
+  memberships Membership[]
+  rounds      Round[]
+  activities  Activity[]
+  payments    Payment[]
+}
 
-  model Group {
-    id                 String   @id @default(cuid())
-    name               String   @unique
-    description        String?
-    contributionAmount Int
-    billingCycle       BillingCycle
-    payoutSequence     PayoutSequence @default(MANUAL)
-    cycleDuration      Int
-    maxMembers         Int
-    inviteCode         String? @unique
-    organizerId        String
-    startDate          DateTime?
-    createdAt          DateTime @default(now())
+model Round {
+  id          String      @id @default(cuid())
+  groupId     String
+  cycleNumber Int
+  roundNumber Int
+  recipientId String
+  targetDate  DateTime
+  status      RoundStatus @default(PENDING)
 
-    organizer          User @relation("GroupOwner", fields: [organizerId], references: [id])
-    memberships        Membership[]
-    rounds             Round[]
-    activities         Activity[]
-  }
-  
-  model Round {
-    id           String @id @default(cuid())
-    groupId      String
-    cycleNumber  Int
-    roundNumber  Int
-    recipientId  String
-    targetDate   DateTime
-    status       RoundStatus @default(PENDING)
+  group     Group     @relation(fields: [groupId], references: [id])
+  recipient User      @relation("RoundRecipient", fields: [recipientId], references: [id])
+  payments  Payment[]
 
-    group        Group @relation(fields: [groupId], references: [id])
-    recipient    User  @relation("RoundRecipient", fields: [recipientId], references: [id])
+  @@unique([groupId, cycleNumber, roundNumber])
+}
 
-    @@unique([groupId, cycleNumber, roundNumber])
-  }
+model Membership {
+  id                     String             @id @default(cuid())
+  userId                 String
+  groupId                String
+  position               Int
+  preferredPaymentMethod PaymentMethodType?
+  paymentAccountDetails  String?
+  joinedAt               DateTime           @default(now())
 
-  model Membership {
-    id        String @id @default(cuid())
-    userId    String
-    groupId   String
-    position  Int
-    joinedAt  DateTime @default(now())
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
 
-    user      User  @relation(fields: [userId], references: [id])
-    group     Group @relation(fields: [groupId], references: [id])
+  @@unique([userId, groupId])
+  @@unique([groupId, position])
+}
 
-    @@unique([userId, groupId])
-    @@unique([groupId, position])
-  }
+model Payment {
+  id                String            @id @default(cuid())
+  groupId           String
+  roundId           String
+  userId            String
+  paymentMethod     PaymentMethodType
+  baseAmount        Int
+  penaltyAmount     Int               @default(0)
+  backupFundAmount  Int               @default(0)
+  totalAmount       Int
+  referenceNumber   String?
+  proofUrl          String?
+  status            PaymentStatus     @default(PENDING)
+  rejectionReason   String?
+  rejectionProofUrl String?
+  verifiedAt        DateTime?
+  createdAt         DateTime          @default(now())
 
-  model Activity {
-    id        String @id @default(cuid())
-    userId    String
-    groupId   String
-    activity  ActivityType
-    description String
-    createdAt  DateTime @default(now())
+  group Group @relation(fields: [groupId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+  round Round @relation(fields: [roundId], references: [id])
+}
 
-    user      User  @relation(fields: [userId], references: [id])
-    group     Group @relation(fields: [groupId], references: [id])
+model Activity {
+  id          String       @id @default(cuid())
+  userId      String
+  groupId     String
+  activity    ActivityType
+  description String
+  createdAt   DateTime     @default(now())
 
-    @@index([groupId])
-    @@index([userId])
-  }
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
 
-  enum ActivityType {
-    PAYMENT
-    PAYMENT_OVERDUE
-    PAYMENT_VERIFIED
-    PAYOUT_DISBURSED
-    PENALTY_APPLIED
-    CYCLE_STARTED
-    CYCLE_CLOSED
-    ROTATED
-    ANNOUNCEMENT
-  }
+  @@index([groupId])
+  @@index([userId])
+}
 
-  enum BillingCycle {
-    DAILY
-    WEEKLY
-    BIMONTHLY
-    MONTHLY
-    QUARTERLY
-  }
+enum ActivityType {
+  PAYMENT
+  PAYMENT_OVERDUE
+  PAYMENT_VERIFIED
+  PAYMENT_REJECTED
+  PAYOUT_DISBURSED
+  PENALTY_APPLIED
+  CYCLE_STARTED
+  CYCLE_CLOSED
+  ROTATED
+  ANNOUNCEMENT
+}
 
-  enum RoundStatus {
-    PENDING
-    PAID
-  }
+enum BillingCycle {
+  DAILY
+  WEEKLY
+  BIMONTHLY
+  MONTHLY
+  QUARTERLY
+}
 
-  enum PayoutSequence {
-    RANDOM
-    MANUAL
-    FREECHOOSING 
-  }
-    
+enum RoundStatus {
+  PENDING
+  PAID
+}
 
+enum PayoutSequence {
+  RANDOM
+  MANUAL
+  FREECHOOSING
+}
 
+enum PaymentMethodType {
+  E_WALLET
+  BANK_TRANSFER
+  CASH
+}
+
+enum BackupFundAction {
+  EQUAL_REFUND
+  CARRY_OVER
+  ORGANIZER_REWARD
+}
+
+enum PaymentStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}

@@ -4,7 +4,7 @@ import { UpdateSettingDto } from './dto/update-setting.dto';
 
 @Injectable()
 export class SettingsService {
-  create(createSettingDto: CreateSettingDto) {
+  create(_createSettingDto: CreateSettingDto) {
     return 'This action adds a new setting';
   }
 
@@ -16,7 +16,7 @@ export class SettingsService {
     return `This action returns a #${id} setting`;
   }
 
-  update(id: number, updateSettingDto: UpdateSettingDto) {
+  update(id: number, _updateSettingDto: UpdateSettingDto) {
     return `This action updates a #${id} setting`;
   }
 
