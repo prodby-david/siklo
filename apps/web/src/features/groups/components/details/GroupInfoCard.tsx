@@ -1,4 +1,16 @@
-import { Info, Shield, Phone, RefreshCw } from "lucide-react";
+import {
+  Info,
+  Shield,
+  Phone,
+  RefreshCw,
+  Clock,
+  AlertTriangle,
+  ShieldCheck,
+  CreditCard,
+  Wallet,
+  Building2,
+  Banknote,
+} from "lucide-react";
 import formatDate from "@/shared/utils/formatDate";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { PAYOUT_SEQUENCE_LABELS } from "../../constants/payout-sequence.constants";
@@ -22,6 +34,12 @@ interface GroupInfoCardProps {
   isDeleting?: boolean;
   membershipsCount?: number;
   isCycleDone?: boolean;
+  allowedMethods?: string[];
+  paymentDetails?: string | null;
+  gracePeriodDays?: number;
+  latePenaltyAmount?: number;
+  enableBackupFund?: boolean;
+  backupFundPerTurn?: number | null;
 }
 
 export default function GroupInfoCard({
@@ -41,6 +59,12 @@ export default function GroupInfoCard({
   isDeleting = false,
   membershipsCount = 0,
   isCycleDone = false,
+  allowedMethods = ["E_WALLET", "BANK_TRANSFER", "CASH"],
+  paymentDetails,
+  gracePeriodDays = 0,
+  latePenaltyAmount = 0,
+  enableBackupFund = false,
+  backupFundPerTurn = 0,
 }: GroupInfoCardProps) {
   const billingLabel =
     BILLING_CYCLE_LABELS[billingCycle as keyof typeof BILLING_CYCLE_LABELS] ||
@@ -50,38 +74,117 @@ export default function GroupInfoCard({
     payoutSequence;
   const isOnlyOrganizerLeft = membershipsCount === 1;
 
+  const methodIcons: Record<string, { label: string; icon: typeof Wallet }> = {
+    E_WALLET: { label: "E-Wallet", icon: Wallet },
+    BANK_TRANSFER: { label: "Bank Transfer", icon: Building2 },
+    CASH: { label: "Cash on Hand", icon: Banknote },
+  };
+
   return (
     <div className="p-5 border border-neutral-border rounded-2xl bg-background shadow-sm space-y-4">
       <h3 className="text-sm sm:text-base font-bold text-foreground border-b border-neutral-border pb-3 flex items-center gap-2">
-        <Info className="w-4 h-4 text-brand-accent" /> Group Details
+        <Info className="w-4 h-4 text-brand-accent" /> Group Details & Rules
       </h3>
-      <div className="space-y-3.5 text-xs sm:text-sm">
+
+      <div className="space-y-3 text-xs sm:text-sm">
         <div className="flex justify-between items-center">
           <span className="text-neutral-subtext">Start Date</span>
           <span className="font-semibold text-foreground">
             {startDate ? formatDate(startDate) : "Pending (Not Started)"}
           </span>
         </div>
+
         <div className="flex justify-between items-center">
           <span className="text-neutral-subtext">Est. End Date</span>
           <span className="font-semibold text-foreground">
             {endDate ? formatDate(endDate) : "Pending"}
           </span>
         </div>
+
         <div className="flex justify-between items-center">
           <span className="text-neutral-subtext">Est. Duration</span>
           <span className="font-semibold text-foreground">
             {totalDays} day(s)
           </span>
         </div>
+
         <div className="flex justify-between items-center">
           <span className="text-neutral-subtext">Payout Frequency</span>
           <span className="font-semibold text-brand-accent">{billingLabel}</span>
         </div>
+
         <div className="flex justify-between items-center">
           <span className="text-neutral-subtext">Payout Sequence</span>
           <span className="font-semibold text-foreground">{sequenceLabel}</span>
         </div>
+
+        <div className="pt-2 border-t border-neutral-border/50 space-y-2.5">
+          <div className="flex justify-between items-center">
+            <span className="text-neutral-subtext flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-brand-accent" /> Grace Period
+            </span>
+            <span className="font-bold text-foreground">
+              {gracePeriodDays && gracePeriodDays > 0
+                ? `${gracePeriodDays} Day(s)`
+                : "None (Due Immediately)"}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-neutral-subtext flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> Daily Late Penalty
+            </span>
+            <span className="font-bold text-amber-600 dark:text-amber-400">
+              {latePenaltyAmount && latePenaltyAmount > 0
+                ? `${latePenaltyAmount}% / day`
+                : "None"}
+            </span>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <span className="text-neutral-subtext flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Emergency Backup Fund
+            </span>
+            <span className="font-bold text-foreground">
+              {enableBackupFund && backupFundPerTurn && backupFundPerTurn > 0
+                ? `₱${backupFundPerTurn} / turn`
+                : "Disabled"}
+            </span>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t border-neutral-border/50 space-y-2">
+          <span className="text-neutral-subtext flex items-center gap-1.5 text-xs font-semibold">
+            <CreditCard className="w-3.5 h-3.5 text-brand-accent" /> Allowed Payment Methods
+          </span>
+          <div className="flex flex-wrap gap-1.5 pt-0.5">
+            {allowedMethods.map((m) => {
+              const info = methodIcons[m] || { label: m, icon: Wallet };
+              const IconComp = info.icon;
+              return (
+                <span
+                  key={m}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-[11px] font-bold"
+                >
+                  <IconComp className="w-3 h-3" />
+                  <span>{info.label}</span>
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        {paymentDetails && (
+          <div className="p-3 rounded-xl bg-neutral-subtext/5 border border-neutral-border/60 space-y-1">
+            <span className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-subtext block">
+              Organizer Payment Account Details
+            </span>
+            <p className="text-xs font-mono font-medium text-foreground whitespace-pre-wrap leading-relaxed">
+              {paymentDetails}
+            </p>
+          </div>
+        )}
+
         <div className="flex justify-between items-center pt-2 border-t border-neutral-border/50">
           <span className="text-neutral-subtext flex items-center gap-1.5">
             <Shield className="w-3.5 h-3.5 text-brand-accent" /> Organizer
@@ -90,6 +193,7 @@ export default function GroupInfoCard({
             {organizerName || "Organizer"}
           </span>
         </div>
+
         {organizerContact && !isCycleDone && (
           <div className="flex justify-between items-center">
             <span className="text-neutral-subtext flex items-center gap-1.5">
@@ -100,6 +204,7 @@ export default function GroupInfoCard({
             </span>
           </div>
         )}
+
         {isOrganizer && !hasStarted && !isCycleDone && (
           <div className="pt-3 border-t border-neutral-border/50 flex flex-col gap-2.5 w-full">
             {isMembersFull && onStartCycle && (

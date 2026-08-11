@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Resolver, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,9 +21,10 @@ export function useCreateGroupController() {
     register,
     watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm<CreateGroupInput>({
-    resolver: zodResolver(createGroupSchema),
+    resolver: zodResolver(createGroupSchema) as unknown as Resolver<CreateGroupInput>,
     defaultValues: {
       name: "",
       description: "",
@@ -33,6 +34,13 @@ export function useCreateGroupController() {
       cycleDuration: 1,
       totalPayout: 0,
       maxMembers: 3,
+      allowedPaymentMethods: ["E_WALLET", "BANK_TRANSFER", "CASH"],
+      paymentDetails: "",
+      gracePeriodDays: 0,
+      latePenaltyAmount: 0,
+      enableBackupFund: false,
+      backupFundPerTurn: 0,
+      backupFundAction: "EQUAL_REFUND",
     },
   });
 
@@ -69,14 +77,19 @@ export function useCreateGroupController() {
     }
   };
 
+  const handleFormSubmit = async (e?: React.BaseSyntheticEvent) => {
+    await handleSubmit(onSubmit as SubmitHandler<CreateGroupInput>)(e);
+  };
+
   return {
     register,
     errors,
     watch,
+    control,
     watchAllFields,
     setValue,
     isPending,
-    onSubmit: handleSubmit(onSubmit),
+    onSubmit: handleFormSubmit,
     totalPayout,
     totalRounds,
     totalDays,

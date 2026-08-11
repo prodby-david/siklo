@@ -1,4 +1,4 @@
-import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import { Control, FieldErrors, UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import {
   CreateGroupData,
   CreateGroupInput,
@@ -11,6 +11,7 @@ export interface CreateGroupFormFieldsProps {
   selectedBillingCycle?: string;
   setValue?: UseFormSetValue<CreateGroupInput | CreateGroupData>;
   watch?: UseFormWatch<CreateGroupInput | CreateGroupData>;
+  control?: Control<CreateGroupInput | CreateGroupData>;
   isPending?: boolean;
   onSubmit?: (e?: React.BaseSyntheticEvent) => Promise<void> | void;
 }

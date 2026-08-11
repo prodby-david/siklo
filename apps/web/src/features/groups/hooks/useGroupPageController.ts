@@ -13,7 +13,7 @@ import { Membership } from "../types/group.types";
 
 export function useGroupPageController() {
   const router = useRouter();
-  const { data, isLoading, copied, handleCopyInviteCode, timeline } =
+  const { data, isLoading, copied, handleCopyInviteCode, timeline, refetch } =
     useGroupDetails();
   const { data: currentUser } = useGetCurrentName();
   const { mutateAsync: startCycle, isPending: isStarting } =
@@ -104,6 +104,7 @@ export function useGroupPageController() {
     isStarting,
     handleDeleteGroup,
     isDeleting,
+    refetch,
     currentUserId: currentUser?.id,
   };
 }

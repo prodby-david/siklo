@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export function useGroupDetails() {
   const { groupId } = useParams();
-  const { data, isLoading } = useGetGroupById(groupId as string);
+  const { data, isLoading, refetch } = useGetGroupById(groupId as string);
   const [copied, setCopied] = useState(false);
 
   const handleCopyInviteCode = () => {
@@ -34,5 +34,6 @@ export function useGroupDetails() {
     copied,
     handleCopyInviteCode,
     timeline,
+    refetch,
   };
 }

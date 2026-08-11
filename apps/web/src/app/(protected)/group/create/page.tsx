@@ -9,6 +9,7 @@ export default function CreateGroupPage() {
     register,
     errors,
     watch,
+    control,
     watchAllFields,
     setValue,
     isPending,
@@ -25,6 +26,7 @@ export default function CreateGroupPage() {
           register={register}
           errors={errors}
           watch={watch}
+          control={control}
           selectedBillingCycle={watchAllFields.billingCycle}
           payoutSequence={watchAllFields.payoutSequence || "RANDOM"}
           setValue={setValue}

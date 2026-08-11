@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldErrors, UseFormRegister, UseFormSetValue, UseFormWatch, useForm } from "react-hook-form";
+import { Control, FieldErrors, Resolver, UseFormRegister, UseFormSetValue, UseFormWatch, useForm } from "react-hook-form";
 import useCreateGroup from "./useCreateGroup";
 import {
   CreateGroupData,
@@ -11,7 +11,7 @@ export default function useCreateGroupFormFields(
   props: CreateGroupFormFieldsProps,
 ) {
   const internalForm = useForm<CreateGroupData>({
-    resolver: zodResolver(createGroupSchema),
+    resolver: zodResolver(createGroupSchema) as unknown as Resolver<CreateGroupData>,
     values: {
       name: "",
       description: "",
@@ -20,6 +20,13 @@ export default function useCreateGroupFormFields(
       contributionAmount: 1000,
       cycleDuration: 1,
       payoutSequence: "MANUAL",
+      allowedPaymentMethods: ["E_WALLET", "BANK_TRANSFER", "CASH"],
+      paymentDetails: "",
+      gracePeriodDays: 0,
+      latePenaltyAmount: 0,
+      enableBackupFund: false,
+      backupFundPerTurn: 0,
+      backupFundAction: "EQUAL_REFUND",
     },
   });
   const internalMutation = useCreateGroup();
@@ -66,6 +73,7 @@ export default function useCreateGroupFormFields(
     errors,
     setValue,
     watch,
+    control: (props.control || internalForm.control) as unknown as Control<CreateGroupData>,
     isPending,
     handleSubmit,
     selectedBillingCycle,

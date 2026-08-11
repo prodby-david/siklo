@@ -1,7 +1,7 @@
 import type { CreateGroupInput } from "@/features/groups/validator/create-group.validator";
 import { BILLING_CYCLE_LABELS } from "@/features/groups/constants/billing-cycle.constants";
 import { PAYOUT_SEQUENCE_LABELS } from "@/features/groups/constants/payout-sequence.constants";
-import { Info } from "lucide-react";
+import { Info, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 
 interface CreateGroupPreviewProps {
   watchedFields: CreateGroupInput;
@@ -16,155 +16,114 @@ export default function CreateGroupPreview({
   totalRounds,
   totalDays,
 }: CreateGroupPreviewProps) {
+  const allowedMethods = watchedFields.allowedPaymentMethods || ["E_WALLET", "BANK_TRANSFER", "CASH"];
+  const isBackupEnabled = watchedFields.enableBackupFund || false;
+  const backupFee = isBackupEnabled ? Number(watchedFields.backupFundPerTurn || 0) : 0;
+  const graceDays = Number(watchedFields.gracePeriodDays || 0);
+  const penaltyRate = Number(watchedFields.latePenaltyAmount || 0);
+  const estimatedDailyPenalty = Math.round(
+    Number(watchedFields.contributionAmount || 0) * (penaltyRate / 100)
+  );
+
   return (
-    <div className="lg:col-span-5 flex flex-col gap-4">
-      <div className="relative overflow-hidden rounded-2xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-indigo-500/10 p-6 backdrop-blur-md dark:from-brand-accent/10 dark:to-indigo-500/5 flex-1 flex flex-col justify-between min-h-[420px]">
-        <div>
-          <div className="mb-4 flex items-center justify-between">
-            <span className="rounded-full bg-brand-accent/15 px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-brand-accent">
-              Live Preview
+    <div className="lg:col-span-5 lg:sticky lg:top-6 self-start flex flex-col gap-4">
+      <div className="relative overflow-hidden rounded-2xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-indigo-500/10 p-5 backdrop-blur-md dark:from-brand-accent/10 dark:to-indigo-500/5 shadow-xs h-auto">
+        <div className="mb-3 flex items-center justify-between">
+          <span className="rounded-full bg-brand-accent/15 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-brand-accent">
+            Live Preview
+          </span>
+        </div>
+
+        <div className="mb-4 space-y-0.5">
+          <h3 className="truncate text-lg font-extrabold text-foreground">
+            {watchedFields.name || "Untitled Group"}
+          </h3>
+          <p className="line-clamp-2 text-xs text-neutral-subtext">
+            {watchedFields.description || "No description provided yet."}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 border-t border-neutral-border/20 pt-4 text-xs">
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-subtext">
+              Base Contribution
+            </p>
+            <p className="text-base font-extrabold text-foreground">
+              ₱{Number(watchedFields.contributionAmount || 0).toLocaleString()}
+            </p>
+            <span className="text-[10px] text-neutral-subtext">
+              every {(BILLING_CYCLE_LABELS[watchedFields.billingCycle] || "Day").toLowerCase()}
             </span>
           </div>
 
-          <div className="mb-6 space-y-1">
-            <h3 className="truncate text-xl font-bold text-foreground">
-              {watchedFields.name || "Untitled Group"}
-            </h3>
-
-            <p className="line-clamp-3 text-xs text-neutral-subtext">
-              {watchedFields.description || "No description provided yet."}
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-subtext">
+              Payout Per Round
+            </p>
+            <p className="text-base font-extrabold text-brand-accent">
+              ₱{totalPayout.toLocaleString()}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-5 border-t border-neutral-border/20 pt-5">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
-                Contribution
-              </p>
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-subtext">
+              Members & Cycles
+            </p>
+            <p className="text-xs font-semibold text-foreground">
+              {Number(watchedFields.maxMembers || 0)} members ({Number(watchedFields.cycleDuration || 0)} rot.)
+            </p>
+          </div>
 
-              <p className="text-lg font-bold text-foreground">
-                ₱
-                {Number(watchedFields.contributionAmount || 0).toLocaleString()}
-              </p>
-
-              <span className="text-xs text-neutral-subtext">
-                every{" "}
-                {(
-                  BILLING_CYCLE_LABELS[watchedFields.billingCycle] || "Day"
-                ).toLowerCase()}
-              </span>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
-                Payout Per Round
-              </p>
-
-              <p className="text-lg font-bold text-brand-accent">
-                ₱{totalPayout.toLocaleString()}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
-                Members
-              </p>
-
-              <p className="text-sm font-semibold text-foreground">
-                {Number(watchedFields.maxMembers || 0)} member(s)
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
-                Cycles
-              </p>
-
-              <p className="text-sm font-semibold text-foreground">
-                {Number(watchedFields.cycleDuration || 0)} rotation(s)
-              </p>
-            </div>
-
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
-                Payout Sequence
-              </p>
-
-              <p className="text-sm font-semibold text-foreground">
-                {PAYOUT_SEQUENCE_LABELS[watchedFields.payoutSequence] || "Randomized"}
-              </p>
-            </div>
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-wider text-neutral-subtext">
+              Payout Sequence
+            </p>
+            <p className="text-xs font-semibold text-foreground">
+              {PAYOUT_SEQUENCE_LABELS[watchedFields.payoutSequence] || "Randomized"}
+            </p>
           </div>
         </div>
 
-        <div className="mt-6 border-t border-neutral-border/20 pt-5">
-          <div className="flex items-start gap-3 rounded-2xl border border-neutral-border/10 bg-neutral-subtext/5 p-4">
-            <Info className="mt-0.5 h-4 w-4 shrink-0 text-brand-accent" />
-
-            <div className="flex-1">
-              <h4 className="text-[10px] font-bold uppercase tracking-wider text-foreground">
-                Cycle Summary
-              </h4>
-
-              <div className="mt-3 space-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-neutral-subtext">Rounds per Cycle</span>
-
-                  <span className="font-semibold text-foreground">
-                    {Number(watchedFields.maxMembers || 0)}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-neutral-subtext">
-                    Total Payout Rounds
-                  </span>
-
-                  <span className="font-semibold text-foreground">
-                    {totalRounds}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-neutral-subtext">
-                    Estimated Duration
-                  </span>
-
-                  <span className="font-semibold text-foreground">
-                    {totalDays} day(s)
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-neutral-subtext">
-                    Every Member Receives
-                  </span>
-
-                  <span className="font-semibold text-brand-accent">
-                    {Number(watchedFields.cycleDuration || 0)} payout(s)
-                  </span>
-                </div>
+        {(graceDays > 0 || penaltyRate > 0 || isBackupEnabled) && (
+          <div className="mt-3 grid grid-cols-2 gap-2 pt-3 border-t border-neutral-border/20 text-[10px]">
+            {graceDays > 0 && (
+              <div className="flex items-center gap-1 text-neutral-subtext">
+                <Clock className="w-3 h-3 text-brand-accent shrink-0" />
+                <span>Grace: <strong>{graceDays}d</strong></span>
               </div>
+            )}
+            {penaltyRate > 0 && (
+              <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                <AlertTriangle className="w-3 h-3 shrink-0" />
+                <span>Penalty: <strong>{penaltyRate}% (₱{estimatedDailyPenalty}/d)</strong></span>
+              </div>
+            )}
+            {isBackupEnabled && (
+              <div className="col-span-2 flex items-center gap-1 text-brand-accent font-semibold">
+                <ShieldCheck className="w-3 h-3 shrink-0" />
+                <span>Backup Fund: <strong>+₱{backupFee}/turn</strong></span>
+              </div>
+            )}
+          </div>
+        )}
 
-              <div className="mt-4 rounded-2xl bg-brand-accent/10 p-3 text-xs text-neutral-subtext">
-                Every member contributes{" "}
-                <span className="font-bold text-foreground">
-                  ₱
-                  {Number(
-                    watchedFields.contributionAmount || 0,
-                  ).toLocaleString()}
-                </span>{" "}
-                every{" "}
-                <span className="font-bold text-foreground">
-                  {(
-                    BILLING_CYCLE_LABELS[watchedFields.billingCycle] || "Day"
-                  ).toLowerCase()}
-                </span>
-                . Each payout round distributes{" "}
+        <div className="mt-4 border-t border-neutral-border/20 pt-3">
+          <div className="flex items-start gap-2.5 rounded-xl border border-neutral-border/10 bg-neutral-subtext/5 p-3">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-accent" />
+            <div className="flex-1 text-[11px] space-y-1">
+              <div className="flex justify-between">
+                <span className="text-neutral-subtext">Total Payout Rounds:</span>
+                <span className="font-bold text-foreground">{totalRounds}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-subtext">Est. Duration:</span>
+                <span className="font-bold text-foreground">{totalDays} day(s)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neutral-subtext">Allowed Payments:</span>
                 <span className="font-bold text-brand-accent">
-                  ₱{totalPayout.toLocaleString()}
-                </span>{" "}
-                to the scheduled member.
+                  {allowedMethods.map((m) => (m === "E_WALLET" ? "E-Wallet" : m === "BANK_TRANSFER" ? "Bank" : "Cash on Hand")).join(", ")}
+                </span>
               </div>
             </div>
           </div>

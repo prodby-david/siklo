@@ -7,6 +7,8 @@ export interface User {
 export interface Membership {
   userId: string;
   position: number;
+  preferredPaymentMethod?: "E_WALLET" | "BANK_TRANSFER" | "CASH" | null;
+  paymentAccountDetails?: string | null;
   joinedAt?: string | Date;
   user: User;
 }
@@ -29,6 +31,13 @@ export interface Group {
   maxMembers: number;
   cycleDuration: number;
   payoutSequence: string;
+  gracePeriodDays?: number;
+  latePenaltyAmount?: number;
+  enableBackupFund?: boolean;
+  backupFundPerTurn?: number;
+  allowedPaymentMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
+  paymentDetails?: string | null;
+  memberships?: Membership[];
 }
 
 export interface GroupHeroProps {
@@ -42,6 +51,19 @@ export interface GroupHeroProps {
   hasStarted?: boolean;
   isCycleDone?: boolean;
   isOrganizer?: boolean;
+  allowedMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
+  organizerPaymentDetails?: string | null;
+  contributionAmount?: number;
+  gracePeriodDays?: number;
+  latePenaltyAmount?: number;
+  backupFundAmount?: number;
+  roundId?: string;
+  currentMemberMethod?: "E_WALLET" | "BANK_TRANSFER" | "CASH" | null;
+  currentMemberAccountDetails?: string | null;
+  maxMembers?: number;
+  payoutSequence?: string;
+  enableBackupFund?: boolean;
+  onRefresh?: () => void;
 }
 
 export interface GroupRotationSlotsProps {

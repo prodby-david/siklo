@@ -8,8 +8,11 @@ import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
 import GroupPayoutProgress from "@/features/groups/components/details/GroupPayoutProgress";
 import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
 import GroupTurnShowcase from "@/features/groups/components/details/GroupTurnShowcase";
+import IncomingPaymentsVerificationSection from "@/features/groups/components/details/IncomingPaymentsVerificationSection";
+import EqualRefundSummaryCard from "@/features/groups/components/cards/EqualRefundSummaryCard";
 import Loader from "@/shared/components/loader/Loader";
 import { useGroupPageController } from "@/features/groups/hooks/useGroupPageController";
+import { Membership } from "@/features/groups/types/group.types";
 
 export default function GroupPage() {
   const {
@@ -26,6 +29,7 @@ export default function GroupPage() {
     isStarting,
     handleDeleteGroup,
     isDeleting,
+    refetch,
     currentUserId,
   } = useGroupPageController();
 
@@ -57,6 +61,10 @@ export default function GroupPage() {
     );
   }
 
+  const currentMembership = data.memberships?.find(
+    (m: Membership) => m.userId === currentUserId
+  );
+
   return (
     <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
@@ -83,6 +91,18 @@ export default function GroupPage() {
           hasStarted={hasStarted}
           isCycleDone={isCycleDone}
           isOrganizer={isOrganizer}
+          allowedMethods={data.allowedPaymentMethods || ["E_WALLET", "BANK_TRANSFER", "CASH"]}
+          organizerPaymentDetails={data.paymentDetails}
+          contributionAmount={data.contributionAmount}
+          gracePeriodDays={data.gracePeriodDays}
+          latePenaltyAmount={data.latePenaltyAmount}
+          backupFundAmount={data.backupFundPerTurn}
+          currentMemberMethod={currentMembership?.preferredPaymentMethod}
+          currentMemberAccountDetails={currentMembership?.paymentAccountDetails}
+          maxMembers={data.maxMembers}
+          payoutSequence={data.payoutSequence}
+          enableBackupFund={data.enableBackupFund}
+          onRefresh={refetch}
         />
 
         <GroupStatsGrid
@@ -94,6 +114,13 @@ export default function GroupPage() {
           totalPayout={timeline.totalPayout}
           totalRounds={timeline.totalRounds}
         />
+
+        {hasStarted && isOrganizer && (
+          <IncomingPaymentsVerificationSection
+            groupId={data.id}
+            isOrganizer={isOrganizer}
+          />
+        )}
 
         <GroupTurnShowcase
           groupId={data.id}
@@ -144,7 +171,14 @@ export default function GroupPage() {
               isDeleting={isDeleting}
               membershipsCount={data._count?.memberships ?? 0}
               isCycleDone={isCycleDone}
+              allowedMethods={data.allowedPaymentMethods}
+              paymentDetails={data.paymentDetails}
+              gracePeriodDays={data.gracePeriodDays}
+              latePenaltyAmount={data.latePenaltyAmount}
+              enableBackupFund={data.enableBackupFund}
+              backupFundPerTurn={data.backupFundPerTurn}
             />
+
             {hasStarted && (
               <GroupPayoutProgress
                 groupId={data.id}
@@ -156,6 +190,10 @@ export default function GroupPage() {
                 currentCycle={data.currentCycle}
                 cycleDuration={data.cycleDuration}
               />
+            )}
+
+            {isCycleDone && (
+              <EqualRefundSummaryCard groupId={data.id} />
             )}
           </div>
         </div>
