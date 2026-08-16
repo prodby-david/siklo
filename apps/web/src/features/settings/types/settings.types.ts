@@ -2,7 +2,11 @@ import { LucideIcon } from "lucide-react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { UserProfileSettingDTO } from "@siklo/shared-schemas";
 
-export type SettingsTabId = "profile" | "security" | "notifications";
+export type SettingsTabId =
+  | "profile"
+  | "security"
+  | "notifications"
+  | "payments";
 
 export interface SettingsTab {
   id: SettingsTabId;

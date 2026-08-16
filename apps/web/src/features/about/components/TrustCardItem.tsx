@@ -8,7 +8,7 @@ interface TrustCardItemProps {
 
 export default function TrustCardItem({ item }: TrustCardItemProps) {
   return (
-    <div className="p-6 rounded-3xl border border-neutral-border/80 bg-neutral-table-stripe/80 flex flex-col gap-4 hover:border-brand-accent/40 transition-all duration-300">
+    <div className="h-full p-6 rounded-3xl border border-neutral-border/80 bg-neutral-table-stripe/80 flex flex-col justify-between gap-4 hover:border-brand-accent/40 transition-all duration-300">
       <div className="h-10 w-10 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center">
         {getIcon(item.id)}
       </div>

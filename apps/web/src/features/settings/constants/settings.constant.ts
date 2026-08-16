@@ -1,4 +1,4 @@
-import { User, Lock, Bell } from "lucide-react";
+import { User, Lock, Bell, CreditCard } from "lucide-react";
 import { SettingsTab } from "../types/settings.types";
 
 export const SETTINGS_TABS: SettingsTab[] = [
@@ -16,5 +16,10 @@ export const SETTINGS_TABS: SettingsTab[] = [
     id: "notifications",
     label: "Notifications",
     icon: Bell,
+  },
+  {
+    id: "payments",
+    label: "Payment & Payout",
+    icon: CreditCard,
   },
 ];

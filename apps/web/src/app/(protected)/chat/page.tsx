@@ -82,8 +82,10 @@ export default function ChatPage() {
 
         {error && (
           <div className="flex justify-center p-4">
-            <div className="bg-danger bg-opacity-10 text-danger text-sm border border-color-danger-border px-4 py-2 rounded-xl flex items-center gap-2">
-              <span>Something went wrong. Please try again.</span>
+            <div className="bg-danger/10 text-danger text-xs border border-danger/30 px-4 py-2.5 rounded-2xl flex items-center gap-2 max-w-md text-center shadow-xs">
+              <span className="leading-relaxed">
+                {error.message || "Something went wrong. Please try again."}
+              </span>
             </div>
           </div>
         )}

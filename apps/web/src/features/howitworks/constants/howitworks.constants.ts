@@ -63,8 +63,8 @@ export const bestPractices: BestPracticeItem[] = [
   {
     id: "3",
     stepNumber: 3,
-    title: "Keep a Small Backup Fund",
-    description: "Veteran saving circles often contribute a small extra amount as a reserve to cover temporary delays.",
+    title: "Maintain Consistent Schedules",
+    description: "Agree on contribution cutoffs and payout dates early so every member knows exactly when their turn begins.",
   },
   {
     id: "4",

@@ -26,7 +26,8 @@ export default function TrustCards() {
         </h3>
 
         <p className="text-xs sm:text-sm text-neutral-subtext leading-relaxed font-normal">
-          How we ensure transparency, clarity, and reliability in all your Paluwagan cycles.
+          How we ensure transparency, clarity, and reliability in all your
+          Paluwagan cycles.
         </p>
       </motion.div>
 
@@ -38,6 +39,7 @@ export default function TrustCards() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-30px" }}
             transition={{ duration: 0.45, delay: index * 0.1, ease: "easeOut" }}
+            className="h-full flex flex-col"
           >
             <TrustCardItem item={item} />
           </motion.div>
