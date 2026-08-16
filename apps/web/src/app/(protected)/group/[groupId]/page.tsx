@@ -1,15 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import GroupHero from "@/features/groups/components/details/GroupHero";
 import GroupStatsGrid from "@/features/groups/components/details/GroupStatsGrid";
 import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
 import GroupPayoutProgress from "@/features/groups/components/details/GroupPayoutProgress";
+import UnstartedCyclePreparationGuide from "@/features/groups/components/details/UnstartedCyclePreparationGuide";
 import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
 import GroupTurnShowcase from "@/features/groups/components/details/GroupTurnShowcase";
-import IncomingPaymentsVerificationSection from "@/features/groups/components/details/IncomingPaymentsVerificationSection";
-import EqualRefundSummaryCard from "@/features/groups/components/cards/EqualRefundSummaryCard";
+import IncomingPaymentsVerificationSection from "@/features/payments/components/IncomingPaymentsVerificationSection";
+import CycleCompletionModal from "@/features/groups/components/modals/CycleCompletionModal";
 import Loader from "@/shared/components/loader/Loader";
 import { useGroupPageController } from "@/features/groups/hooks/useGroupPageController";
 import { Membership } from "@/features/groups/types/group.types";
@@ -32,6 +34,7 @@ export default function GroupPage() {
     refetch,
     currentUserId,
   } = useGroupPageController();
+  const [isCompletionDismissed, setIsCompletionDismissed] = useState(false);
 
   if (isLoading) {
     return (
@@ -96,12 +99,10 @@ export default function GroupPage() {
           contributionAmount={data.contributionAmount}
           gracePeriodDays={data.gracePeriodDays}
           latePenaltyAmount={data.latePenaltyAmount}
-          backupFundAmount={data.backupFundPerTurn}
           currentMemberMethod={currentMembership?.preferredPaymentMethod}
           currentMemberAccountDetails={currentMembership?.paymentAccountDetails}
           maxMembers={data.maxMembers}
           payoutSequence={data.payoutSequence}
-          enableBackupFund={data.enableBackupFund}
           onRefresh={refetch}
         />
 
@@ -137,10 +138,31 @@ export default function GroupPage() {
           hasStarted={hasStarted}
           currentUserId={currentUserId}
           isCycleDone={isCycleDone}
+          payments={data.payments}
+          rounds={data.rounds}
+          allowedPaymentMethods={data.allowedPaymentMethods}
+          paymentDetails={data.paymentDetails}
+          gracePeriodDays={data.gracePeriodDays}
+          latePenaltyAmount={data.latePenaltyAmount}
+          onRefresh={refetch}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-7 flex flex-col gap-6">
+            {!hasStarted && !isCycleDone && (
+              <UnstartedCyclePreparationGuide
+                isOrganizer={isOrganizer}
+                membershipsCount={data._count?.memberships ?? 0}
+                maxMembers={data.maxMembers}
+                inviteCode={data.inviteCode}
+                copied={copied}
+                onCopyInviteCode={handleCopyInviteCode}
+                payoutSequence={data.payoutSequence}
+                contributionAmount={data.contributionAmount}
+                billingCycle={data.billingCycle}
+              />
+            )}
+
             {hasStarted && (
               <div>
                 <GroupActivityLogs
@@ -175,8 +197,6 @@ export default function GroupPage() {
               paymentDetails={data.paymentDetails}
               gracePeriodDays={data.gracePeriodDays}
               latePenaltyAmount={data.latePenaltyAmount}
-              enableBackupFund={data.enableBackupFund}
-              backupFundPerTurn={data.backupFundPerTurn}
             />
 
             {hasStarted && (
@@ -191,13 +211,20 @@ export default function GroupPage() {
                 cycleDuration={data.cycleDuration}
               />
             )}
-
-            {isCycleDone && (
-              <EqualRefundSummaryCard groupId={data.id} />
-            )}
           </div>
         </div>
       </div>
+
+      {isOrganizer && isCycleDone && !isCompletionDismissed && (
+        <CycleCompletionModal
+          isOpen={true}
+          onClose={() => setIsCompletionDismissed(true)}
+          groupName={data.name}
+          totalPayout={timeline.totalPayout}
+          membersCount={data.memberships?.length || data.maxMembers}
+          cycleDuration={data.cycleDuration}
+        />
+      )}
     </main>
   );
 }

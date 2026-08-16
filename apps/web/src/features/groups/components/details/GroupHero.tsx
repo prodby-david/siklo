@@ -1,20 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import {
-  RotateCw,
-  Check,
-  Copy,
-  Lock,
-  CreditCard,
-  Wallet,
-  Settings,
-} from "lucide-react";
+import { RotateCw, CreditCard, Settings } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { GroupHeroProps } from "../../types/group.types";
-import PaymentSubmissionModal from "../modal/PaymentSubmissionModal";
-import MemberPaymentPreferenceModal from "../modal/MemberPaymentPreferenceModal";
-import EditGroupModal from "../modal/EditGroupModal";
+import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
+import EditGroupModal from "../modals/EditGroupModal";
+import GroupHeroCompletedBadge from "./elements/GroupHeroCompletedBadge";
+import GroupHeroInviteCodeCard from "./elements/GroupHeroInviteCodeCard";
+import GroupHeroWisdomQuoteCard from "./elements/GroupHeroWisdomQuoteCard";
 
 export default function GroupHero({
   groupId,
@@ -32,17 +26,12 @@ export default function GroupHero({
   contributionAmount = 1000,
   gracePeriodDays = 0,
   latePenaltyAmount = 0,
-  backupFundAmount = 0,
   roundId = "",
-  currentMemberMethod,
-  currentMemberAccountDetails,
   maxMembers = 6,
   payoutSequence = "MANUAL",
-  enableBackupFund = false,
   onRefresh,
 }: GroupHeroProps) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
-  const [isPrefModalOpen, setIsPrefModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const billingLabel =
@@ -118,73 +107,19 @@ export default function GroupHero({
                 <span>Pay Contribution</span>
               </button>
             )}
-
-            {!isCycleDone && (
-              <button
-                type="button"
-                onClick={() => setIsPrefModalOpen(true)}
-                className="inline-flex items-center gap-2 bg-background border border-neutral-border hover:border-brand-accent/40 text-foreground px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
-              >
-                <Wallet className="w-4 h-4 text-brand-accent" />
-                <span>Payout Receiving Details</span>
-              </button>
-            )}
           </div>
         </div>
 
-        {isOrganizer && (
-          <>
-            {isCycleDone ? (
-              <div className="flex flex-col gap-1.5 bg-neutral-table-stripe/80 border border-neutral-border/80 p-4 rounded-2xl min-w-[260px] shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext flex items-center gap-1">
-                  <Lock className="w-3 h-3 text-neutral-subtext" /> Group Invite Closed
-                </span>
-                <span className="text-xs font-bold text-foreground">
-                  Invites Disabled
-                </span>
-                <span className="text-[10px] text-neutral-subtext leading-relaxed">
-                  This cycle has ended. New members cannot join completed groups.
-                </span>
-              </div>
-            ) : hasStarted || !inviteCode ? (
-              <div className="flex flex-col gap-1.5 bg-amber-500/10 border border-amber-500/20 p-4 rounded-2xl min-w-[260px] shadow-sm">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <Lock className="w-3 h-3 text-amber-500" /> Invites Disabled
-                </span>
-                <span className="text-xs font-bold text-foreground">
-                  Cycle Has Started
-                </span>
-                <span className="text-[10px] text-neutral-subtext leading-relaxed">
-                  You can no longer invite new members once the group cycle has started.
-                </span>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2 bg-background/80 backdrop-blur-sm border border-neutral-border p-4 rounded-2xl min-w-[260px] shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
-                  Organizer Invite Code
-                </span>
-                <div className="flex items-center justify-between bg-neutral-subtext/5 rounded-2xl p-2.5 border border-neutral-border/50">
-                  <code className="font-mono text-sm font-bold tracking-wider text-foreground select-all">
-                    {inviteCode}
-                  </code>
-                  <button
-                    onClick={onCopyInviteCode}
-                    className="p-1.5 rounded-2xl hover:bg-neutral-subtext/10 text-brand-accent hover:text-brand-accent-hover transition-all duration-150 active:scale-95 cursor-pointer"
-                    title="Copy Code"
-                  >
-                    {copied ? (
-                      <Check className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-                <span className="text-[10px] text-neutral-subtext leading-relaxed">
-                  Share this invite code with members. Once the cycle starts, inviting new members will be disabled.
-                </span>
-              </div>
-            )}
-          </>
+        {isCycleDone ? (
+          <GroupHeroCompletedBadge />
+        ) : isOrganizer && !hasStarted && inviteCode ? (
+          <GroupHeroInviteCodeCard
+            inviteCode={inviteCode}
+            copied={copied}
+            onCopyInviteCode={onCopyInviteCode}
+          />
+        ) : (
+          <GroupHeroWisdomQuoteCard />
         )}
       </div>
 
@@ -195,22 +130,10 @@ export default function GroupHero({
           groupId={groupId}
           roundId={roundId || "current"}
           baseAmount={contributionAmount}
-          lateFee={latePenaltyAmount}
-          backupFundAmount={backupFundAmount}
+          gracePeriodDays={gracePeriodDays}
+          latePenaltyRate={latePenaltyAmount}
           allowedMethods={allowedMethods}
           organizerPaymentDetails={organizerPaymentDetails}
-          onSuccess={onRefresh}
-        />
-      )}
-
-      {groupId && isPrefModalOpen && (
-        <MemberPaymentPreferenceModal
-          isOpen={isPrefModalOpen}
-          onClose={() => setIsPrefModalOpen(false)}
-          groupId={groupId}
-          allowedMethods={allowedMethods}
-          initialMethod={currentMemberMethod}
-          initialDetails={currentMemberAccountDetails}
           onSuccess={onRefresh}
         />
       )}
@@ -229,8 +152,6 @@ export default function GroupHero({
             latePenaltyAmount,
             allowedPaymentMethods: allowedMethods,
             paymentDetails: organizerPaymentDetails,
-            enableBackupFund,
-            backupFundPerTurn: backupFundAmount,
             billingCycle,
             payoutSequence,
           }}

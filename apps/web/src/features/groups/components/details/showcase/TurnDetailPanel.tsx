@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import formatDate from "@/shared/utils/formatDate";
 import {
   ShieldCheck,
@@ -8,21 +8,16 @@ import {
   Lock,
   Clock,
   Calendar,
-  CheckCircle2,
   HandCoins,
   UserX,
   Crown,
+  CreditCard,
 } from "lucide-react";
 import { TurnDetailPanelProps } from "@/features/groups/types/showcase.types";
-
-const getInitials = (name: string) => {
-  if (!name || name === "Unassigned Slot" || name === "Open Slot") return "SL";
-  const parts = name.trim().split(" ");
-  if (parts.length >= 2) {
-    return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-};
+import { getInitials } from "@/features/groups/utils/group.helper";
+import PaymentConfirmationModal from "@/features/payments/components/modals/PaymentConfirmationModal";
+import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
+import TurnPaidBadge from "../elements/TurnPaidBadge";
 
 export default function TurnDetailPanel({
   selectedTurn,
@@ -36,13 +31,18 @@ export default function TurnDetailPanel({
   currentCycle,
   onMarkAsPaid,
   isMarkingPaid,
+  onRejectPayment,
+  isRejecting = false,
   hasStarted = false,
   currentUserId,
   onSelectSlot,
   isSelectingSlot = false,
   onRemoveMember,
   isRemovingMember = false,
+  onRefresh,
 }: TurnDetailPanelProps) {
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const contributionNum = Number(group.contributionAmount) || 0;
   const poolTotal = contributionNum * group.maxMembers;
   const isUserSlotOwner =
@@ -184,7 +184,7 @@ export default function TurnDetailPanel({
           group.payoutSequence === "FREECHOOSING" ? (
             isUserSlotOwner ? (
               <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-                <CheckCircle2 className="w-4 h-4" />
+                <ShieldCheck className="w-4 h-4" />
                 <span>Your Chosen Slot</span>
               </div>
             ) : !selectedMembership ? (
@@ -214,33 +214,102 @@ export default function TurnDetailPanel({
           )
         ) : isOrganizer ? (
           isSelectedPaid ? (
-            <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Marked as Paid for Cycle #{currentCycle}</span>
-            </div>
+            <TurnPaidBadge currentCycle={currentCycle} isOrganizer={true} />
           ) : selectedMembership ? (
-            <button
-              onClick={onMarkAsPaid}
-              disabled={isMarkingPaid}
-              className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
-            >
-              <UserCheck className="w-4 h-4" />
-              <span>
-                {isMarkingPaid
-                  ? "Verifying..."
-                  : `Mark as Paid (Cycle ${currentCycle})`}
-              </span>
-            </button>
+            <>
+              <button
+                onClick={() => setIsConfirmModalOpen(true)}
+                disabled={isMarkingPaid}
+                className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
+              >
+                <UserCheck className="w-4 h-4" />
+                <span>
+                  {isMarkingPaid
+                    ? "Verifying..."
+                    : `Mark as Paid (Cycle ${currentCycle})`}
+                </span>
+              </button>
+
+              <PaymentConfirmationModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                memberName={selectedMembership.user.name}
+                turnNumber={selectedTurn}
+                contributionAmount={contributionNum}
+                isConfirming={isMarkingPaid}
+                isRejecting={isRejecting}
+                onApprove={(data) => {
+                  setIsConfirmModalOpen(false);
+                  onMarkAsPaid(data);
+                }}
+                onReject={(data) => {
+                  setIsConfirmModalOpen(false);
+                  onRejectPayment?.(data);
+                }}
+              />
+            </>
           ) : (
             <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
               <Lock className="w-3.5 h-3.5" />
               <span>Slot Unassigned</span>
             </div>
           )
+        ) : isUserSlotOwner ? (
+          isSelectedPaid ? (
+            <TurnPaidBadge currentCycle={currentCycle} isOrganizer={false} />
+          ) : (
+            <>
+              <button
+                onClick={() => setIsPayModalOpen(true)}
+                className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer"
+              >
+                <CreditCard className="w-4 h-4" />
+                <span>Pay Contribution (Cycle #{currentCycle})</span>
+              </button>
+
+              {group.id && isPayModalOpen && (
+                <PaymentSubmissionModal
+                  isOpen={isPayModalOpen}
+                  onClose={() => setIsPayModalOpen(false)}
+                  groupId={group.id}
+                  roundId={
+                    group.rounds?.find(
+                      (r) =>
+                        r.cycleNumber === currentCycle &&
+                        r.roundNumber === selectedTurn,
+                    )?.id || "current"
+                  }
+                  cycleNumber={currentCycle}
+                  turnNumber={selectedTurn}
+                  baseAmount={contributionNum}
+                  targetDueDate={calculatedPayoutDate}
+                  gracePeriodDays={group.gracePeriodDays ?? 0}
+                  latePenaltyRate={group.latePenaltyAmount ?? 0}
+                  allowedMethods={
+                    group.allowedPaymentMethods || [
+                      "E_WALLET",
+                      "BANK_TRANSFER",
+                      "CASH",
+                    ]
+                  }
+                  organizerPaymentDetails={group.paymentDetails}
+                  onSuccess={() => {
+                    setIsPayModalOpen(false);
+                    onRefresh?.();
+                  }}
+                />
+              )}
+            </>
+          )
+        ) : isSelectedPaid ? (
+          <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Paid for Cycle #{currentCycle}</span>
+          </div>
         ) : (
           <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
-            <Lock className="w-3.5 h-3.5" />
-            <span>Organizer Action Required</span>
+            <Clock className="w-3.5 h-3.5" />
+            <span>Awaiting Member Contribution</span>
           </div>
         )}
       </div>

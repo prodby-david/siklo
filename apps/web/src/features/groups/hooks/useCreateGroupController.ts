@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { calculateCycleDetails } from "@/features/groups/utils/group.calculations";
+import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 
 export function useCreateGroupController() {
   const router = useRouter();
@@ -28,19 +29,16 @@ export function useCreateGroupController() {
     defaultValues: {
       name: "",
       description: "",
-      contributionAmount: 100,
+      contributionAmount: undefined as unknown as number,
       billingCycle: "DAILY",
       payoutSequence: "MANUAL",
       cycleDuration: 1,
       totalPayout: 0,
-      maxMembers: 3,
+      maxMembers: undefined as unknown as number,
       allowedPaymentMethods: ["E_WALLET", "BANK_TRANSFER", "CASH"],
       paymentDetails: "",
-      gracePeriodDays: 0,
-      latePenaltyAmount: 0,
-      enableBackupFund: false,
-      backupFundPerTurn: 0,
-      backupFundAction: "EQUAL_REFUND",
+      gracePeriodDays: undefined as unknown as number,
+      latePenaltyAmount: undefined as unknown as number,
     },
   });
 
@@ -56,9 +54,43 @@ export function useCreateGroupController() {
     billingCycle
   );
 
+  const { data: user } = useGetCurrentName();
+
   useEffect(() => {
     setValue("totalPayout", totalPayout);
   }, [totalPayout, setValue]);
+
+  useEffect(() => {
+    if (user?.paymentAccounts) {
+      const accounts = user.paymentAccounts as {
+        gcashName?: string;
+        gcashNumber?: string;
+        mayaName?: string;
+        mayaNumber?: string;
+        bankName?: string;
+        bankAccountNumber?: string;
+      };
+      const detailsArr: string[] = [];
+      if (accounts.gcashNumber) {
+        detailsArr.push(
+          `GCash: ${accounts.gcashNumber} (${accounts.gcashName || "Organizer"})`,
+        );
+      }
+      if (accounts.mayaNumber) {
+        detailsArr.push(
+          `Maya: ${accounts.mayaNumber} (${accounts.mayaName || "Organizer"})`,
+        );
+      }
+      if (accounts.bankAccountNumber) {
+        detailsArr.push(
+          `${accounts.bankName || "Bank"}: ${accounts.bankAccountNumber} (${accounts.gcashName || accounts.mayaName || "Organizer"})`,
+        );
+      }
+      if (detailsArr.length > 0) {
+        setValue("paymentDetails", detailsArr.join("\n"));
+      }
+    }
+  }, [user, setValue]);
 
   const watchAllFields = watch();
 

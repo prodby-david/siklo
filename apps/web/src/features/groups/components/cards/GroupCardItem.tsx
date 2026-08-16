@@ -2,24 +2,11 @@
 
 import Link from "next/link";
 import formatDate from "@/shared/utils/formatDate";
-import { Group } from "@/features/dashboard/types/groups";
 import { PhilippinePeso, LogIn, Users, Crown, UserCheck } from "lucide-react";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
+import { GroupCardItemProps } from "@/features/groups/types/group.types";
 
-interface ExtendedGroup extends Omit<Group, "billingCycle"> {
-  maxMembers: number;
-  billingCycle: string;
-  _count?: {
-    memberships: number;
-  };
-  isCycleDone?: boolean;
-}
-
-export default function GroupCardItem({
-  group,
-}: {
-  group: ExtendedGroup;
-}) {
+export default function GroupCardItem({ group }: GroupCardItemProps) {
   const { data: currentUser } = useGetCurrentName();
   const isOrganizer = currentUser?.id === group.organizerId;
 

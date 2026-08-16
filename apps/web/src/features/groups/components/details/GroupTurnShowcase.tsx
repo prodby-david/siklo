@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCw, Users, Info, CheckCircle2 } from "lucide-react";
-import { useMarkMemberPaid } from "../../hooks/useMarkMemberPaid";
+import { useMarkMemberPaid } from "@/features/payments/hooks/useMarkMemberPaid";
 import { useSelectSlot } from "../../hooks/useSelectSlot";
 import { useRemoveMember } from "../../hooks/useRemoveMember";
 import { useGroupTurnShowcaseState } from "../../hooks/useGroupTurnShowcaseState";
@@ -27,9 +27,16 @@ export default function GroupTurnShowcase({
   hasStarted = false,
   currentUserId,
   isCycleDone = false,
+  payments = [],
+  rounds = [],
+  allowedPaymentMethods,
+  paymentDetails,
+  gracePeriodDays,
+  latePenaltyAmount,
+  onRefresh,
 }: GroupTurnShowcaseProps) {
   const [selectedTurn, setSelectedTurn] = useState<number>(1);
-  const { mutateAsync: markAsPaid, isPending: isMarkingPaid } =
+  const { markPaid, isMarkingPaid, markRejected, isRejecting } =
     useMarkMemberPaid(groupId);
   const { mutateAsync: selectSlot, isPending: isSelectingSlot } =
     useSelectSlot(groupId);
@@ -41,7 +48,9 @@ export default function GroupTurnShowcase({
     memberships,
     organizerId || "",
     startDate,
-    cycleDuration
+    cycleDuration,
+    payments,
+    rounds
   );
 
   const sortedMemberships = [...memberships].sort(
@@ -64,11 +73,29 @@ export default function GroupTurnShowcase({
 
   const totalPayoutNum = (Number(contributionAmount) || 0) * maxMembers;
 
-  const handleMarkAsPaid = async () => {
+  const handleMarkAsPaid = async (data?: {
+    referenceNumber?: string;
+    proofUrl?: string;
+  }) => {
     if (!selectedMemberUserId) return;
-    await markAsPaid({
+    await markPaid({
       memberUserId: selectedMemberUserId,
       cycleNumber: currentCycle,
+      referenceNumber: data?.referenceNumber,
+      proofUrl: data?.proofUrl,
+    });
+  };
+
+  const handleRejectPayment = async (data?: {
+    reason?: string;
+    rejectionProofUrl?: string;
+  }) => {
+    if (!selectedMemberUserId) return;
+    await markRejected({
+      memberUserId: selectedMemberUserId,
+      reason: data?.reason,
+      cycleNumber: currentCycle,
+      rejectionProofUrl: data?.rejectionProofUrl,
     });
   };
 
@@ -195,12 +222,18 @@ export default function GroupTurnShowcase({
           isSelectedPaid={isSelectedPaid}
           calculatedPayoutDate={calculatedPayoutDate}
           group={{
+            id: groupId,
             contributionAmount,
             maxMembers,
             billingCycle,
             startDate,
             payoutSequence,
             organizerId,
+            allowedPaymentMethods,
+            paymentDetails,
+            gracePeriodDays,
+            latePenaltyAmount,
+            rounds,
           }}
           isOrganizer={isOrganizer}
           isCurrentTurn={selectedTurn === 1}
@@ -208,12 +241,15 @@ export default function GroupTurnShowcase({
           currentCycle={currentCycle}
           onMarkAsPaid={handleMarkAsPaid}
           isMarkingPaid={isMarkingPaid}
+          onRejectPayment={handleRejectPayment}
+          isRejecting={isRejecting}
           hasStarted={hasStarted}
           currentUserId={currentUserId}
           onSelectSlot={handleSelectSlot}
           isSelectingSlot={isSelectingSlot}
           onRemoveMember={handleRemoveMember}
           isRemovingMember={isRemovingMember}
+          onRefresh={onRefresh}
         />
       </div>
     </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 
 import formatDate from "@/shared/utils/formatDate";
-import { Clock, User, ShieldCheck, Crown } from "lucide-react";
+import { Clock, User, ShieldCheck, Crown, ChevronRight } from "lucide-react";
 import { ShowcaseTurnCardProps } from "@/features/groups/types/showcase.types";
 
 export default function ShowcaseTurnCard({
@@ -72,6 +72,13 @@ export default function ShowcaseTurnCard({
             Available
           </span>
         )}
+        <ChevronRight
+          className={`w-4 h-4 transition-transform duration-150 ${
+            isSelected
+              ? "text-brand-accent translate-x-0.5"
+              : "text-neutral-subtext/60"
+          }`}
+        />
       </div>
     </button>
   );

@@ -9,7 +9,7 @@ import useStartGroupCycle from "./useStartGroupCycle";
 import useDeleteGroup from "./useDeleteGroup";
 import useGroupSocket from "./useGroupSocket";
 import { ApiActivity } from "../types/group.activity.types";
-import { Membership } from "../types/group.types";
+import { Membership, GroupRound, PaymentRecord } from "../types/group.types";
 
 export function useGroupPageController() {
   const router = useRouter();
@@ -38,6 +38,36 @@ export function useGroupPageController() {
       return false;
     const duration = data.cycleDuration || 1;
     const map: Record<number, Set<string>> = {};
+    for (let c = 1; c <= duration; c++) {
+      map[c] = new Set<string>();
+    }
+
+    if (data.rounds && data.rounds.length > 0) {
+      data.rounds.forEach((rnd: GroupRound) => {
+        if (rnd.payments && map[rnd.cycleNumber]) {
+          rnd.payments.forEach((p: PaymentRecord) => {
+            if (p.status === "VERIFIED") {
+              map[rnd.cycleNumber].add(p.userId);
+            }
+          });
+        }
+      });
+    }
+
+    if (data.payments && data.payments.length > 0) {
+      data.payments.forEach((p: PaymentRecord) => {
+        if (p.status === "VERIFIED") {
+          const matchedRound = data.rounds?.find(
+            (r: GroupRound) => r.id === p.roundId,
+          );
+          const cycleNum = matchedRound ? matchedRound.cycleNumber : 1;
+          if (map[cycleNum]) {
+            map[cycleNum].add(p.userId);
+          }
+        }
+      });
+    }
+
     (activities as ApiActivity[]).forEach((act: ApiActivity) => {
       if (act.activity === "PAYMENT_VERIFIED") {
         const desc = act.description || "";
@@ -47,12 +77,12 @@ export function useGroupPageController() {
           (m: Membership) =>
             desc.includes(m.user.name) || desc.includes(`Turn #${m.position}`)
         );
-        if (matchedMember) {
-          if (!map[cycleNum]) map[cycleNum] = new Set();
+        if (matchedMember && map[cycleNum]) {
           map[cycleNum].add(matchedMember.userId);
         }
       }
     });
+
     const finalCount = map[duration]?.size || 0;
     return finalCount >= data.memberships.length;
   }, [data, activities]);

@@ -1,14 +1,7 @@
-import type { CreateGroupInput } from "@/features/groups/validator/create-group.validator";
 import { BILLING_CYCLE_LABELS } from "@/features/groups/constants/billing-cycle.constants";
 import { PAYOUT_SEQUENCE_LABELS } from "@/features/groups/constants/payout-sequence.constants";
-import { Info, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
-
-interface CreateGroupPreviewProps {
-  watchedFields: CreateGroupInput;
-  totalPayout: number;
-  totalRounds: number;
-  totalDays: number;
-}
+import { Info, Clock, AlertTriangle } from "lucide-react";
+import { CreateGroupPreviewProps } from "@/features/groups/types/group.types";
 
 export default function CreateGroupPreview({
   watchedFields,
@@ -17,8 +10,6 @@ export default function CreateGroupPreview({
   totalDays,
 }: CreateGroupPreviewProps) {
   const allowedMethods = watchedFields.allowedPaymentMethods || ["E_WALLET", "BANK_TRANSFER", "CASH"];
-  const isBackupEnabled = watchedFields.enableBackupFund || false;
-  const backupFee = isBackupEnabled ? Number(watchedFields.backupFundPerTurn || 0) : 0;
   const graceDays = Number(watchedFields.gracePeriodDays || 0);
   const penaltyRate = Number(watchedFields.latePenaltyAmount || 0);
   const estimatedDailyPenalty = Math.round(
@@ -84,7 +75,7 @@ export default function CreateGroupPreview({
           </div>
         </div>
 
-        {(graceDays > 0 || penaltyRate > 0 || isBackupEnabled) && (
+        {(graceDays > 0 || penaltyRate > 0) && (
           <div className="mt-3 grid grid-cols-2 gap-2 pt-3 border-t border-neutral-border/20 text-[10px]">
             {graceDays > 0 && (
               <div className="flex items-center gap-1 text-neutral-subtext">
@@ -96,12 +87,6 @@ export default function CreateGroupPreview({
               <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
                 <AlertTriangle className="w-3 h-3 shrink-0" />
                 <span>Penalty: <strong>{penaltyRate}% (₱{estimatedDailyPenalty}/d)</strong></span>
-              </div>
-            )}
-            {isBackupEnabled && (
-              <div className="col-span-2 flex items-center gap-1 text-brand-accent font-semibold">
-                <ShieldCheck className="w-3 h-3 shrink-0" />
-                <span>Backup Fund: <strong>+₱{backupFee}/turn</strong></span>
               </div>
             )}
           </div>

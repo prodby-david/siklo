@@ -2,23 +2,11 @@
 
 import React, { useMemo } from "react";
 import { TrendingUp, Calendar, Clock, ShieldCheck, Wallet } from "lucide-react";
-import { Membership } from "../../types/group.types";
+import { GroupPayoutProgressProps } from "../../types/group.types";
 import { ApiActivity } from "../../types/group.activity.types";
 import { getPayoutDate } from "../../utils/group.calculations";
 import useGetGroupActivities from "../../hooks/useGetGroupActivities";
 import formatDate from "@/shared/utils/formatDate";
-
-interface GroupPayoutProgressProps {
-  groupId?: string;
-  memberships?: Membership[];
-  maxMembers: number;
-  contributionAmount: number;
-  startDate?: string | Date | null;
-  billingCycle: string;
-  currentCycle?: number;
-  cycleDuration?: number;
-  isCycleDone?: boolean;
-}
 
 export default function GroupPayoutProgress({
   groupId,

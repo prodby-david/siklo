@@ -4,11 +4,8 @@ import React, { useState } from "react";
 import { Megaphone, X, Loader2, Send } from "lucide-react";
 import { useSendAnnouncement } from "../../hooks/useSendAnnouncement";
 import { toast } from "sonner";
-import axios from "axios";
-
-interface GroupAnnouncementDialogProps {
-  groupId: string;
-}
+import { getApiErrorMessage } from "@/features/payments/utils/error.helper";
+import { GroupAnnouncementDialogProps } from "@/features/groups/types/group.types";
 
 export default function GroupAnnouncementDialog({
   groupId,
@@ -24,16 +21,11 @@ export default function GroupAnnouncementDialog({
 
     try {
       await sendAnnouncement(message.trim());
-      toast.success("Announcement posted successfully!");
+      toast.success("Announcement broadcasted to group!");
       setMessage("");
       setIsOpen(false);
     } catch (err: unknown) {
-      const msg = axios.isAxiosError(err)
-        ? err.response?.data?.message || err.message
-        : err instanceof Error
-        ? err.message
-        : "Failed to post announcement";
-      toast.error(msg);
+      toast.error(getApiErrorMessage(err, "Failed to send announcement"));
     }
   };
 
@@ -41,66 +33,74 @@ export default function GroupAnnouncementDialog({
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="text-xs flex items-center justify-center gap-2 bg-brand-accent/10 hover:bg-brand-accent/20 text-brand-accent border border-brand-accent/30 px-3.5 py-2 rounded-2xl font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-accent/30 bg-brand-accent/10 hover:bg-brand-accent/20 text-brand-accent text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
+        title="Broadcast Announcement"
       >
-        <Megaphone className="w-4 h-4" /> Post Announcement
+        <Megaphone className="w-3.5 h-3.5" />
+        <span>Broadcast</span>
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-background border border-neutral-border rounded-3xl p-6 w-full max-w-md shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-neutral-border pb-4 mb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-2xl bg-brand-accent/10 text-brand-accent flex items-center justify-center border border-brand-accent/30">
-                  <Megaphone className="w-4.5 h-4.5" />
-                </div>
-                <div>
-                  <h4 className="text-base font-extrabold text-foreground">
-                    Post Group Announcement
-                  </h4>
-                  <p className="text-xs text-neutral-subtext">
-                    Broadcast an official notice to all members live.
-                  </p>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-background border border-neutral-border rounded-3xl p-6 shadow-2xl max-w-md w-full relative">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-neutral-subtext/10 text-neutral-subtext transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-9 h-9 rounded-xl bg-brand-accent/15 text-brand-accent flex items-center justify-center border border-brand-accent/25">
+                <Megaphone className="w-4 h-4" />
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-xl border border-neutral-border hover:bg-neutral-subtext/10 text-neutral-subtext transition-all"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div>
+                <h3 className="text-sm font-extrabold text-foreground">
+                  Broadcast Announcement
+                </h3>
+                <p className="text-[10px] text-neutral-subtext">
+                  Broadcast an update to all members in this group activity feed.
+                </p>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type your official announcement here..."
-                rows={4}
-                required
-                className="w-full p-3.5 text-xs rounded-2xl bg-neutral-table-stripe/60 border border-neutral-border focus:border-brand-accent focus:outline-none text-foreground placeholder:text-neutral-subtext resize-none"
-              />
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-foreground">
+                  Announcement Message
+                </label>
+                <textarea
+                  rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="e.g. Next round payout scheduled this Friday! Please prepare your contribution proofs."
+                  className="w-full text-xs p-3 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 focus:bg-background text-foreground focus:outline-none focus:border-brand-accent resize-none transition-all placeholder:text-neutral-subtext/60"
+                  disabled={isPending}
+                />
+              </div>
 
-              <div className="flex items-center justify-end gap-2.5 pt-2">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-border/60">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold rounded-2xl border border-neutral-border text-neutral-subtext hover:bg-neutral-subtext/10 transition-all"
+                  className="px-4 py-2 rounded-xl border border-neutral-border text-xs font-semibold text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/5 transition-all cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isPending || !message.trim()}
-                  className="px-4 py-2 text-xs font-bold rounded-2xl bg-brand-accent hover:bg-brand-accent-hover text-background flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-background text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Broadcasting...
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Sending...</span>
                     </>
                   ) : (
                     <>
-                      <Send className="w-4 h-4" /> Broadcast
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Send Broadcast</span>
                     </>
                   )}
                 </button>

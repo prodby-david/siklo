@@ -5,7 +5,6 @@ import {
   RefreshCw,
   Clock,
   AlertTriangle,
-  ShieldCheck,
   CreditCard,
   Wallet,
   Building2,
@@ -14,33 +13,8 @@ import {
 import formatDate from "@/shared/utils/formatDate";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { PAYOUT_SEQUENCE_LABELS } from "../../constants/payout-sequence.constants";
+import { GroupInfoCardProps } from "../../types/group.types";
 import DeleteGroupDialog from "./DeleteGroupDialog";
-
-interface GroupInfoCardProps {
-  startDate?: string | Date | null;
-  endDate?: string | Date | null;
-  totalDays: number;
-  billingCycle: string;
-  payoutSequence: string;
-  organizerId: string;
-  organizerName?: string;
-  organizerContact?: string;
-  isOrganizer?: boolean;
-  hasStarted?: boolean;
-  onStartCycle?: () => void;
-  isStarting?: boolean;
-  isMembersFull?: boolean;
-  onDeleteGroup?: () => void;
-  isDeleting?: boolean;
-  membershipsCount?: number;
-  isCycleDone?: boolean;
-  allowedMethods?: string[];
-  paymentDetails?: string | null;
-  gracePeriodDays?: number;
-  latePenaltyAmount?: number;
-  enableBackupFund?: boolean;
-  backupFundPerTurn?: number | null;
-}
 
 export default function GroupInfoCard({
   startDate,
@@ -63,8 +37,6 @@ export default function GroupInfoCard({
   paymentDetails,
   gracePeriodDays = 0,
   latePenaltyAmount = 0,
-  enableBackupFund = false,
-  backupFundPerTurn = 0,
 }: GroupInfoCardProps) {
   const billingLabel =
     BILLING_CYCLE_LABELS[billingCycle as keyof typeof BILLING_CYCLE_LABELS] ||
@@ -138,17 +110,6 @@ export default function GroupInfoCard({
               {latePenaltyAmount && latePenaltyAmount > 0
                 ? `${latePenaltyAmount}% / day`
                 : "None"}
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-neutral-subtext flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Emergency Backup Fund
-            </span>
-            <span className="font-bold text-foreground">
-              {enableBackupFund && backupFundPerTurn && backupFundPerTurn > 0
-                ? `₱${backupFundPerTurn} / turn`
-                : "Disabled"}
             </span>
           </div>
         </div>

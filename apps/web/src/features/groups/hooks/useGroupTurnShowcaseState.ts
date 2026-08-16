@@ -1,22 +1,23 @@
 import { useState, useCallback, useMemo } from "react";
-import { useMarkMemberPaid } from "./useMarkMemberPaid";
+import { useMarkMemberPaid } from "@/features/payments/hooks/useMarkMemberPaid";
+import { getApiErrorMessage } from "@/features/payments/utils/error.helper";
 import useGetGroupActivities from "./useGetGroupActivities";
-import { Membership } from "../types/group.types";
+import { Membership, PaymentRecord, GroupRound } from "../types/group.types";
 import { ApiActivity } from "../types/group.activity.types";
 import { toast } from "sonner";
-import axios from "axios";
 
 export function useGroupTurnShowcaseState(
   groupId: string,
   memberships: Membership[] = [],
   organizerId: string,
   startDate?: string | Date | null,
-  cycleDuration: number = 1
+  cycleDuration: number = 1,
+  payments: PaymentRecord[] = [],
+  rounds: GroupRound[] = [],
 ) {
   const [selectedTurn, setSelectedTurn] = useState<number>(1);
   const { data: activities = [] } = useGetGroupActivities(groupId);
-  const { mutateAsync: markPaid, isPending: isMarkingPaid } =
-    useMarkMemberPaid(groupId);
+  const { markPaid, isMarkingPaid } = useMarkMemberPaid(groupId);
 
   const hasStarted = !!startDate;
 
@@ -30,6 +31,30 @@ export function useGroupTurnShowcaseState(
       map[c] = new Set<string>();
     }
 
+    if (rounds && rounds.length > 0) {
+      rounds.forEach((rnd) => {
+        if (rnd.payments && map[rnd.cycleNumber]) {
+          rnd.payments.forEach((p) => {
+            if (p.status === "VERIFIED") {
+              map[rnd.cycleNumber].add(p.userId);
+            }
+          });
+        }
+      });
+    }
+
+    if (payments && payments.length > 0) {
+      payments.forEach((p) => {
+        if (p.status === "VERIFIED") {
+          const matchedRound = rounds?.find((r) => r.id === p.roundId);
+          const cycleNum = matchedRound ? matchedRound.cycleNumber : 1;
+          if (map[cycleNum]) {
+            map[cycleNum].add(p.userId);
+          }
+        }
+      });
+    }
+
     (activities as ApiActivity[]).forEach((act: ApiActivity) => {
       if (act.activity === "PAYMENT_VERIFIED") {
         const desc = act.description || "";
@@ -39,7 +64,7 @@ export function useGroupTurnShowcaseState(
         const matchedMember = sortedMemberships.find(
           (m) =>
             desc.includes(m.user.name) ||
-            desc.includes(`Turn #${m.position}`)
+            desc.includes(`Turn #${m.position}`),
         );
 
         if (matchedMember && map[cycleNum]) {
@@ -73,7 +98,7 @@ export function useGroupTurnShowcaseState(
       currentCycle: activeCycle,
       isCycleDone: done,
     };
-  }, [activities, sortedMemberships, cycleDuration, hasStarted]);
+  }, [activities, payments, rounds, sortedMemberships, cycleDuration, hasStarted]);
 
   const paidMemberUserIds = useMemo(() => {
     return paidUserIdsByCycle[currentCycle] || new Set<string>();
@@ -90,15 +115,14 @@ export function useGroupTurnShowcaseState(
         await markPaid({ memberUserId, cycleNumber: currentCycle });
         toast.success("Member marked as paid successfully!");
       } catch (err: unknown) {
-        const message = axios.isAxiosError(err)
-          ? err.response?.data?.message || err.message
-          : err instanceof Error
-          ? err.message
-          : "Failed to mark member as paid";
+        const message = getApiErrorMessage(
+          err,
+          "Failed to mark member as paid",
+        );
         toast.error(message);
       }
     },
-    [markPaid, currentCycle, isCycleDone]
+    [markPaid, currentCycle, isCycleDone],
   );
 
   return {

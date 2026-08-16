@@ -17,10 +17,6 @@ import {
   Clock,
   AlertTriangle,
   CreditCard,
-  ShieldCheck,
-  Wallet,
-  Building2,
-  Banknote,
   Check,
   AlertCircle,
   Loader2,
@@ -29,29 +25,8 @@ import {
 import { api } from "@/shared/lib/axios";
 import { BILLING_CYCLE_LABELS } from "@siklo/shared-schemas";
 import PayoutSequenceSelector from "../forms/PayoutSequenceSelector";
-
-type PaymentMethodKey = "E_WALLET" | "BANK_TRANSFER" | "CASH";
-
-interface EditGroupModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  groupId: string;
-  initialData: {
-    name: string;
-    description?: string | null;
-    contributionAmount: number;
-    maxMembers: number;
-    gracePeriodDays?: number;
-    latePenaltyAmount?: number;
-    allowedPaymentMethods?: string[];
-    paymentDetails?: string | null;
-    enableBackupFund?: boolean;
-    backupFundPerTurn?: number | null;
-    billingCycle: string;
-    payoutSequence: string;
-  };
-  onSuccess?: () => void;
-}
+import { EditGroupModalProps, PaymentMethodKey } from "../../types/group.types";
+import { PAYMENT_METHOD_OPTIONS } from "../../constants/group.constants";
 
 export default function EditGroupModal({
   isOpen,
@@ -63,36 +38,30 @@ export default function EditGroupModal({
   const [name, setName] = useState(initialData.name || "");
   const [description, setDescription] = useState(initialData.description || "");
   const [contributionAmount, setContributionAmount] = useState(
-    initialData.contributionAmount || 1000
+    initialData.contributionAmount || 1000,
   );
   const [maxMembers, setMaxMembers] = useState(initialData.maxMembers || 6);
   const [gracePeriodDays, setGracePeriodDays] = useState(
-    initialData.gracePeriodDays ?? 0
+    initialData.gracePeriodDays ?? 0,
   );
   const [latePenaltyAmount, setLatePenaltyAmount] = useState(
-    initialData.latePenaltyAmount ?? 0
+    initialData.latePenaltyAmount ?? 0,
   );
   const [allowedMethods, setAllowedMethods] = useState<PaymentMethodKey[]>(
     (initialData.allowedPaymentMethods as PaymentMethodKey[]) || [
       "E_WALLET",
       "BANK_TRANSFER",
       "CASH",
-    ]
+    ],
   );
   const [paymentDetails, setPaymentDetails] = useState(
-    initialData.paymentDetails || ""
-  );
-  const [enableBackupFund, setEnableBackupFund] = useState(
-    Boolean(initialData.enableBackupFund)
-  );
-  const [backupFundPerTurn, setBackupFundPerTurn] = useState(
-    initialData.backupFundPerTurn ?? 0
+    initialData.paymentDetails || "",
   );
   const [billingCycle, setBillingCycle] = useState(
-    initialData.billingCycle || "MONTHLY"
+    initialData.billingCycle || "MONTHLY",
   );
   const [payoutSequence, setPayoutSequence] = useState(
-    initialData.payoutSequence || "MANUAL"
+    initialData.payoutSequence || "MANUAL",
   );
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -129,10 +98,6 @@ export default function EditGroupModal({
       setErrorMessage("Please select at least 1 allowed payment method");
       return;
     }
-    if (enableBackupFund && (backupFundPerTurn || 0) < 1) {
-      setErrorMessage("Backup fund contribution must be at least ₱1 per turn when enabled");
-      return;
-    }
 
     setIsSubmitting(true);
 
@@ -146,8 +111,6 @@ export default function EditGroupModal({
         latePenaltyAmount,
         allowedPaymentMethods: allowedMethods,
         paymentDetails: paymentDetails.trim() || undefined,
-        enableBackupFund,
-        backupFundPerTurn: enableBackupFund ? backupFundPerTurn : 0,
         billingCycle,
         payoutSequence,
       });
@@ -157,9 +120,12 @@ export default function EditGroupModal({
     } catch (err: unknown) {
       const msg =
         err && typeof err === "object" && "response" in err
-          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          ? (err as { response?: { data?: { message?: string } } }).response
+              ?.data?.message
           : undefined;
-      setErrorMessage(msg || "Failed to update group settings. Please try again.");
+      setErrorMessage(
+        msg || "Failed to update group settings. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -221,7 +187,9 @@ export default function EditGroupModal({
                 <input
                   type="number"
                   value={contributionAmount}
-                  onChange={(e) => setContributionAmount(Number(e.target.value))}
+                  onChange={(e) =>
+                    setContributionAmount(Number(e.target.value))
+                  }
                   disabled={isSubmitting}
                   className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
                 />
@@ -295,11 +263,7 @@ export default function EditGroupModal({
               </div>
 
               <div className="grid grid-cols-3 gap-2 pt-1">
-                {[
-                  { key: "E_WALLET" as PaymentMethodKey, label: "E-Wallet", icon: Wallet },
-                  { key: "BANK_TRANSFER" as PaymentMethodKey, label: "Bank Transfer", icon: Building2 },
-                  { key: "CASH" as PaymentMethodKey, label: "Cash on Hand", icon: Banknote },
-                ].map(({ key, label, icon: IconComponent }) => {
+                {PAYMENT_METHOD_OPTIONS.map(({ key, label, icon: IconComponent }) => {
                   const isSelected = allowedMethods.includes(key);
                   return (
                     <button
@@ -338,54 +302,6 @@ export default function EditGroupModal({
                   className="w-full text-xs p-3 min-h-[84px] rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent resize-none leading-relaxed"
                 />
               </div>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-brand-accent/5 border border-brand-accent/20 space-y-3">
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="editEnableBackupFundCheck"
-                  className="flex items-center gap-2 cursor-pointer select-none"
-                >
-                  <ShieldCheck
-                    className={`w-5 h-5 shrink-0 transition-colors ${
-                      enableBackupFund ? "text-brand-accent font-bold" : "text-neutral-subtext"
-                    }`}
-                  />
-                  <div>
-                    <span className="text-xs font-extrabold text-foreground block">
-                      Emergency Backup Fund (Optional)
-                    </span>
-                    <span className="text-[10px] text-neutral-subtext block">
-                      Safety reserve pool to protect payouts and refund compliant members.
-                    </span>
-                  </div>
-                </label>
-
-                <input
-                  id="editEnableBackupFundCheck"
-                  type="checkbox"
-                  disabled={isSubmitting}
-                  checked={enableBackupFund}
-                  onChange={(e) => setEnableBackupFund(e.target.checked)}
-                  className="w-4 h-4 rounded border-neutral-border text-brand-accent focus:ring-brand-accent cursor-pointer"
-                />
-              </div>
-
-              {enableBackupFund && (
-                <div className="pt-2 border-t border-brand-accent/30">
-                  <label className="text-xs font-bold text-foreground flex items-center gap-1.5 mb-1">
-                    <PhilippinePeso className="w-4 h-4 text-brand-accent" />
-                    <span>Backup Fund Amount Per Turn (₱)</span>
-                  </label>
-                  <input
-                    type="number"
-                    value={backupFundPerTurn}
-                    onChange={(e) => setBackupFundPerTurn(Number(e.target.value))}
-                    disabled={isSubmitting}
-                    className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-                  />
-                </div>
-              )}
             </div>
 
             <PayoutSequenceSelector

@@ -1,8 +1,5 @@
 import { LogIn } from "lucide-react";
-
-type JoinGroupProps = {
-  onClick: () => void;
-};
+import { JoinGroupProps } from "@/features/groups/types/group.types";
 
 export default function JoinGroupButton({ onClick }: JoinGroupProps) {
   return (

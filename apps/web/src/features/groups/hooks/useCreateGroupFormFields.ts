@@ -24,9 +24,6 @@ export default function useCreateGroupFormFields(
       paymentDetails: "",
       gracePeriodDays: 0,
       latePenaltyAmount: 0,
-      enableBackupFund: false,
-      backupFundPerTurn: 0,
-      backupFundAction: "EQUAL_REFUND",
     },
   });
   const internalMutation = useCreateGroup();

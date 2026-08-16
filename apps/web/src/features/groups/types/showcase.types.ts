@@ -1,4 +1,4 @@
-import { Membership } from "@/features/groups/types/group.types";
+import { Membership, PaymentRecord, GroupRound } from "@/features/groups/types/group.types";
 
 export interface GroupTurnShowcaseProps {
   groupId: string;
@@ -15,6 +15,13 @@ export interface GroupTurnShowcaseProps {
   hasStarted?: boolean;
   currentUserId?: string;
   isCycleDone?: boolean;
+  payments?: PaymentRecord[];
+  rounds?: GroupRound[];
+  allowedPaymentMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
+  paymentDetails?: string | null;
+  gracePeriodDays?: number;
+  latePenaltyAmount?: number;
+  onRefresh?: () => void;
 }
 
 export interface ShowcaseTurnCardProps {
@@ -28,6 +35,11 @@ export interface ShowcaseTurnCardProps {
   organizerId?: string;
 }
 
+export interface TurnPaidBadgeProps {
+  currentCycle: number;
+  isOrganizer?: boolean;
+}
+
 export interface TurnDetailPanelProps {
   selectedTurn: number;
   selectedMemberName: string;
@@ -35,23 +47,32 @@ export interface TurnDetailPanelProps {
   isSelectedPaid: boolean;
   calculatedPayoutDate: Date | null;
   group: {
+    id?: string;
     contributionAmount: number | string;
     maxMembers: number;
     billingCycle: string;
     startDate?: string | null;
     payoutSequence?: "RANDOM" | "MANUAL" | "FREECHOOSING";
     organizerId?: string;
+    allowedPaymentMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
+    paymentDetails?: string | null;
+    gracePeriodDays?: number;
+    latePenaltyAmount?: number;
+    rounds?: GroupRound[];
   };
   isOrganizer: boolean;
   isCurrentTurn: boolean;
   isCycleDone: boolean;
   currentCycle: number;
-  onMarkAsPaid: () => void;
+  onMarkAsPaid: (data?: { referenceNumber?: string; proofUrl?: string }) => void;
   isMarkingPaid: boolean;
+  onRejectPayment?: (data?: { reason?: string; rejectionProofUrl?: string }) => void | Promise<void>;
+  isRejecting?: boolean;
   hasStarted?: boolean;
   currentUserId?: string;
   onSelectSlot?: (position: number) => Promise<void>;
   isSelectingSlot?: boolean;
   onRemoveMember?: (memberUserId: string) => Promise<void>;
   isRemovingMember?: boolean;
+  onRefresh?: () => void;
 }
