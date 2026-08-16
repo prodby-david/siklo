@@ -9,20 +9,16 @@ import {
   Delete,
   Patch,
 } from '@nestjs/common';
-import { JwtAuthGuard } from '@/commons/guards/jwt-auth';
+import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
-import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
+import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipe';
 import { GroupsService } from './groups.service';
 import { createGroupSchema } from './schema/create-group.schema';
 import { joinGroupBodySchema } from './schema/join-group.schema';
 import {
   updateGroupSchema,
-  submitPaymentSchema,
-  rejectPaymentSchema,
   updateMemberPaymentPreferenceSchema,
   type UpdateGroupDTO,
-  type SubmitPaymentDTO,
-  type RejectPaymentDTO,
   type UpdateMemberPaymentPreferenceDTO,
 } from '@siklo/shared-schemas';
 import type { CreateGroupData } from './schema/create-group.schema';
@@ -85,34 +81,6 @@ export class GroupsController {
     return this.groupsService.getGroupById(groupId, userId);
   }
 
-  @Post('payments/submit')
-  @UseGuards(JwtAuthGuard)
-  async submitPayment(
-    @Body(new ZodValidationPipe(submitPaymentSchema)) body: SubmitPaymentDTO,
-    @CurrentUser('sub') userId: string,
-  ) {
-    return this.groupsService.submitPayment(body, userId);
-  }
-
-  @Post('payments/:paymentId/verify')
-  @UseGuards(JwtAuthGuard)
-  async verifyPayment(
-    @Param('paymentId') paymentId: string,
-    @CurrentUser('sub') userId: string,
-  ) {
-    return this.groupsService.verifyPayment(paymentId, userId);
-  }
-
-  @Post('payments/:paymentId/reject')
-  @UseGuards(JwtAuthGuard)
-  async rejectPayment(
-    @Param('paymentId') paymentId: string,
-    @Body(new ZodValidationPipe(rejectPaymentSchema)) body: RejectPaymentDTO,
-    @CurrentUser('sub') userId: string,
-  ) {
-    return this.groupsService.rejectPayment(paymentId, body, userId);
-  }
-
   @Patch(':id/members/payment-preference')
   @UseGuards(JwtAuthGuard)
   async updateMemberPaymentPreference(
@@ -125,39 +93,6 @@ export class GroupsController {
       groupId,
       body,
       userId,
-    );
-  }
-
-  @Get(':id/payments/pending')
-  @UseGuards(JwtAuthGuard)
-  async getPendingPayments(
-    @Param('id') groupId: string,
-    @CurrentUser('sub') userId: string,
-  ) {
-    return this.groupsService.getPendingPayments(groupId, userId);
-  }
-
-  @Get(':id/backup-fund/summary')
-  @UseGuards(JwtAuthGuard)
-  async getEqualBackupRefundSummary(
-    @Param('id') groupId: string,
-    @CurrentUser('sub') userId: string,
-  ) {
-    return this.groupsService.getEqualBackupRefundSummary(groupId, userId);
-  }
-
-  @Post(':id/mark-paid')
-  @UseGuards(JwtAuthGuard)
-  async markMemberPaid(
-    @Param('id') groupId: string,
-    @Body() body: { memberUserId: string; cycleNumber?: number },
-    @CurrentUser('sub') userId: string,
-  ) {
-    return this.groupsService.markMemberPaid(
-      groupId,
-      body.memberUserId,
-      userId,
-      body.cycleNumber,
     );
   }
 

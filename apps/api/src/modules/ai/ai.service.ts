@@ -6,20 +6,18 @@ import {
   isStepCount,
 } from 'ai';
 import { google } from '@ai-sdk/google';
-import { ollama } from 'ollama-ai-provider-v2';
 import { SIKLO_SYSTEM_PROMPT } from 'src/commons/context/ai.context';
-import { createGroupSchema } from '@siklo/shared-schemas';
-import { z } from 'zod';
 import { AiToolRegistry } from './registry/ai-tools.registry';
+import { createOllama } from 'ollama-ai-provider-v2';
 
-const aiCreateGroupSchema = createGroupSchema.extend({
-  startDate: z.string().optional().describe('ISO Date string (YYYY-MM-DD)'),
+const ollamaProvider = createOllama({
+  baseURL: 'http://localhost:11434/api',
 });
 
 const model =
   process.env.NODE_ENV === 'production'
-    ? google('gemini-3.5-flash')
-    : ollama('qwen2.5:3b');
+    ? google('gemini-2.0-flash')
+    : ollamaProvider('qwen3:4b');
 
 @Injectable()
 export class AiService {

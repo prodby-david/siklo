@@ -4,36 +4,29 @@ import {
   NotFoundException,
   ForbiddenException,
 } from '@nestjs/common';
-import { GroupsService } from './groups.service';
-import { GroupsRepository } from './groups.repository';
+import { GroupsCoreService } from './groups-core.service';
+import { GroupsRepository } from '../groups.repository';
 import { PrismaService } from '@/database/prisma.service';
-import { ActivityService } from '../activity/activity.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { GroupsCoreService } from './services/groups-core.service';
-import { GroupsMembersService } from './services/groups-members.service';
-import { GroupsPaymentsService } from './services/groups-payments.service';
-import { GroupsTurnsService } from './services/groups-turns.service';
+import { ActivityService } from '../../activity/activity.service';
+import { NotificationsService } from '../../notifications/notifications.service';
 
 jest.mock('@/commons/utils/generateInviteCode', () => ({
   __esModule: true,
   default: jest.fn(() => 'ABC123'),
 }));
 
-describe('GroupsService', () => {
-  let service: GroupsService;
+describe('GroupsCoreService', () => {
+  let service: GroupsCoreService;
   let groupsRepository: {
     findGroupByName: jest.Mock;
     createGroup: jest.Mock;
     getUserGroup: jest.Mock;
     getGroupById: jest.Mock;
     findGroupByInviteCode: jest.Mock;
-    updateGroupStartDate: jest.Mock;
+    getGroupPreviewByInviteCode: jest.Mock;
     createMembership: jest.Mock;
-    findMembership: jest.Mock;
-    countMembers: jest.Mock;
     countUserMemberships: jest.Mock;
-    findMembershipByPosition: jest.Mock;
-    findMembershipsByGroupId: jest.Mock;
+    updateGroup: jest.Mock;
   };
   let activityService: { createActivity: jest.Mock };
   let notificationService: { createNotification: jest.Mock };
@@ -46,13 +39,10 @@ describe('GroupsService', () => {
       getUserGroup: jest.fn(),
       getGroupById: jest.fn(),
       findGroupByInviteCode: jest.fn(),
-      updateGroupStartDate: jest.fn(),
+      getGroupPreviewByInviteCode: jest.fn(),
       createMembership: jest.fn(),
-      findMembership: jest.fn(),
-      countMembers: jest.fn(),
       countUserMemberships: jest.fn().mockResolvedValue(0),
-      findMembershipByPosition: jest.fn(),
-      findMembershipsByGroupId: jest.fn().mockResolvedValue([]),
+      updateGroup: jest.fn(),
     };
 
     activityService = {
@@ -69,11 +59,7 @@ describe('GroupsService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        GroupsService,
         GroupsCoreService,
-        GroupsMembersService,
-        GroupsPaymentsService,
-        GroupsTurnsService,
         { provide: GroupsRepository, useValue: groupsRepository },
         { provide: ActivityService, useValue: activityService },
         { provide: NotificationsService, useValue: notificationService },
@@ -81,7 +67,7 @@ describe('GroupsService', () => {
       ],
     }).compile();
 
-    service = module.get<GroupsService>(GroupsService);
+    service = module.get<GroupsCoreService>(GroupsCoreService);
   });
 
   it('should be defined', () => {
@@ -91,7 +77,7 @@ describe('GroupsService', () => {
   describe('createGroup', () => {
     it('should create a group successfully', async () => {
       const dto = {
-        name: 'Test Group',
+        name: 'Core Test Group',
         description: 'Test Description',
         contributionAmount: 1000,
         billingCycle: 'WEEKLY' as const,
@@ -117,7 +103,7 @@ describe('GroupsService', () => {
       expect(result.group.id).toBe('group-1');
     });
 
-    it('should throw ConflictException if group name already exists', async () => {
+    it('should throw ConflictException if group name exists', async () => {
       const dto = {
         name: 'Existing Group',
         description: 'Test',
@@ -141,78 +127,8 @@ describe('GroupsService', () => {
     });
   });
 
-  describe('joinGroup', () => {
-    it('should join group successfully', async () => {
-      const dto = { inviteCode: 'ABC123' };
-      const userId = 'user-2';
-      const mockGroup = {
-        id: 'group-1',
-        maxMembers: 5,
-        payoutSequence: 'RANDOM',
-        startDate: null,
-      };
-
-      prisma.$transaction.mockImplementation(async (cb) => {
-        groupsRepository.findGroupByInviteCode.mockResolvedValue(mockGroup);
-        groupsRepository.findMembershipsByGroupId.mockResolvedValue([
-          { position: 1 },
-        ]);
-        groupsRepository.findMembership.mockResolvedValue(null);
-        groupsRepository.createMembership.mockResolvedValue({});
-        return cb({
-          group: {
-            findUnique: jest.fn().mockResolvedValue(mockGroup),
-          },
-        });
-      });
-
-      const result = await service.joinGroup(dto, userId);
-
-      expect(result.message).toBe('Group joined successfully');
-      expect(result.groupId).toBe('group-1');
-    });
-
-    it('should throw NotFoundException if group does not exist', async () => {
-      const dto = { inviteCode: 'INVALID' };
-      const userId = 'user-2';
-
-      prisma.$transaction.mockImplementation(async (cb) => {
-        groupsRepository.findGroupByInviteCode.mockResolvedValue(null);
-        return cb({});
-      });
-
-      await expect(service.joinGroup(dto, userId)).rejects.toThrow(
-        NotFoundException,
-      );
-    });
-
-    it('should throw ConflictException if group is full', async () => {
-      const dto = { inviteCode: 'ABC123' };
-      const userId = 'user-6';
-      const mockGroup = {
-        id: 'group-1',
-        maxMembers: 2,
-        payoutSequence: 'RANDOM',
-        startDate: null,
-      };
-
-      prisma.$transaction.mockImplementation(async (cb) => {
-        groupsRepository.findGroupByInviteCode.mockResolvedValue(mockGroup);
-        groupsRepository.findMembershipsByGroupId.mockResolvedValue([
-          { position: 1 },
-          { position: 2 },
-        ]);
-        return cb({});
-      });
-
-      await expect(service.joinGroup(dto, userId)).rejects.toThrow(
-        ConflictException,
-      );
-    });
-  });
-
   describe('startGroupCycle', () => {
-    it('should start the group cycle successfully', async () => {
+    it('should start cycle successfully', async () => {
       const groupId = 'group-1';
       const userId = 'organizer-1';
       const mockGroup = {
@@ -249,7 +165,7 @@ describe('GroupsService', () => {
       expect(result.startDate).toBeDefined();
     });
 
-    it('should throw ForbiddenException if user is not organizer', async () => {
+    it('should throw ForbiddenException if not organizer', async () => {
       const groupId = 'group-1';
       const userId = 'member-1';
       const mockGroup = {

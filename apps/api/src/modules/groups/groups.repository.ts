@@ -86,6 +86,12 @@ export class GroupsRepository {
             },
           },
         },
+        rounds: {
+          include: {
+            payments: true,
+          },
+        },
+        payments: true,
       },
     });
   }

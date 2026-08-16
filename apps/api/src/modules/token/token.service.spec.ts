@@ -57,12 +57,12 @@ describe('TokenService', () => {
     });
   });
 
-  describe('verifyToken', () => {
-    it('should verify a token', async () => {
+  describe('verifyAccessToken', () => {
+    it('should verify an access token', async () => {
       const mockPayload = { sub: 'user-123', email: 'test@example.com' };
       jwtService.verifyAsync.mockResolvedValue(mockPayload);
 
-      const result = await service.verifyToken('some-token');
+      const result = await service.verifyAccessToken('some-token');
 
       expect(result).toEqual(mockPayload);
       expect(jwtService.verifyAsync).toHaveBeenCalledWith('some-token');

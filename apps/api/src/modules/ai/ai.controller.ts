@@ -14,10 +14,20 @@ export class AiController {
     @Body('messages') messages: UIMessage[],
     @CurrentUser('sub') userId: string,
   ) {
-    const { text, toolResults } = await this.aiService.handleMessage(
-      messages,
-      userId,
-    );
-    return { reply: text, toolResults };
+    try {
+      const { text, toolResults } = await this.aiService.handleMessage(
+        messages,
+        userId,
+      );
+      return { reply: text || 'I understood your request. How else can I assist you?', toolResults };
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown AI processing error';
+      return {
+        reply:
+          'I encountered an issue processing your request right now. Please try again in a moment.',
+        error: errorMessage,
+      };
+    }
   }
 }

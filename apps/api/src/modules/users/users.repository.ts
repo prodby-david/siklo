@@ -38,4 +38,13 @@ export class UsersRepository {
       data,
     });
   }
+
+  async updatePaymentAccounts(id: string, data: unknown) {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        paymentAccounts: data as any,
+      },
+    });
+  }
 }

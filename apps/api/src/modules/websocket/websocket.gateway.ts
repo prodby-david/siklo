@@ -53,6 +53,7 @@ export class WebsocketGateway
       const payload = await this.tokenService.verifyAccessToken(accessToken);
 
       client.data.user = payload.sub;
+      client.join(`user_${payload.sub}`);
 
       this.logger.log(`User ${payload.sub} connected with socket ${client.id}`);
     } catch (error) {

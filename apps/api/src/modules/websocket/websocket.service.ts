@@ -16,4 +16,8 @@ export class WebsocketService {
   broadcastPayment(groupId: string, payment: unknown) {
     this.server.to(groupId).emit('payment.created', payment);
   }
+
+  sendUserNotification(userId: string, notification: unknown) {
+    this.server.to(`user_${userId}`).emit('notification.created', notification);
+  }
 }

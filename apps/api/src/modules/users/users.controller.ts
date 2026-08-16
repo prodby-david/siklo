@@ -7,8 +7,10 @@ import { CurrentUser } from '@/commons/decorators/current-user.decorator';
 import {
   changePasswordSchema,
   userProfileSettingSchema,
+  paymentAccountDetailsSchema,
   type UserProfileSettingDTO,
   type ChangePasswordDTO,
+  type PaymentAccountDetailsDTO,
 } from '@siklo/shared-schemas';
 
 @Controller('users')
@@ -45,5 +47,15 @@ export class UsersController {
     @CurrentUser('sub') userId: string,
   ) {
     return this.usersService.changeUserPassword(userId, data);
+  }
+
+  @Patch('payment-accounts')
+  @UseGuards(JwtAuthGuard)
+  async updatePaymentAccounts(
+    @Body(new ZodValidationPipe(paymentAccountDetailsSchema))
+    data: PaymentAccountDetailsDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.usersService.updatePaymentAccounts(userId, data);
   }
 }

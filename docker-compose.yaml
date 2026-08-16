@@ -14,5 +14,15 @@ services:
     volumes:
       - siklo_pgdata:/var/lib/postgresql/data
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: siklo-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - siklo_ollama:/root/.ollama
+
 volumes:
   siklo_pgdata:
+  siklo_ollama:

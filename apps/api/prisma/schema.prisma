@@ -16,15 +16,18 @@ model User {
   contactNumber String   @unique
   createdAt     DateTime @default(now())
 
+  paymentAccounts Json?
+
   memberships Membership[]
   ownedGroups Group[]      @relation("GroupOwner")
   payouts     Round[]      @relation("RoundRecipient")
   activities  Activity[]
   payments    Payment[]
+  notifications Notification[]
 }
 
 model Group {
-  id                    String              @id @default(cuid())
+  id                    String              @id @default(uuid())
   name                  String              @unique
   description           String?
   contributionAmount    Int
@@ -37,9 +40,6 @@ model Group {
   startDate             DateTime?
   gracePeriodDays       Int                 @default(0)
   latePenaltyAmount     Int                 @default(0)
-  enableBackupFund      Boolean             @default(false)
-  backupFundPerTurn     Int?                @default(0)
-  backupFundAction      BackupFundAction?   @default(EQUAL_REFUND)
   allowedPaymentMethods PaymentMethodType[]
   paymentDetails        String?
   createdAt             DateTime            @default(now())
@@ -49,10 +49,11 @@ model Group {
   rounds      Round[]
   activities  Activity[]
   payments    Payment[]
+  notifications Notification[]
 }
 
 model Round {
-  id          String      @id @default(cuid())
+  id          String      @id @default(uuid())
   groupId     String
   cycleNumber Int
   roundNumber Int
@@ -68,7 +69,7 @@ model Round {
 }
 
 model Membership {
-  id                     String             @id @default(cuid())
+  id                     String             @id @default(uuid())
   userId                 String
   groupId                String
   position               Int
@@ -84,14 +85,13 @@ model Membership {
 }
 
 model Payment {
-  id                String            @id @default(cuid())
+  id                String            @id @default(uuid())
   groupId           String
   roundId           String
   userId            String
   paymentMethod     PaymentMethodType
   baseAmount        Int
   penaltyAmount     Int               @default(0)
-  backupFundAmount  Int               @default(0)
   totalAmount       Int
   referenceNumber   String?
   proofUrl          String?
@@ -107,12 +107,28 @@ model Payment {
 }
 
 model Activity {
-  id          String       @id @default(cuid())
+  id          String       @id @default(uuid())
   userId      String
   groupId     String
   activity    ActivityType
   description String
   createdAt   DateTime     @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  group Group @relation(fields: [groupId], references: [id])
+
+  @@index([groupId])
+  @@index([userId])
+}
+
+model Notification {
+  id               String             @id @default(uuid())
+  userId           String
+  groupId          String
+  notificationType NotificationType
+  description      String
+  isRead           Boolean            @default(false)
+  createdAt        DateTime           @default(now())
 
   user  User  @relation(fields: [userId], references: [id])
   group Group @relation(fields: [groupId], references: [id])
@@ -159,14 +175,16 @@ enum PaymentMethodType {
   CASH
 }
 
-enum BackupFundAction {
-  EQUAL_REFUND
-  CARRY_OVER
-  ORGANIZER_REWARD
-}
-
 enum PaymentStatus {
   PENDING
   VERIFIED
   REJECTED
+}
+
+enum NotificationType {
+  PAYMENT
+  PAYOUT
+  REMINDER
+  ANNOUNCEMENT
+  SYSTEM
 }

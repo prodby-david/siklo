@@ -86,4 +86,18 @@ export class UsersService {
       message: 'Password changed successfully.',
     };
   }
+
+  async updatePaymentAccounts(id: string, dto: unknown) {
+    const user = await this.usersRepository.findUserById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    await this.usersRepository.updatePaymentAccounts(id, dto);
+
+    return {
+      message: 'Payment accounts updated successfully.',
+    };
+  }
 }
