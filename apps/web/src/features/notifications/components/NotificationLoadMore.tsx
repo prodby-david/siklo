@@ -1,13 +1,8 @@
 "use client";
 
+import React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-
-interface NotificationLoadMoreProps {
-  totalCount: number;
-  visibleCount: number;
-  isExpanded: boolean;
-  onToggleExpand: () => void;
-}
+import { NotificationLoadMoreProps } from "../types/notification.types";
 
 export default function NotificationLoadMore({
   totalCount,

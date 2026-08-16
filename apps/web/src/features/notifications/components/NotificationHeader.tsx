@@ -1,16 +1,6 @@
-"use client";
-
 import { Bell, X } from "lucide-react";
-import { NotificationFilter } from "../types/notification.types";
+import { NotificationHeaderProps } from "../types/notification.types";
 import { NOTIFICATION_FILTERS } from "../constants/notification.constants";
-
-interface NotificationHeaderProps {
-  unreadCount: number;
-  filter: NotificationFilter;
-  setFilter: (filter: NotificationFilter) => void;
-  onMarkAllAsRead?: () => void;
-  onClose: () => void;
-}
 
 export default function NotificationHeader({
   unreadCount,

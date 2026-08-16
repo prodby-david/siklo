@@ -2,10 +2,7 @@
 
 import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
-
-interface NotificationEmptyStateProps {
-  filter: string;
-}
+import { NotificationEmptyStateProps } from "../types/notification.types";
 
 export default function NotificationEmptyState({ filter }: NotificationEmptyStateProps) {
   return (

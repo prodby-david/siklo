@@ -9,7 +9,10 @@ import NotificationEmptyState from "./NotificationEmptyState";
 import NotificationLoadMore from "./NotificationLoadMore";
 import { NotificationSheetProps } from "../types/notification.types";
 
-export default function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
+export default function NotificationSheet({
+  isOpen,
+  onClose,
+}: NotificationSheetProps) {
   const {
     notifications,
     filter,
@@ -22,7 +25,9 @@ export default function NotificationSheet({ isOpen, onClose }: NotificationSheet
 
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const visibleNotifications = isExpanded ? notifications : notifications.slice(0, 4);
+  const visibleNotifications = isExpanded
+    ? notifications
+    : notifications.slice(0, 4);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
