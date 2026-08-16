@@ -40,14 +40,6 @@ export const updateGroupSchema = z.object({
     .min(1, "Please select at least 1 payment method")
     .optional(),
   paymentDetails: z.string().optional(),
-  enableBackupFund: z.boolean().optional(),
-  backupFundPerTurn: z.coerce
-    .number()
-    .min(0, "Backup fund per turn cannot be negative")
-    .optional(),
-  backupFundAction: z
-    .enum(["EQUAL_REFUND", "CARRY_OVER", "ORGANIZER_REWARD"])
-    .optional(),
 });
 
 export type UpdateGroupDTO = z.infer<typeof updateGroupSchema>;

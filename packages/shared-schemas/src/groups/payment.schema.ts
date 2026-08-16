@@ -2,8 +2,10 @@ import { z } from "zod";
 import { PAYMENT_METHODS } from "../enums/payment-method.js";
 
 export const submitPaymentSchema = z.object({
-  groupId: z.string(),
-  roundId: z.string(),
+  groupId: z.string().min(1, "Group ID is required"),
+  roundId: z.string().optional(),
+  cycleNumber: z.number().int().positive().optional(),
+  turnNumber: z.number().int().positive().optional(),
   paymentMethod: z.enum(PAYMENT_METHODS),
   referenceNumber: z.string().optional(),
   proofUrl: z.string().optional(),
@@ -20,6 +22,45 @@ export const updateMemberPaymentPreferenceSchema = z.object({
   paymentAccountDetails: z.string().min(3, "Receiving account details required"),
 });
 
+export const markMemberPaidSchema = z
+  .object({
+    groupId: z.string().min(1, "Group ID is required"),
+    memberUserId: z.string().min(1, "Member User ID is required"),
+    cycleNumber: z.number().int().positive().optional(),
+    referenceNumber: z
+      .string()
+      .trim()
+      .max(100, "Reference number cannot exceed 100 characters")
+      .optional()
+      .or(z.literal("")),
+    proofUrl: z.string().optional().or(z.literal("")),
+  })
+  .refine(
+    (data) =>
+      (Boolean(data.referenceNumber) &&
+        data.referenceNumber!.trim().length >= 3) ||
+      (Boolean(data.proofUrl) && data.proofUrl!.trim().length > 0),
+    {
+      message:
+        "Please provide either a valid reference number (at least 3 characters) or a proof image",
+      path: ["referenceNumber"],
+    },
+  );
+
+export const markMemberRejectedSchema = z.object({
+  groupId: z.string().min(1, "Group ID is required"),
+  memberUserId: z.string().min(1, "Member User ID is required"),
+  reason: z
+    .string()
+    .trim()
+    .min(5, "Rejection reason must be at least 5 characters")
+    .max(300, "Rejection reason cannot exceed 300 characters"),
+  cycleNumber: z.number().int().positive().optional(),
+  rejectionProofUrl: z.string().optional().or(z.literal("")),
+});
+
 export type SubmitPaymentDTO = z.infer<typeof submitPaymentSchema>;
 export type RejectPaymentDTO = z.infer<typeof rejectPaymentSchema>;
 export type UpdateMemberPaymentPreferenceDTO = z.infer<typeof updateMemberPaymentPreferenceSchema>;
+export type MarkMemberPaidDTO = z.infer<typeof markMemberPaidSchema>;
+export type MarkMemberRejectedDTO = z.infer<typeof markMemberRejectedSchema>;

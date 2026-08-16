@@ -41,19 +41,10 @@ export const createGroupFullSchema = z.object({
     .default(0),
   latePenaltyAmount: z.coerce
     .number()
+    .int("Late penalty rate must be a whole percentage number (e.g. 5%)")
     .min(0, "Daily penalty rate cannot be negative")
     .max(10, "Daily penalty rate is capped at 10% per day maximum")
     .default(0),
-  enableBackupFund: z.boolean().default(false),
-  backupFundPerTurn: z.coerce
-    .number()
-    .min(0, "Backup fund per turn cannot be negative")
-    .optional()
-    .default(0),
-  backupFundAction: z
-    .enum(["EQUAL_REFUND", "CARRY_OVER", "ORGANIZER_REWARD"])
-    .optional()
-    .default("EQUAL_REFUND"),
   inviteCode: z.string().length(12),
   organizerId: z.string(),
 });
