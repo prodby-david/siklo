@@ -1,5 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
+import { fetchNearestDue } from "../api/fetchNearestDue";
 import { ExtendedGroup as Group } from "../types/groups";
 
 const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
@@ -13,6 +15,12 @@ const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
 export function useDashboardData() {
   const { data: user, isLoading: isUserLoading } = useGetCurrentName();
   const { data: groups = [], isLoading: isGroupsLoading } = useGetGroup();
+
+  const { data: nearestDue, isLoading: isNearestDueLoading } = useQuery({
+    queryKey: ["nearest-due"],
+    queryFn: fetchNearestDue,
+    refetchInterval: 30000,
+  });
 
   const firstName = user?.name?.split(" ")[0] || "User";
 
@@ -38,55 +46,23 @@ export function useDashboardData() {
 
   const primaryBillingCycle = groups.length === 1 ? groups[0]?.billingCycle : "";
 
-  type GroupWithStatus = Group & { isCycleDone?: boolean; status?: string };
+  const dueGroupName =
+    nearestDue?.dueGroupName || nearestDue?.nearestGroupName || "";
+  const dueGroupId =
+    nearestDue?.dueGroupId || nearestDue?.nearestGroupId || "";
+  const nextContributionAmount = nearestDue?.nextContributionAmount || 0;
+  const activeGroupsCount = nearestDue?.activeGroupsCount ?? groups.length;
+  const nearestDueDate = nearestDue?.nearestDueDate || null;
 
-  const runningActiveGroups = groups.filter(
-    (g: GroupWithStatus) =>
-      !!g.startDate && !g.isCycleDone && g.status !== "COMPLETED",
-  );
-
-  const sortedActiveGroups = [...runningActiveGroups].sort(
-    (a: Group, b: Group) => {
-      const timeA = a.startDate ? new Date(a.startDate).getTime() : 0;
-      const timeB = b.startDate ? new Date(b.startDate).getTime() : 0;
-      return timeA - timeB;
-    },
-  );
-
-  const nearestGroup = sortedActiveGroups[0] || groups[0] || null;
-  const isNearestGroupActive =
-    !!nearestGroup?.startDate &&
-    !(nearestGroup as GroupWithStatus).isCycleDone &&
-    (nearestGroup as GroupWithStatus).status !== "COMPLETED";
-
-  const nextPayoutAmount =
-    nearestGroup && isNearestGroupActive
-      ? nearestGroup.contributionAmount * nearestGroup.maxMembers
-      : 0;
-
-  const nextPayoutDate =
-    nearestGroup && isNearestGroupActive && nearestGroup.startDate
-      ? new Date(nearestGroup.startDate).toLocaleDateString("en-US", {
-          month: "long",
-          day: "numeric",
-          year: "numeric",
-        })
-      : null;
-
-  const nearestGroupName =
-    nearestGroup && isNearestGroupActive ? nearestGroup.name : "";
-
-  const nearestGroupId = nearestGroup ? nearestGroup.id : "";
-
-  const nextContributionAmount =
-    nearestGroup && isNearestGroupActive
-      ? nearestGroup.contributionAmount
-      : 0;
+  const nextPayoutDate = nearestDue?.nextPayoutDate || null;
+  const nextPayoutAmount = nearestDue?.nextPayoutAmount || 0;
+  const nextPayoutGroupName = nearestDue?.nextPayoutGroupName || "";
+  const nextPayoutGroupId = nearestDue?.nextPayoutGroupId || "";
 
   return {
     firstName,
     groups,
-    isLoading: isUserLoading || isGroupsLoading,
+    isLoading: isUserLoading || isGroupsLoading || isNearestDueLoading,
     stats: {
       totalPayoutPool,
       totalMonthlyContributions,
@@ -94,9 +70,14 @@ export function useDashboardData() {
       primaryBillingCycle,
       nextPayoutAmount,
       nextPayoutDate,
-      nearestGroupName,
-      nearestGroupId,
-      activeGroupsCount: groups.length,
+      nextPayoutGroupName,
+      nextPayoutGroupId,
+      dueGroupName,
+      dueGroupId,
+      nearestGroupName: dueGroupName,
+      nearestGroupId: dueGroupId,
+      nearestDueDate,
+      activeGroupsCount,
       nextContributionAmount,
     },
   };

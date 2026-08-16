@@ -1,22 +1,24 @@
 import React from "react";
 import Link from "next/link";
 import { Clock, CheckCircle2, ArrowRight } from "lucide-react";
-
-interface ActiveGroupsCardProps {
-  count: number;
-  nextContributionAmount?: number;
-  groupName?: string;
-  groupId?: string;
-}
+import { ActiveGroupsCardProps } from "../../types/dashboard.types";
 
 export default function ActiveGroupsCard({
   count,
   nextContributionAmount = 0,
   groupName,
   groupId,
+  nearestDueDate,
 }: ActiveGroupsCardProps) {
   const hasContribution = nextContributionAmount > 0;
   const targetHref = groupId ? `/group/${groupId}` : "/group";
+
+  const formattedDueDate = nearestDueDate
+    ? new Date(nearestDueDate).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
+    : null;
 
   return (
     <div className="p-6 border border-neutral-border rounded-2xl w-full bg-background shadow-sm hover:border-brand-accent/30 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col justify-between gap-4">
@@ -27,7 +29,9 @@ export default function ActiveGroupsCard({
           </span>
           <p
             className={`text-3xl font-extrabold tracking-tight mt-1 ${
-              hasContribution ? "text-foreground" : "text-emerald-600 dark:text-emerald-400"
+              hasContribution
+                ? "text-foreground"
+                : "text-emerald-600 dark:text-emerald-400"
             }`}
           >
             {hasContribution
@@ -40,8 +44,9 @@ export default function ActiveGroupsCard({
             <div className="flex items-center gap-1.5 mt-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-2xl text-[11px] font-semibold border border-amber-500/20">
               <Clock className="w-3.5 h-3.5" />
               <span>
-                {count} Active {count === 1 ? "Group" : "Groups"}
-                {groupName ? ` • ${groupName}` : ""}
+                {groupName ? `${groupName}` : ""}
+                {","}
+                {formattedDueDate ? ` ${formattedDueDate}` : ""}
               </span>
             </div>
           ) : (

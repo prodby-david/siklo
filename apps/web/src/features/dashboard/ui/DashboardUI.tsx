@@ -31,14 +31,15 @@ export default function DashboardUI() {
         <NextPayoutCard
           expectedAmount={stats.nextPayoutAmount}
           expectedDate={stats.nextPayoutDate}
-          groupName={stats.nearestGroupName}
-          groupId={stats.nearestGroupId}
+          groupName={stats.nextPayoutGroupName}
+          groupId={stats.nextPayoutGroupId}
         />
         <ActiveGroupsCard
           count={stats.activeGroupsCount}
           nextContributionAmount={stats.nextContributionAmount}
-          groupName={stats.nearestGroupName}
-          groupId={stats.nearestGroupId}
+          groupName={stats.dueGroupName}
+          groupId={stats.dueGroupId}
+          nearestDueDate={stats.nearestDueDate}
         />
       </div>
 

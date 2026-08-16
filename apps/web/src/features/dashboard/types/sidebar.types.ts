@@ -39,3 +39,17 @@ export interface SidebarMobileDrawerProps {
   onOpenNotifications: () => void;
   onSignOut: () => void;
 }
+
+export interface SidebarInviteItem {
+  id: string;
+  groupName: string;
+  organizerName: string;
+  type: "INVITE";
+}
+
+export interface SidebarRequestItem {
+  id: string;
+  groupName: string;
+  status: "PENDING";
+  type: "REQUEST";
+}

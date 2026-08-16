@@ -1,13 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { Calendar, Banknote, Coins, ArrowRight } from "lucide-react";
-
-interface NextPayoutCardProps {
-  expectedAmount: number;
-  expectedDate: string | null;
-  groupName: string;
-  groupId?: string;
-}
+import formatDate from "@/shared/utils/formatDate";
+import { NextPayoutCardProps } from "../../types/dashboard.types";
 
 export default function NextPayoutCard({
   expectedAmount,
@@ -16,6 +11,8 @@ export default function NextPayoutCard({
   groupId,
 }: NextPayoutCardProps) {
   const targetHref = groupId ? `/group/${groupId}` : "/group";
+
+  const formattedDate = expectedDate ? formatDate(expectedDate) : null;
 
   return (
     <div className="p-6 border border-transparent rounded-2xl w-full bg-brand-accent text-white shadow-md hover:bg-brand-accent-hover transition-all duration-300 relative overflow-hidden flex flex-col justify-between gap-4">
@@ -51,7 +48,7 @@ export default function NextPayoutCard({
             <Calendar className="w-3.5 h-3.5 text-white" />
             <span>
               {expectedAmount > 0
-                ? expectedDate || "Cycle Starting Soon"
+                ? formattedDate || "Cycle Starting Soon"
                 : "No Upcoming Payouts"}
             </span>
           </div>

@@ -1,14 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { HandCoins, ArrowUpRight, ArrowRight } from "lucide-react";
-
-interface TotalSavingsCardProps {
-  totalPayoutPool: number;
-  totalMonthlyContributions?: number;
-  perTurnContribution?: number;
-  primaryBillingCycle?: string;
-  activeGroupsCount?: number;
-}
+import { TotalSavingsCardProps } from "../../types/dashboard.types";
 
 export default function TotalSavingsCard({
   totalPayoutPool,

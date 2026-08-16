@@ -1,5 +1,5 @@
 import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
-import JoinGroupModal from "@/features/groups/components/modal/JoinGroupModal";
+import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
 import Image from "next/image";
 
 export default function EmptyGroupState() {

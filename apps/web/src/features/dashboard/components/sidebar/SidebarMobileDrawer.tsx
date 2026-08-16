@@ -7,6 +7,7 @@ import { Button } from "@/shared/components/ui/button";
 import { SidebarMobileDrawerProps } from "../../types/sidebar.types";
 import { NAV_ITEMS } from "../../constants/sidebar.constants";
 import SidebarUnreadBadge from "./SidebarUnreadBadge";
+import ThemeToggle from "@/shared/components/theme/ThemeToggle";
 
 export default function SidebarMobileDrawer({
   isOpen,
@@ -111,14 +112,17 @@ export default function SidebarMobileDrawer({
               </nav>
             </div>
 
-            <Button
-              variant="outline"
-              onClick={onSignOut}
-              className="w-full flex items-center gap-2 cursor-pointer hover:text-danger hover:bg-danger-bg hover:border-danger-border rounded-2xl transition-all duration-200"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="text-xs font-medium">Sign out</span>
-            </Button>
+            <div className="space-y-2 w-full">
+              <ThemeToggle showLabel />
+              <Button
+                variant="outline"
+                onClick={onSignOut}
+                className="w-full flex items-center justify-center gap-2.5 px-3 py-2.5 cursor-pointer hover:text-danger hover:bg-danger-bg hover:border-danger-border rounded-2xl border border-neutral-border transition-all duration-200"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-xs font-medium">Sign out</span>
+              </Button>
+            </div>
           </motion.aside>
         </div>
       )}

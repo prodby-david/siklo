@@ -2,23 +2,10 @@
 
 import { useState } from "react";
 import { Mail, Check, X, Clock, UserPlus } from "lucide-react";
-
-interface InviteItem {
-  id: string;
-  groupName: string;
-  organizerName: string;
-  type: "INVITE";
-}
-
-interface RequestItem {
-  id: string;
-  groupName: string;
-  status: "PENDING";
-  type: "REQUEST";
-}
+import { SidebarInviteItem, SidebarRequestItem } from "../../types/sidebar.types";
 
 export default function SidebarInvitesRequests() {
-  const [invites, setInvites] = useState<InviteItem[]>([
+  const [invites, setInvites] = useState<SidebarInviteItem[]>([
     {
       id: "inv-1",
       groupName: "Techies Savings Circle",
@@ -27,7 +14,7 @@ export default function SidebarInvitesRequests() {
     },
   ]);
 
-  const [requests, setRequests] = useState<RequestItem[]>([
+  const [requests, setRequests] = useState<SidebarRequestItem[]>([
     {
       id: "req-1",
       groupName: "Weekend Paluwagan",

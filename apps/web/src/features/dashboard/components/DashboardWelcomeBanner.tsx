@@ -1,13 +1,10 @@
 import React from "react";
 import Image from "next/image";
 import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
-import JoinGroupModal from "@/features/groups/components/modal/JoinGroupModal";
+import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
 import { Coins } from "lucide-react";
 import { timeGreeting } from "@/shared/utils/greetings";
-
-interface DashboardWelcomeBannerProps {
-  firstName: string;
-}
+import { DashboardWelcomeBannerProps } from "../types/dashboard.types";
 
 export default function DashboardWelcomeBanner({
   firstName,

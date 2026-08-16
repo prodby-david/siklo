@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { Menu, Bell } from "lucide-react";
 import { useSidebarContext } from "./SidebarContext";
-import { useNotifications } from "@/features/notifications/hooks/useNotifications";
+import { useFetchNotifications } from "@/features/notifications/hooks/useFetchNotifications";
 import NotificationSheet from "@/features/notifications/components/NotificationSheet";
 
 export default function DashboardMobileHeader() {
   const { expandSidebar } = useSidebarContext();
-  const { unreadCount } = useNotifications();
+  const { unreadCount } = useFetchNotifications();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
   return (
@@ -25,19 +23,6 @@ export default function DashboardMobileHeader() {
           >
             <Menu className="w-5 h-5 text-foreground" />
           </button>
-
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <Image
-              src="/images/logo.svg"
-              width={38}
-              height={38}
-              alt="Logo"
-              priority
-            />
-            <span className="font-extrabold text-base text-foreground tracking-tight">
-              Siklo
-            </span>
-          </Link>
         </div>
 
         <button
