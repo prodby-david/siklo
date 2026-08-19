@@ -140,11 +140,12 @@ export default function CreateGroupFormFields(
               disabled={isPending}
               {...register("contributionAmount", { valueAsNumber: true })}
               onKeyDown={(e) => {
-                if (["-", "e", "E", "+"].includes(e.key)) e.preventDefault();
+                if (["-", "e", "E", "+", "."].includes(e.key)) e.preventDefault();
               }}
               onChange={(e) => {
-                const val = Number(e.target.value);
-                if (isNaN(val) || e.target.value === "") {
+                const cleaned = e.target.value.replace(/\D/g, "");
+                const val = Number(cleaned);
+                if (isNaN(val) || cleaned === "") {
                   setValue(
                     "contributionAmount",
                     undefined as unknown as number,
@@ -175,8 +176,9 @@ export default function CreateGroupFormFields(
                   e.preventDefault();
               }}
               onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                if (isNaN(val) || e.target.value === "") {
+                const cleaned = e.target.value.replace(/\D/g, "");
+                const val = parseInt(cleaned, 10);
+                if (isNaN(val) || cleaned === "") {
                   setValue("maxMembers", undefined as unknown as number, {
                     shouldValidate: true,
                   });
@@ -203,8 +205,9 @@ export default function CreateGroupFormFields(
                   e.preventDefault();
               }}
               onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                if (isNaN(val) || e.target.value === "") {
+                const cleaned = e.target.value.replace(/\D/g, "");
+                const val = parseInt(cleaned, 10);
+                if (isNaN(val) || cleaned === "") {
                   setValue("cycleDuration", 1, { shouldValidate: true });
                 } else if (val > 10) {
                   setValue("cycleDuration", 10, { shouldValidate: true });
@@ -233,8 +236,9 @@ export default function CreateGroupFormFields(
                   e.preventDefault();
               }}
               onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                if (isNaN(val) || e.target.value === "") {
+                const cleaned = e.target.value.replace(/\D/g, "");
+                const val = parseInt(cleaned, 10);
+                if (isNaN(val) || cleaned === "") {
                   setValue("gracePeriodDays", 0, { shouldValidate: true });
                 } else if (val > 7) {
                   setValue("gracePeriodDays", 7, { shouldValidate: true });
@@ -262,8 +266,9 @@ export default function CreateGroupFormFields(
                   e.preventDefault();
               }}
               onChange={(e) => {
-                const val = parseInt(e.target.value, 10);
-                if (isNaN(val) || e.target.value === "") {
+                const cleaned = e.target.value.replace(/\D/g, "");
+                const val = parseInt(cleaned, 10);
+                if (isNaN(val) || cleaned === "") {
                   setValue("latePenaltyAmount", 0, { shouldValidate: true });
                 } else if (val > 10) {
                   setValue("latePenaltyAmount", 10, { shouldValidate: true });
@@ -277,6 +282,7 @@ export default function CreateGroupFormFields(
               icon={<AlertTriangle className="w-4 h-4 text-amber-500" />}
             />
           </div>
+
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">

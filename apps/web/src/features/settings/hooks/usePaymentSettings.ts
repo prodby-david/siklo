@@ -32,11 +32,18 @@ export function usePaymentSettings() {
     field: keyof PaymentAccountDetailsDTO,
     value: string,
   ) => {
+    const isNumericField = [
+      "gcashNumber",
+      "mayaNumber",
+      "bankAccountNumber",
+    ].includes(field);
+    const sanitizedValue = isNumericField ? value.replace(/\D/g, "") : value;
     setCustomData((prev) => ({
       ...prev,
-      [field]: value,
+      [field]: sanitizedValue,
     }));
   };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

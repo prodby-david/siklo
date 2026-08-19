@@ -195,9 +195,14 @@ export default function EditGroupModal({
                 <input
                   type="number"
                   value={contributionAmount}
-                  onChange={(e) =>
-                    setContributionAmount(Number(e.target.value))
-                  }
+                  onKeyDown={(e) => {
+                    if (["-", "e", "E", "+", "."].includes(e.key)) e.preventDefault();
+                  }}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, "");
+                    const val = Number(cleaned);
+                    setContributionAmount(isNaN(val) ? 0 : val > 10000 ? 10000 : val);
+                  }}
                   disabled={isSubmitting}
                   className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
                 />
@@ -211,7 +216,15 @@ export default function EditGroupModal({
                 <input
                   type="number"
                   value={maxMembers}
-                  onChange={(e) => setMaxMembers(Number(e.target.value))}
+                  onKeyDown={(e) => {
+                    if ([".", ",", "-", "e", "E", "+"].includes(e.key))
+                      e.preventDefault();
+                  }}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, "");
+                    const val = parseInt(cleaned, 10);
+                    setMaxMembers(isNaN(val) ? 3 : val > 50 ? 50 : val);
+                  }}
                   disabled={isSubmitting}
                   className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
                 />
@@ -229,9 +242,14 @@ export default function EditGroupModal({
                   min={0}
                   max={7}
                   value={gracePeriodDays}
+                  onKeyDown={(e) => {
+                    if ([".", ",", "-", "e", "E", "+"].includes(e.key))
+                      e.preventDefault();
+                  }}
                   onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setGracePeriodDays(val > 7 ? 7 : val < 0 ? 0 : val);
+                    const cleaned = e.target.value.replace(/\D/g, "");
+                    const val = Number(cleaned);
+                    setGracePeriodDays(isNaN(val) ? 0 : val > 7 ? 7 : val < 0 ? 0 : val);
                   }}
                   disabled={isSubmitting}
                   className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
@@ -249,15 +267,21 @@ export default function EditGroupModal({
                   min={1}
                   max={10}
                   value={latePenaltyAmount}
+                  onKeyDown={(e) => {
+                    if ([".", ",", "-", "e", "E", "+"].includes(e.key))
+                      e.preventDefault();
+                  }}
                   onChange={(e) => {
-                    const val = Number(e.target.value);
-                    setLatePenaltyAmount(val > 10 ? 10 : val < 1 ? 1 : val);
+                    const cleaned = e.target.value.replace(/\D/g, "");
+                    const val = Number(cleaned);
+                    setLatePenaltyAmount(isNaN(val) ? 0 : val > 10 ? 10 : val);
                   }}
                   disabled={isSubmitting}
                   className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
                 />
               </div>
             </div>
+
 
             <div className="space-y-3">
               <div className="space-y-1">

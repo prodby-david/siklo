@@ -41,6 +41,7 @@ export default function PaymentSettings() {
               id="gcashNumber"
               labelText="GCash Mobile Number"
               type="text"
+              inputMode="numeric"
               value={formData.gcashNumber || ""}
               onChange={(e) => handleChange("gcashNumber", e.target.value)}
               placeholder="e.g. 09171234567"
@@ -70,6 +71,7 @@ export default function PaymentSettings() {
               id="mayaNumber"
               labelText="Maya Mobile Number"
               type="text"
+              inputMode="numeric"
               value={formData.mayaNumber || ""}
               onChange={(e) => handleChange("mayaNumber", e.target.value)}
               placeholder="e.g. 09187654321"
@@ -99,15 +101,17 @@ export default function PaymentSettings() {
               id="bankAccountNumber"
               labelText="Bank Account Number"
               type="text"
+              inputMode="numeric"
               value={formData.bankAccountNumber || ""}
               onChange={(e) =>
                 handleChange("bankAccountNumber", e.target.value)
               }
-              placeholder="e.g. 1234 5678 9012"
+              placeholder="e.g. 123456789012"
               icon={<CreditCard className="w-4 h-4 text-brand-accent" />}
             />
           </div>
         </div>
+
 
         <div className="pt-2 flex items-center gap-3">
           <button
