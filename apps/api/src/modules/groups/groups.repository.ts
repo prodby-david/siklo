@@ -47,6 +47,14 @@ export class GroupsRepository {
         activities: {
           where: { activity: 'PAYMENT_VERIFIED' },
         },
+        rounds: {
+          select: {
+            id: true,
+            cycleNumber: true,
+            roundNumber: true,
+            status: true,
+          },
+        },
       },
     });
   }

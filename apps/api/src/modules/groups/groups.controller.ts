@@ -18,8 +18,12 @@ import { joinGroupBodySchema } from './schema/join-group.schema';
 import {
   updateGroupSchema,
   updateMemberPaymentPreferenceSchema,
+  sendAnnouncementSchema,
+  selectSlotSchema,
   type UpdateGroupDTO,
   type UpdateMemberPaymentPreferenceDTO,
+  type SendAnnouncementDTO,
+  type SelectSlotDTO,
 } from '@siklo/shared-schemas';
 import type { CreateGroupData } from './schema/create-group.schema';
 import type { JoinGroupBodyDTO } from './schema/join-group.schema';
@@ -28,7 +32,7 @@ import type { JoinGroupBodyDTO } from './schema/join-group.schema';
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
-  @Post('create')
+  @Post()
   @UseGuards(JwtAuthGuard)
   async createGroup(
     @Body(new ZodValidationPipe(createGroupSchema))
@@ -48,7 +52,7 @@ export class GroupsController {
     return this.groupsService.joinGroup(joinGroupDto, userId);
   }
 
-  @Post(':id/start')
+  @Post(':id/cycle')
   @UseGuards(JwtAuthGuard)
   async startGroupCycle(
     @Param('id') groupId: string,
@@ -57,7 +61,7 @@ export class GroupsController {
     return this.groupsService.startGroupCycle(groupId, userId);
   }
 
-  @Get('my-groups')
+  @Get()
   @UseGuards(JwtAuthGuard)
   async getUserGroup(
     @CurrentUser('sub') userId: string,
@@ -66,7 +70,7 @@ export class GroupsController {
     return this.groupsService.getUsersGroup(userId, status);
   }
 
-  @Get('invite/:inviteCode')
+  @Get('invites/:inviteCode')
   @UseGuards(JwtAuthGuard)
   async getGroupByInviteCodePreview(@Param('inviteCode') inviteCode: string) {
     return this.groupsService.getGroupByInviteCodePreview(inviteCode);
@@ -81,7 +85,7 @@ export class GroupsController {
     return this.groupsService.getGroupById(groupId, userId);
   }
 
-  @Patch(':id/members/payment-preference')
+  @Patch(':id/members/me/payment-preference')
   @UseGuards(JwtAuthGuard)
   async updateMemberPaymentPreference(
     @Param('id') groupId: string,
@@ -96,11 +100,12 @@ export class GroupsController {
     );
   }
 
-  @Post(':id/announcement')
+  @Post(':id/announcements')
   @UseGuards(JwtAuthGuard)
   async sendAnnouncement(
     @Param('id') groupId: string,
-    @Body() body: { message: string },
+    @Body(new ZodValidationPipe(sendAnnouncementSchema))
+    body: SendAnnouncementDTO,
     @CurrentUser('sub') userId: string,
   ) {
     return this.groupsService.sendAnnouncement(groupId, body.message, userId);
@@ -116,11 +121,12 @@ export class GroupsController {
     return this.groupsService.removeMember(groupId, memberUserId, userId);
   }
 
-  @Post(':id/select-slot')
+  @Patch(':id/members/me/slot')
   @UseGuards(JwtAuthGuard)
   async selectSlot(
     @Param('id') groupId: string,
-    @Body() body: { position: number },
+    @Body(new ZodValidationPipe(selectSlotSchema))
+    body: SelectSlotDTO,
     @CurrentUser('sub') userId: string,
   ) {
     return this.groupsService.selectSlot(groupId, body.position, userId);
@@ -145,3 +151,4 @@ export class GroupsController {
     return this.groupsService.updateGroup(groupId, body, userId);
   }
 }
+

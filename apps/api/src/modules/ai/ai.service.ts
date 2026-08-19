@@ -5,8 +5,7 @@ import {
   type UIMessage,
   isStepCount,
 } from 'ai';
-import { google } from '@ai-sdk/google';
-import { SIKLO_SYSTEM_PROMPT } from 'src/commons/context/ai.context';
+import { SIKLO_SYSTEM_PROMPT } from '@/commons/context/ai.context';
 import { AiToolRegistry } from './registry/ai-tools.registry';
 import { createOllama } from 'ollama-ai-provider-v2';
 

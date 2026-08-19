@@ -63,7 +63,7 @@ export class UsersService {
   }
 
   async changeUserPassword(id: string, dto: ChangePasswordDTO) {
-    const user = await this.usersRepository.findUserById(id);
+    const user = await this.usersRepository.findUserWithPasswordById(id);
 
     if (!user) {
       throw new NotFoundException('User not found.');

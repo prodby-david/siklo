@@ -1,5 +1,5 @@
 import { Controller, Get, Patch, Param, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '@/commons/guards/jwt-auth';
+import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
 import { NotificationsService } from './notifications.service';
 
@@ -13,7 +13,7 @@ export class NotificationsController {
     return this.notificationService.getUserNotifications(userId);
   }
 
-  @Patch('mark-read/:notificationId')
+  @Patch(':notificationId/read')
   @UseGuards(JwtAuthGuard)
   async markNotificationRead(
     @Param('notificationId') notificationId: string,
@@ -25,9 +25,10 @@ export class NotificationsController {
     );
   }
 
-  @Patch('mark-all-read')
+  @Patch('read-all')
   @UseGuards(JwtAuthGuard)
   async markAllNotificationsRead(@CurrentUser('sub') userId: string) {
     return this.notificationService.markAllNotificationRead(userId);
   }
 }
+

@@ -11,7 +11,7 @@ import {
 import { SettingsService } from './settings.service';
 import { CreateSettingDto } from './dto/create-setting.dto';
 import { UpdateSettingDto } from './dto/update-setting.dto';
-import { JwtAuthGuard } from '@/commons/guards/jwt-auth';
+import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('settings')

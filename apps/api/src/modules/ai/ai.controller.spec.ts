@@ -1,6 +1,27 @@
+jest.mock('ai', () => ({
+  generateText: jest.fn(),
+  convertToModelMessages: jest.fn(),
+  isStepCount: jest.fn(),
+}));
+
+jest.mock('@ai-sdk/google', () => ({
+  google: jest.fn(),
+}));
+
+jest.mock('ollama-ai-provider-v2', () => ({
+  createOllama: jest.fn(() => jest.fn()),
+}));
+
+jest.mock('./registry/ai-tools.registry', () => ({
+  AiToolRegistry: jest.fn().mockImplementation(() => ({
+    getTools: jest.fn().mockReturnValue({}),
+  })),
+}));
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AiController', () => {
   let controller: AiController;
@@ -8,8 +29,18 @@ describe('AiController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AiController],
-      providers: [AiService],
+      providers: [
+        {
+          provide: AiService,
+          useValue: { handleMessage: jest.fn() },
+        },
+        {
+          provide: JwtService,
+          useValue: { verifyAsync: jest.fn() },
+        },
+      ],
     }).compile();
+
 
     controller = module.get<AiController>(AiController);
   });
@@ -18,3 +49,4 @@ describe('AiController', () => {
     expect(controller).toBeDefined();
   });
 });
+

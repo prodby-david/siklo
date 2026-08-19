@@ -6,6 +6,7 @@ import {
   Param,
   Query,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
@@ -14,21 +15,25 @@ import { PaymentsService } from './payments.service';
 import {
   submitPaymentSchema,
   rejectPaymentSchema,
-  updateMemberPaymentPreferenceSchema,
   markMemberPaidSchema,
   markMemberRejectedSchema,
+  requestAdvancePayoutSchema,
+  disbursePayoutSchema,
+  confirmPayoutReceiptSchema,
   type SubmitPaymentDTO,
   type RejectPaymentDTO,
-  type UpdateMemberPaymentPreferenceDTO,
   type MarkMemberPaidDTO,
   type MarkMemberRejectedDTO,
+  type RequestAdvancePayoutDTO,
+  type DisbursePayoutDTO,
+  type ConfirmPayoutReceiptDTO,
 } from '@siklo/shared-schemas';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post('submit')
+  @Post()
   @UseGuards(JwtAuthGuard)
   async submitPayment(
     @Body(new ZodValidationPipe(submitPaymentSchema)) body: SubmitPaymentDTO,
@@ -37,7 +42,7 @@ export class PaymentsController {
     return this.paymentsService.submitPayment(body, userId);
   }
 
-  @Post(':paymentId/verify')
+  @Patch(':paymentId/verification')
   @UseGuards(JwtAuthGuard)
   async verifyPayment(
     @Param('paymentId') paymentId: string,
@@ -46,7 +51,7 @@ export class PaymentsController {
     return this.paymentsService.verifyPayment(paymentId, userId);
   }
 
-  @Post(':paymentId/reject')
+  @Patch(':paymentId/rejection')
   @UseGuards(JwtAuthGuard)
   async rejectPayment(
     @Param('paymentId') paymentId: string,
@@ -56,7 +61,7 @@ export class PaymentsController {
     return this.paymentsService.rejectPayment(paymentId, body, userId);
   }
 
-  @Get('pending')
+  @Get()
   @UseGuards(JwtAuthGuard)
   async getPendingPayments(
     @Query('groupId') groupId: string,
@@ -71,7 +76,7 @@ export class PaymentsController {
     return this.paymentsService.getNearestUnpaidContribution(userId);
   }
 
-  @Post('mark-paid')
+  @Post('manual')
   @UseGuards(JwtAuthGuard)
   async markMemberPaid(
     @Body(new ZodValidationPipe(markMemberPaidSchema))
@@ -88,7 +93,7 @@ export class PaymentsController {
     );
   }
 
-  @Post('mark-rejected')
+  @Post('manual-rejections')
   @UseGuards(JwtAuthGuard)
   async markMemberRejected(
     @Body(new ZodValidationPipe(markMemberRejectedSchema))
@@ -103,5 +108,35 @@ export class PaymentsController {
       body.cycleNumber,
       body.rejectionProofUrl,
     );
+  }
+
+  @Post('payout-requests')
+  @UseGuards(JwtAuthGuard)
+  async requestAdvancePayout(
+    @Body(new ZodValidationPipe(requestAdvancePayoutSchema))
+    body: RequestAdvancePayoutDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.paymentsService.requestAdvancePayout(body, userId);
+  }
+
+  @Post('disbursements')
+  @UseGuards(JwtAuthGuard)
+  async disbursePayout(
+    @Body(new ZodValidationPipe(disbursePayoutSchema))
+    body: DisbursePayoutDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.paymentsService.disbursePayout(body, userId);
+  }
+
+  @Post('receipts')
+  @UseGuards(JwtAuthGuard)
+  async confirmPayoutReceipt(
+    @Body(new ZodValidationPipe(confirmPayoutReceiptSchema))
+    body: ConfirmPayoutReceiptDTO,
+    @CurrentUser('sub') userId: string,
+  ) {
+    return this.paymentsService.confirmPayoutReceipt(body, userId);
   }
 }

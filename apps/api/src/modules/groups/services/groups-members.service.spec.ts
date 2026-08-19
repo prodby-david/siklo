@@ -87,6 +87,12 @@ describe('GroupsMembersService', () => {
         groupsRepository.findMembership.mockResolvedValue(null);
         groupsRepository.createMembership.mockResolvedValue({});
         return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
           group: {
             findUnique: jest.fn().mockResolvedValue(mockGroup),
           },
@@ -105,8 +111,16 @@ describe('GroupsMembersService', () => {
 
       prisma.$transaction.mockImplementation(async (cb) => {
         groupsRepository.findGroupByInviteCode.mockResolvedValue(null);
-        return cb({});
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
+        });
       });
+
 
       await expect(service.joinGroup(dto, userId)).rejects.toThrow(
         NotFoundException,

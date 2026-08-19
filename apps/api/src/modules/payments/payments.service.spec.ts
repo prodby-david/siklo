@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ForbiddenException } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsRepository } from './payments.repository';
+import { PaymentsSubmissionService } from './services/payments-submission.service';
+import { PaymentsManagementService } from './services/payments-management.service';
+import { PaymentsScheduleService } from './services/payments-schedule.service';
+import { PaymentsPayoutService } from './services/payments-payout.service';
 import { ActivityService } from '../activity/activity.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { GroupsCoreService } from '../groups/services/groups-core.service';
 
 describe('PaymentsService', () => {
@@ -17,6 +22,7 @@ describe('PaymentsService', () => {
     findUserActiveGroupsWithMemberships: jest.Mock;
   };
   let activityService: { createActivity: jest.Mock };
+  let notificationsService: { createNotification: jest.Mock };
   let groupsCoreService: { getExistingGroup: jest.Mock };
 
   beforeEach(async () => {
@@ -34,6 +40,10 @@ describe('PaymentsService', () => {
       createActivity: jest.fn().mockResolvedValue({}),
     };
 
+    notificationsService = {
+      createNotification: jest.fn().mockResolvedValue({}),
+    };
+
     groupsCoreService = {
       getExistingGroup: jest.fn(),
     };
@@ -41,8 +51,13 @@ describe('PaymentsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentsService,
+        PaymentsSubmissionService,
+        PaymentsManagementService,
+        PaymentsScheduleService,
+        PaymentsPayoutService,
         { provide: PaymentsRepository, useValue: paymentsRepository },
         { provide: ActivityService, useValue: activityService },
+        { provide: NotificationsService, useValue: notificationsService },
         { provide: GroupsCoreService, useValue: groupsCoreService },
       ],
     }).compile();
@@ -63,6 +78,7 @@ describe('PaymentsService', () => {
         id: paymentId,
         userId: 'member-1',
         groupId: 'group-1',
+        totalAmount: 1000,
         group: { organizerId: organizerUserId },
         user: { name: 'Member 1' },
         round: { roundNumber: 1 },
@@ -112,7 +128,11 @@ describe('PaymentsService', () => {
           name: 'Savings Group A',
           contributionAmount: 1000,
           startDate: '2026-08-01T00:00:00.000Z',
-          memberships: [],
+          cycleDuration: 1,
+          billingCycle: 'MONTHLY',
+          memberships: [{ userId: 'user-1', position: 1 }],
+          payments: [],
+          rounds: [],
         },
       ];
 

@@ -1,8 +1,8 @@
 import { Controller, Post, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { signInSchema, type SignInDTO } from './schema/signin.schema';
+import { signInSchema, type SignInDTO } from '@siklo/shared-schemas';
 import type { Response } from 'express';
-import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
+import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipe';
 
 const isProduction = process.env.NODE_ENV === 'production';
 

@@ -13,6 +13,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { WebsocketService } from './websocket.service';
 import { TokenService } from '../token/token.service';
+import { PrismaService } from '@/database/prisma.service';
 
 @WebSocketGateway({
   cors: {
@@ -29,6 +30,7 @@ export class WebsocketGateway
   constructor(
     private readonly tokenService: TokenService,
     private readonly websocketService: WebsocketService,
+    private readonly prisma: PrismaService,
   ) {}
 
   private readonly logger = new Logger(WebsocketGateway.name);
@@ -78,7 +80,24 @@ export class WebsocketGateway
       return;
     }
 
+    const isAuthorized = await this.prisma.group.findFirst({
+      where: {
+        id: roomId,
+        OR: [
+          { organizerId: userId },
+          { memberships: { some: { userId } } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (!isAuthorized) {
+      this.logger.warn(`Unauthorized join-group attempt by ${userId} for room ${roomId}`);
+      return;
+    }
+
     client.join(roomId);
     this.logger.log(`User ${userId} joined room ${roomId}`);
   }
 }
+

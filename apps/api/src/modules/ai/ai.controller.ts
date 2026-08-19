@@ -1,6 +1,6 @@
 import { Controller, UseGuards, Post, Body } from '@nestjs/common';
 import { AiService } from './ai.service';
-import { JwtAuthGuard } from '@/commons/guards/jwt-auth';
+import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
 import { UIMessage } from 'ai';
 
@@ -19,7 +19,10 @@ export class AiController {
         messages,
         userId,
       );
-      return { reply: text || 'I understood your request. How else can I assist you?', toolResults };
+      return {
+        reply: text || 'I understood your request. How else can I assist you?',
+        toolResults,
+      };
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown AI processing error';

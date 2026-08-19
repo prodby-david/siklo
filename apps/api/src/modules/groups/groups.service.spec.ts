@@ -11,7 +11,6 @@ import { ActivityService } from '../activity/activity.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { GroupsCoreService } from './services/groups-core.service';
 import { GroupsMembersService } from './services/groups-members.service';
-import { GroupsPaymentsService } from './services/groups-payments.service';
 import { GroupsTurnsService } from './services/groups-turns.service';
 
 jest.mock('@/commons/utils/generateInviteCode', () => ({
@@ -72,7 +71,6 @@ describe('GroupsService', () => {
         GroupsService,
         GroupsCoreService,
         GroupsMembersService,
-        GroupsPaymentsService,
         GroupsTurnsService,
         { provide: GroupsRepository, useValue: groupsRepository },
         { provide: ActivityService, useValue: activityService },
@@ -105,6 +103,12 @@ describe('GroupsService', () => {
       groupsRepository.findGroupByName.mockResolvedValue(null);
       prisma.$transaction.mockImplementation(async (cb) => {
         return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
           group: {
             create: jest.fn().mockResolvedValue({ id: 'group-1', ...dto }),
           },
@@ -132,7 +136,14 @@ describe('GroupsService', () => {
 
       prisma.$transaction.mockImplementation(async (cb) => {
         groupsRepository.findGroupByName.mockResolvedValue({ id: 'existing' });
-        return cb({});
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
+        });
       });
 
       await expect(service.createGroup(dto, userId)).rejects.toThrow(
@@ -160,6 +171,12 @@ describe('GroupsService', () => {
         groupsRepository.findMembership.mockResolvedValue(null);
         groupsRepository.createMembership.mockResolvedValue({});
         return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
           group: {
             findUnique: jest.fn().mockResolvedValue(mockGroup),
           },
@@ -178,7 +195,14 @@ describe('GroupsService', () => {
 
       prisma.$transaction.mockImplementation(async (cb) => {
         groupsRepository.findGroupByInviteCode.mockResolvedValue(null);
-        return cb({});
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
+        });
       });
 
       await expect(service.joinGroup(dto, userId)).rejects.toThrow(
@@ -202,8 +226,16 @@ describe('GroupsService', () => {
           { position: 1 },
           { position: 2 },
         ]);
-        return cb({});
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcash: '09123456789' },
+            }),
+          },
+        });
       });
+
 
       await expect(service.joinGroup(dto, userId)).rejects.toThrow(
         ConflictException,

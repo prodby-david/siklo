@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
-import { PaymentStatus, PaymentMethodType } from '@/generated/prisma/client';
+import {
+  PaymentStatus,
+  PaymentMethodType,
+  RoundStatus,
+} from '@/generated/prisma/client';
 
 export interface CreatePaymentRecordData {
   groupId: string;
@@ -220,6 +224,13 @@ export class PaymentsRepository {
       include: {
         round: true,
       },
+    });
+  }
+
+  async updateRoundStatus(roundId: string, status: RoundStatus) {
+    return this.prisma.round.update({
+      where: { id: roundId },
+      data: { status },
     });
   }
 }

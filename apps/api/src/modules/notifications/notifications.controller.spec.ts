@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
+import { JwtService } from '@nestjs/jwt';
 
 describe('NotificationsController', () => {
   let controller: NotificationsController;
@@ -14,10 +15,18 @@ describe('NotificationsController', () => {
           useValue: {
             getUserNotifications: jest.fn().mockResolvedValue([]),
             markNotificationRead: jest.fn().mockResolvedValue({}),
+            markAllNotificationRead: jest.fn().mockResolvedValue({}),
+          },
+        },
+        {
+          provide: JwtService,
+          useValue: {
+            verifyAsync: jest.fn(),
           },
         },
       ],
     }).compile();
+
 
     controller = module.get<NotificationsController>(NotificationsController);
   });

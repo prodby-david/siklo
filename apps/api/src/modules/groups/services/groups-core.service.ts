@@ -12,7 +12,7 @@ import { CreateGroupData } from '../schema/create-group.schema';
 import { UpdateGroupDTO } from '@siklo/shared-schemas';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
-import { shuffle } from '../utils/shuffle.members';
+import { shuffle } from '../utils/shuffleMembers';
 
 @Injectable()
 export class GroupsCoreService {
@@ -110,14 +110,17 @@ export class GroupsCoreService {
     const groups = await this.groupsRepository.getUserGroup(userId);
 
     const processedGroups = groups.map((group) => {
-      const verifiedPayments = (group.activities || []).filter(
-        (a) => a.activity === 'PAYMENT_VERIFIED',
+      const memberCount = group.memberships?.length || group.maxMembers || 0;
+      const duration = group.cycleDuration || 1;
+      const totalRoundsRequired = memberCount * duration;
+      const paidRoundsCount = (group.rounds || []).filter(
+        (r) => r.status === 'PAID',
       ).length;
-      const requiredPayments = group.maxMembers || 0;
+
       const isCycleDone =
         !!group.startDate &&
-        requiredPayments > 0 &&
-        verifiedPayments >= requiredPayments;
+        totalRoundsRequired > 0 &&
+        paidRoundsCount >= totalRoundsRequired;
 
       const computedStatus = isCycleDone
         ? 'COMPLETED'
@@ -284,6 +287,18 @@ export class GroupsCoreService {
     }
 
     return this.prisma.$transaction(async (tx) => {
+      await tx.payment.deleteMany({
+        where: { groupId },
+      });
+      await tx.round.deleteMany({
+        where: { groupId },
+      });
+      await tx.activity.deleteMany({
+        where: { groupId },
+      });
+      await tx.notification.deleteMany({
+        where: { groupId },
+      });
       await tx.membership.deleteMany({
         where: { groupId },
       });

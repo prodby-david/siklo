@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Patch, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userSchema, type CreateUserDTO } from './schema/user.schema';
-import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipes';
-import { JwtAuthGuard } from '@/commons/guards/jwt-auth';
+import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipe';
+import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
 import {
   changePasswordSchema,
@@ -30,7 +30,7 @@ export class UsersController {
     return this.usersService.getCurrentUserName(userId);
   }
 
-  @Patch('profile/settings')
+  @Patch('me/profile')
   @UseGuards(JwtAuthGuard)
   async updateProfileSettings(
     @Body(new ZodValidationPipe(userProfileSettingSchema))
@@ -40,7 +40,7 @@ export class UsersController {
     return this.usersService.updateUserProfile(userId, data);
   }
 
-  @Patch('change-password')
+  @Patch('me/password')
   @UseGuards(JwtAuthGuard)
   async changeUserPassword(
     @Body(new ZodValidationPipe(changePasswordSchema)) data: ChangePasswordDTO,
@@ -49,7 +49,7 @@ export class UsersController {
     return this.usersService.changeUserPassword(userId, data);
   }
 
-  @Patch('payment-accounts')
+  @Patch('me/payment-accounts')
   @UseGuards(JwtAuthGuard)
   async updatePaymentAccounts(
     @Body(new ZodValidationPipe(paymentAccountDetailsSchema))
@@ -59,3 +59,4 @@ export class UsersController {
     return this.usersService.updatePaymentAccounts(userId, data);
   }
 }
+
