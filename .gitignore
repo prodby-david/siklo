@@ -2,7 +2,7 @@ node_modules
 dist
 build
 src/generated/
-.env
+.env*
 
 # pnpm
 .pnpm-store
