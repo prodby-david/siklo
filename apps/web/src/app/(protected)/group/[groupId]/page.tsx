@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import GroupHero from "@/features/groups/components/details/GroupHero";
 import GroupStatsGrid from "@/features/groups/components/details/GroupStatsGrid";
 import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
-import GroupPayoutProgress from "@/features/groups/components/details/GroupPayoutProgress";
 import UnstartedCyclePreparationGuide from "@/features/groups/components/details/UnstartedCyclePreparationGuide";
 import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
 import GroupTurnShowcase from "@/features/groups/components/details/GroupTurnShowcase";
 import IncomingPaymentsVerificationSection from "@/features/payments/components/IncomingPaymentsVerificationSection";
-import CycleCompletionModal from "@/features/groups/components/modals/CycleCompletionModal";
 import Loader from "@/shared/components/loader/Loader";
 import { useGroupPageController } from "@/features/groups/hooks/useGroupPageController";
 import { Membership } from "@/features/groups/types/group.types";
@@ -27,6 +24,8 @@ export default function GroupPage() {
     hasStarted,
     isMembersFull,
     isCycleDone,
+    currentCycle,
+    isCurrentUserPaid,
     handleStartCycle,
     isStarting,
     handleDeleteGroup,
@@ -34,7 +33,6 @@ export default function GroupPage() {
     refetch,
     currentUserId,
   } = useGroupPageController();
-  const [isCompletionDismissed, setIsCompletionDismissed] = useState(false);
 
   if (isLoading) {
     return (
@@ -103,6 +101,8 @@ export default function GroupPage() {
           currentMemberAccountDetails={currentMembership?.paymentAccountDetails}
           maxMembers={data.maxMembers}
           payoutSequence={data.payoutSequence}
+          isCurrentUserPaid={isCurrentUserPaid}
+          currentCycle={currentCycle}
           onRefresh={refetch}
         />
 
@@ -176,6 +176,7 @@ export default function GroupPage() {
 
           <div className="lg:col-span-5 flex flex-col gap-3">
             <GroupInfoCard
+              groupName={data.name}
               startDate={data.startDate}
               endDate={timeline.endDate}
               totalDays={timeline.totalDays}
@@ -198,33 +199,9 @@ export default function GroupPage() {
               gracePeriodDays={data.gracePeriodDays}
               latePenaltyAmount={data.latePenaltyAmount}
             />
-
-            {hasStarted && (
-              <GroupPayoutProgress
-                groupId={data.id}
-                memberships={data.memberships}
-                maxMembers={data.maxMembers}
-                contributionAmount={data.contributionAmount}
-                startDate={data.startDate}
-                billingCycle={data.billingCycle}
-                currentCycle={data.currentCycle}
-                cycleDuration={data.cycleDuration}
-              />
-            )}
           </div>
         </div>
       </div>
-
-      {isOrganizer && isCycleDone && !isCompletionDismissed && (
-        <CycleCompletionModal
-          isOpen={true}
-          onClose={() => setIsCompletionDismissed(true)}
-          groupName={data.name}
-          totalPayout={timeline.totalPayout}
-          membersCount={data.memberships?.length || data.maxMembers}
-          cycleDuration={data.cycleDuration}
-        />
-      )}
     </main>
   );
 }

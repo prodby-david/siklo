@@ -74,5 +74,14 @@ export interface TurnDetailPanelProps {
   isSelectingSlot?: boolean;
   onRemoveMember?: (memberUserId: string) => Promise<void>;
   isRemovingMember?: boolean;
+  isRoundAllContributionsPaid?: boolean;
+  isRoundDisbursed?: boolean;
+  isRoundConfirmed?: boolean;
+  onDisbursePayout?: (data: { referenceNumber?: string; proofUrl?: string }) => Promise<void>;
+  isDisbursingPayout?: boolean;
+  onConfirmPayoutReceipt?: (data: { notes?: string }) => Promise<void>;
+  isConfirmingPayoutReceipt?: boolean;
+  onRequestAdvancePayout?: (data: { accountDetails: string; notes?: string }) => Promise<void>;
+  isRequestingAdvancePayout?: boolean;
   onRefresh?: () => void;
 }

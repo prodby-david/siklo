@@ -9,7 +9,7 @@ import { api } from "@/shared/lib/axios";
 import {
   ForgotPasswordFormData,
   forgotPasswordSchema,
-} from "../types/forgotPassword.type";
+} from "../types/forgot-password.types";
 
 const initialData: ForgotPasswordFormData = {
   email: "",

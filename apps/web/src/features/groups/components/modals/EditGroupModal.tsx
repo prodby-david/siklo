@@ -22,8 +22,14 @@ import {
   Loader2,
   Save,
 } from "lucide-react";
-import { api } from "@/shared/lib/axios";
-import { BILLING_CYCLE_LABELS } from "@siklo/shared-schemas";
+
+import { updateGroup } from "../../api/updateGroup";
+
+import {
+  BILLING_CYCLE_LABELS,
+  type BillingCycle,
+  type PayoutSequence,
+} from "@siklo/shared-schemas";
 import PayoutSequenceSelector from "../forms/PayoutSequenceSelector";
 import { EditGroupModalProps, PaymentMethodKey } from "../../types/group.types";
 import { PAYMENT_METHOD_OPTIONS } from "../../constants/group.constants";
@@ -57,12 +63,13 @@ export default function EditGroupModal({
   const [paymentDetails, setPaymentDetails] = useState(
     initialData.paymentDetails || "",
   );
-  const [billingCycle, setBillingCycle] = useState(
-    initialData.billingCycle || "MONTHLY",
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>(
+    (initialData.billingCycle as BillingCycle) || "MONTHLY",
   );
-  const [payoutSequence, setPayoutSequence] = useState(
-    initialData.payoutSequence || "MANUAL",
+  const [payoutSequence, setPayoutSequence] = useState<PayoutSequence>(
+    (initialData.payoutSequence as PayoutSequence) || "MANUAL",
   );
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -102,7 +109,7 @@ export default function EditGroupModal({
     setIsSubmitting(true);
 
     try {
-      await api.patch(`/groups/${groupId}`, {
+      await updateGroup(groupId, {
         name: name.trim(),
         description: description.trim() || undefined,
         contributionAmount,
@@ -142,7 +149,8 @@ export default function EditGroupModal({
             </DialogTitle>
             <DialogDescription>
               <span className="text-xs text-neutral-subtext block">
-                Update parameters, contribution amount, penalties, and payment channels before cycle starts.
+                Update parameters, contribution amount, penalties, and payment
+                channels before cycle starts.
               </span>
             </DialogDescription>
           </DialogHeader>
@@ -182,7 +190,7 @@ export default function EditGroupModal({
               <div className="space-y-1">
                 <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
                   <PhilippinePeso className="w-4 h-4 text-neutral-subtext" />
-                  <span>Contribution Amount (₱50 - ₱10,000)</span>
+                  <span>Contribution Amount</span>
                 </label>
                 <input
                   type="number"
@@ -263,30 +271,32 @@ export default function EditGroupModal({
               </div>
 
               <div className="grid grid-cols-3 gap-2 pt-1">
-                {PAYMENT_METHOD_OPTIONS.map(({ key, label, icon: IconComponent }) => {
-                  const isSelected = allowedMethods.includes(key);
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      disabled={isSubmitting}
-                      onClick={() => togglePaymentMethod(key)}
-                      className={`relative py-3 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                        isSelected
-                          ? "bg-brand-accent text-white border-brand-accent shadow-xs"
-                          : "bg-background border-neutral-border text-neutral-subtext hover:border-neutral-border"
-                      }`}
-                    >
-                      <IconComponent className="w-3.5 h-3.5 shrink-0" />
-                      <span>{label}</span>
-                      {isSelected && (
-                        <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 bg-emerald-500 text-white rounded-full border-2 border-background shadow-xs">
-                          <Check className="w-2.5 h-2.5 stroke-[3]" />
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                {PAYMENT_METHOD_OPTIONS.map(
+                  ({ key, label, icon: IconComponent }) => {
+                    const isSelected = allowedMethods.includes(key);
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        disabled={isSubmitting}
+                        onClick={() => togglePaymentMethod(key)}
+                        className={`relative py-3 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                          isSelected
+                            ? "bg-brand-accent text-white border-brand-accent shadow-xs"
+                            : "bg-background border-neutral-border text-neutral-subtext hover:border-neutral-border"
+                        }`}
+                      >
+                        <IconComponent className="w-3.5 h-3.5 shrink-0" />
+                        <span>{label}</span>
+                        {isSelected && (
+                          <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 bg-emerald-500 text-white rounded-full border-2 border-background shadow-xs">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" />
+                          </span>
+                        )}
+                      </button>
+                    );
+                  },
+                )}
               </div>
 
               <div className="space-y-1 pt-1">
@@ -320,7 +330,7 @@ export default function EditGroupModal({
                     key={key}
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => setBillingCycle(key)}
+                    onClick={() => setBillingCycle(key as BillingCycle)}
                     className={`p-2.5 text-center rounded-2xl border text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                       billingCycle === key
                         ? "bg-brand-accent text-white border-brand-accent shadow-xs"

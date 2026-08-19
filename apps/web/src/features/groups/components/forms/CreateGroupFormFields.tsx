@@ -13,11 +13,15 @@ import {
   Building2,
   Banknote,
   Check,
+  RefreshCw,
 } from "lucide-react";
 import { CreateGroupFormFieldsProps } from "@/features/groups/types/create-group-field.types";
 import { PaymentMethodKey } from "@/features/groups/types/group.types";
 import useCreateGroupFormFields from "../../hooks/useCreateGroupFormFields";
-import { BILLING_CYCLE_LABELS, type PaymentAccountDetailsDTO } from "@siklo/shared-schemas";
+import {
+  BILLING_CYCLE_LABELS,
+  type PaymentAccountDetailsDTO,
+} from "@siklo/shared-schemas";
 import PayoutSequenceSelector from "./PayoutSequenceSelector";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 
@@ -25,7 +29,8 @@ export default function CreateGroupFormFields(
   props: CreateGroupFormFieldsProps,
 ) {
   const { data: user } = useGetCurrentName();
-  const userAccounts = user?.paymentAccounts as PaymentAccountDetailsDTO | undefined;
+  const userAccounts = user?.paymentAccounts as
+    PaymentAccountDetailsDTO | undefined;
 
   const {
     register,
@@ -96,7 +101,7 @@ export default function CreateGroupFormFields(
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-1 pb-4 border-b border-neutral-border/60">
           <h2 className="text-xl font-extrabold text-foreground tracking-tight">
-            Create Paluwagan Group
+            Create Cycle Group
           </h2>
           <p className="text-xs text-neutral-subtext">
             Set up your group parameters, contribution amount, grace period
@@ -125,10 +130,10 @@ export default function CreateGroupFormFields(
             icon={<AlignLeft className="w-4 h-4 text-neutral-subtext" />}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Input
               label="contributionAmount"
-              labelText="Contribution Amount (₱50 - ₱10,000)"
+              labelText="Contribution Amount"
               type="number"
               min={50}
               max={10000}
@@ -183,6 +188,34 @@ export default function CreateGroupFormFields(
               }}
               errors={errors}
               icon={<Users className="w-4 h-4 text-neutral-subtext" />}
+            />
+
+            <Input
+              label="cycleDuration"
+              labelText="Rotation Cycles (1 - 10)"
+              type="number"
+              min={1}
+              max={10}
+              disabled={isPending}
+              {...register("cycleDuration", { valueAsNumber: true })}
+              onKeyDown={(e) => {
+                if ([".", ",", "-", "e", "E", "+"].includes(e.key))
+                  e.preventDefault();
+              }}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                if (isNaN(val) || e.target.value === "") {
+                  setValue("cycleDuration", 1, { shouldValidate: true });
+                } else if (val > 10) {
+                  setValue("cycleDuration", 10, { shouldValidate: true });
+                } else if (val < 1) {
+                  setValue("cycleDuration", 1, { shouldValidate: true });
+                } else {
+                  setValue("cycleDuration", val, { shouldValidate: true });
+                }
+              }}
+              errors={errors}
+              icon={<RefreshCw className="w-4 h-4 text-brand-accent" />}
             />
           </div>
 
@@ -253,7 +286,8 @@ export default function CreateGroupFormFields(
                   <span>Select Payment Method</span>
                 </label>
                 <span className="text-[10px] text-neutral-subtext block">
-                  Select the payment channels members can use to send contributions.
+                  Select the payment channels members can use to send
+                  contributions.
                 </span>
               </div>
             </div>
@@ -323,9 +357,7 @@ export default function CreateGroupFormFields(
                           : "border-neutral-border bg-background"
                       }`}
                     >
-                      {isSelected && (
-                        <Check className="w-3 h-3 stroke-[3]" />
-                      )}
+                      {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                     </div>
                   </button>
                 );

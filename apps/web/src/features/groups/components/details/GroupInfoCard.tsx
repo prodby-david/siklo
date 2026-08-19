@@ -17,6 +17,7 @@ import { GroupInfoCardProps } from "../../types/group.types";
 import DeleteGroupDialog from "./DeleteGroupDialog";
 
 export default function GroupInfoCard({
+  groupName,
   startDate,
   endDate,
   totalDays,
@@ -186,6 +187,7 @@ export default function GroupInfoCard({
                 isDeleting={isDeleting}
                 isStarting={isStarting}
                 onDelete={onDeleteGroup}
+                groupName={groupName}
               />
             )}
           </div>

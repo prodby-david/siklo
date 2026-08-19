@@ -1,16 +1,14 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/shared/lib/axios";
+import { updateGroup } from "../api/updateGroup";
 
 export function useUpdateGroupDescription(groupId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (description: string) => {
-      const res = await api.patch(`/groups/${groupId}`, { description });
-      return res.data;
-    },
+    mutationFn: (description: string) => updateGroup(groupId, { description }),
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["groups", groupId] });
       queryClient.invalidateQueries({ queryKey: ["groups"] });

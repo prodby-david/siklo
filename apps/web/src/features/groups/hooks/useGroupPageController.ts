@@ -33,23 +33,36 @@ export function useGroupPageController() {
 
   const { data: activities = [] } = useGetGroupActivities(data?.id || "");
 
-  const isCycleDone = useMemo(() => {
-    if (!data?.startDate || !data?.memberships || data.memberships.length === 0)
-      return false;
+  const { isCycleDone, currentCycle, isCurrentUserPaid } = useMemo(() => {
+    if (!data?.startDate || !data?.memberships || data.memberships.length === 0) {
+      return { isCycleDone: false, currentCycle: 1, isCurrentUserPaid: false };
+    }
     const duration = data.cycleDuration || 1;
-    const map: Record<number, Set<string>> = {};
+    const totalMembers = data.memberships.length;
+    const paidMap: Record<string, Set<string>> = {};
+    const confirmedSet = new Set<string>();
+
     for (let c = 1; c <= duration; c++) {
-      map[c] = new Set<string>();
+      for (let t = 1; t <= Math.max(totalMembers, 1); t++) {
+        paidMap[`${c}-${t}`] = new Set<string>();
+      }
     }
 
     if (data.rounds && data.rounds.length > 0) {
       data.rounds.forEach((rnd: GroupRound) => {
-        if (rnd.payments && map[rnd.cycleNumber]) {
+        const key = `${rnd.cycleNumber}-${rnd.roundNumber}`;
+        if (!paidMap[key]) {
+          paidMap[key] = new Set<string>();
+        }
+        if (rnd.payments) {
           rnd.payments.forEach((p: PaymentRecord) => {
             if (p.status === "VERIFIED") {
-              map[rnd.cycleNumber].add(p.userId);
+              paidMap[key].add(p.userId);
             }
           });
+        }
+        if (rnd.status === "PAID") {
+          confirmedSet.add(key);
         }
       });
     }
@@ -61,31 +74,80 @@ export function useGroupPageController() {
             (r: GroupRound) => r.id === p.roundId,
           );
           const cycleNum = matchedRound ? matchedRound.cycleNumber : 1;
-          if (map[cycleNum]) {
-            map[cycleNum].add(p.userId);
+          const turnNum = matchedRound ? matchedRound.roundNumber : 1;
+          const key = `${cycleNum}-${turnNum}`;
+          if (!paidMap[key]) {
+            paidMap[key] = new Set<string>();
           }
+          paidMap[key].add(p.userId);
         }
       });
     }
 
     (activities as ApiActivity[]).forEach((act: ApiActivity) => {
+      const desc = act.description || "";
+      const cycleMatch = desc.match(/\(Cycle (\d+)\)/);
+      const turnMatch = desc.match(/Turn #(\d+)/);
+      const cycleNum = cycleMatch ? parseInt(cycleMatch[1], 10) : 1;
+      const turnNum = turnMatch ? parseInt(turnMatch[1], 10) : 1;
+      const key = `${cycleNum}-${turnNum}`;
+
+      if (!paidMap[key]) {
+        paidMap[key] = new Set<string>();
+      }
+
       if (act.activity === "PAYMENT_VERIFIED") {
-        const desc = act.description || "";
-        const cycleMatch = desc.match(/\(Cycle (\d+)\)/);
-        const cycleNum = cycleMatch ? parseInt(cycleMatch[1], 10) : 1;
         const matchedMember = data.memberships?.find(
           (m: Membership) =>
-            desc.includes(m.user.name) || desc.includes(`Turn #${m.position}`)
+            desc.includes(m.user.name) || desc.includes(`Turn #${m.position}`),
         );
-        if (matchedMember && map[cycleNum]) {
-          map[cycleNum].add(matchedMember.userId);
+        if (matchedMember) {
+          paidMap[key].add(matchedMember.userId);
+        }
+      }
+
+      if (act.activity === "PAYOUT_DISBURSED") {
+        if (desc.includes("confirmed receipt") || desc.includes("confirmed")) {
+          confirmedSet.add(key);
         }
       }
     });
 
-    const finalCount = map[duration]?.size || 0;
-    return finalCount >= data.memberships.length;
-  }, [data, activities]);
+    let activeCycle = 1;
+    let activeTurn = 1;
+    let allFinished = false;
+
+    if (totalMembers > 0) {
+      let foundIncomplete = false;
+      for (let c = 1; c <= duration; c++) {
+        for (let t = 1; t <= totalMembers; t++) {
+          const key = `${c}-${t}`;
+          const isConfirmed = confirmedSet.has(key);
+          if (!isConfirmed && !foundIncomplete) {
+            activeCycle = c;
+            activeTurn = t;
+            foundIncomplete = true;
+          }
+        }
+      }
+
+      if (!foundIncomplete) {
+        activeCycle = duration;
+        activeTurn = totalMembers;
+        allFinished = hasStarted && confirmedSet.size >= totalMembers * duration;
+      }
+    }
+
+    const currentMemberPaid = currentUser?.id
+      ? Boolean(paidMap[`${activeCycle}-${activeTurn}`]?.has(currentUser.id))
+      : false;
+
+    return {
+      isCycleDone: allFinished,
+      currentCycle: activeCycle,
+      isCurrentUserPaid: currentMemberPaid,
+    };
+  }, [data, activities, hasStarted, currentUser]);
 
   const handleStartCycle = async () => {
     if (!data?.id) return;
@@ -130,6 +192,8 @@ export function useGroupPageController() {
     hasStarted,
     isMembersFull,
     isCycleDone,
+    currentCycle,
+    isCurrentUserPaid,
     handleStartCycle,
     isStarting,
     handleDeleteGroup,

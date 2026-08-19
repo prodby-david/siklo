@@ -55,9 +55,6 @@ export default function GroupCardItem({ group }: GroupCardItemProps) {
               </span>
             )}
           </div>
-          <span className="text-[10px] text-neutral-subtext font-medium bg-neutral-subtext/5 px-2 py-0.5 rounded-2xl border border-neutral-border/50">
-            {group.cycleDuration} rotation(s)
-          </span>
         </div>
 
         <div className="space-y-1">

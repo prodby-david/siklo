@@ -13,7 +13,7 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import {
   CheckCircle2,
-  Receipt,
+  FileText,
   UserCheck,
   UserX,
   XCircle,
@@ -83,7 +83,6 @@ export default function PaymentConfirmationModal({
       } else {
         setPreviewImage(result);
         approvalForm.setValue("proofUrl", result, { shouldValidate: true });
-        approvalForm.clearErrors("referenceNumber");
       }
     };
     reader.readAsDataURL(file);
@@ -140,7 +139,7 @@ export default function PaymentConfirmationModal({
               <span className="text-xs text-neutral-subtext block">
                 {showRejectReason
                   ? `Provide reasons for rejecting ${memberName}'s payment.`
-                  : `Verify payment receipt or reference number for ${memberName} (Turn #${turnNumber}).`}
+                  : `Verify in-person cash handover and attach proof for ${memberName} (Turn #${turnNumber}).`}
               </span>
             </DialogDescription>
           </DialogHeader>
@@ -159,13 +158,13 @@ export default function PaymentConfirmationModal({
             >
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <Receipt className="w-3.5 h-3.5 text-brand-accent" />
-                  <span>Transaction Reference Number</span>
+                  <FileText className="w-3.5 h-3.5 text-brand-accent" />
+                  <span>Notes / Remarks (Optional)</span>
                 </label>
                 <input
                   type="text"
                   {...approvalForm.register("referenceNumber")}
-                  placeholder="e.g. GCash Ref #123456789 or Bank Deposit Ref"
+                  placeholder="e.g. In-person cash collection, physical receipt acknowledgment"
                   className={`w-full text-xs p-2.5 rounded-xl border bg-background text-foreground focus:outline-none ${
                     approvalForm.formState.errors.referenceNumber
                       ? "border-rose-500 focus:border-rose-500"
@@ -179,12 +178,19 @@ export default function PaymentConfirmationModal({
                 )}
               </div>
 
-              <PaymentReceiptUploader
-                previewImage={previewImage}
-                onImageChange={(e) => handleImageUpload(e, false)}
-                onClearImage={() => handleClearImage(false)}
-                label="Payment Receipt / Proof Image"
-              />
+              <div className="space-y-1.5">
+                <PaymentReceiptUploader
+                  previewImage={previewImage}
+                  onImageChange={(e) => handleImageUpload(e, false)}
+                  onClearImage={() => handleClearImage(false)}
+                  label="Cash Handover Proof / Receipt Image *"
+                />
+                {approvalForm.formState.errors.proofUrl && (
+                  <p className="text-[11px] text-rose-500 font-semibold">
+                    {approvalForm.formState.errors.proofUrl.message}
+                  </p>
+                )}
+              </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <Button

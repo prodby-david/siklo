@@ -7,7 +7,7 @@ export async function markMemberPaid(
   referenceNumber?: string,
   proofUrl?: string,
 ) {
-  const response = await api.post("/payments/mark-paid", {
+  const response = await api.post("/payments/manual", {
     groupId,
     memberUserId,
     cycleNumber,
@@ -16,3 +16,4 @@ export async function markMemberPaid(
   });
   return response.data;
 }
+

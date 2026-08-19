@@ -4,6 +4,9 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCw, Users, Info, CheckCircle2 } from "lucide-react";
 import { useMarkMemberPaid } from "@/features/payments/hooks/useMarkMemberPaid";
+import { useRequestAdvancePayout } from "@/features/payments/hooks/useRequestAdvancePayout";
+import { useDisbursePayout } from "@/features/payments/hooks/useDisbursePayout";
+import { useConfirmPayoutReceipt } from "@/features/payments/hooks/useConfirmPayoutReceipt";
 import { useSelectSlot } from "../../hooks/useSelectSlot";
 import { useRemoveMember } from "../../hooks/useRemoveMember";
 import { useGroupTurnShowcaseState } from "../../hooks/useGroupTurnShowcaseState";
@@ -42,8 +45,21 @@ export default function GroupTurnShowcase({
     useSelectSlot(groupId);
   const { mutateAsync: removeMember, isPending: isRemovingMember } =
     useRemoveMember(groupId);
+  const { requestPayout, isRequesting: isRequestingAdvancePayout } =
+    useRequestAdvancePayout(groupId);
+  const { disburse, isDisbursing: isDisbursingPayout } =
+    useDisbursePayout(groupId);
+  const { confirmReceipt, isConfirmingReceipt: isConfirmingPayoutReceipt } =
+    useConfirmPayoutReceipt(groupId);
 
-  const { paidMemberUserIds, currentCycle } = useGroupTurnShowcaseState(
+  const {
+    paidMemberUserIds,
+    paidUserIdsByTurn,
+    disbursedTurns,
+    confirmedTurns,
+    currentCycle,
+    currentTurn,
+  } = useGroupTurnShowcaseState(
     groupId,
     memberships,
     organizerId || "",
@@ -56,6 +72,19 @@ export default function GroupTurnShowcase({
   const sortedMemberships = [...memberships].sort(
     (a, b) => a.position - b.position
   );
+
+  const currentTurnKey = `${currentCycle}-${selectedTurn}`;
+  const isRoundAllContributionsPaid =
+    sortedMemberships.length > 0 &&
+    (paidUserIdsByTurn[currentTurnKey]?.size || 0) >= sortedMemberships.length;
+
+  const matchedRound = rounds.find(
+    (r) => r.cycleNumber === currentCycle && r.roundNumber === selectedTurn
+  );
+  const isRoundDisbursed =
+    disbursedTurns.has(currentTurnKey) || matchedRound?.status === "PAID";
+  const isRoundConfirmed =
+    confirmedTurns.has(currentTurnKey) || matchedRound?.status === "PAID";
 
   const selectedMembership = sortedMemberships.find(
     (m) => m.position === selectedTurn
@@ -99,6 +128,47 @@ export default function GroupTurnShowcase({
     });
   };
 
+  const handleRequestAdvancePayout = async (data: {
+    accountDetails: string;
+    notes?: string;
+  }) => {
+    await requestPayout({
+      groupId,
+      roundId: matchedRound?.id,
+      cycleNumber: currentCycle,
+      turnNumber: selectedTurn,
+      accountDetails: data.accountDetails,
+      notes: data.notes,
+    });
+    onRefresh?.();
+  };
+
+  const handleDisbursePayout = async (data: {
+    referenceNumber?: string;
+    proofUrl?: string;
+  }) => {
+    await disburse({
+      groupId,
+      roundId: matchedRound?.id,
+      cycleNumber: currentCycle,
+      turnNumber: selectedTurn,
+      referenceNumber: data.referenceNumber,
+      proofUrl: data.proofUrl,
+    });
+    onRefresh?.();
+  };
+
+  const handleConfirmPayoutReceipt = async (data: { notes?: string }) => {
+    await confirmReceipt({
+      groupId,
+      roundId: matchedRound?.id,
+      cycleNumber: currentCycle,
+      turnNumber: selectedTurn,
+      notes: data.notes,
+    });
+    onRefresh?.();
+  };
+
   const handleSelectSlot = async (position: number) => {
     await selectSlot(position);
   };
@@ -140,7 +210,7 @@ export default function GroupTurnShowcase({
             </h3>
           </div>
           <p className="text-xs text-neutral-subtext">
-            Click on any member turn to inspect payout details and manage payment verification.
+            Click on any member turn to inspect payout details, manage payments, and confirm payout releases.
           </p>
         </div>
 
@@ -171,7 +241,7 @@ export default function GroupTurnShowcase({
       <div className="text-xs leading-relaxed text-neutral-subtext bg-brand-accent/5 p-3.5 rounded-2xl border border-brand-accent/10 flex items-start gap-2.5 mb-6">
         <Info className="w-4.5 h-4.5 text-brand-accent shrink-0 mt-0.5" />
         <p>
-          Paluwagans run on a rotating payout system. Slots are filled by order of joining. Each billing cycle, one member is scheduled to receive the full payout pool.
+          Paluwagans run on a rotating payout system. Slots are filled by order of joining. Each round, one member receives the full pooled fund. Once all member payouts are received, the cycle advances.
         </p>
       </div>
 
@@ -188,10 +258,9 @@ export default function GroupTurnShowcase({
                 (m) => m.position === position
               );
               const isSelected = selectedTurn === position;
-              const isPaid = membership?.userId
-                ? paidMemberUserIds.has(membership.userId)
-                : false;
-              const isCurrent = position === 1;
+              const cardKey = `${currentCycle}-${position}`;
+              const isConfirmed = confirmedTurns.has(cardKey);
+              const isCurrent = position === currentTurn;
               const calculatedDate = getPayoutDate(
                 startDate,
                 position,
@@ -204,7 +273,7 @@ export default function GroupTurnShowcase({
                   position={position}
                   membership={membership}
                   isSelected={isSelected}
-                  isPaid={isPaid}
+                  isPaid={isConfirmed}
                   isCurrent={isCurrent}
                   calculatedDate={calculatedDate}
                   onSelect={setSelectedTurn}
@@ -236,7 +305,7 @@ export default function GroupTurnShowcase({
             rounds,
           }}
           isOrganizer={isOrganizer}
-          isCurrentTurn={selectedTurn === 1}
+          isCurrentTurn={selectedTurn === currentTurn}
           isCycleDone={isCycleDone}
           currentCycle={currentCycle}
           onMarkAsPaid={handleMarkAsPaid}
@@ -249,6 +318,15 @@ export default function GroupTurnShowcase({
           isSelectingSlot={isSelectingSlot}
           onRemoveMember={handleRemoveMember}
           isRemovingMember={isRemovingMember}
+          isRoundAllContributionsPaid={isRoundAllContributionsPaid}
+          isRoundDisbursed={isRoundDisbursed}
+          isRoundConfirmed={isRoundConfirmed}
+          onDisbursePayout={handleDisbursePayout}
+          isDisbursingPayout={isDisbursingPayout}
+          onConfirmPayoutReceipt={handleConfirmPayoutReceipt}
+          isConfirmingPayoutReceipt={isConfirmingPayoutReceipt}
+          onRequestAdvancePayout={handleRequestAdvancePayout}
+          isRequestingAdvancePayout={isRequestingAdvancePayout}
           onRefresh={onRefresh}
         />
       </div>

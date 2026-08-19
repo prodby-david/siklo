@@ -7,7 +7,7 @@ export async function markMemberRejected(
   cycleNumber?: number,
   rejectionProofUrl?: string,
 ) {
-  const response = await api.post("/payments/mark-rejected", {
+  const response = await api.post("/payments/manual-rejections", {
     groupId,
     memberUserId,
     reason,
@@ -16,3 +16,4 @@ export async function markMemberRejected(
   });
   return response.data;
 }
+

@@ -1,6 +1,7 @@
 import { api } from "@/shared/lib/axios";
 
 export const startGroupCycle = async (groupId: string) => {
-  const res = await api.post(`/groups/${groupId}/start`);
+  const res = await api.post(`/groups/${groupId}/cycle`);
   return res.data;
 };
+

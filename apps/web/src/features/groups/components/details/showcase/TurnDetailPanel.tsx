@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import formatDate from "@/shared/utils/formatDate";
 import {
   ShieldCheck,
+  CheckCircle2,
   UserCheck,
   Lock,
   Clock,
@@ -12,11 +13,14 @@ import {
   UserX,
   Crown,
   CreditCard,
+  Sparkles,
 } from "lucide-react";
 import { TurnDetailPanelProps } from "@/features/groups/types/showcase.types";
 import { getInitials } from "@/features/groups/utils/group.helper";
 import PaymentConfirmationModal from "@/features/payments/components/modals/PaymentConfirmationModal";
 import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
+import DisbursePayoutModal from "@/features/payments/components/modals/DisbursePayoutModal";
+import ConfirmPayoutReceiptModal from "@/features/payments/components/modals/ConfirmPayoutReceiptModal";
 import TurnPaidBadge from "../elements/TurnPaidBadge";
 
 export default function TurnDetailPanel({
@@ -39,10 +43,19 @@ export default function TurnDetailPanel({
   isSelectingSlot = false,
   onRemoveMember,
   isRemovingMember = false,
+  isRoundAllContributionsPaid = false,
+  isRoundDisbursed = false,
+  isRoundConfirmed = false,
+  onDisbursePayout,
+  isDisbursingPayout = false,
+  onConfirmPayoutReceipt,
+  isConfirmingPayoutReceipt = false,
   onRefresh,
 }: TurnDetailPanelProps) {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+  const [isDisburseModalOpen, setIsDisburseModalOpen] = useState(false);
+  const [isConfirmReceiptModalOpen, setIsConfirmReceiptModalOpen] = useState(false);
   const contributionNum = Number(group.contributionAmount) || 0;
   const poolTotal = contributionNum * group.maxMembers;
   const isUserSlotOwner =
@@ -157,21 +170,59 @@ export default function TurnDetailPanel({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-border/60 bg-background/80 p-3.5 sm:p-4 space-y-1.5">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-brand-accent shrink-0" />
-            <span className="text-xs font-bold text-brand-accent">
-              Ledger Verification
-            </span>
+        {isRoundConfirmed ? (
+          <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 sm:p-4 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                Payout Received & Confirmed (₱{poolTotal.toLocaleString()})
+              </span>
+            </div>
+            <p className="text-[11px] text-neutral-subtext leading-relaxed font-normal">
+              {selectedMemberName} has confirmed receiving the ₱{poolTotal.toLocaleString()} pooled payout for Turn #{selectedTurn}.
+            </p>
           </div>
-          <p className="text-[11px] text-neutral-subtext leading-relaxed font-normal">
-            {isCycleDone
-              ? "All contributions for this cycle have been fully collected and verified."
-              : isSelectedPaid
-              ? "Payment for this cycle has been confirmed and verified on the ledger."
-              : "Contributions for this round are verified in real time by the group organizer."}
-          </p>
-        </div>
+        ) : isRoundDisbursed ? (
+          <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3.5 sm:p-4 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+              <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                Payout Disbursed (Awaiting Recipient Confirmation)
+              </span>
+            </div>
+            <p className="text-[11px] text-neutral-subtext leading-relaxed font-normal">
+              Organizer has disbursed ₱{poolTotal.toLocaleString()} to {selectedMemberName}. Awaiting confirmation to complete Turn #{selectedTurn}.
+            </p>
+          </div>
+        ) : isRoundAllContributionsPaid ? (
+          <div className="rounded-2xl border border-brand-accent/30 bg-brand-accent/10 p-3.5 sm:p-4 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-brand-accent shrink-0" />
+              <span className="text-xs font-bold text-brand-accent">
+                All Contributions Collected for Turn #{selectedTurn}
+              </span>
+            </div>
+            <p className="text-[11px] text-neutral-subtext leading-relaxed font-normal">
+              All members completed verified contributions for Turn #{selectedTurn}. The ₱{poolTotal.toLocaleString()} pool is ready for payout release.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-neutral-border/60 bg-background/80 p-3.5 sm:p-4 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-brand-accent shrink-0" />
+              <span className="text-xs font-bold text-brand-accent">
+                Ledger Verification
+              </span>
+            </div>
+            <p className="text-[11px] text-neutral-subtext leading-relaxed font-normal">
+              {isCycleDone
+                ? "All contributions for this cycle have been fully collected and verified."
+                : isSelectedPaid
+                ? "Payment for this cycle has been confirmed and verified on the ledger."
+                : "Contributions for this round are verified in real time by the group organizer."}
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="pt-3 border-t border-neutral-border/60">
@@ -179,6 +230,11 @@ export default function TurnDetailPanel({
           <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
             <Lock className="w-3.5 h-3.5" />
             <span>Cycle Completed</span>
+          </div>
+        ) : isRoundConfirmed ? (
+          <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/25">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Payout Received & Confirmed (₱{poolTotal.toLocaleString()})</span>
           </div>
         ) : !hasStarted ? (
           group.payoutSequence === "FREECHOOSING" ? (
@@ -210,6 +266,112 @@ export default function TurnDetailPanel({
             <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
               <Clock className="w-3.5 h-3.5" />
               <span>Cycle Not Started (Payment Verification Inactive)</span>
+            </div>
+          )
+        ) : isRoundDisbursed ? (
+          isUserSlotOwner ? (
+            <>
+              <button
+                onClick={() => setIsConfirmReceiptModalOpen(true)}
+                disabled={isConfirmingPayoutReceipt}
+                className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>
+                  {isConfirmingPayoutReceipt
+                    ? "Confirming..."
+                    : `Confirm Payout Received (₱${poolTotal.toLocaleString()})`}
+                </span>
+              </button>
+
+              {group.id && isConfirmReceiptModalOpen && (
+                <ConfirmPayoutReceiptModal
+                  isOpen={isConfirmReceiptModalOpen}
+                  onClose={() => setIsConfirmReceiptModalOpen(false)}
+                  groupId={group.id}
+                  roundId={
+                    group.rounds?.find(
+                      (r) =>
+                        r.cycleNumber === currentCycle &&
+                        r.roundNumber === selectedTurn,
+                    )?.id
+                  }
+                  cycleNumber={currentCycle}
+                  turnNumber={selectedTurn}
+                  poolTotal={poolTotal}
+                  onConfirmReceipt={async (data) => {
+                    if (onConfirmPayoutReceipt)
+                      await onConfirmPayoutReceipt(data);
+                  }}
+                  isConfirming={isConfirmingPayoutReceipt}
+                />
+              )}
+            </>
+          ) : isOrganizer ? (
+            <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 rounded-2xl border border-amber-500/20">
+              <Clock className="w-3.5 h-3.5" />
+              <span>Disbursed • Awaiting Member Confirmation</span>
+            </div>
+          ) : (
+            <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
+              <Clock className="w-3.5 h-3.5" />
+              <span>Disbursed • Awaiting Member Confirmation</span>
+            </div>
+          )
+        ) : isRoundAllContributionsPaid ? (
+          isOrganizer ? (
+            <>
+              <button
+                onClick={() => setIsDisburseModalOpen(true)}
+                disabled={isDisbursingPayout}
+                className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-white bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
+              >
+                <HandCoins className="w-4 h-4" />
+                <span>
+                  {isDisbursingPayout
+                    ? "Disbursing..."
+                    : `Disburse Payout & Notify Member (₱${poolTotal.toLocaleString()})`}
+                </span>
+              </button>
+
+              {group.id && isDisburseModalOpen && (
+                <DisbursePayoutModal
+                  isOpen={isDisburseModalOpen}
+                  onClose={() => setIsDisburseModalOpen(false)}
+                  groupId={group.id}
+                  roundId={
+                    group.rounds?.find(
+                      (r) =>
+                        r.cycleNumber === currentCycle &&
+                        r.roundNumber === selectedTurn,
+                    )?.id || ""
+                  }
+                  cycleNumber={currentCycle}
+                  recipientName={selectedMemberName}
+                  recipientPaymentMethod={
+                    selectedMembership?.preferredPaymentMethod
+                  }
+                  recipientAccountDetails={
+                    selectedMembership?.paymentAccountDetails
+                  }
+                  turnNumber={selectedTurn}
+                  poolTotal={poolTotal}
+                  onDisburse={async (data) => {
+                    if (onDisbursePayout) await onDisbursePayout(data);
+                  }}
+                  isDisbursing={isDisbursingPayout}
+                />
+              )}
+            </>
+          ) : isUserSlotOwner ? (
+            <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-brand-accent bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
+              <Sparkles className="w-4 h-4" />
+              <span>All Contributions Collected • Awaiting Organizer Disbursement</span>
+            </div>
+          ) : (
+            <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
+              <Sparkles className="w-3.5 h-3.5 text-brand-accent" />
+              <span>All Contributions Collected • Awaiting Disbursement</span>
             </div>
           )
         ) : isOrganizer ? (

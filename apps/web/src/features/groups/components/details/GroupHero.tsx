@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCw, CreditCard, Settings } from "lucide-react";
+import { RotateCw, CreditCard, Settings, ShieldCheck } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { GroupHeroProps } from "../../types/group.types";
 import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
@@ -29,6 +29,8 @@ export default function GroupHero({
   roundId = "",
   maxMembers = 6,
   payoutSequence = "MANUAL",
+  isCurrentUserPaid = false,
+  currentCycle = 1,
   onRefresh,
 }: GroupHeroProps) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
@@ -98,14 +100,25 @@ export default function GroupHero({
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             {hasStarted && !isCycleDone && (
-              <button
-                type="button"
-                onClick={() => setIsPayModalOpen(true)}
-                className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
-              >
-                <CreditCard className="w-4 h-4" />
-                <span>Pay Contribution</span>
-              </button>
+              isCurrentUserPaid ? (
+                <button
+                  type="button"
+                  disabled={true}
+                  className="inline-flex items-center gap-2 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-xs cursor-not-allowed opacity-90"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Contribution Paid (Cycle #{currentCycle})</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsPayModalOpen(true)}
+                  className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+                >
+                  <CreditCard className="w-4 h-4" />
+                  <span>Pay Contribution</span>
+                </button>
+              )
             )}
           </div>
         </div>

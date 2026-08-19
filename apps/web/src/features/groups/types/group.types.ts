@@ -108,6 +108,8 @@ export interface GroupHeroProps {
   currentMemberAccountDetails?: string | null;
   maxMembers?: number;
   payoutSequence?: string;
+  isCurrentUserPaid?: boolean;
+  currentCycle?: number;
   onRefresh?: () => void;
 }
 
@@ -139,6 +141,7 @@ export interface GroupAnnouncementDialogProps {
 }
 
 export interface GroupInfoCardProps {
+  groupName?: string;
   startDate?: string | Date | null;
   endDate?: string | Date | null;
   totalDays: number;

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Settings } from "lucide-react";
-import { SETTINGS_TABS } from "../constants/settings.constant";
+import { SETTINGS_TABS } from "../constants/settings.constants";
 import { SettingsTabId } from "../types/settings.types";
 import { SETTINGS_COMPONENTS } from "../utils/renderComponent";
 

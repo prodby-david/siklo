@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { api } from "@/shared/lib/axios";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { SigninFormData, signinSchema } from "../types/signin.type";
+import { SigninFormData, signinSchema } from "../types/signin.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const initialData: SigninFormData = {

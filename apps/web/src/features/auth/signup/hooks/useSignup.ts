@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import { SignupFormData, signupSchema } from "../types/signup.type";
+import { SignupFormData, signupSchema } from "../types/signup.types";
 import { api } from "@/shared/lib/axios";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
