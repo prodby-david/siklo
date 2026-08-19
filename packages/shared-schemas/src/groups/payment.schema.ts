@@ -22,30 +22,18 @@ export const updateMemberPaymentPreferenceSchema = z.object({
   paymentAccountDetails: z.string().min(3, "Receiving account details required"),
 });
 
-export const markMemberPaidSchema = z
-  .object({
-    groupId: z.string().min(1, "Group ID is required"),
-    memberUserId: z.string().min(1, "Member User ID is required"),
-    cycleNumber: z.number().int().positive().optional(),
-    referenceNumber: z
-      .string()
-      .trim()
-      .max(100, "Reference number cannot exceed 100 characters")
-      .optional()
-      .or(z.literal("")),
-    proofUrl: z.string().optional().or(z.literal("")),
-  })
-  .refine(
-    (data) =>
-      (Boolean(data.referenceNumber) &&
-        data.referenceNumber!.trim().length >= 3) ||
-      (Boolean(data.proofUrl) && data.proofUrl!.trim().length > 0),
-    {
-      message:
-        "Please provide either a valid reference number (at least 3 characters) or a proof image",
-      path: ["referenceNumber"],
-    },
-  );
+export const markMemberPaidSchema = z.object({
+  groupId: z.string().min(1, "Group ID is required"),
+  memberUserId: z.string().min(1, "Member User ID is required"),
+  cycleNumber: z.number().int().positive().optional(),
+  referenceNumber: z
+    .string()
+    .trim()
+    .max(100, "Notes cannot exceed 100 characters")
+    .optional()
+    .or(z.literal("")),
+  proofUrl: z.string().min(1, "Payment receipt proof image is required"),
+});
 
 export const markMemberRejectedSchema = z.object({
   groupId: z.string().min(1, "Group ID is required"),

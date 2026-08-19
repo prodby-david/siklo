@@ -43,3 +43,15 @@ export const updateGroupSchema = z.object({
 });
 
 export type UpdateGroupDTO = z.infer<typeof updateGroupSchema>;
+
+export const sendAnnouncementSchema = z.object({
+  message: z.string().min(1, "Message cannot be empty").max(1000, "Message is too long"),
+});
+
+export type SendAnnouncementDTO = z.infer<typeof sendAnnouncementSchema>;
+
+export const selectSlotSchema = z.object({
+  position: z.coerce.number().int().min(1, "Position must be at least 1"),
+});
+
+export type SelectSlotDTO = z.infer<typeof selectSlotSchema>;

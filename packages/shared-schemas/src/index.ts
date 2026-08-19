@@ -29,7 +29,11 @@ export {
 } from "./groups/join-group.schema.js";
 export {
   updateGroupSchema,
+  sendAnnouncementSchema,
+  selectSlotSchema,
   type UpdateGroupDTO,
+  type SendAnnouncementDTO,
+  type SelectSlotDTO,
 } from "./groups/update-group.schema.js";
 export {
   submitPaymentSchema,
@@ -43,6 +47,14 @@ export {
   type MarkMemberPaidDTO,
   type MarkMemberRejectedDTO,
 } from "./groups/payment.schema.js";
+export {
+  requestAdvancePayoutSchema,
+  disbursePayoutSchema,
+  confirmPayoutReceiptSchema,
+  type RequestAdvancePayoutDTO,
+  type DisbursePayoutDTO,
+  type ConfirmPayoutReceiptDTO,
+} from "./groups/payout.schema.js";
 
 export {
   BILLING_CYCLES,
