@@ -68,7 +68,6 @@ export class PaymentsPayoutService {
       );
     }
 
-
     const groupPayments =
       await this.paymentsRepository.findVerifiedPaymentsByGroupId(dto.groupId);
 
@@ -147,7 +146,6 @@ export class PaymentsPayoutService {
         targetTurn,
       );
     }
-
 
     const recipientMembership = memberships.find(
       (m) =>
@@ -265,7 +263,6 @@ export class PaymentsPayoutService {
         targetTurn,
       );
     }
-
 
     if (!round) {
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;

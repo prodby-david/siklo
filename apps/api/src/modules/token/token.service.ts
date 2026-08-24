@@ -35,8 +35,4 @@ export class TokenService {
   async verifyAccessToken(token: string): Promise<JwtPayload> {
     return await this.token.verifyAsync<JwtPayload>(token);
   }
-
-  async decodeToken(token: string): Promise<JwtPayload | null> {
-    return await this.token.decode(token);
-  }
 }

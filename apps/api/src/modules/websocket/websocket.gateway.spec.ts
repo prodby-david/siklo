@@ -37,4 +37,3 @@ describe('WebsocketGateway', () => {
     expect(gateway).toBeDefined();
   });
 });
-

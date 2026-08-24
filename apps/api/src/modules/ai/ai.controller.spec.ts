@@ -41,7 +41,6 @@ describe('AiController', () => {
       ],
     }).compile();
 
-
     controller = module.get<AiController>(AiController);
   });
 
@@ -49,4 +48,3 @@ describe('AiController', () => {
     expect(controller).toBeDefined();
   });
 });
-

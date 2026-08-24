@@ -16,4 +16,3 @@ export class ActivityController {
     return this.activityService.getGroupActivities(groupId, userId);
   }
 }
-

@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+﻿import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
   NotFoundException,
@@ -133,7 +133,6 @@ describe('GroupsCoreService', () => {
           },
         });
       });
-
 
       await expect(service.createGroup(dto, userId)).rejects.toThrow(
         ConflictException,

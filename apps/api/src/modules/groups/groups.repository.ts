@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client/extension';
+import { Prisma } from '@/generated/prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import type { CreateGroupDTO } from './schema/create-group.schema';
 import type { JoinGroupDTO } from './schema/join-group.schema';
@@ -46,6 +46,12 @@ export class GroupsRepository {
         },
         activities: {
           where: { activity: 'PAYMENT_VERIFIED' },
+        },
+        payments: {
+          select: {
+            id: true,
+            status: true,
+          },
         },
         rounds: {
           select: {
@@ -110,13 +116,6 @@ export class GroupsRepository {
   ) {
     return tx.group.findUnique({
       where: { inviteCode },
-    });
-  }
-
-  async updateGroupStartDate(groupId: string, startDate: Date) {
-    return this.prisma.group.update({
-      where: { id: groupId },
-      data: { startDate },
     });
   }
 
@@ -197,13 +196,6 @@ export class GroupsRepository {
           },
         },
       },
-    });
-  }
-
-  async updateGroupDescription(groupId: string, description?: string) {
-    return this.prisma.group.update({
-      where: { id: groupId },
-      data: { description },
     });
   }
 

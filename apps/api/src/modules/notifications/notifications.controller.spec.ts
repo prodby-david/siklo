@@ -27,7 +27,6 @@ describe('NotificationsController', () => {
       ],
     }).compile();
 
-
     controller = module.get<NotificationsController>(NotificationsController);
   });
 

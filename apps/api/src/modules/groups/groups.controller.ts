@@ -151,4 +151,3 @@ export class GroupsController {
     return this.groupsService.updateGroup(groupId, body, userId);
   }
 }
-

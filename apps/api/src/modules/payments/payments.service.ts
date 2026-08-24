@@ -43,7 +43,7 @@ export class PaymentsService {
     );
   }
 
-  async getPendingPayments(groupId: string, organizerUserId: string) {
+  async getPendingPayments(groupId?: string, organizerUserId?: string) {
     return this.paymentsManagementService.getPendingPayments(
       groupId,
       organizerUserId,

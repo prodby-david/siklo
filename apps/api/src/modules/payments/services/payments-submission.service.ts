@@ -65,11 +65,15 @@ export class PaymentsSubmissionService {
         intervalDays,
       );
 
+      const recipientMember = group.memberships?.find(
+        (m) => m.position === targetTurnNum,
+      );
+
       round = await this.paymentsRepository.createRound({
         groupId: dto.groupId,
         cycleNumber: targetCycleNum,
         roundNumber: targetTurnNum,
-        recipientId: membership.userId,
+        recipientId: recipientMember?.userId || membership.userId,
         targetDate,
       });
     }
@@ -164,18 +168,22 @@ export class PaymentsSubmissionService {
     const updatedPayment =
       await this.paymentsRepository.updatePaymentStatusVerified(paymentId);
 
+    const cycleNum = payment.round?.cycleNumber || 1;
+    const turnNum = payment.round?.roundNumber || 1;
+    const memberName = payment.user?.name || 'Member';
+
     await this.activityService.createActivity({
       userId: payment.userId,
       groupId: payment.groupId,
       activityType: 'PAYMENT_VERIFIED',
-      description: `Payment for Round #${payment.round.roundNumber} was verified and approved by organizer.`,
+      description: `${memberName}'s payment for Turn #${turnNum} (Cycle ${cycleNum}) was verified and approved by organizer.`,
     });
 
     await this.notificationsService.createNotification({
       userId: payment.userId,
       groupId: payment.groupId,
       notificationType: 'PAYMENT',
-      description: `Your payment of ₱${payment.totalAmount.toLocaleString()} for Round #${payment.round.roundNumber} was approved and verified by the organizer.`,
+      description: `Your payment of ₱${payment.totalAmount.toLocaleString()} for Turn #${turnNum} (Cycle ${cycleNum}) was approved and verified by the organizer.`,
     });
 
     return {
@@ -205,18 +213,22 @@ export class PaymentsSubmissionService {
         dto.rejectionProofUrl,
       );
 
+    const cycleNum = payment.round?.cycleNumber || 1;
+    const turnNum = payment.round?.roundNumber || 1;
+    const memberName = payment.user?.name || 'Member';
+
     await this.activityService.createActivity({
       userId: payment.userId,
       groupId: payment.groupId,
       activityType: 'PAYMENT_REJECTED',
-      description: `Payment for Round #${payment.round.roundNumber} was rejected: ${dto.rejectionReason}`,
+      description: `${memberName}'s payment for Turn #${turnNum} (Cycle ${cycleNum}) was rejected: ${dto.rejectionReason}`,
     });
 
     await this.notificationsService.createNotification({
       userId: payment.userId,
       groupId: payment.groupId,
       notificationType: 'PAYMENT',
-      description: `Your payment proof for Round #${payment.round.roundNumber} was rejected: ${dto.rejectionReason}. Please resubmit valid payment proof.`,
+      description: `Your payment proof for Turn #${turnNum} (Cycle ${cycleNum}) was rejected: ${dto.rejectionReason}. Please resubmit valid payment proof.`,
     });
 
     return {

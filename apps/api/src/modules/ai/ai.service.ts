@@ -8,6 +8,7 @@ import {
 import { SIKLO_SYSTEM_PROMPT } from '@/commons/context/ai.context';
 import { AiToolRegistry } from './registry/ai-tools.registry';
 import { createOllama } from 'ollama-ai-provider-v2';
+import { google } from '@ai-sdk/google';
 
 const ollamaProvider = createOllama({
   baseURL: 'http://localhost:11434/api',

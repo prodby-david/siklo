@@ -59,4 +59,3 @@ export class UsersController {
     return this.usersService.updatePaymentAccounts(userId, data);
   }
 }
-

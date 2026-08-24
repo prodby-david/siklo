@@ -35,4 +35,3 @@ describe('NotificationsService', () => {
     expect(service).toBeDefined();
   });
 });
-

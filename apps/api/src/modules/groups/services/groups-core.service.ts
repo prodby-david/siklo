@@ -13,6 +13,7 @@ import { UpdateGroupDTO } from '@siklo/shared-schemas';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { shuffle } from '../utils/shuffleMembers';
+import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
 
 @Injectable()
 export class GroupsCoreService {
@@ -110,19 +111,9 @@ export class GroupsCoreService {
     const groups = await this.groupsRepository.getUserGroup(userId);
 
     const processedGroups = groups.map((group) => {
-      const memberCount = group.memberships?.length || group.maxMembers || 0;
-      const duration = group.cycleDuration || 1;
-      const totalRoundsRequired = memberCount * duration;
-      const paidRoundsCount = (group.rounds || []).filter(
-        (r) => r.status === 'PAID',
-      ).length;
+      const completion = computeGroupCompletion(group);
 
-      const isCycleDone =
-        !!group.startDate &&
-        totalRoundsRequired > 0 &&
-        paidRoundsCount >= totalRoundsRequired;
-
-      const computedStatus = isCycleDone
+      const computedStatus = completion.isComplete
         ? 'COMPLETED'
         : group.startDate
           ? 'ACTIVE'
@@ -130,7 +121,7 @@ export class GroupsCoreService {
 
       return {
         ...group,
-        isCycleDone,
+        isCycleDone: completion.isComplete,
         status: computedStatus,
       };
     });

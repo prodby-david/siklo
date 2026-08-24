@@ -76,6 +76,22 @@ export class PaymentsRepository {
       include: {
         user: true,
         round: true,
+        group: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async findPendingPaymentsByOrganizerId(organizerUserId: string) {
+    return this.prisma.payment.findMany({
+      where: {
+        group: { organizerId: organizerUserId },
+        status: PaymentStatus.PENDING,
+      },
+      include: {
+        user: true,
+        round: true,
+        group: true,
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -108,6 +124,11 @@ export class PaymentsRepository {
   async findGroupByGroupId(groupId: string) {
     return this.prisma.group.findUnique({
       where: { id: groupId },
+      include: {
+        memberships: {
+          include: { user: true },
+        },
+      },
     });
   }
 

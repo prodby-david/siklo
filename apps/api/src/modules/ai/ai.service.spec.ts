@@ -44,4 +44,3 @@ describe('AiService', () => {
     expect(service).toBeDefined();
   });
 });
-

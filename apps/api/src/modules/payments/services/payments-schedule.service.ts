@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentsRepository } from '../payments.repository';
+import { GroupWithMembershipsAndRounds } from '../payments.types';
 import {
   BILLING_CYCLE_DAYS,
   PAYMENT_STATUS,
 } from '../constants/payment.constants';
+import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
 
 @Injectable()
 export class PaymentsScheduleService {
@@ -13,12 +15,21 @@ export class PaymentsScheduleService {
     const activeGroups =
       await this.paymentsRepository.findUserActiveGroupsWithMemberships(userId);
 
-    const nonCompletedGroups = activeGroups.filter(
-      (group) => !this.isGroupCycleCompleted(group),
-    );
+    const nonCompletedGroups: GroupWithMembershipsAndRounds[] = [];
+    for (const group of activeGroups) {
+      if (!(await this.isGroupComplete(group))) {
+        nonCompletedGroups.push(group);
+      }
+    }
 
-    const due = this.computeNextUnpaidContribution(nonCompletedGroups, userId);
-    const payout = this.computeNextUpcomingPayout(nonCompletedGroups, userId);
+    const due = await this.computeNextUnpaidContribution(
+      nonCompletedGroups,
+      userId,
+    );
+    const payout = await this.computeNextUpcomingPayout(
+      nonCompletedGroups,
+      userId,
+    );
 
     return {
       nextContributionAmount: due.amount,
@@ -35,38 +46,14 @@ export class PaymentsScheduleService {
     };
   }
 
-  isGroupCycleCompleted(
-    group: Awaited<
-      ReturnType<
-        typeof this.paymentsRepository.findUserActiveGroupsWithMemberships
-      >
-    >[number],
-  ): boolean {
-    if (
-      !group.startDate ||
-      !group.memberships ||
-      group.memberships.length === 0
-    ) {
-      return false;
-    }
-
-    const memberCount = group.memberships.length;
-    const duration = group.cycleDuration || 1;
-    const totalRequiredPayments = duration * memberCount * memberCount;
-
-    const verifiedPayments = (group.payments || []).filter(
-      (p) => p.status === PAYMENT_STATUS.VERIFIED,
-    );
-
-    return verifiedPayments.length >= totalRequiredPayments;
+  async isGroupComplete(
+    group: GroupWithMembershipsAndRounds,
+  ): Promise<boolean> {
+    return computeGroupCompletion(group).isComplete;
   }
 
-  computeNextUnpaidContribution(
-    groups: Awaited<
-      ReturnType<
-        typeof this.paymentsRepository.findUserActiveGroupsWithMemberships
-      >
-    >,
+  async computeNextUnpaidContribution(
+    groups: GroupWithMembershipsAndRounds[],
     userId: string,
   ) {
     let earliestDue: {
@@ -129,12 +116,8 @@ export class PaymentsScheduleService {
     );
   }
 
-  computeNextUpcomingPayout(
-    groups: Awaited<
-      ReturnType<
-        typeof this.paymentsRepository.findUserActiveGroupsWithMemberships
-      >
-    >,
+  async computeNextUpcomingPayout(
+    groups: GroupWithMembershipsAndRounds[],
     userId: string,
   ) {
     let earliestPayout: {

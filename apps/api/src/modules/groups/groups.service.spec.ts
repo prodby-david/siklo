@@ -236,7 +236,6 @@ describe('GroupsService', () => {
         });
       });
 
-
       await expect(service.joinGroup(dto, userId)).rejects.toThrow(
         ConflictException,
       );

@@ -83,16 +83,15 @@ export class WebsocketGateway
     const isAuthorized = await this.prisma.group.findFirst({
       where: {
         id: roomId,
-        OR: [
-          { organizerId: userId },
-          { memberships: { some: { userId } } },
-        ],
+        OR: [{ organizerId: userId }, { memberships: { some: { userId } } }],
       },
       select: { id: true },
     });
 
     if (!isAuthorized) {
-      this.logger.warn(`Unauthorized join-group attempt by ${userId} for room ${roomId}`);
+      this.logger.warn(
+        `Unauthorized join-group attempt by ${userId} for room ${roomId}`,
+      );
       return;
     }
 
@@ -100,4 +99,3 @@ export class WebsocketGateway
     this.logger.log(`User ${userId} joined room ${roomId}`);
   }
 }
-

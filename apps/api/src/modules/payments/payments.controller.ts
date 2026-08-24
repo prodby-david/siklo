@@ -64,7 +64,7 @@ export class PaymentsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getPendingPayments(
-    @Query('groupId') groupId: string,
+    @Query('groupId') groupId: string | undefined,
     @CurrentUser('sub') userId: string,
   ) {
     return this.paymentsService.getPendingPayments(groupId, userId);

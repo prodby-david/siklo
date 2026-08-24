@@ -68,16 +68,4 @@ describe('TokenService', () => {
       expect(jwtService.verifyAsync).toHaveBeenCalledWith('some-token');
     });
   });
-
-  describe('decodeToken', () => {
-    it('should decode a token', async () => {
-      const mockPayload = { sub: 'user-123', email: 'test@example.com' };
-      jwtService.decode.mockReturnValue(mockPayload);
-
-      const result = await service.decodeToken('some-token');
-
-      expect(result).toEqual(mockPayload);
-      expect(jwtService.decode).toHaveBeenCalledWith('some-token');
-    });
-  });
 });

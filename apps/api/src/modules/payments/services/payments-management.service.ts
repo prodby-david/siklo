@@ -25,18 +25,29 @@ export class PaymentsManagementService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async getPendingPayments(groupId: string, organizerUserId: string) {
-    const group = await this.groupsCoreService.getExistingGroup(
-      groupId,
-      organizerUserId,
-    );
-    if (group.organizerId !== organizerUserId) {
+  async getPendingPayments(groupId?: string, organizerUserId?: string) {
+    if (!organizerUserId) {
       throw new ForbiddenException(
-        'Only the organizer can view pending verification queue',
+        'Authentication required to view pending verification queue',
       );
     }
 
-    return this.paymentsRepository.findPendingPaymentsByGroupId(groupId);
+    if (groupId) {
+      const group = await this.groupsCoreService.getExistingGroup(
+        groupId,
+        organizerUserId,
+      );
+      if (group.organizerId !== organizerUserId) {
+        throw new ForbiddenException(
+          'Only the organizer can view pending verification queue',
+        );
+      }
+      return this.paymentsRepository.findPendingPaymentsByGroupId(groupId);
+    }
+
+    return this.paymentsRepository.findPendingPaymentsByOrganizerId(
+      organizerUserId,
+    );
   }
 
   async markMemberPaid(

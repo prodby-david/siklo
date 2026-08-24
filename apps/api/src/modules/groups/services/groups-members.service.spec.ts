@@ -121,7 +121,6 @@ describe('GroupsMembersService', () => {
         });
       });
 
-
       await expect(service.joinGroup(dto, userId)).rejects.toThrow(
         NotFoundException,
       );
