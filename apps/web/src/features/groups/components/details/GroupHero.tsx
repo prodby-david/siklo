@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCw, CreditCard, Settings, ShieldCheck } from "lucide-react";
+import { RotateCw, CreditCard, Settings, ShieldCheck, Crown } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { GroupHeroProps } from "../../types/group.types";
+import formatDate from "@/shared/utils/formatDate";
 import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
 import EditGroupModal from "../modals/EditGroupModal";
 import GroupHeroCompletedBadge from "./elements/GroupHeroCompletedBadge";
@@ -32,6 +33,7 @@ export default function GroupHero({
   isCurrentUserPaid = false,
   currentCycle = 1,
   currentTurn = 1,
+  nextPayoutee,
   onRefresh,
 }: GroupHeroProps) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
@@ -106,6 +108,19 @@ export default function GroupHero({
             ) : (
               <div className="text-xs text-neutral-subtext">
                 Waiting for organizer to start cycle...
+              </div>
+            )}
+
+            {hasStarted && !isCycleDone && nextPayoutee && (
+              <div className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-brand-accent bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
+                <Crown className="w-3.5 h-3.5" />
+                <span>
+                  Next Payoutee: {nextPayoutee.name} · Turn #
+                  {nextPayoutee.roundNumber}
+                  {nextPayoutee.payoutDate
+                    ? ` · ${formatDate(nextPayoutee.payoutDate)}`
+                    : ""}
+                </span>
               </div>
             )}
 

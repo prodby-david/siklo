@@ -105,6 +105,7 @@ export default function GroupPage() {
           isCurrentUserPaid={isCurrentUserPaid}
           currentCycle={currentCycle}
           currentTurn={currentTurn}
+          nextPayoutee={data.nextPayoutee}
           onRefresh={refetch}
         />
 

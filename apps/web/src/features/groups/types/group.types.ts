@@ -47,6 +47,15 @@ export interface GroupRound {
   payments?: PaymentRecord[];
 }
 
+export interface NextPayoutee {
+  userId: string;
+  name: string;
+  position: number;
+  cycleNumber: number;
+  roundNumber: number;
+  payoutDate: string | Date | null;
+}
+
 export interface Group {
   id: string;
   name: string;
@@ -72,6 +81,7 @@ export interface Group {
   memberships?: Membership[];
   rounds?: GroupRound[];
   payments?: PaymentRecord[];
+  nextPayoutee?: NextPayoutee | null;
 }
 
 export interface ExtendedGroup extends Omit<Group, "billingCycle"> {
@@ -111,6 +121,7 @@ export interface GroupHeroProps {
   isCurrentUserPaid?: boolean;
   currentCycle?: number;
   currentTurn?: number;
+  nextPayoutee?: NextPayoutee | null;
   onRefresh?: () => void;
 }
 
