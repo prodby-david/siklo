@@ -129,6 +129,7 @@ export class PaymentsManagementService {
           referenceNumber: referenceNumber || existingPayment.referenceNumber,
           proofUrl: proofUrl || existingPayment.proofUrl,
           baseAmount: group.contributionAmount,
+          penaltyAmount: 0,
           totalAmount: group.contributionAmount,
         },
       );
