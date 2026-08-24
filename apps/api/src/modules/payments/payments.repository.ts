@@ -4,6 +4,7 @@ import {
   PaymentStatus,
   PaymentMethodType,
   RoundStatus,
+  Prisma,
 } from '@/generated/prisma/client';
 
 export interface CreatePaymentRecordData {
@@ -199,6 +200,39 @@ export class PaymentsRepository {
     return this.prisma.round.create({
       data,
     });
+  }
+
+  async findOrCreateRound(data: {
+    groupId: string;
+    cycleNumber: number;
+    roundNumber: number;
+    recipientId: string;
+    targetDate: Date;
+  }) {
+    const existing = await this.findRoundByGroupCycleAndNumber(
+      data.groupId,
+      data.cycleNumber,
+      data.roundNumber,
+    );
+    if (existing) return existing;
+
+    try {
+      return await this.createRound(data);
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        const raced = await this.findRoundByGroupCycleAndNumber(
+          data.groupId,
+          data.cycleNumber,
+          data.roundNumber,
+        );
+        if (!raced) throw error;
+        return raced;
+      }
+      throw error;
+    }
   }
 
   async findPaymentByGroupRoundAndUser(

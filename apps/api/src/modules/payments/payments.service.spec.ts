@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, ForbiddenException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsRepository } from './payments.repository';
 import { PaymentsSubmissionService } from './services/payments-submission.service';
@@ -144,6 +148,29 @@ describe('PaymentsService', () => {
       expect(
         paymentsRepository.updatePaymentStatusRejected,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('submitPayment', () => {
+    it('should throw BadRequestException for a cycle beyond group duration', async () => {
+      paymentsRepository.findGroupByGroupId.mockResolvedValue({
+        id: 'group-1',
+        cycleDuration: 3,
+        memberships: [{ userId: 'user-1', position: 1 }],
+      });
+      paymentsRepository.findMembership.mockResolvedValue({
+        userId: 'user-1',
+        position: 1,
+        user: { name: 'User One' },
+      });
+
+      await expect(
+        service.submitPayment(
+          { groupId: 'group-1', cycleNumber: 5, paymentMethod: 'CASH' },
+          'user-1',
+        ),
+      ).rejects.toThrow(BadRequestException);
+      expect(paymentsRepository.createPayment).not.toHaveBeenCalled();
     });
   });
 

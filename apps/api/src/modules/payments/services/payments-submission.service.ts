@@ -3,14 +3,13 @@ import {
   NotFoundException,
   ForbiddenException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { SubmitPaymentDTO, RejectPaymentDTO } from '@siklo/shared-schemas';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
-import {
-  PAYMENT_STATUS,
-} from '../constants/payment.constants';
+import { PAYMENT_STATUS } from '../constants/payment.constants';
 import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import {
   calculatePenaltyAmount,
@@ -46,17 +45,19 @@ export class PaymentsSubmissionService {
     let round =
       dto.roundId && dto.roundId !== 'current'
         ? await this.paymentsRepository.findRoundByRoundId(dto.roundId)
-        : await this.paymentsRepository.findRoundByGroupCycleAndNumber(
-            dto.groupId,
-            targetCycleNum,
-            targetTurnNum,
-          );
+        : null;
 
     if (round && round.groupId !== dto.groupId) {
       throw new ForbiddenException('Invalid round for this group');
     }
 
     if (!round) {
+      if (targetCycleNum > group.cycleDuration) {
+        throw new BadRequestException(
+          `Cycle ${targetCycleNum} does not exist for this group`,
+        );
+      }
+
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
       const totalMembers = group.memberships?.length || 1;
       const step = calculateRoundStep(
@@ -74,7 +75,7 @@ export class PaymentsSubmissionService {
         (m) => m.position === targetTurnNum,
       );
 
-      round = await this.paymentsRepository.createRound({
+      round = await this.paymentsRepository.findOrCreateRound({
         groupId: dto.groupId,
         cycleNumber: targetCycleNum,
         roundNumber: targetTurnNum,

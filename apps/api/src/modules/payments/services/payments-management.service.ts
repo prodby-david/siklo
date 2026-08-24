@@ -88,34 +88,28 @@ export class PaymentsManagementService {
 
     const currentCycleNum = cycleNumber || 1;
 
-    let round = await this.paymentsRepository.findRoundByGroupCycleAndNumber(
-      groupId,
+    if (currentCycleNum > group.cycleDuration) {
+      throw new BadRequestException(
+        `Cycle ${currentCycleNum} does not exist for this group`,
+      );
+    }
+
+    const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
+    const totalMembers = group.memberships?.length || 1;
+    const step = calculateRoundStep(
       currentCycleNum,
       targetMember.position,
+      totalMembers,
     );
+    const targetDate = calculateTargetDate(group.startDate, step, intervalDays);
 
-    if (!round) {
-      const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const totalMembers = group.memberships?.length || 1;
-      const step = calculateRoundStep(
-        currentCycleNum,
-        targetMember.position,
-        totalMembers,
-      );
-      const targetDate = calculateTargetDate(
-        group.startDate,
-        step,
-        intervalDays,
-      );
-
-      round = await this.paymentsRepository.createRound({
-        groupId,
-        cycleNumber: currentCycleNum,
-        roundNumber: targetMember.position,
-        recipientId: targetMember.userId,
-        targetDate,
-      });
-    }
+    const round = await this.paymentsRepository.findOrCreateRound({
+      groupId,
+      cycleNumber: currentCycleNum,
+      roundNumber: targetMember.position,
+      recipientId: targetMember.userId,
+      targetDate,
+    });
 
     const existingPayment =
       await this.paymentsRepository.findPaymentByGroupRoundAndUser(
@@ -208,34 +202,28 @@ export class PaymentsManagementService {
 
     const currentCycleNum = cycleNumber || 1;
 
-    let round = await this.paymentsRepository.findRoundByGroupCycleAndNumber(
-      groupId,
+    if (currentCycleNum > group.cycleDuration) {
+      throw new BadRequestException(
+        `Cycle ${currentCycleNum} does not exist for this group`,
+      );
+    }
+
+    const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
+    const totalMembers = group.memberships?.length || 1;
+    const step = calculateRoundStep(
       currentCycleNum,
       targetMember.position,
+      totalMembers,
     );
+    const targetDate = calculateTargetDate(group.startDate, step, intervalDays);
 
-    if (!round) {
-      const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const totalMembers = group.memberships?.length || 1;
-      const step = calculateRoundStep(
-        currentCycleNum,
-        targetMember.position,
-        totalMembers,
-      );
-      const targetDate = calculateTargetDate(
-        group.startDate,
-        step,
-        intervalDays,
-      );
-
-      round = await this.paymentsRepository.createRound({
-        groupId,
-        cycleNumber: currentCycleNum,
-        roundNumber: targetMember.position,
-        recipientId: targetMember.userId,
-        targetDate,
-      });
-    }
+    const round = await this.paymentsRepository.findOrCreateRound({
+      groupId,
+      cycleNumber: currentCycleNum,
+      roundNumber: targetMember.position,
+      recipientId: targetMember.userId,
+      targetDate,
+    });
 
     const existingPayment =
       await this.paymentsRepository.findPaymentByGroupRoundAndUser(

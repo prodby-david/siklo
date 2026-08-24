@@ -142,6 +142,12 @@ export class PaymentsPayoutService {
       throw new ForbiddenException('Invalid round for this group');
     }
 
+    if (!round && currentCycle > group.cycleDuration) {
+      throw new BadRequestException(
+        `Cycle ${currentCycle} does not exist for this group`,
+      );
+    }
+
     if (!round) {
       round = await this.paymentsRepository.findRoundByGroupCycleAndNumber(
         dto.groupId,
@@ -173,7 +179,7 @@ export class PaymentsPayoutService {
         intervalDays,
       );
 
-      round = await this.paymentsRepository.createRound({
+      round = await this.paymentsRepository.findOrCreateRound({
         groupId: dto.groupId,
         cycleNumber: currentCycle,
         roundNumber: recipientMembership.position,
@@ -262,11 +268,9 @@ export class PaymentsPayoutService {
       throw new ForbiddenException('Invalid round for this group');
     }
 
-    if (!round) {
-      round = await this.paymentsRepository.findRoundByGroupCycleAndNumber(
-        dto.groupId,
-        currentCycle,
-        targetTurn,
+    if (!round && currentCycle > group.cycleDuration) {
+      throw new BadRequestException(
+        `Cycle ${currentCycle} does not exist for this group`,
       );
     }
 
@@ -284,7 +288,7 @@ export class PaymentsPayoutService {
         intervalDays,
       );
 
-      round = await this.paymentsRepository.createRound({
+      round = await this.paymentsRepository.findOrCreateRound({
         groupId: dto.groupId,
         cycleNumber: currentCycle,
         roundNumber: userMembership.position,
