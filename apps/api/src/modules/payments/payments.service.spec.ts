@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ForbiddenException } from '@nestjs/common';
+import { ConflictException, ForbiddenException } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { PaymentsRepository } from './payments.repository';
 import { PaymentsSubmissionService } from './services/payments-submission.service';
@@ -15,6 +15,7 @@ describe('PaymentsService', () => {
   let paymentsRepository: {
     findPaymentById: jest.Mock;
     updatePaymentStatusVerified: jest.Mock;
+    updatePaymentStatusRejected: jest.Mock;
     findGroupByGroupId: jest.Mock;
     findRoundByRoundId: jest.Mock;
     findMembership: jest.Mock;
@@ -29,6 +30,7 @@ describe('PaymentsService', () => {
     paymentsRepository = {
       findPaymentById: jest.fn(),
       updatePaymentStatusVerified: jest.fn(),
+      updatePaymentStatusRejected: jest.fn(),
       findGroupByGroupId: jest.fn(),
       findRoundByRoundId: jest.fn(),
       findMembership: jest.fn(),
@@ -79,6 +81,7 @@ describe('PaymentsService', () => {
         userId: 'member-1',
         groupId: 'group-1',
         totalAmount: 1000,
+        status: 'PENDING',
         group: { organizerId: organizerUserId },
         user: { name: 'Member 1' },
         round: { roundNumber: 1 },
@@ -100,12 +103,47 @@ describe('PaymentsService', () => {
 
       paymentsRepository.findPaymentById.mockResolvedValue({
         id: paymentId,
+        status: 'PENDING',
         group: { organizerId: 'organizer-1' },
       });
 
       await expect(
         service.verifyPayment(paymentId, 'not-organizer'),
       ).rejects.toThrow(ForbiddenException);
+    });
+
+    it('should throw ConflictException when verifying an already processed payment', async () => {
+      paymentsRepository.findPaymentById.mockResolvedValue({
+        id: 'pay-1',
+        status: 'VERIFIED',
+        group: { organizerId: 'organizer-1' },
+      });
+
+      await expect(
+        service.verifyPayment('pay-1', 'organizer-1'),
+      ).rejects.toThrow(ConflictException);
+      expect(
+        paymentsRepository.updatePaymentStatusVerified,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException when rejecting a verified payment', async () => {
+      paymentsRepository.findPaymentById.mockResolvedValue({
+        id: 'pay-1',
+        status: 'VERIFIED',
+        group: { organizerId: 'organizer-1' },
+      });
+
+      await expect(
+        service.rejectPayment(
+          'pay-1',
+          { rejectionReason: 'Invalid proof' },
+          'organizer-1',
+        ),
+      ).rejects.toThrow(ConflictException);
+      expect(
+        paymentsRepository.updatePaymentStatusRejected,
+      ).not.toHaveBeenCalled();
     });
   });
 

@@ -165,6 +165,12 @@ export class PaymentsSubmissionService {
       throw new ForbiddenException('Only the organizer can verify payments');
     }
 
+    if (payment.status !== PAYMENT_STATUS.PENDING) {
+      throw new ConflictException(
+        'This payment has already been processed and can no longer be verified',
+      );
+    }
+
     const updatedPayment =
       await this.paymentsRepository.updatePaymentStatusVerified(paymentId);
 
@@ -204,6 +210,12 @@ export class PaymentsSubmissionService {
 
     if (payment.group.organizerId !== organizerUserId) {
       throw new ForbiddenException('Only the organizer can reject payments');
+    }
+
+    if (payment.status !== PAYMENT_STATUS.PENDING) {
+      throw new ConflictException(
+        'This payment has already been processed and can no longer be rejected',
+      );
     }
 
     const updatedPayment =
