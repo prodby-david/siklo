@@ -16,6 +16,7 @@ import {
   calculateRoundStep,
   calculateTargetDate,
 } from '../utils/paymentCalculator';
+import { PrismaService } from '@/database/prisma.service';
 
 @Injectable()
 export class PaymentsManagementService {
@@ -24,6 +25,7 @@ export class PaymentsManagementService {
     private readonly activityService: ActivityService,
     private readonly groupsCoreService: GroupsCoreService,
     private readonly notificationsService: NotificationsService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async getPendingPayments(groupId?: string, organizerUserId?: string) {
@@ -103,61 +105,74 @@ export class PaymentsManagementService {
     );
     const targetDate = calculateTargetDate(group.startDate, step, intervalDays);
 
-    const round = await this.paymentsRepository.findOrCreateRound({
-      groupId,
-      cycleNumber: currentCycleNum,
-      roundNumber: targetMember.position,
-      recipientId: targetMember.userId,
-      targetDate,
-    });
-
-    const existingPayment =
-      await this.paymentsRepository.findPaymentByGroupRoundAndUser(
-        groupId,
-        round.id,
-        memberUserId,
-      );
-
-    let paymentRecord;
-    if (existingPayment) {
-      paymentRecord = await this.paymentsRepository.updatePaymentRecord(
-        existingPayment.id,
-        {
-          status: PAYMENT_STATUS.VERIFIED,
-          verifiedAt: new Date(),
-          referenceNumber: referenceNumber || existingPayment.referenceNumber,
-          proofUrl: proofUrl || existingPayment.proofUrl,
-          baseAmount: group.contributionAmount,
-          penaltyAmount: 0,
-          totalAmount: group.contributionAmount,
-        },
-      );
-    } else {
-      paymentRecord = await this.paymentsRepository.createPayment({
-        groupId,
-        roundId: round.id,
-        userId: memberUserId,
-        paymentMethod:
-          (targetMember.preferredPaymentMethod as PaymentMethodType) ||
-          PaymentMethodType.CASH,
-        baseAmount: group.contributionAmount,
-        penaltyAmount: 0,
-        totalAmount: group.contributionAmount,
-        referenceNumber,
-        proofUrl,
-        status: PAYMENT_STATUS.VERIFIED,
-      });
-    }
-
     const cycleInfo = cycleNumber ? ` (Cycle ${cycleNumber})` : '';
     const refInfo = referenceNumber ? ` [Ref: ${referenceNumber}]` : '';
     const description = `${targetMember.user.name}'s payment for Turn #${targetMember.position}${cycleInfo} was verified and marked as paid by the organizer${refInfo}.`;
 
-    await this.activityService.createActivity({
-      userId: organizerUserId,
-      groupId,
-      activityType: 'PAYMENT_VERIFIED',
-      description,
+    const paymentRecord = await this.prisma.$transaction(async (tx) => {
+      const round = await this.paymentsRepository.findOrCreateRound(
+        {
+          groupId,
+          cycleNumber: currentCycleNum,
+          roundNumber: targetMember.position,
+          recipientId: targetMember.userId,
+          targetDate,
+        },
+        tx,
+      );
+
+      const existingPayment =
+        await this.paymentsRepository.findPaymentByGroupRoundAndUser(
+          groupId,
+          round.id,
+          memberUserId,
+          tx,
+        );
+
+      const savedPayment = existingPayment
+        ? await this.paymentsRepository.updatePaymentRecord(
+            existingPayment.id,
+            {
+              status: PAYMENT_STATUS.VERIFIED,
+              verifiedAt: new Date(),
+              referenceNumber:
+                referenceNumber || existingPayment.referenceNumber,
+              proofUrl: proofUrl || existingPayment.proofUrl,
+              baseAmount: group.contributionAmount,
+              penaltyAmount: 0,
+              totalAmount: group.contributionAmount,
+            },
+            tx,
+          )
+        : await this.paymentsRepository.createPayment(
+            {
+              groupId,
+              roundId: round.id,
+              userId: memberUserId,
+              paymentMethod:
+                (targetMember.preferredPaymentMethod as PaymentMethodType) ||
+                PaymentMethodType.CASH,
+              baseAmount: group.contributionAmount,
+              penaltyAmount: 0,
+              totalAmount: group.contributionAmount,
+              referenceNumber,
+              proofUrl,
+              status: PAYMENT_STATUS.VERIFIED,
+            },
+            tx,
+          );
+
+      await this.activityService.createActivity(
+        {
+          userId: organizerUserId,
+          groupId,
+          activityType: 'PAYMENT_VERIFIED',
+          description,
+        },
+        tx,
+      );
+
+      return savedPayment;
     });
 
     await this.notificationsService.createNotification({
@@ -217,57 +232,69 @@ export class PaymentsManagementService {
     );
     const targetDate = calculateTargetDate(group.startDate, step, intervalDays);
 
-    const round = await this.paymentsRepository.findOrCreateRound({
-      groupId,
-      cycleNumber: currentCycleNum,
-      roundNumber: targetMember.position,
-      recipientId: targetMember.userId,
-      targetDate,
-    });
-
-    const existingPayment =
-      await this.paymentsRepository.findPaymentByGroupRoundAndUser(
-        groupId,
-        round.id,
-        memberUserId,
-      );
-
-    let paymentRecord;
-    if (existingPayment) {
-      paymentRecord = await this.paymentsRepository.updatePaymentRecord(
-        existingPayment.id,
-        {
-          status: PAYMENT_STATUS.REJECTED,
-          rejectionReason: reason,
-          rejectionProofUrl,
-        },
-      );
-    } else {
-      paymentRecord = await this.paymentsRepository.createPayment({
-        groupId,
-        roundId: round.id,
-        userId: memberUserId,
-        paymentMethod:
-          (targetMember.preferredPaymentMethod as PaymentMethodType) ||
-          PaymentMethodType.CASH,
-        baseAmount: group.contributionAmount,
-        penaltyAmount: 0,
-        totalAmount: group.contributionAmount,
-        status: PAYMENT_STATUS.REJECTED,
-        rejectionReason: reason,
-        rejectionProofUrl,
-      });
-    }
-
     const cycleInfo = cycleNumber ? ` (Cycle ${cycleNumber})` : '';
     const reasonInfo = reason ? `: ${reason}` : '';
     const description = `${targetMember.user.name}'s payment for Turn #${targetMember.position}${cycleInfo} was marked as rejected by the organizer${reasonInfo}.`;
 
-    await this.activityService.createActivity({
-      userId: organizerUserId,
-      groupId,
-      activityType: 'PAYMENT_REJECTED',
-      description,
+    const paymentRecord = await this.prisma.$transaction(async (tx) => {
+      const round = await this.paymentsRepository.findOrCreateRound(
+        {
+          groupId,
+          cycleNumber: currentCycleNum,
+          roundNumber: targetMember.position,
+          recipientId: targetMember.userId,
+          targetDate,
+        },
+        tx,
+      );
+
+      const existingPayment =
+        await this.paymentsRepository.findPaymentByGroupRoundAndUser(
+          groupId,
+          round.id,
+          memberUserId,
+          tx,
+        );
+
+      const savedPayment = existingPayment
+        ? await this.paymentsRepository.updatePaymentRecord(
+            existingPayment.id,
+            {
+              status: PAYMENT_STATUS.REJECTED,
+              rejectionReason: reason,
+              rejectionProofUrl,
+            },
+            tx,
+          )
+        : await this.paymentsRepository.createPayment(
+            {
+              groupId,
+              roundId: round.id,
+              userId: memberUserId,
+              paymentMethod:
+                (targetMember.preferredPaymentMethod as PaymentMethodType) ||
+                PaymentMethodType.CASH,
+              baseAmount: group.contributionAmount,
+              penaltyAmount: 0,
+              totalAmount: group.contributionAmount,
+              status: PAYMENT_STATUS.REJECTED,
+              rejectionReason: reason,
+              rejectionProofUrl,
+            },
+            tx,
+          );
+
+      await this.activityService.createActivity(
+        {
+          userId: organizerUserId,
+          groupId,
+          activityType: 'PAYMENT_REJECTED',
+          description,
+        },
+        tx,
+      );
+
+      return savedPayment;
     });
 
     await this.notificationsService.createNotification({

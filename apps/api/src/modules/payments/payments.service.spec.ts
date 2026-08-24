@@ -13,6 +13,7 @@ import { PaymentsPayoutService } from './services/payments-payout.service';
 import { ActivityService } from '../activity/activity.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { GroupsCoreService } from '../groups/services/groups-core.service';
+import { PrismaService } from '@/database/prisma.service';
 
 describe('PaymentsService', () => {
   let service: PaymentsService;
@@ -54,6 +55,12 @@ describe('PaymentsService', () => {
       getExistingGroup: jest.fn(),
     };
 
+    const prismaService = {
+      $transaction: jest.fn(async (cb: (tx: unknown) => Promise<unknown>) =>
+        cb(undefined),
+      ),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentsService,
@@ -65,6 +72,7 @@ describe('PaymentsService', () => {
         { provide: ActivityService, useValue: activityService },
         { provide: NotificationsService, useValue: notificationsService },
         { provide: GroupsCoreService, useValue: groupsCoreService },
+        { provide: PrismaService, useValue: prismaService },
       ],
     }).compile();
 

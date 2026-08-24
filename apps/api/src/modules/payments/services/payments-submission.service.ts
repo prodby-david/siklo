@@ -16,6 +16,7 @@ import {
   calculateRoundStep,
   calculateTargetDate,
 } from '../utils/paymentCalculator';
+import { PrismaService } from '@/database/prisma.service';
 
 @Injectable()
 export class PaymentsSubmissionService {
@@ -23,6 +24,7 @@ export class PaymentsSubmissionService {
     private readonly paymentsRepository: PaymentsRepository,
     private readonly activityService: ActivityService,
     private readonly notificationsService: NotificationsService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async submitPayment(dto: SubmitPaymentDTO, userId: string) {
@@ -42,122 +44,142 @@ export class PaymentsSubmissionService {
     const targetCycleNum = dto.cycleNumber || 1;
     const targetTurnNum = dto.turnNumber || membership.position;
 
-    let round =
-      dto.roundId && dto.roundId !== 'current'
-        ? await this.paymentsRepository.findRoundByRoundId(dto.roundId)
-        : null;
+    const { savedPayment, cycleNumber, turnNumber } =
+      await this.prisma.$transaction(async (tx) => {
+        let round =
+          dto.roundId && dto.roundId !== 'current'
+            ? await this.paymentsRepository.findRoundByRoundId(dto.roundId)
+            : null;
 
-    if (round && round.groupId !== dto.groupId) {
-      throw new ForbiddenException('Invalid round for this group');
-    }
+        if (round && round.groupId !== dto.groupId) {
+          throw new ForbiddenException('Invalid round for this group');
+        }
 
-    if (!round) {
-      if (targetCycleNum > group.cycleDuration) {
-        throw new BadRequestException(
-          `Cycle ${targetCycleNum} does not exist for this group`,
+        if (!round) {
+          if (targetCycleNum > group.cycleDuration) {
+            throw new BadRequestException(
+              `Cycle ${targetCycleNum} does not exist for this group`,
+            );
+          }
+
+          const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
+          const totalMembers = group.memberships?.length || 1;
+          const step = calculateRoundStep(
+            targetCycleNum,
+            targetTurnNum,
+            totalMembers,
+          );
+          const targetDate = calculateTargetDate(
+            group.startDate,
+            step,
+            intervalDays,
+          );
+
+          const recipientMember = group.memberships?.find(
+            (m) => m.position === targetTurnNum,
+          );
+
+          round = await this.paymentsRepository.findOrCreateRound(
+            {
+              groupId: dto.groupId,
+              cycleNumber: targetCycleNum,
+              roundNumber: targetTurnNum,
+              recipientId: recipientMember?.userId || membership.userId,
+              targetDate,
+            },
+            tx,
+          );
+        }
+
+        const existingPayment =
+          await this.paymentsRepository.findPaymentByGroupRoundAndUser(
+            dto.groupId,
+            round.id,
+            userId,
+            tx,
+          );
+
+        if (
+          existingPayment &&
+          existingPayment.status === PAYMENT_STATUS.VERIFIED
+        ) {
+          throw new ConflictException(
+            'Your contribution for this cycle has already been verified and paid.',
+          );
+        }
+
+        const now = new Date();
+        const penaltyAmount = calculatePenaltyAmount(
+          now,
+          round.targetDate,
+          group.gracePeriodDays,
+          group.contributionAmount,
+          group.latePenaltyAmount,
         );
-      }
 
-      const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const totalMembers = group.memberships?.length || 1;
-      const step = calculateRoundStep(
-        targetCycleNum,
-        targetTurnNum,
-        totalMembers,
-      );
-      const targetDate = calculateTargetDate(
-        group.startDate,
-        step,
-        intervalDays,
-      );
+        const totalAmount = group.contributionAmount + penaltyAmount;
 
-      const recipientMember = group.memberships?.find(
-        (m) => m.position === targetTurnNum,
-      );
+        const refLabel = dto.referenceNumber
+          ? ` (Ref: ${dto.referenceNumber})`
+          : '';
 
-      round = await this.paymentsRepository.findOrCreateRound({
-        groupId: dto.groupId,
-        cycleNumber: targetCycleNum,
-        roundNumber: targetTurnNum,
-        recipientId: recipientMember?.userId || membership.userId,
-        targetDate,
+        const savedPayment = existingPayment
+          ? await this.paymentsRepository.updatePaymentRecord(
+              existingPayment.id,
+              {
+                paymentMethod: dto.paymentMethod,
+                baseAmount: group.contributionAmount,
+                penaltyAmount,
+                totalAmount,
+                referenceNumber: dto.referenceNumber,
+                proofUrl: dto.proofUrl,
+                status: PAYMENT_STATUS.PENDING,
+              },
+              tx,
+            )
+          : await this.paymentsRepository.createPayment(
+              {
+                groupId: dto.groupId,
+                roundId: round.id,
+                userId,
+                paymentMethod: dto.paymentMethod,
+                baseAmount: group.contributionAmount,
+                penaltyAmount,
+                totalAmount,
+                referenceNumber: dto.referenceNumber,
+                proofUrl: dto.proofUrl,
+                status: PAYMENT_STATUS.PENDING,
+              },
+              tx,
+            );
+
+        await this.activityService.createActivity(
+          {
+            userId: group.organizerId,
+            groupId: dto.groupId,
+            activityType: 'PAYMENT',
+            description: `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}`,
+          },
+          tx,
+        );
+
+        return {
+          savedPayment,
+          cycleNumber: round.cycleNumber,
+          turnNumber: round.roundNumber,
+        };
       });
-    }
-
-    const existingPayment =
-      await this.paymentsRepository.findPaymentByGroupRoundAndUser(
-        dto.groupId,
-        round.id,
-        userId,
-      );
-
-    if (existingPayment && existingPayment.status === PAYMENT_STATUS.VERIFIED) {
-      throw new ConflictException(
-        'Your contribution for this cycle has already been verified and paid.',
-      );
-    }
-
-    const now = new Date();
-    const penaltyAmount = calculatePenaltyAmount(
-      now,
-      round.targetDate,
-      group.gracePeriodDays,
-      group.contributionAmount,
-      group.latePenaltyAmount,
-    );
-
-    const totalAmount = group.contributionAmount + penaltyAmount;
-
-    let payment;
-    if (existingPayment) {
-      payment = await this.paymentsRepository.updatePaymentRecord(
-        existingPayment.id,
-        {
-          paymentMethod: dto.paymentMethod,
-          baseAmount: group.contributionAmount,
-          penaltyAmount,
-          totalAmount,
-          referenceNumber: dto.referenceNumber,
-          proofUrl: dto.proofUrl,
-          status: PAYMENT_STATUS.PENDING,
-        },
-      );
-    } else {
-      payment = await this.paymentsRepository.createPayment({
-        groupId: dto.groupId,
-        roundId: round.id,
-        userId,
-        paymentMethod: dto.paymentMethod,
-        baseAmount: group.contributionAmount,
-        penaltyAmount,
-        totalAmount,
-        referenceNumber: dto.referenceNumber,
-        proofUrl: dto.proofUrl,
-        status: PAYMENT_STATUS.PENDING,
-      });
-    }
-
-    const refLabel = dto.referenceNumber
-      ? ` (Ref: ${dto.referenceNumber})`
-      : '';
-
-    await this.activityService.createActivity({
-      userId: group.organizerId,
-      groupId: dto.groupId,
-      activityType: 'PAYMENT',
-      description: `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}`,
-    });
 
     await this.notificationsService.createNotification({
       userId: group.organizerId,
       groupId: dto.groupId,
       notificationType: 'PAYMENT',
-      description: `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} (Turn #${round.roundNumber}). Please review and verify.`,
+      description: `${membership.user.name} submitted payment proof for Cycle #${cycleNumber} (Turn #${turnNumber}). Please review and verify.`,
     });
 
     return {
       message: 'Payment proof submitted successfully',
-      payment,
+      payment: savedPayment,
     };
   }
 
@@ -177,18 +199,28 @@ export class PaymentsSubmissionService {
       );
     }
 
-    const updatedPayment =
-      await this.paymentsRepository.updatePaymentStatusVerified(paymentId);
-
     const cycleNum = payment.round?.cycleNumber || 1;
     const turnNum = payment.round?.roundNumber || 1;
     const memberName = payment.user?.name || 'Member';
 
-    await this.activityService.createActivity({
-      userId: payment.userId,
-      groupId: payment.groupId,
-      activityType: 'PAYMENT_VERIFIED',
-      description: `${memberName}'s payment for Turn #${turnNum} (Cycle ${cycleNum}) was verified and approved by organizer.`,
+    const updatedPayment = await this.prisma.$transaction(async (tx) => {
+      const verified =
+        await this.paymentsRepository.updatePaymentStatusVerified(
+          paymentId,
+          tx,
+        );
+
+      await this.activityService.createActivity(
+        {
+          userId: payment.userId,
+          groupId: payment.groupId,
+          activityType: 'PAYMENT_VERIFIED',
+          description: `${memberName}'s payment for Turn #${turnNum} (Cycle ${cycleNum}) was verified and approved by organizer.`,
+        },
+        tx,
+      );
+
+      return verified;
     });
 
     await this.notificationsService.createNotification({
@@ -224,22 +256,30 @@ export class PaymentsSubmissionService {
       );
     }
 
-    const updatedPayment =
-      await this.paymentsRepository.updatePaymentStatusRejected(
-        paymentId,
-        dto.rejectionReason,
-        dto.rejectionProofUrl,
-      );
-
     const cycleNum = payment.round?.cycleNumber || 1;
     const turnNum = payment.round?.roundNumber || 1;
     const memberName = payment.user?.name || 'Member';
 
-    await this.activityService.createActivity({
-      userId: payment.userId,
-      groupId: payment.groupId,
-      activityType: 'PAYMENT_REJECTED',
-      description: `${memberName}'s payment for Turn #${turnNum} (Cycle ${cycleNum}) was rejected: ${dto.rejectionReason}`,
+    const updatedPayment = await this.prisma.$transaction(async (tx) => {
+      const rejected =
+        await this.paymentsRepository.updatePaymentStatusRejected(
+          paymentId,
+          dto.rejectionReason,
+          dto.rejectionProofUrl,
+          tx,
+        );
+
+      await this.activityService.createActivity(
+        {
+          userId: payment.userId,
+          groupId: payment.groupId,
+          activityType: 'PAYMENT_REJECTED',
+          description: `${memberName}'s payment for Turn #${turnNum} (Cycle ${cycleNum}) was rejected: ${dto.rejectionReason}`,
+        },
+        tx,
+      );
+
+      return rejected;
     });
 
     await this.notificationsService.createNotification({

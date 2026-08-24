@@ -20,6 +20,7 @@ import {
   calculateRoundStep,
   calculateTargetDate,
 } from '../utils/paymentCalculator';
+import { PrismaService } from '@/database/prisma.service';
 
 @Injectable()
 export class PaymentsPayoutService {
@@ -28,6 +29,7 @@ export class PaymentsPayoutService {
     private readonly activityService: ActivityService,
     private readonly groupsCoreService: GroupsCoreService,
     private readonly notificationsService: NotificationsService,
+    private readonly prisma: PrismaService,
   ) {}
 
   async requestAdvancePayout(dto: RequestAdvancePayoutDTO, userId: string) {
@@ -165,28 +167,23 @@ export class PaymentsPayoutService {
       throw new NotFoundException('Recipient member not found for this turn');
     }
 
-    if (!round) {
-      const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const totalMembers = memberships.length || 1;
-      const step = calculateRoundStep(
-        currentCycle,
-        recipientMembership.position,
-        totalMembers,
-      );
-      const targetDate = calculateTargetDate(
-        group.startDate || new Date(),
-        step,
-        intervalDays,
-      );
-
-      round = await this.paymentsRepository.findOrCreateRound({
-        groupId: dto.groupId,
-        cycleNumber: currentCycle,
-        roundNumber: recipientMembership.position,
-        recipientId: recipientMembership.userId,
-        targetDate,
-      });
-    }
+    const newRoundData = !round
+      ? {
+          groupId: dto.groupId,
+          cycleNumber: currentCycle,
+          roundNumber: recipientMembership.position,
+          recipientId: recipientMembership.userId,
+          targetDate: calculateTargetDate(
+            group.startDate || new Date(),
+            calculateRoundStep(
+              currentCycle,
+              recipientMembership.position,
+              memberships.length || 1,
+            ),
+            BILLING_CYCLE_DAYS[group.billingCycle] || 30,
+          ),
+        }
+      : undefined;
 
     const recipientName =
       recipientMembership.user?.name || 'Scheduled Beneficiary';
@@ -205,11 +202,23 @@ export class PaymentsPayoutService {
     const refInfo = dto.referenceNumber ? ` [Ref: ${dto.referenceNumber}]` : '';
     const description = `Organizer disbursed the lump-sum payout of ₱${poolTotal.toLocaleString()} to ${recipientName} for Turn #${targetTurn} (Cycle ${currentCycle}) via ${gatewayInfo}${refInfo}.`;
 
-    await this.activityService.createActivity({
-      userId: organizerUserId,
-      groupId: dto.groupId,
-      activityType: 'PAYOUT_DISBURSED',
-      description,
+    await this.prisma.$transaction(async (tx) => {
+      if (newRoundData) {
+        round = await this.paymentsRepository.findOrCreateRound(
+          newRoundData,
+          tx,
+        );
+      }
+
+      await this.activityService.createActivity(
+        {
+          userId: organizerUserId,
+          groupId: dto.groupId,
+          activityType: 'PAYOUT_DISBURSED',
+          description,
+        },
+        tx,
+      );
     });
 
     if (recipientUserId && recipientUserId !== organizerUserId) {
@@ -303,21 +312,29 @@ export class PaymentsPayoutService {
       );
     }
 
-    const updatedRound = await this.paymentsRepository.updateRoundStatus(
-      round.id,
-      RoundStatus.PAID,
-    );
-
     const totalMembers = memberships.length || group.maxMembers;
     const poolTotal = (group.contributionAmount || 0) * totalMembers;
     const notesInfo = dto.notes ? ` (Note: ${dto.notes})` : '';
     const description = `${userMembership.user.name} confirmed receipt of ₱${poolTotal.toLocaleString()} payout for Turn #${targetTurn} (Cycle ${currentCycle})${notesInfo}.`;
 
-    await this.activityService.createActivity({
-      userId: recipientUserId,
-      groupId: dto.groupId,
-      activityType: 'PAYOUT_DISBURSED',
-      description,
+    const updatedRound = await this.prisma.$transaction(async (tx) => {
+      const paidRound = await this.paymentsRepository.updateRoundStatus(
+        round.id,
+        RoundStatus.PAID,
+        tx,
+      );
+
+      await this.activityService.createActivity(
+        {
+          userId: recipientUserId,
+          groupId: dto.groupId,
+          activityType: 'PAYOUT_DISBURSED',
+          description,
+        },
+        tx,
+      );
+
+      return paidRound;
     });
 
     if (group.organizerId && group.organizerId !== recipientUserId) {

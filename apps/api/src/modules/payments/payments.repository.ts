@@ -26,8 +26,12 @@ export interface CreatePaymentRecordData {
 export class PaymentsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createPayment(data: CreatePaymentRecordData) {
-    return this.prisma.payment.create({
+  async createPayment(
+    data: CreatePaymentRecordData,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.payment.create({
       data,
     });
   }
@@ -43,8 +47,9 @@ export class PaymentsRepository {
     });
   }
 
-  async updatePaymentStatusVerified(id: string) {
-    return this.prisma.payment.update({
+  async updatePaymentStatusVerified(id: string, tx?: Prisma.TransactionClient) {
+    const db = tx ?? this.prisma;
+    return db.payment.update({
       where: { id },
       data: {
         status: PaymentStatus.VERIFIED,
@@ -57,8 +62,10 @@ export class PaymentsRepository {
     id: string,
     rejectionReason: string,
     rejectionProofUrl?: string,
+    tx?: Prisma.TransactionClient,
   ) {
-    return this.prisma.payment.update({
+    const db = tx ?? this.prisma;
+    return db.payment.update({
       where: { id },
       data: {
         status: PaymentStatus.REJECTED,
@@ -178,8 +185,10 @@ export class PaymentsRepository {
     groupId: string,
     cycleNumber: number,
     roundNumber: number,
+    tx?: Prisma.TransactionClient,
   ) {
-    return this.prisma.round.findUnique({
+    const db = tx ?? this.prisma;
+    return db.round.findUnique({
       where: {
         groupId_cycleNumber_roundNumber: {
           groupId,
@@ -190,34 +199,42 @@ export class PaymentsRepository {
     });
   }
 
-  async createRound(data: {
-    groupId: string;
-    cycleNumber: number;
-    roundNumber: number;
-    recipientId: string;
-    targetDate: Date;
-  }) {
-    return this.prisma.round.create({
+  async createRound(
+    data: {
+      groupId: string;
+      cycleNumber: number;
+      roundNumber: number;
+      recipientId: string;
+      targetDate: Date;
+    },
+    tx?: Prisma.TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.round.create({
       data,
     });
   }
 
-  async findOrCreateRound(data: {
-    groupId: string;
-    cycleNumber: number;
-    roundNumber: number;
-    recipientId: string;
-    targetDate: Date;
-  }) {
+  async findOrCreateRound(
+    data: {
+      groupId: string;
+      cycleNumber: number;
+      roundNumber: number;
+      recipientId: string;
+      targetDate: Date;
+    },
+    tx?: Prisma.TransactionClient,
+  ) {
     const existing = await this.findRoundByGroupCycleAndNumber(
       data.groupId,
       data.cycleNumber,
       data.roundNumber,
+      tx,
     );
     if (existing) return existing;
 
     try {
-      return await this.createRound(data);
+      return await this.createRound(data, tx);
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -227,6 +244,7 @@ export class PaymentsRepository {
           data.groupId,
           data.cycleNumber,
           data.roundNumber,
+          tx,
         );
         if (!raced) throw error;
         return raced;
@@ -239,8 +257,10 @@ export class PaymentsRepository {
     groupId: string,
     roundId: string,
     userId: string,
+    tx?: Prisma.TransactionClient,
   ) {
-    return this.prisma.payment.findFirst({
+    const db = tx ?? this.prisma;
+    return db.payment.findFirst({
       where: {
         groupId,
         roundId,
@@ -263,8 +283,10 @@ export class PaymentsRepository {
       totalAmount?: number;
       paymentMethod?: PaymentMethodType;
     },
+    tx?: Prisma.TransactionClient,
   ) {
-    return this.prisma.payment.update({
+    const db = tx ?? this.prisma;
+    return db.payment.update({
       where: { id },
       data,
     });
@@ -282,8 +304,13 @@ export class PaymentsRepository {
     });
   }
 
-  async updateRoundStatus(roundId: string, status: RoundStatus) {
-    return this.prisma.round.update({
+  async updateRoundStatus(
+    roundId: string,
+    status: RoundStatus,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.round.update({
       where: { id: roundId },
       data: { status },
     });
