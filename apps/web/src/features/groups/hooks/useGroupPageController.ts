@@ -29,29 +29,39 @@ export function useGroupPageController() {
   );
   const isMembersFull = (data?.memberships?.length ?? 0) >= (data?.maxMembers ?? 0);
 
-  const { isCycleDone, currentCycle, currentTurn, isCurrentUserPaid } = useMemo(() => {
+  const { isCycleDone, currentCycle, currentTurn, isCurrentUserPaid, isCurrentUserPending } = useMemo(() => {
     if (!data?.memberships) {
-      return { isCycleDone: false, currentCycle: 1, currentTurn: 1, isCurrentUserPaid: false };
+      return {
+        isCycleDone: false,
+        currentCycle: 1,
+        currentTurn: 1,
+        isCurrentUserPaid: false,
+        isCurrentUserPending: false,
+      };
     }
     const duration = data.cycleDuration || 1;
     const totalMembers = data.memberships.length;
 
     const paidByRound: Record<string, Set<string>> = {};
+    const pendingByRound: Record<string, Set<string>> = {};
     const completedKeys = new Set<string>();
 
     for (let c = 1; c <= duration; c++) {
       for (let t = 1; t <= Math.max(totalMembers, 1); t++) {
         paidByRound[`${c}-${t}`] = new Set<string>();
+        pendingByRound[`${c}-${t}`] = new Set<string>();
       }
     }
 
     (data.rounds ?? []).forEach((rnd: GroupRound) => {
       const key = `${rnd.cycleNumber}-${rnd.roundNumber}`;
       if (!paidByRound[key]) paidByRound[key] = new Set<string>();
+      if (!pendingByRound[key]) pendingByRound[key] = new Set<string>();
       if (rnd.status === "PAID") completedKeys.add(key);
 
       rnd.payments?.forEach((p: PaymentRecord) => {
         if (p.status === "VERIFIED") paidByRound[key].add(p.userId);
+        if (p.status === "PENDING") pendingByRound[key].add(p.userId);
       });
     });
 
@@ -60,7 +70,9 @@ export function useGroupPageController() {
       if (!matchedRound) return;
       const key = `${matchedRound.cycleNumber}-${matchedRound.roundNumber}`;
       if (!paidByRound[key]) paidByRound[key] = new Set<string>();
+      if (!pendingByRound[key]) pendingByRound[key] = new Set<string>();
       if (p.status === "VERIFIED") paidByRound[key].add(p.userId);
+      if (p.status === "PENDING") pendingByRound[key].add(p.userId);
     });
 
     const nextRound = [...(data.rounds ?? [])]
@@ -78,8 +90,12 @@ export function useGroupPageController() {
     const activeCycle = nextRound ? nextRound.cycleNumber : duration;
     const activeTurn = nextRound ? nextRound.roundNumber : totalMembers;
 
+    const activeKey = `${activeCycle}-${activeTurn}`;
     const currentMemberPaid = currentUser?.id && nextRound
-      ? Boolean(paidByRound[`${activeCycle}-${activeTurn}`]?.has(currentUser.id))
+      ? Boolean(paidByRound[activeKey]?.has(currentUser.id))
+      : false;
+    const currentMemberPending = currentUser?.id && nextRound
+      ? Boolean(pendingByRound[activeKey]?.has(currentUser.id))
       : false;
 
     return {
@@ -87,6 +103,7 @@ export function useGroupPageController() {
       currentCycle: activeCycle,
       currentTurn: activeTurn,
       isCurrentUserPaid: currentMemberPaid,
+      isCurrentUserPending: currentMemberPending,
     };
   }, [data, hasStarted, currentUser]);
 
@@ -163,6 +180,7 @@ export function useGroupPageController() {
     currentCycle,
     currentTurn,
     isCurrentUserPaid,
+    isCurrentUserPending,
     handleStartCycle,
     isStarting,
     handleDeleteGroup,

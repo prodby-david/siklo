@@ -119,6 +119,7 @@ export interface GroupHeroProps {
   maxMembers?: number;
   payoutSequence?: string;
   isCurrentUserPaid?: boolean;
+  isCurrentUserPending?: boolean;
   currentCycle?: number;
   currentTurn?: number;
   nextPayoutee?: NextPayoutee | null;

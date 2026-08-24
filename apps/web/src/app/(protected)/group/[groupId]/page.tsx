@@ -27,6 +27,7 @@ export default function GroupPage() {
     currentCycle,
     currentTurn,
     isCurrentUserPaid,
+    isCurrentUserPending,
     handleStartCycle,
     isStarting,
     handleDeleteGroup,
@@ -103,6 +104,7 @@ export default function GroupPage() {
           maxMembers={data.maxMembers}
           payoutSequence={data.payoutSequence}
           isCurrentUserPaid={isCurrentUserPaid}
+          isCurrentUserPending={isCurrentUserPending}
           currentCycle={currentCycle}
           currentTurn={currentTurn}
           nextPayoutee={data.nextPayoutee}

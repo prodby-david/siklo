@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCw, CreditCard, Settings, ShieldCheck, Crown } from "lucide-react";
+import { RotateCw, CreditCard, Settings, ShieldCheck, Crown, Clock } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { GroupHeroProps } from "../../types/group.types";
 import formatDate from "@/shared/utils/formatDate";
@@ -31,6 +31,7 @@ export default function GroupHero({
   maxMembers = 6,
   payoutSequence = "MANUAL",
   isCurrentUserPaid = false,
+  isCurrentUserPending = false,
   currentCycle = 1,
   currentTurn = 1,
   nextPayoutee,
@@ -95,6 +96,11 @@ export default function GroupHero({
                 <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
                   <ShieldCheck className="w-4 h-4" />
                   <span>Turn #{currentTurn} Contribution Paid</span>
+                </div>
+              ) : isCurrentUserPending ? (
+                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 rounded-2xl border border-amber-500/25">
+                  <Clock className="w-4 h-4" />
+                  <span>Contribution Awaiting Verification</span>
                 </div>
               ) : (
                 <button
