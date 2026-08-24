@@ -15,6 +15,7 @@ import { NotificationsService } from '../../notifications/notifications.service'
 import { shuffle } from '../utils/shuffleMembers';
 import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
 import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
+import { computeNextPayoutee } from '@/commons/utils/computeNextPayoutee';
 
 @Injectable()
 export class GroupsCoreService {
@@ -139,7 +140,8 @@ export class GroupsCoreService {
   }
 
   async getGroupById(groupId: string, userId: string) {
-    return this.getExistingGroup(groupId, userId);
+    const group = await this.getExistingGroup(groupId, userId);
+    return { ...group, nextPayoutee: computeNextPayoutee(group) };
   }
 
   async startGroupCycle(groupId: string, userId: string) {
