@@ -96,6 +96,19 @@ export class PaymentsManagementService {
       );
     }
 
+    if (currentCycleNum > 1) {
+      const unpaidBefore =
+        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
+          groupId,
+          currentCycleNum,
+        );
+      if (unpaidBefore > 0) {
+        throw new ConflictException(
+          `Cycle ${currentCycleNum} cannot open until all previous cycle payouts are completed`,
+        );
+      }
+    }
+
     const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
     const totalMembers = group.memberships?.length || 1;
     const step = calculateRoundStep(
@@ -221,6 +234,19 @@ export class PaymentsManagementService {
       throw new BadRequestException(
         `Cycle ${currentCycleNum} does not exist for this group`,
       );
+    }
+
+    if (currentCycleNum > 1) {
+      const unpaidBefore =
+        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
+          groupId,
+          currentCycleNum,
+        );
+      if (unpaidBefore > 0) {
+        throw new ConflictException(
+          `Cycle ${currentCycleNum} cannot open until all previous cycle payouts are completed`,
+        );
+      }
     }
 
     const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;

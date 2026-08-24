@@ -25,6 +25,7 @@ describe('PaymentsService', () => {
     findRoundByRoundId: jest.Mock;
     findMembership: jest.Mock;
     createPayment: jest.Mock;
+    countUnpaidRoundsBeforeCycle: jest.Mock;
     findUserActiveGroupsWithMemberships: jest.Mock;
   };
   let activityService: { createActivity: jest.Mock };
@@ -40,6 +41,7 @@ describe('PaymentsService', () => {
       findRoundByRoundId: jest.fn(),
       findMembership: jest.fn(),
       createPayment: jest.fn(),
+      countUnpaidRoundsBeforeCycle: jest.fn().mockResolvedValue(0),
       findUserActiveGroupsWithMemberships: jest.fn().mockResolvedValue([]),
     };
 

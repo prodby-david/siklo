@@ -304,6 +304,16 @@ export class PaymentsRepository {
     });
   }
 
+  async countUnpaidRoundsBeforeCycle(groupId: string, cycleNumber: number) {
+    return this.prisma.round.count({
+      where: {
+        groupId,
+        cycleNumber: { lt: cycleNumber },
+        status: { not: RoundStatus.PAID },
+      },
+    });
+  }
+
   async updateRoundStatus(
     roundId: string,
     status: RoundStatus,

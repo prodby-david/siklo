@@ -44,6 +44,18 @@ export class PaymentsSubmissionService {
     const targetCycleNum = dto.cycleNumber || 1;
     const targetTurnNum = dto.turnNumber || membership.position;
 
+    if (targetCycleNum > 1) {
+      const unpaidBefore = await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
+        dto.groupId,
+        targetCycleNum,
+      );
+      if (unpaidBefore > 0) {
+        throw new ConflictException(
+          `Cycle ${targetCycleNum} cannot open until all previous cycle payouts are completed`,
+        );
+      }
+    }
+
     const { savedPayment, cycleNumber, turnNumber } =
       await this.prisma.$transaction(async (tx) => {
         let round =
