@@ -10,10 +10,8 @@ import { ActivityService } from '../../activity/activity.service';
 import { GroupsCoreService } from '../../groups/services/groups-core.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
-import {
-  BILLING_CYCLE_DAYS,
-  PAYMENT_STATUS,
-} from '../constants/payment.constants';
+import { PAYMENT_STATUS } from '../constants/payment.constants';
+import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import {
   calculateRoundStep,
   calculateTargetDate,

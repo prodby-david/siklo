@@ -14,6 +14,7 @@ import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { shuffle } from '../utils/shuffleMembers';
 import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
+import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 
 @Injectable()
 export class GroupsCoreService {
@@ -191,14 +192,7 @@ export class GroupsCoreService {
         });
 
         const startDate = new Date();
-        const intervalDaysMap: Record<string, number> = {
-          DAILY: 1,
-          WEEKLY: 7,
-          BIMONTHLY: 15,
-          MONTHLY: 30,
-          QUARTERLY: 90,
-        };
-        const intervalDays = intervalDaysMap[group.billingCycle] || 30;
+        const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
 
         for (let c = 1; c <= group.cycleDuration; c++) {
           for (const member of finalMemberships) {

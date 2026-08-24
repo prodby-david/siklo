@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentsRepository } from '../payments.repository';
 import { GroupWithMembershipsAndRounds } from '../payments.types';
-import {
-  BILLING_CYCLE_DAYS,
-  PAYMENT_STATUS,
-} from '../constants/payment.constants';
+import { PAYMENT_STATUS } from '../constants/payment.constants';
+import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
 
 @Injectable()
