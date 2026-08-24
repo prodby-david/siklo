@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FaqItem } from "../types/help.type";
+import { FaqItem } from "../types/help.types";
 
 type HelpFaqAccordionProps = {
   items: FaqItem[];

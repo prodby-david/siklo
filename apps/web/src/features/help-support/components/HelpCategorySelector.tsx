@@ -6,7 +6,7 @@ import {
   Zap,
   LucideIcon,
 } from "lucide-react";
-import { HelpCategory } from "../types/help.type";
+import { HelpCategory } from "../types/help.types";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   ShieldCheck,

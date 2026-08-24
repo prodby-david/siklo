@@ -1,4 +1,4 @@
-import { HelpCategory } from "../types/help.type";
+import { HelpCategory } from "../types/help.types";
 
 export const helpCategories: HelpCategory[] = [
   {

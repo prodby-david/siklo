@@ -3,7 +3,6 @@
 import { Inter } from "next/font/google";
 import DashboardSidebar from "@/features/dashboard/components/sidebar/DashboardSidebar";
 import DashboardMobileHeader from "@/features/dashboard/components/sidebar/DashboardMobileHeader";
-import { NotificationProvider } from "@/features/notifications/context/NotificationContext";
 import { SidebarProvider } from "@/features/dashboard/components/sidebar/SidebarContext";
 
 const inter = Inter({
@@ -30,10 +29,8 @@ export default function DashboardClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <NotificationProvider>
-      <SidebarProvider>
-        <DashboardLayoutContent>{children}</DashboardLayoutContent>
-      </SidebarProvider>
-    </NotificationProvider>
+    <SidebarProvider>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+    </SidebarProvider>
   );
 }

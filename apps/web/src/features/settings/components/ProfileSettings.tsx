@@ -1,9 +1,11 @@
 "use client";
 
-import { User, Mail, Phone, Edit3 } from "lucide-react";
+import { useState } from "react";
+import { User, Mail, Phone, Edit3, Fingerprint, Copy, Check } from "lucide-react";
 import useProfileSettings from "../hooks/useProfileSettings";
 import ProfileEditSheet from "./ProfileEditSheet";
 import { Button } from "@/shared/components/ui/button";
+import { toast } from "sonner";
 
 export default function ProfileSettings() {
   const {
@@ -16,6 +18,15 @@ export default function ProfileSettings() {
     openDrawer,
     closeDrawer,
   } = useProfileSettings();
+  const [copiedId, setCopiedId] = useState(false);
+
+  const handleCopyUserId = () => {
+    if (!user?.id) return;
+    navigator.clipboard.writeText(user.id);
+    setCopiedId(true);
+    toast.success("User ID copied to clipboard!");
+    setTimeout(() => setCopiedId(false), 2000);
+  };
 
   return (
     <div className="space-y-6 max-w-xl">
@@ -50,6 +61,32 @@ export default function ProfileSettings() {
         </div>
 
         <div className="space-y-3 pt-1">
+          <div className="flex items-center justify-between text-xs py-1">
+            <div className="flex items-center gap-2.5 text-neutral-subtext">
+              <Fingerprint className="w-4 h-4 text-brand-accent" />
+              <span className="font-semibold">User ID</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-mono font-bold text-foreground text-[11px] bg-neutral-table-stripe px-2 py-0.5 rounded-lg border border-neutral-border/60">
+                {user?.id || "—"}
+              </span>
+              {user?.id && (
+                <button
+                  type="button"
+                  onClick={handleCopyUserId}
+                  className="text-neutral-subtext hover:text-brand-accent p-1 rounded-lg hover:bg-neutral-subtext/10 transition-colors cursor-pointer"
+                  title="Copy User ID"
+                >
+                  {copiedId ? (
+                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="flex items-center justify-between text-xs py-1">
             <div className="flex items-center gap-2.5 text-neutral-subtext">
               <Mail className="w-4 h-4 text-brand-accent" />

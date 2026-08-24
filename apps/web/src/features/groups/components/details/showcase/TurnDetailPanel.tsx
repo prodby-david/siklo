@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import formatDate from "@/shared/utils/formatDate";
 import {
   ShieldCheck,
@@ -14,10 +14,10 @@ import {
   Crown,
   CreditCard,
   Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { TurnDetailPanelProps } from "@/features/groups/types/showcase.types";
 import { getInitials } from "@/features/groups/utils/group.helper";
-import PaymentConfirmationModal from "@/features/payments/components/modals/PaymentConfirmationModal";
 import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
 import DisbursePayoutModal from "@/features/payments/components/modals/DisbursePayoutModal";
 import ConfirmPayoutReceiptModal from "@/features/payments/components/modals/ConfirmPayoutReceiptModal";
@@ -28,15 +28,14 @@ export default function TurnDetailPanel({
   selectedMemberName,
   selectedMembership,
   isSelectedPaid,
+  isSelectedPending = false,
+  isSelectedRejected = false,
   calculatedPayoutDate,
   group,
   isOrganizer,
+  isCurrentTurn = false,
   isCycleDone,
   currentCycle,
-  onMarkAsPaid,
-  isMarkingPaid,
-  onRejectPayment,
-  isRejecting = false,
   hasStarted = false,
   currentUserId,
   onSelectSlot,
@@ -52,7 +51,6 @@ export default function TurnDetailPanel({
   isConfirmingPayoutReceipt = false,
   onRefresh,
 }: TurnDetailPanelProps) {
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [isDisburseModalOpen, setIsDisburseModalOpen] = useState(false);
   const [isConfirmReceiptModalOpen, setIsConfirmReceiptModalOpen] = useState(false);
@@ -194,7 +192,7 @@ export default function TurnDetailPanel({
               Organizer has disbursed ₱{poolTotal.toLocaleString()} to {selectedMemberName}. Awaiting confirmation to complete Turn #{selectedTurn}.
             </p>
           </div>
-        ) : isRoundAllContributionsPaid ? (
+        ) : isRoundAllContributionsPaid && isCurrentTurn ? (
           <div className="rounded-2xl border border-brand-accent/30 bg-brand-accent/10 p-3.5 sm:p-4 space-y-1.5">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-brand-accent shrink-0" />
@@ -219,7 +217,11 @@ export default function TurnDetailPanel({
                 ? "All contributions for this cycle have been fully collected and verified."
                 : isSelectedPaid
                 ? "Payment for this cycle has been confirmed and verified on the ledger."
-                : "Contributions for this round are verified in real time by the group organizer."}
+                : isSelectedPending
+                ? "Payment has been submitted and is awaiting verification by the organizer."
+                : isSelectedRejected
+                ? "Previous payment was rejected. Please review and re-submit contribution."
+                : "Contributions for this round are verified on the organizer verification queue."}
             </p>
           </div>
         )}
@@ -318,7 +320,7 @@ export default function TurnDetailPanel({
               <span>Disbursed • Awaiting Member Confirmation</span>
             </div>
           )
-        ) : isRoundAllContributionsPaid ? (
+        ) : isRoundAllContributionsPaid && isCurrentTurn ? (
           isOrganizer ? (
             <>
               <button
@@ -374,104 +376,76 @@ export default function TurnDetailPanel({
               <span>All Contributions Collected • Awaiting Disbursement</span>
             </div>
           )
-        ) : isOrganizer ? (
-          isSelectedPaid ? (
-            <TurnPaidBadge currentCycle={currentCycle} isOrganizer={true} />
-          ) : selectedMembership ? (
-            <>
-              <button
-                onClick={() => setIsConfirmModalOpen(true)}
-                disabled={isMarkingPaid}
-                className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
-              >
-                <UserCheck className="w-4 h-4" />
-                <span>
-                  {isMarkingPaid
-                    ? "Verifying..."
-                    : `Mark as Paid (Cycle ${currentCycle})`}
-                </span>
-              </button>
+        ) : isSelectedPaid ? (
+          <TurnPaidBadge currentCycle={currentCycle} isOrganizer={isOrganizer} />
+        ) : isSelectedPending ? (
+          <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 rounded-2xl border border-amber-500/25">
+            <Clock className="w-4 h-4" />
+            <span>Payment Pending Verification</span>
+          </div>
+        ) : isUserSlotOwner ? (
+          <>
+            {isSelectedRejected && (
+              <div className="mb-2 p-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 flex items-center gap-2 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>Previous payment was rejected. Please re-submit valid proof.</span>
+              </div>
+            )}
+            <button
+              onClick={() => setIsPayModalOpen(true)}
+              className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer"
+            >
+              <CreditCard className="w-4 h-4" />
+              <span>{isSelectedRejected ? "Re-submit Contribution" : `Pay Contribution (Cycle #${currentCycle})`}</span>
+            </button>
 
-              <PaymentConfirmationModal
-                isOpen={isConfirmModalOpen}
-                onClose={() => setIsConfirmModalOpen(false)}
-                memberName={selectedMembership.user.name}
+            {group.id && isPayModalOpen && (
+              <PaymentSubmissionModal
+                isOpen={isPayModalOpen}
+                onClose={() => setIsPayModalOpen(false)}
+                groupId={group.id}
+                roundId={
+                  group.rounds?.find(
+                    (r) =>
+                      r.cycleNumber === currentCycle &&
+                      r.roundNumber === selectedTurn,
+                  )?.id || "current"
+                }
+                cycleNumber={currentCycle}
                 turnNumber={selectedTurn}
-                contributionAmount={contributionNum}
-                isConfirming={isMarkingPaid}
-                isRejecting={isRejecting}
-                onApprove={(data) => {
-                  setIsConfirmModalOpen(false);
-                  onMarkAsPaid(data);
-                }}
-                onReject={(data) => {
-                  setIsConfirmModalOpen(false);
-                  onRejectPayment?.(data);
+                baseAmount={contributionNum}
+                targetDueDate={calculatedPayoutDate}
+                gracePeriodDays={group.gracePeriodDays ?? 0}
+                latePenaltyRate={group.latePenaltyAmount ?? 0}
+                allowedMethods={
+                  group.allowedPaymentMethods || [
+                    "E_WALLET",
+                    "BANK_TRANSFER",
+                    "CASH",
+                  ]
+                }
+                organizerPaymentDetails={group.paymentDetails}
+                onSuccess={() => {
+                  setIsPayModalOpen(false);
+                  onRefresh?.();
                 }}
               />
-            </>
-          ) : (
-            <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
-              <Lock className="w-3.5 h-3.5" />
-              <span>Slot Unassigned</span>
-            </div>
-          )
-        ) : isUserSlotOwner ? (
-          isSelectedPaid ? (
-            <TurnPaidBadge currentCycle={currentCycle} isOrganizer={false} />
-          ) : (
-            <>
-              <button
-                onClick={() => setIsPayModalOpen(true)}
-                className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover rounded-2xl transition-all shadow-sm active:scale-95 cursor-pointer"
-              >
-                <CreditCard className="w-4 h-4" />
-                <span>Pay Contribution (Cycle #{currentCycle})</span>
-              </button>
-
-              {group.id && isPayModalOpen && (
-                <PaymentSubmissionModal
-                  isOpen={isPayModalOpen}
-                  onClose={() => setIsPayModalOpen(false)}
-                  groupId={group.id}
-                  roundId={
-                    group.rounds?.find(
-                      (r) =>
-                        r.cycleNumber === currentCycle &&
-                        r.roundNumber === selectedTurn,
-                    )?.id || "current"
-                  }
-                  cycleNumber={currentCycle}
-                  turnNumber={selectedTurn}
-                  baseAmount={contributionNum}
-                  targetDueDate={calculatedPayoutDate}
-                  gracePeriodDays={group.gracePeriodDays ?? 0}
-                  latePenaltyRate={group.latePenaltyAmount ?? 0}
-                  allowedMethods={
-                    group.allowedPaymentMethods || [
-                      "E_WALLET",
-                      "BANK_TRANSFER",
-                      "CASH",
-                    ]
-                  }
-                  organizerPaymentDetails={group.paymentDetails}
-                  onSuccess={() => {
-                    setIsPayModalOpen(false);
-                    onRefresh?.();
-                  }}
-                />
-              )}
-            </>
-          )
-        ) : isSelectedPaid ? (
-          <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Paid for Cycle #{currentCycle}</span>
+            )}
+          </>
+        ) : isSelectedRejected ? (
+          <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded-2xl border border-rose-500/25">
+            <AlertCircle className="w-4 h-4" />
+            <span>Payment Rejected • Awaiting Member Re-submission</span>
           </div>
-        ) : (
+        ) : selectedMembership ? (
           <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
             <Clock className="w-3.5 h-3.5" />
             <span>Awaiting Member Contribution</span>
+          </div>
+        ) : (
+          <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-neutral-subtext bg-neutral-table-stripe rounded-2xl border border-neutral-border/60">
+            <Lock className="w-3.5 h-3.5" />
+            <span>Slot Unassigned</span>
           </div>
         )}
       </div>

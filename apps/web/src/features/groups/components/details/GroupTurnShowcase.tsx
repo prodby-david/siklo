@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCw, Users, Info, CheckCircle2 } from "lucide-react";
-import { useMarkMemberPaid } from "@/features/payments/hooks/useMarkMemberPaid";
-import { useRequestAdvancePayout } from "@/features/payments/hooks/useRequestAdvancePayout";
 import { useDisbursePayout } from "@/features/payments/hooks/useDisbursePayout";
 import { useConfirmPayoutReceipt } from "@/features/payments/hooks/useConfirmPayoutReceipt";
 import { useSelectSlot } from "../../hooks/useSelectSlot";
@@ -39,14 +37,10 @@ export default function GroupTurnShowcase({
   onRefresh,
 }: GroupTurnShowcaseProps) {
   const [selectedTurn, setSelectedTurn] = useState<number>(1);
-  const { markPaid, isMarkingPaid, markRejected, isRejecting } =
-    useMarkMemberPaid(groupId);
   const { mutateAsync: selectSlot, isPending: isSelectingSlot } =
     useSelectSlot(groupId);
   const { mutateAsync: removeMember, isPending: isRemovingMember } =
     useRemoveMember(groupId);
-  const { requestPayout, isRequesting: isRequestingAdvancePayout } =
-    useRequestAdvancePayout(groupId);
   const { disburse, isDisbursing: isDisbursingPayout } =
     useDisbursePayout(groupId);
   const { confirmReceipt, isConfirmingReceipt: isConfirmingPayoutReceipt } =
@@ -54,9 +48,12 @@ export default function GroupTurnShowcase({
 
   const {
     paidMemberUserIds,
+    pendingMemberUserIds,
+    rejectedMemberUserIds,
     paidUserIdsByTurn,
     disbursedTurns,
     confirmedTurns,
+    completedDisbursementDates,
     currentCycle,
     currentTurn,
   } = useGroupTurnShowcaseState(
@@ -94,54 +91,21 @@ export default function GroupTurnShowcase({
   const isSelectedPaid = selectedMemberUserId
     ? paidMemberUserIds.has(selectedMemberUserId)
     : false;
+  const isSelectedPending = selectedMemberUserId
+    ? pendingMemberUserIds.has(selectedMemberUserId)
+    : false;
+  const isSelectedRejected = selectedMemberUserId
+    ? rejectedMemberUserIds.has(selectedMemberUserId)
+    : false;
+
   const calculatedPayoutDate = getPayoutDate(
     startDate,
     selectedTurn,
-    billingCycle
+    billingCycle,
+    completedDisbursementDates
   );
 
   const totalPayoutNum = (Number(contributionAmount) || 0) * maxMembers;
-
-  const handleMarkAsPaid = async (data?: {
-    referenceNumber?: string;
-    proofUrl?: string;
-  }) => {
-    if (!selectedMemberUserId) return;
-    await markPaid({
-      memberUserId: selectedMemberUserId,
-      cycleNumber: currentCycle,
-      referenceNumber: data?.referenceNumber,
-      proofUrl: data?.proofUrl,
-    });
-  };
-
-  const handleRejectPayment = async (data?: {
-    reason?: string;
-    rejectionProofUrl?: string;
-  }) => {
-    if (!selectedMemberUserId) return;
-    await markRejected({
-      memberUserId: selectedMemberUserId,
-      reason: data?.reason,
-      cycleNumber: currentCycle,
-      rejectionProofUrl: data?.rejectionProofUrl,
-    });
-  };
-
-  const handleRequestAdvancePayout = async (data: {
-    accountDetails: string;
-    notes?: string;
-  }) => {
-    await requestPayout({
-      groupId,
-      roundId: matchedRound?.id,
-      cycleNumber: currentCycle,
-      turnNumber: selectedTurn,
-      accountDetails: data.accountDetails,
-      notes: data.notes,
-    });
-    onRefresh?.();
-  };
 
   const handleDisbursePayout = async (data: {
     referenceNumber?: string;
@@ -261,10 +225,20 @@ export default function GroupTurnShowcase({
               const cardKey = `${currentCycle}-${position}`;
               const isConfirmed = confirmedTurns.has(cardKey);
               const isCurrent = position === currentTurn;
+              const isTurnPaid =
+                isConfirmed ||
+                position < currentTurn ||
+                (membership?.userId
+                  ? paidUserIdsByTurn[`${currentCycle}-${currentTurn}`]?.has(
+                      membership.userId
+                    )
+                  : false);
+
               const calculatedDate = getPayoutDate(
                 startDate,
                 position,
-                billingCycle
+                billingCycle,
+                completedDisbursementDates
               );
 
               return (
@@ -273,7 +247,7 @@ export default function GroupTurnShowcase({
                   position={position}
                   membership={membership}
                   isSelected={isSelected}
-                  isPaid={isConfirmed}
+                  isPaid={Boolean(isTurnPaid)}
                   isCurrent={isCurrent}
                   calculatedDate={calculatedDate}
                   onSelect={setSelectedTurn}
@@ -289,6 +263,8 @@ export default function GroupTurnShowcase({
           selectedMemberName={selectedMemberName}
           selectedMembership={selectedMembership}
           isSelectedPaid={isSelectedPaid}
+          isSelectedPending={isSelectedPending}
+          isSelectedRejected={isSelectedRejected}
           calculatedPayoutDate={calculatedPayoutDate}
           group={{
             id: groupId,
@@ -308,10 +284,6 @@ export default function GroupTurnShowcase({
           isCurrentTurn={selectedTurn === currentTurn}
           isCycleDone={isCycleDone}
           currentCycle={currentCycle}
-          onMarkAsPaid={handleMarkAsPaid}
-          isMarkingPaid={isMarkingPaid}
-          onRejectPayment={handleRejectPayment}
-          isRejecting={isRejecting}
           hasStarted={hasStarted}
           currentUserId={currentUserId}
           onSelectSlot={handleSelectSlot}
@@ -325,8 +297,6 @@ export default function GroupTurnShowcase({
           isDisbursingPayout={isDisbursingPayout}
           onConfirmPayoutReceipt={handleConfirmPayoutReceipt}
           isConfirmingPayoutReceipt={isConfirmingPayoutReceipt}
-          onRequestAdvancePayout={handleRequestAdvancePayout}
-          isRequestingAdvancePayout={isRequestingAdvancePayout}
           onRefresh={onRefresh}
         />
       </div>

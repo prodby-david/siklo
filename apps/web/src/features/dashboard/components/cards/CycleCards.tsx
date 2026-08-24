@@ -1,7 +1,7 @@
 "use client";
 
 import useGetGroup from "../../../groups/hooks/useGetGroup";
-import { Group, ExtendedGroup } from "../../types/groups";
+import { Group, ExtendedGroup } from "../../types/groups.types";
 import { PhilippinePeso, FolderOpen, Users } from "lucide-react";
 import Link from "next/link";
 import EmptyGroupState from "../EmptyGroupState";

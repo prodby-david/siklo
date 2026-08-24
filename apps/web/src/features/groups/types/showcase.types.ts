@@ -45,6 +45,8 @@ export interface TurnDetailPanelProps {
   selectedMemberName: string;
   selectedMembership?: Membership;
   isSelectedPaid: boolean;
+  isSelectedPending?: boolean;
+  isSelectedRejected?: boolean;
   calculatedPayoutDate: Date | null;
   group: {
     id?: string;
@@ -64,10 +66,6 @@ export interface TurnDetailPanelProps {
   isCurrentTurn: boolean;
   isCycleDone: boolean;
   currentCycle: number;
-  onMarkAsPaid: (data?: { referenceNumber?: string; proofUrl?: string }) => void;
-  isMarkingPaid: boolean;
-  onRejectPayment?: (data?: { reason?: string; rejectionProofUrl?: string }) => void | Promise<void>;
-  isRejecting?: boolean;
   hasStarted?: boolean;
   currentUserId?: string;
   onSelectSlot?: (position: number) => Promise<void>;
@@ -81,7 +79,5 @@ export interface TurnDetailPanelProps {
   isDisbursingPayout?: boolean;
   onConfirmPayoutReceipt?: (data: { notes?: string }) => Promise<void>;
   isConfirmingPayoutReceipt?: boolean;
-  onRequestAdvancePayout?: (data: { accountDetails: string; notes?: string }) => Promise<void>;
-  isRequestingAdvancePayout?: boolean;
   onRefresh?: () => void;
 }

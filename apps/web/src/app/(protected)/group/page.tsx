@@ -8,7 +8,7 @@ import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup"
 import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
 import EmptyGroupState from "@/features/dashboard/components/EmptyGroupState";
 import GroupCardItem from "@/features/groups/components/cards/GroupCardItem";
-import { ExtendedGroup } from "@/features/dashboard/types/groups";
+import { ExtendedGroup } from "@/features/dashboard/types/groups.types";
 
 interface GroupWithCycle extends ExtendedGroup {
   isCycleDone?: boolean;

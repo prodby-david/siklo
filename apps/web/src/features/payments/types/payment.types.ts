@@ -9,14 +9,10 @@ export interface PaymentMethodMeta {
 }
 
 export type { PaymentSubmissionInput } from "../validator/payment-submission.validator";
-export type {
-  ConfirmApprovalInput,
-  ConfirmRejectionInput,
-  PaymentRejectionInput,
-} from "../validator/payment-confirmation.validator";
 
 export interface IncomingPaymentItem {
   id: string;
+  groupId: string;
   userId: string;
   paymentMethod: PaymentMethod;
   baseAmount: number;
@@ -32,6 +28,11 @@ export interface IncomingPaymentItem {
   };
   round?: {
     roundNumber: number;
+    cycleNumber?: number;
+  };
+  group?: {
+    id: string;
+    name: string;
   };
 }
 
@@ -83,38 +84,12 @@ export interface PaymentSubmissionModalProps {
   onSuccess?: () => void;
 }
 
-export interface PaymentConfirmationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  memberName: string;
-  turnNumber: number;
-  contributionAmount: number;
-  isConfirming: boolean;
-  isRejecting: boolean;
-  initialReferenceNumber?: string;
-  initialProofUrl?: string;
-  onApprove: (data: { referenceNumber?: string; proofUrl?: string }) => void;
-  onReject: (data: { reason: string; rejectionProofUrl?: string }) => void;
-}
-
 export interface PaymentRejectionReasonModalProps {
   isOpen: boolean;
   onClose: () => void;
   paymentId: string;
   memberName: string;
   onSuccess?: () => void;
-}
-
-export interface PaymentSetupGateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-}
-
-export interface PayoutSetupGateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
 }
 
 export interface ReceiptImagePreviewModalProps {
@@ -125,7 +100,7 @@ export interface ReceiptImagePreviewModalProps {
 }
 
 export interface IncomingPaymentsVerificationSectionProps {
-  groupId: string;
-  isOrganizer: boolean;
+  groupId?: string;
+  isOrganizer?: boolean;
   onRefreshGroup?: () => void;
 }

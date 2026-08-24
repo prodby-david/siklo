@@ -7,7 +7,6 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useJoinGroup from "./useJoinGroup";
-import type { GroupPreviewResponse } from "../api/getGroupInvitePreview";
 import { toast } from "sonner";
 import axios from "axios";
 
@@ -29,9 +28,7 @@ export default function useInviteCode() {
 
   const [showModal, setShowModal] = useState(false);
   const [step, setStep] = useState<"code" | "slots">("code");
-  const [preview, setPreview] = useState<GroupPreviewResponse | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
-  const [loadingPreview] = useState(false);
 
   const inviteCodeValue = watch("inviteCode");
 
@@ -45,7 +42,6 @@ export default function useInviteCode() {
   const handleReset = () => {
     reset();
     setStep("code");
-    setPreview(null);
     setSelectedSlot(null);
   };
 
@@ -80,14 +76,13 @@ export default function useInviteCode() {
     register,
     handleSubmit: handleSubmit(onSubmit),
     errors,
-    isSubmitting: isSubmitting || loadingPreview || joinGroup.isPending,
+    isSubmitting: isSubmitting || joinGroup.isPending,
     showModal,
     setShowModal,
     reset: handleReset,
     handleShowModal,
     step,
     setStep,
-    preview,
     selectedSlot,
     setSelectedSlot,
     inviteCodeValue,

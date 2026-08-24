@@ -31,6 +31,7 @@ export default function GroupHero({
   payoutSequence = "MANUAL",
   isCurrentUserPaid = false,
   currentCycle = 1,
+  currentTurn = 1,
   onRefresh,
 }: GroupHeroProps) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
@@ -58,67 +59,64 @@ export default function GroupHero({
                   : "bg-warning/15 text-warning"
               }`}
             >
-              {isCycleDone ? (
-                "Completed"
-              ) : hasStarted ? (
-                "Active"
-              ) : (
-                "Not Yet Started"
-              )}
+              {isCycleDone ? "Cycle Complete" : hasStarted ? "Active Cycle" : "Unstarted"}
             </span>
-            <span className="rounded-full bg-indigo-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-indigo-500">
-              {billingLabel} Cycle
+
+            <span className="rounded-full bg-neutral-table-stripe px-3 py-1 text-[10px] font-bold text-neutral-subtext uppercase tracking-wider border border-neutral-border">
+              {billingLabel}
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-3">
-            <span>{name}</span>
-            {isOrganizer && !hasStarted && !isCycleDone && (
-              <button
-                type="button"
-                onClick={() => setIsEditModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-background border border-neutral-border hover:border-brand-accent/40 text-neutral-subtext hover:text-foreground text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
-                title="Edit Group Parameters"
-              >
-                <Settings className="w-3.5 h-3.5 text-brand-accent" />
-                <span>Edit Group</span>
-              </button>
-            )}
-          </h1>
-
-          <div>
+          <div className="space-y-1">
+            <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
+              {name}
+            </h1>
             {description ? (
-              <p className="text-sm text-neutral-subtext leading-relaxed">
+              <p className="text-xs sm:text-sm text-neutral-subtext line-clamp-2">
                 {description}
               </p>
             ) : (
-              <p className="text-sm text-neutral-subtext italic">
+              <p className="text-xs sm:text-sm text-neutral-subtext italic">
                 No description provided for this group.
               </p>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 pt-2">
-            {hasStarted && !isCycleDone && (
+          <div className="flex flex-wrap items-center gap-2 pt-1">
+            {isCycleDone ? (
+              <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+                <ShieldCheck className="w-4 h-4" />
+                <span>All Cycle Rotations Completed</span>
+              </div>
+            ) : hasStarted ? (
               isCurrentUserPaid ? (
-                <button
-                  type="button"
-                  disabled={true}
-                  className="inline-flex items-center gap-2 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-xs cursor-not-allowed opacity-90"
-                >
+                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Contribution Paid (Cycle #{currentCycle})</span>
-                </button>
+                  <span>Turn #{currentTurn} Contribution Paid</span>
+                </div>
               ) : (
                 <button
-                  type="button"
                   onClick={() => setIsPayModalOpen(true)}
-                  className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2.5 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+                  className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
                 >
                   <CreditCard className="w-4 h-4" />
-                  <span>Pay Contribution</span>
+                  <span>Pay Contribution (Turn #{currentTurn})</span>
                 </button>
               )
+            ) : (
+              <div className="text-xs text-neutral-subtext">
+                Waiting for organizer to start cycle...
+              </div>
+            )}
+
+            {isOrganizer && !hasStarted && (
+              <button
+                onClick={() => setIsEditModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-neutral-subtext hover:text-foreground bg-background hover:bg-neutral-subtext/5 rounded-2xl border border-neutral-border transition-all duration-150 active:scale-95 cursor-pointer"
+              >
+                <Settings className="w-3.5 h-3.5" />
+                <span>Settings</span>
+              </button>
             )}
           </div>
         </div>
@@ -142,6 +140,8 @@ export default function GroupHero({
           onClose={() => setIsPayModalOpen(false)}
           groupId={groupId}
           roundId={roundId || "current"}
+          cycleNumber={currentCycle}
+          turnNumber={currentTurn}
           baseAmount={contributionAmount}
           gracePeriodDays={gracePeriodDays}
           latePenaltyRate={latePenaltyAmount}

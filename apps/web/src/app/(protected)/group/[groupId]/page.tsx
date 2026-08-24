@@ -25,6 +25,7 @@ export default function GroupPage() {
     isMembersFull,
     isCycleDone,
     currentCycle,
+    currentTurn,
     isCurrentUserPaid,
     handleStartCycle,
     isStarting,
@@ -52,7 +53,7 @@ export default function GroupPage() {
             permission to view it.
           </p>
           <Link
-            href="/dashboard"
+            href="/group"
             className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Dashboard
@@ -103,6 +104,7 @@ export default function GroupPage() {
           payoutSequence={data.payoutSequence}
           isCurrentUserPaid={isCurrentUserPaid}
           currentCycle={currentCycle}
+          currentTurn={currentTurn}
           onRefresh={refetch}
         />
 
@@ -120,6 +122,7 @@ export default function GroupPage() {
           <IncomingPaymentsVerificationSection
             groupId={data.id}
             isOrganizer={isOrganizer}
+            onRefreshGroup={refetch}
           />
         )}
 

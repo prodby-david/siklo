@@ -39,9 +39,10 @@ export default function PaymentSettings() {
 
             <Input
               id="gcashNumber"
-              labelText="GCash Mobile Number"
+              labelText="GCash Mobile Number (11 digits)"
               type="text"
               inputMode="numeric"
+              maxLength={11}
               value={formData.gcashNumber || ""}
               onChange={(e) => handleChange("gcashNumber", e.target.value)}
               placeholder="e.g. 09171234567"
@@ -69,9 +70,10 @@ export default function PaymentSettings() {
 
             <Input
               id="mayaNumber"
-              labelText="Maya Mobile Number"
+              labelText="Maya Mobile Number (11 digits)"
               type="text"
               inputMode="numeric"
+              maxLength={11}
               value={formData.mayaNumber || ""}
               onChange={(e) => handleChange("mayaNumber", e.target.value)}
               placeholder="e.g. 09187654321"
@@ -102,6 +104,7 @@ export default function PaymentSettings() {
               labelText="Bank Account Number"
               type="text"
               inputMode="numeric"
+              maxLength={20}
               value={formData.bankAccountNumber || ""}
               onChange={(e) =>
                 handleChange("bankAccountNumber", e.target.value)
@@ -111,7 +114,6 @@ export default function PaymentSettings() {
             />
           </div>
         </div>
-
 
         <div className="pt-2 flex items-center gap-3">
           <button

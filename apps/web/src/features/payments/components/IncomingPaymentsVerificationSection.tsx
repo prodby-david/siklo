@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-import { ShieldCheck, Check, Eye, UserX } from "lucide-react";
+import { useState } from "react";
+import { ShieldCheck, Check, Eye, UserX, Users } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { verifyPayment } from "../api/verifyPayment";
 import { usePendingPayments } from "../hooks/usePendingPayments";
 import { IncomingPaymentsVerificationSectionProps } from "../types/payment.types";
-import { getApiErrorMessage } from "../utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import ReceiptImagePreviewModal from "./modals/ReceiptImagePreviewModal";
 import PaymentRejectionReasonModal from "./modals/PaymentRejectionReasonModal";
 
 export default function IncomingPaymentsVerificationSection({
   groupId,
-  isOrganizer,
+  isOrganizer = true,
   onRefreshGroup,
 }: IncomingPaymentsVerificationSectionProps) {
+  const queryClient = useQueryClient();
   const [selectedProofUrl, setSelectedProofUrl] = useState<string | null>(null);
   const [rejectingPayment, setRejectingPayment] = useState<{
     id: string;
@@ -33,6 +35,9 @@ export default function IncomingPaymentsVerificationSection({
       await verifyPayment(paymentId);
       toast.success("Payment verified and approved!");
       await refetch();
+      await queryClient.invalidateQueries({ queryKey: ["groups"] });
+      await queryClient.invalidateQueries({ queryKey: ["group-activities"] });
+      await queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
       if (onRefreshGroup) onRefreshGroup();
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Failed to verify payment"));
@@ -73,12 +78,18 @@ export default function IncomingPaymentsVerificationSection({
             className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl border border-neutral-border/60 bg-background"
           >
             <div className="flex flex-col text-left gap-1">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-extrabold text-foreground">
                   {p.user?.name || "Member"}
                 </span>
+                {p.group && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-neutral-subtext bg-neutral-table-stripe px-2 py-0.5 rounded-full border border-neutral-border/60">
+                    <Users className="w-3 h-3 text-brand-accent" />
+                    <span>{p.group.name}</span>
+                  </span>
+                )}
                 <span className="text-[10px] font-bold text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded-full">
-                  Round #{p.round?.roundNumber || 1}
+                  Turn #{p.round?.roundNumber || 1}
                 </span>
                 <span className="text-[10px] font-bold text-neutral-subtext">
                   {p.paymentMethod}
@@ -150,8 +161,11 @@ export default function IncomingPaymentsVerificationSection({
           onClose={() => setRejectingPayment(null)}
           paymentId={rejectingPayment.id}
           memberName={rejectingPayment.name}
-          onSuccess={() => {
-            refetch();
+          onSuccess={async () => {
+            await refetch();
+            await queryClient.invalidateQueries({ queryKey: ["groups"] });
+            await queryClient.invalidateQueries({ queryKey: ["group-activities"] });
+            await queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
             if (onRefreshGroup) onRefreshGroup();
           }}
         />

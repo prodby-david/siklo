@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import axios from "axios";
@@ -32,20 +32,20 @@ export function usePaymentSettings() {
     field: keyof PaymentAccountDetailsDTO,
     value: string,
   ) => {
-    const isNumericField = [
-      "gcashNumber",
-      "mayaNumber",
-      "bankAccountNumber",
-    ].includes(field);
-    const sanitizedValue = isNumericField ? value.replace(/\D/g, "") : value;
+    let sanitizedValue = value;
+    if (field === "gcashNumber" || field === "mayaNumber") {
+      sanitizedValue = value.replace(/\D/g, "").slice(0, 11);
+    } else if (field === "bankAccountNumber") {
+      sanitizedValue = value.replace(/\D/g, "").slice(0, 20);
+    }
+
     setCustomData((prev) => ({
       ...prev,
       [field]: sanitizedValue,
     }));
   };
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 

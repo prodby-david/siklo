@@ -12,7 +12,7 @@ export default function useChatUI() {
   const [messages, setMessages] = useState<UIMessage[]>([
     {
       id: generateId(),
-      role: "assistant",
+      role: "user",
       parts: [
         {
           type: "text",

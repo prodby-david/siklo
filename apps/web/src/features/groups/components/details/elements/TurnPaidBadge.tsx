@@ -6,17 +6,13 @@ export default function TurnPaidBadge({
   isOrganizer = false,
 }: TurnPaidBadgeProps) {
   return (
-    <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+    <div className="w-full flex items-center justify-center gap-1.5 py-3 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/25">
       {isOrganizer ? (
         <ShieldCheck className="w-4 h-4" />
       ) : (
         <CheckCircle2 className="w-4 h-4" />
       )}
-      <span>
-        {isOrganizer
-          ? `Marked as Paid for Cycle #${currentCycle}`
-          : `Your Contribution is Paid (Cycle #${currentCycle})`}
-      </span>
+      <span>Already Paid (Cycle #{currentCycle})</span>
     </div>
   );
 }

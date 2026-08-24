@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
 import { fetchNearestDue } from "../api/fetchNearestDue";
-import { ExtendedGroup as Group } from "../types/groups";
+import { ExtendedGroup as Group } from "../types/groups.types";
 
 const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
   DAILY: 30,

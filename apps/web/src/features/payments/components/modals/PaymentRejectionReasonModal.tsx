@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,12 +13,9 @@ import {
 import { XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { rejectPayment } from "../../api/rejectPayment";
-import { rejectPaymentSchema } from "../../validator/payment-confirmation.validator";
-import {
-  PaymentRejectionInput,
-  PaymentRejectionReasonModalProps,
-} from "../../types/payment.types";
-import { getApiErrorMessage } from "../../utils/error.helper";
+import { rejectPaymentSchema, type RejectPaymentDTO } from "@siklo/shared-schemas";
+import { PaymentRejectionReasonModalProps } from "../../types/payment.types";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
 import PaymentErrorAlert from "../elements/PaymentErrorAlert";
 
@@ -38,7 +35,7 @@ export default function PaymentRejectionReasonModal({
     setValue,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<PaymentRejectionInput>({
+  } = useForm<RejectPaymentDTO>({
     resolver: zodResolver(rejectPaymentSchema),
     defaultValues: {
       rejectionReason: "",
@@ -46,7 +43,7 @@ export default function PaymentRejectionReasonModal({
     },
   });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -70,11 +67,10 @@ export default function PaymentRejectionReasonModal({
     setValue("rejectionProofUrl", "");
   };
 
-  const onSubmit = async (data: PaymentRejectionInput) => {
+  const onSubmit = async (data: RejectPaymentDTO) => {
     setErrorMessage(null);
     try {
       await rejectPayment(paymentId, {
-        paymentId,
         rejectionReason: data.rejectionReason.trim(),
         rejectionProofUrl: data.rejectionProofUrl?.trim() || undefined,
       });

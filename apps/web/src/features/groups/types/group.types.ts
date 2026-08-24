@@ -110,6 +110,7 @@ export interface GroupHeroProps {
   payoutSequence?: string;
   isCurrentUserPaid?: boolean;
   currentCycle?: number;
+  currentTurn?: number;
   onRefresh?: () => void;
 }
 

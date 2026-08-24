@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, FormEvent } from "react";
 import { Megaphone, X, Loader2, Send } from "lucide-react";
 import { useSendAnnouncement } from "../../hooks/useSendAnnouncement";
 import { toast } from "sonner";
-import { getApiErrorMessage } from "@/features/payments/utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import { GroupAnnouncementDialogProps } from "@/features/groups/types/group.types";
 
 export default function GroupAnnouncementDialog({
@@ -15,13 +15,13 @@ export default function GroupAnnouncementDialog({
   const { mutateAsync: sendAnnouncement, isPending } =
     useSendAnnouncement(groupId);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!message.trim()) return;
 
     try {
       await sendAnnouncement(message.trim());
-      toast.success("Announcement broadcasted to group!");
+      toast.success("Announcement posted to group!");
       setMessage("");
       setIsOpen(false);
     } catch (err: unknown) {
@@ -34,10 +34,10 @@ export default function GroupAnnouncementDialog({
       <button
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-accent/30 bg-brand-accent/10 hover:bg-brand-accent/20 text-brand-accent text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95"
-        title="Broadcast Announcement"
+        title="Post Announcement"
       >
         <Megaphone className="w-3.5 h-3.5" />
-        <span>Broadcast</span>
+        <span>Post Announcement</span>
       </button>
 
       {isOpen && (
@@ -56,10 +56,10 @@ export default function GroupAnnouncementDialog({
               </div>
               <div>
                 <h3 className="text-sm font-extrabold text-foreground">
-                  Broadcast Announcement
+                  Post Announcement
                 </h3>
                 <p className="text-[10px] text-neutral-subtext">
-                  Broadcast an update to all members in this group activity feed.
+                  Post an update to all members in this group activity feed.
                 </p>
               </div>
             </div>
@@ -95,12 +95,12 @@ export default function GroupAnnouncementDialog({
                   {isPending ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Sending...</span>
+                      <span>Posting...</span>
                     </>
                   ) : (
                     <>
                       <Send className="w-3.5 h-3.5" />
-                      <span>Send Broadcast</span>
+                      <span>Post Announcement</span>
                     </>
                   )}
                 </button>
