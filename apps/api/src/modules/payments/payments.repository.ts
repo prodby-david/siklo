@@ -314,6 +314,24 @@ export class PaymentsRepository {
     });
   }
 
+  async findNextUnpaidRoundAfter(
+    groupId: string,
+    cycleNumber: number,
+    roundNumber: number,
+  ) {
+    return this.prisma.round.findFirst({
+      where: {
+        groupId,
+        status: { not: RoundStatus.PAID },
+        OR: [
+          { cycleNumber: { gt: cycleNumber } },
+          { cycleNumber, roundNumber: { gt: roundNumber } },
+        ],
+      },
+      orderBy: [{ cycleNumber: 'asc' }, { roundNumber: 'asc' }],
+    });
+  }
+
   async updateRoundStatus(
     roundId: string,
     status: RoundStatus,

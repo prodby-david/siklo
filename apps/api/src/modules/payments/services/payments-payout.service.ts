@@ -346,6 +346,24 @@ export class PaymentsPayoutService {
       });
     }
 
+    const nextRound = await this.paymentsRepository.findNextUnpaidRoundAfter(
+      dto.groupId,
+      currentCycle,
+      round.roundNumber,
+    );
+
+    if (nextRound) {
+      for (const member of memberships) {
+        if (member.userId === recipientUserId) continue;
+        await this.notificationsService.createNotification({
+          userId: member.userId,
+          groupId: dto.groupId,
+          notificationType: 'PAYOUT',
+          description: `Turn #${nextRound.roundNumber} (Cycle ${nextRound.cycleNumber}) contributions are now open.`,
+        });
+      }
+    }
+
     return {
       success: true,
       message: 'Payout receipt confirmed successfully',
