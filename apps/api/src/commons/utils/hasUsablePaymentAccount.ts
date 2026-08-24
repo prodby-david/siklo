@@ -9,11 +9,12 @@ export function hasUsablePaymentAccount(
 ): accounts is PaymentAccountsInput {
   if (!accounts || typeof accounts !== 'object') return false;
 
-  const { gcashNumber, mayaNumber, bankAccountNumber } =
-    accounts as Record<string, unknown>;
+  const { gcashNumber, mayaNumber, bankAccountNumber } = accounts as Record<
+    string,
+    unknown
+  >;
 
   return [gcashNumber, mayaNumber, bankAccountNumber].some(
-    (number) =>
-      typeof number === 'string' && number.trim().length > 0,
+    (number) => typeof number === 'string' && number.trim().length > 0,
   );
 }
