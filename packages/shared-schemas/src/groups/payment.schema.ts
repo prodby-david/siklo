@@ -12,9 +12,12 @@ export const submitPaymentSchema = z.object({
 });
 
 export const rejectPaymentSchema = z.object({
-  paymentId: z.string(),
-  rejectionReason: z.string().min(5, "Rejection reason must be at least 5 characters"),
-  rejectionProofUrl: z.string().optional(),
+  rejectionReason: z
+    .string()
+    .trim()
+    .min(5, "Rejection reason must be at least 5 characters")
+    .max(300, "Rejection reason cannot exceed 300 characters"),
+  rejectionProofUrl: z.string().optional().or(z.literal("")),
 });
 
 export const updateMemberPaymentPreferenceSchema = z.object({
@@ -29,7 +32,7 @@ export const markMemberPaidSchema = z.object({
   referenceNumber: z
     .string()
     .trim()
-    .max(100, "Notes cannot exceed 100 characters")
+    .max(100, "Reference number cannot exceed 100 characters")
     .optional()
     .or(z.literal("")),
   proofUrl: z.string().min(1, "Payment receipt proof image is required"),
