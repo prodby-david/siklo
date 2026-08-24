@@ -45,10 +45,11 @@ export class PaymentsSubmissionService {
     const targetTurnNum = dto.turnNumber || membership.position;
 
     if (targetCycleNum > 1) {
-      const unpaidBefore = await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
-        dto.groupId,
-        targetCycleNum,
-      );
+      const unpaidBefore =
+        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
+          dto.groupId,
+          targetCycleNum,
+        );
       if (unpaidBefore > 0) {
         throw new ConflictException(
           `Cycle ${targetCycleNum} cannot open until all previous cycle payouts are completed`,
