@@ -120,6 +120,15 @@ export class PaymentsSubmissionService {
           );
         }
 
+        if (
+          existingPayment &&
+          existingPayment.status === PAYMENT_STATUS.PENDING
+        ) {
+          throw new ConflictException(
+            'Your contribution is already awaiting organizer verification.',
+          );
+        }
+
         const now = new Date();
         const penaltyAmount = calculatePenaltyAmount(
           now,

@@ -25,6 +25,8 @@ describe('PaymentsService', () => {
     findRoundByRoundId: jest.Mock;
     findMembership: jest.Mock;
     createPayment: jest.Mock;
+    findPaymentByGroupRoundAndUser: jest.Mock;
+    updatePaymentRecord: jest.Mock;
     countUnpaidRoundsBeforeCycle: jest.Mock;
     findOrCreateRound: jest.Mock;
     updateRoundStatus: jest.Mock;
@@ -44,6 +46,8 @@ describe('PaymentsService', () => {
       findRoundByRoundId: jest.fn(),
       findMembership: jest.fn(),
       createPayment: jest.fn(),
+      findPaymentByGroupRoundAndUser: jest.fn(),
+      updatePaymentRecord: jest.fn(),
       countUnpaidRoundsBeforeCycle: jest.fn().mockResolvedValue(0),
       findOrCreateRound: jest.fn(),
       updateRoundStatus: jest.fn(),
@@ -211,6 +215,77 @@ describe('PaymentsService', () => {
         ),
       ).rejects.toThrow(ConflictException);
       expect(paymentsRepository.createPayment).not.toHaveBeenCalled();
+    });
+
+    it('should block resubmission while a payment is awaiting verification', async () => {
+      paymentsRepository.findGroupByGroupId.mockResolvedValue({
+        id: 'group-1',
+        cycleDuration: 3,
+        memberships: [{ userId: 'user-1', position: 1 }],
+      });
+      paymentsRepository.findMembership.mockResolvedValue({
+        userId: 'user-1',
+        position: 1,
+        user: { name: 'User One' },
+      });
+      paymentsRepository.findRoundByRoundId.mockResolvedValue(null);
+      paymentsRepository.findOrCreateRound.mockResolvedValue({
+        id: 'round-1',
+        targetDate: new Date('2026-08-01'),
+      });
+      paymentsRepository.findPaymentByGroupRoundAndUser.mockResolvedValue({
+        id: 'payment-1',
+        status: 'PENDING',
+      });
+
+      await expect(
+        service.submitPayment(
+          { groupId: 'group-1', paymentMethod: 'CASH' },
+          'user-1',
+        ),
+      ).rejects.toThrow(ConflictException);
+      expect(paymentsRepository.updatePaymentRecord).not.toHaveBeenCalled();
+      expect(paymentsRepository.createPayment).not.toHaveBeenCalled();
+    });
+
+    it('should allow resubmission after rejection by replacing the proof', async () => {
+      paymentsRepository.findGroupByGroupId.mockResolvedValue({
+        id: 'group-1',
+        cycleDuration: 3,
+        memberships: [{ userId: 'user-1', position: 1 }],
+      });
+      paymentsRepository.findMembership.mockResolvedValue({
+        userId: 'user-1',
+        position: 1,
+        user: { name: 'User One' },
+      });
+      paymentsRepository.findRoundByRoundId.mockResolvedValue(null);
+      paymentsRepository.findOrCreateRound.mockResolvedValue({
+        id: 'round-1',
+        targetDate: new Date('2026-08-01'),
+      });
+      paymentsRepository.findPaymentByGroupRoundAndUser.mockResolvedValue({
+        id: 'payment-1',
+        status: 'REJECTED',
+      });
+      paymentsRepository.updatePaymentRecord.mockResolvedValue({
+        id: 'payment-1',
+        status: 'PENDING',
+      });
+      activityService.createActivity.mockResolvedValue({});
+      notificationsService.createNotification.mockResolvedValue({});
+
+      const result = await service.submitPayment(
+        { groupId: 'group-1', paymentMethod: 'CASH', proofUrl: 'proof.png' },
+        'user-1',
+      );
+
+      expect(result.payment.status).toBe('PENDING');
+      expect(paymentsRepository.updatePaymentRecord).toHaveBeenCalledWith(
+        'payment-1',
+        expect.objectContaining({ status: 'PENDING' }),
+        undefined,
+      );
     });
   });
 
