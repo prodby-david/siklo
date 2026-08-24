@@ -16,7 +16,10 @@ import { GroupsCoreService } from '../../groups/services/groups-core.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
 import { BILLING_CYCLE_DAYS } from '../constants/payment.constants';
-import { calculateTargetDate } from '../utils/paymentCalculator';
+import {
+  calculateRoundStep,
+  calculateTargetDate,
+} from '../utils/paymentCalculator';
 
 @Injectable()
 export class PaymentsPayoutService {
@@ -159,8 +162,11 @@ export class PaymentsPayoutService {
     if (!round) {
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
       const totalMembers = memberships.length || 1;
-      const step =
-        (currentCycle - 1) * totalMembers + recipientMembership.position;
+      const step = calculateRoundStep(
+        currentCycle,
+        recipientMembership.position,
+        totalMembers,
+      );
       const targetDate = calculateTargetDate(
         group.startDate || new Date(),
         step,
@@ -267,7 +273,11 @@ export class PaymentsPayoutService {
     if (!round) {
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
       const totalMembers = memberships.length || 1;
-      const step = (currentCycle - 1) * totalMembers + userMembership.position;
+      const step = calculateRoundStep(
+        currentCycle,
+        userMembership.position,
+        totalMembers,
+      );
       const targetDate = calculateTargetDate(
         group.startDate,
         step,

@@ -14,6 +14,7 @@ import {
 } from '../constants/payment.constants';
 import {
   calculatePenaltyAmount,
+  calculateRoundStep,
   calculateTargetDate,
 } from '../utils/paymentCalculator';
 
@@ -57,8 +58,12 @@ export class PaymentsSubmissionService {
 
     if (!round) {
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const totalMembers = group.maxMembers || 1;
-      const step = (targetCycleNum - 1) * totalMembers + targetTurnNum;
+      const totalMembers = group.memberships?.length || 1;
+      const step = calculateRoundStep(
+        targetCycleNum,
+        targetTurnNum,
+        totalMembers,
+      );
       const targetDate = calculateTargetDate(
         group.startDate,
         step,

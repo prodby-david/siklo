@@ -29,3 +29,11 @@ export function calculateTargetDate(
   const startMs = startDate ? new Date(startDate).getTime() : Date.now();
   return new Date(startMs + step * intervalDays * 24 * 60 * 60 * 1000);
 }
+
+export function calculateRoundStep(
+  cycleNumber: number,
+  position: number,
+  totalMembers: number,
+): number {
+  return (cycleNumber - 1) * totalMembers + position;
+}

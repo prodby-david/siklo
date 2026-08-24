@@ -14,7 +14,10 @@ import {
   BILLING_CYCLE_DAYS,
   PAYMENT_STATUS,
 } from '../constants/payment.constants';
-import { calculateTargetDate } from '../utils/paymentCalculator';
+import {
+  calculateRoundStep,
+  calculateTargetDate,
+} from '../utils/paymentCalculator';
 
 @Injectable()
 export class PaymentsManagementService {
@@ -96,7 +99,11 @@ export class PaymentsManagementService {
     if (!round) {
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
       const totalMembers = group.memberships?.length || 1;
-      const step = (currentCycleNum - 1) * totalMembers + targetMember.position;
+      const step = calculateRoundStep(
+        currentCycleNum,
+        targetMember.position,
+        totalMembers,
+      );
       const targetDate = calculateTargetDate(
         group.startDate,
         step,
@@ -212,7 +219,11 @@ export class PaymentsManagementService {
     if (!round) {
       const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
       const totalMembers = group.memberships?.length || 1;
-      const step = (currentCycleNum - 1) * totalMembers + targetMember.position;
+      const step = calculateRoundStep(
+        currentCycleNum,
+        targetMember.position,
+        totalMembers,
+      );
       const targetDate = calculateTargetDate(
         group.startDate,
         step,
