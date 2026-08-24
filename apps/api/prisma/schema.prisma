@@ -104,8 +104,10 @@ model Payment {
   updatedAt         DateTime          @updatedAt
 
   group Group @relation(fields: [groupId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
   round Round @relation(fields: [roundId], references: [id])
+
+  @@unique([groupId, roundId, userId])
 }
 
 model Activity {
