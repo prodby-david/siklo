@@ -2,8 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { PaymentsRepository } from '../payments.repository';
 import { GroupWithMembershipsAndRounds } from '../payments.types';
 import { PAYMENT_STATUS } from '../constants/payment.constants';
-import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
+
+function sortByCycleAndRound<
+  T extends { cycleNumber: number; roundNumber: number },
+>(rounds: T[]): T[] {
+  return [...rounds].sort((a, b) =>
+    a.cycleNumber !== b.cycleNumber
+      ? a.cycleNumber - b.cycleNumber
+      : a.roundNumber - b.roundNumber,
+  );
+}
 
 @Injectable()
 export class PaymentsScheduleService {
@@ -67,40 +76,30 @@ export class PaymentsScheduleService {
       const membership = group.memberships.find((m) => m.userId === userId);
       if (!membership) continue;
 
-      const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const startMs = new Date(group.startDate).getTime();
-      const memberCount = group.memberships.length;
-      const verifiedPayments = group.payments || [];
+      const paidRoundIds = new Set(
+        (group.payments || [])
+          .filter(
+            (p) => p.status === PAYMENT_STATUS.VERIFIED && p.userId === userId,
+          )
+          .map((p) => p.roundId),
+      );
 
-      for (let c = 1; c <= group.cycleDuration; c++) {
-        for (let turn = 1; turn <= memberCount; turn++) {
-          const matchingRound = group.rounds?.find(
-            (r) => r.cycleNumber === c && r.roundNumber === turn,
-          );
+      const nextUnpaid = sortByCycleAndRound(group.rounds ?? []).find(
+        (round) => !paidRoundIds.has(round.id),
+      );
+      if (!nextUnpaid) continue;
 
-          const hasPaid = verifiedPayments.some((p) => {
-            if (p.status !== PAYMENT_STATUS.VERIFIED || p.userId !== userId) {
-              return false;
-            }
-            return matchingRound ? p.roundId === matchingRound.id : true;
-          });
+      const dueIso = nextUnpaid.targetDate
+        ? new Date(nextUnpaid.targetDate).toISOString()
+        : null;
 
-          if (!hasPaid) {
-            const step = (c - 1) * memberCount + (turn - 1);
-            const dueMs = startMs + step * intervalDays * 24 * 60 * 60 * 1000;
-            const dueIso = new Date(dueMs).toISOString();
-
-            if (!earliestDue || dueIso < (earliestDue.dueDate || '')) {
-              earliestDue = {
-                amount: group.contributionAmount,
-                dueDate: dueIso,
-                groupName: group.name,
-                groupId: group.id,
-              };
-            }
-            break;
-          }
-        }
+      if (!earliestDue || (dueIso && dueIso < (earliestDue.dueDate || ''))) {
+        earliestDue = {
+          amount: group.contributionAmount,
+          dueDate: dueIso,
+          groupName: group.name,
+          groupId: group.id,
+        };
       }
     }
 
@@ -131,33 +130,28 @@ export class PaymentsScheduleService {
       const membership = group.memberships.find((m) => m.userId === userId);
       if (!membership) continue;
 
-      const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
-      const startMs = new Date(group.startDate).getTime();
-      const memberCount = group.memberships.length;
       const payoutAmount = group.contributionAmount * group.maxMembers;
 
-      for (let c = 1; c <= group.cycleDuration; c++) {
-        const round = group.rounds?.find(
-          (r) => r.cycleNumber === c && r.roundNumber === membership.position,
-        );
+      const nextOwnRound = sortByCycleAndRound(group.rounds ?? []).find(
+        (round) =>
+          round.recipientId === userId && round.status !== ('PAID' as const),
+      );
+      if (!nextOwnRound) continue;
 
-        if (round && round.status === 'PAID') {
-          continue;
-        }
+      const payoutIso = nextOwnRound.targetDate
+        ? new Date(nextOwnRound.targetDate).toISOString()
+        : null;
 
-        const step = (c - 1) * memberCount + membership.position;
-        const payoutMs = startMs + step * intervalDays * 24 * 60 * 60 * 1000;
-        const payoutIso = new Date(payoutMs).toISOString();
-
-        if (!earliestPayout || payoutIso < (earliestPayout.date || '')) {
-          earliestPayout = {
-            date: payoutIso,
-            amount: payoutAmount,
-            groupName: group.name,
-            groupId: group.id,
-          };
-        }
-        break;
+      if (
+        !earliestPayout ||
+        (payoutIso && payoutIso < (earliestPayout.date || ''))
+      ) {
+        earliestPayout = {
+          date: payoutIso,
+          amount: payoutAmount,
+          groupName: group.name,
+          groupId: group.id,
+        };
       }
     }
 
