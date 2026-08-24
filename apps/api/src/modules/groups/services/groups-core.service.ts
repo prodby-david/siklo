@@ -16,6 +16,7 @@ import { shuffle } from '../utils/shuffleMembers';
 import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
 import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import { computeNextPayoutee } from '@/commons/utils/computeNextPayoutee';
+import { hasUsablePaymentAccount } from '@/commons/utils/hasUsablePaymentAccount';
 
 @Injectable()
 export class GroupsCoreService {
@@ -37,7 +38,7 @@ export class GroupsCoreService {
   async createGroup(dto: CreateGroupData, userId: string) {
     return this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({ where: { id: userId } });
-      if (!user?.paymentAccounts) {
+      if (!hasUsablePaymentAccount(user?.paymentAccounts)) {
         throw new ForbiddenException(
           'Payment account setup required in Settings before creating a group',
         );

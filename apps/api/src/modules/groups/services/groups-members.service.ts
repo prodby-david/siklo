@@ -14,6 +14,7 @@ import {
 } from '@siklo/shared-schemas';
 import { ActivityService } from '../../activity/activity.service';
 import { GroupsCoreService } from './groups-core.service';
+import { hasUsablePaymentAccount } from '@/commons/utils/hasUsablePaymentAccount';
 
 @Injectable()
 export class GroupsMembersService {
@@ -41,7 +42,7 @@ export class GroupsMembersService {
   async joinGroup(dto: JoinGroupBodyDTO, userId: string) {
     return this.prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({ where: { id: userId } });
-      if (!user?.paymentAccounts) {
+      if (!hasUsablePaymentAccount(user?.paymentAccounts)) {
         throw new ForbiddenException(
           'Payout account setup required in Settings before joining a group',
         );

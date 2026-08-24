@@ -1,4 +1,4 @@
-﻿import { Test, TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
   NotFoundException,
@@ -94,7 +94,7 @@ describe('GroupsCoreService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
           group: {
@@ -107,6 +107,35 @@ describe('GroupsCoreService', () => {
 
       expect(result.message).toBe('Group created successfully');
       expect(result.group.id).toBe('group-1');
+    });
+
+    it('should throw ForbiddenException when payment accounts have no usable number', async () => {
+      const dto = {
+        name: 'No Setup Group',
+        description: 'Test',
+        contributionAmount: 1000,
+        billingCycle: 'WEEKLY' as const,
+        payoutSequence: 'RANDOM' as const,
+        cycleDuration: 4,
+        maxMembers: 5,
+        allowedPaymentMethods: ['E_WALLET' as const],
+      };
+      const userId = 'user-1';
+
+      prisma.$transaction.mockImplementation(async (cb) => {
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcashName: 'Juan' },
+            }),
+          },
+        });
+      });
+
+      await expect(service.createGroup(dto, userId)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw ConflictException if group name exists', async () => {
@@ -128,7 +157,7 @@ describe('GroupsCoreService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
         });

@@ -10,6 +10,7 @@ import { CreateUserDTO } from './schema/user.schema';
 import {
   type ChangePasswordDTO,
   type UserProfileSettingDTO,
+  type PaymentAccountDetailsDTO,
 } from '@siklo/shared-schemas';
 
 @Injectable()
@@ -87,7 +88,7 @@ export class UsersService {
     };
   }
 
-  async updatePaymentAccounts(id: string, dto: unknown) {
+  async updatePaymentAccounts(id: string, dto: PaymentAccountDetailsDTO) {
     const user = await this.usersRepository.findUserById(id);
 
     if (!user) {

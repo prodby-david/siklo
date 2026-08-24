@@ -106,7 +106,7 @@ describe('GroupsService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
           group: {
@@ -140,7 +140,7 @@ describe('GroupsService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
         });
@@ -174,7 +174,7 @@ describe('GroupsService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
           group: {
@@ -199,7 +199,7 @@ describe('GroupsService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
         });
@@ -230,7 +230,7 @@ describe('GroupsService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
         });

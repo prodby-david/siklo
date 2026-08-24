@@ -90,7 +90,7 @@ describe('GroupsMembersService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
           group: {
@@ -115,7 +115,7 @@ describe('GroupsMembersService', () => {
           user: {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
-              paymentAccounts: { gcash: '09123456789' },
+              paymentAccounts: { gcashNumber: '09123456789' },
             }),
           },
         });
@@ -123,6 +123,26 @@ describe('GroupsMembersService', () => {
 
       await expect(service.joinGroup(dto, userId)).rejects.toThrow(
         NotFoundException,
+      );
+    });
+
+    it('should throw ForbiddenException when payment accounts have no usable number', async () => {
+      const dto = { inviteCode: 'ABC123' };
+      const userId = 'user-2';
+
+      prisma.$transaction.mockImplementation(async (cb) => {
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcashName: 'Juan' },
+            }),
+          },
+        });
+      });
+
+      await expect(service.joinGroup(dto, userId)).rejects.toThrow(
+        ForbiddenException,
       );
     });
   });
