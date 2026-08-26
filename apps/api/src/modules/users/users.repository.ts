@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
 import { CreateUserDTO } from './schema/user.schema';
 import { UserProfileSettingDTO } from '@siklo/shared-schemas';
+import { Prisma } from '@/generated/prisma/client';
 
 @Injectable()
 export class UsersRepository {
@@ -57,7 +58,7 @@ export class UsersRepository {
     return this.prisma.user.update({
       where: { id },
       data: {
-        paymentAccounts: data as any,
+        paymentAccounts: (data as Prisma.InputJsonValue) ?? Prisma.JsonNull,
       },
     });
   }

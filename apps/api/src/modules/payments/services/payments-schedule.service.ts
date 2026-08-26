@@ -22,21 +22,12 @@ export class PaymentsScheduleService {
     const activeGroups =
       await this.paymentsRepository.findUserActiveGroupsWithMemberships(userId);
 
-    const nonCompletedGroups: GroupWithMembershipsAndRounds[] = [];
-    for (const group of activeGroups) {
-      if (!(await this.isGroupComplete(group))) {
-        nonCompletedGroups.push(group);
-      }
-    }
+    const nonCompletedGroups = activeGroups.filter(
+      (group) => !this.isGroupComplete(group),
+    );
 
-    const due = await this.computeNextUnpaidContribution(
-      nonCompletedGroups,
-      userId,
-    );
-    const payout = await this.computeNextUpcomingPayout(
-      nonCompletedGroups,
-      userId,
-    );
+    const due = this.computeNextUnpaidContribution(nonCompletedGroups, userId);
+    const payout = this.computeNextUpcomingPayout(nonCompletedGroups, userId);
 
     return {
       nextContributionAmount: due.amount,
@@ -53,13 +44,11 @@ export class PaymentsScheduleService {
     };
   }
 
-  async isGroupComplete(
-    group: GroupWithMembershipsAndRounds,
-  ): Promise<boolean> {
+  isGroupComplete(group: GroupWithMembershipsAndRounds): boolean {
     return computeGroupCompletion(group).isComplete;
   }
 
-  async computeNextUnpaidContribution(
+  computeNextUnpaidContribution(
     groups: GroupWithMembershipsAndRounds[],
     userId: string,
   ) {
@@ -113,7 +102,7 @@ export class PaymentsScheduleService {
     );
   }
 
-  async computeNextUpcomingPayout(
+  computeNextUpcomingPayout(
     groups: GroupWithMembershipsAndRounds[],
     userId: string,
   ) {

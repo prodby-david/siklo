@@ -10,11 +10,9 @@ import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
 import { PAYMENT_STATUS } from '../constants/payment.constants';
-import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import {
   calculatePenaltyAmount,
-  calculateRoundStep,
-  calculateTargetDate,
+  calculateMemberTargetDate,
 } from '../utils/paymentCalculator';
 import { PrismaService } from '@/database/prisma.service';
 
@@ -26,6 +24,34 @@ export class PaymentsSubmissionService {
     private readonly notificationsService: NotificationsService,
     private readonly prisma: PrismaService,
   ) {}
+
+  private async getPendingPaymentForOrganizer(
+    paymentId: string,
+    organizerUserId: string,
+    action: 'verify' | 'reject',
+  ) {
+    const payment = await this.paymentsRepository.findPaymentById(paymentId);
+    if (!payment) {
+      throw new NotFoundException('Payment record not found');
+    }
+
+    if (payment.group.organizerId !== organizerUserId) {
+      throw new ForbiddenException(`Only the organizer can ${action} payments`);
+    }
+
+    if (payment.status !== PAYMENT_STATUS.PENDING) {
+      throw new ConflictException(
+        `This payment has already been processed and can no longer be ${action}ed`,
+      );
+    }
+
+    return {
+      payment,
+      cycleNum: payment.round?.cycleNumber || 1,
+      turnNum: payment.round?.roundNumber || 1,
+      memberName: payment.user?.name || 'Member',
+    };
+  }
 
   async submitPayment(dto: SubmitPaymentDTO, userId: string) {
     const group = await this.paymentsRepository.findGroupByGroupId(dto.groupId);
@@ -75,17 +101,13 @@ export class PaymentsSubmissionService {
             );
           }
 
-          const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
           const totalMembers = group.memberships?.length || 1;
-          const step = calculateRoundStep(
+          const targetDate = calculateMemberTargetDate(
+            group.startDate,
+            group.billingCycle,
             targetCycleNum,
             targetTurnNum,
             totalMembers,
-          );
-          const targetDate = calculateTargetDate(
-            group.startDate,
-            step,
-            intervalDays,
           );
 
           const recipientMember = group.memberships?.find(
@@ -206,24 +228,12 @@ export class PaymentsSubmissionService {
   }
 
   async verifyPayment(paymentId: string, organizerUserId: string) {
-    const payment = await this.paymentsRepository.findPaymentById(paymentId);
-    if (!payment) {
-      throw new NotFoundException('Payment record not found');
-    }
-
-    if (payment.group.organizerId !== organizerUserId) {
-      throw new ForbiddenException('Only the organizer can verify payments');
-    }
-
-    if (payment.status !== PAYMENT_STATUS.PENDING) {
-      throw new ConflictException(
-        'This payment has already been processed and can no longer be verified',
+    const { payment, cycleNum, turnNum, memberName } =
+      await this.getPendingPaymentForOrganizer(
+        paymentId,
+        organizerUserId,
+        'verify',
       );
-    }
-
-    const cycleNum = payment.round?.cycleNumber || 1;
-    const turnNum = payment.round?.roundNumber || 1;
-    const memberName = payment.user?.name || 'Member';
 
     const updatedPayment = await this.prisma.$transaction(async (tx) => {
       const verified =
@@ -263,24 +273,12 @@ export class PaymentsSubmissionService {
     dto: RejectPaymentDTO,
     organizerUserId: string,
   ) {
-    const payment = await this.paymentsRepository.findPaymentById(paymentId);
-    if (!payment) {
-      throw new NotFoundException('Payment record not found');
-    }
-
-    if (payment.group.organizerId !== organizerUserId) {
-      throw new ForbiddenException('Only the organizer can reject payments');
-    }
-
-    if (payment.status !== PAYMENT_STATUS.PENDING) {
-      throw new ConflictException(
-        'This payment has already been processed and can no longer be rejected',
+    const { payment, cycleNum, turnNum, memberName } =
+      await this.getPendingPaymentForOrganizer(
+        paymentId,
+        organizerUserId,
+        'reject',
       );
-    }
-
-    const cycleNum = payment.round?.cycleNumber || 1;
-    const turnNum = payment.round?.roundNumber || 1;
-    const memberName = payment.user?.name || 'Member';
 
     const updatedPayment = await this.prisma.$transaction(async (tx) => {
       const rejected =

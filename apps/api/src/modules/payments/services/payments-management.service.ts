@@ -11,11 +11,7 @@ import { GroupsCoreService } from '../../groups/services/groups-core.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
 import { PAYMENT_STATUS } from '../constants/payment.constants';
-import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
-import {
-  calculateRoundStep,
-  calculateTargetDate,
-} from '../utils/paymentCalculator';
+import { calculateMemberTargetDate } from '../utils/paymentCalculator';
 import { PrismaService } from '@/database/prisma.service';
 
 @Injectable()
@@ -27,6 +23,61 @@ export class PaymentsManagementService {
     private readonly notificationsService: NotificationsService,
     private readonly prisma: PrismaService,
   ) {}
+
+  private ensureOrganizer(
+    group: { organizerId: string },
+    organizerUserId: string,
+    actionMessage = 'Only the organizer can perform this action',
+  ) {
+    if (group.organizerId !== organizerUserId) {
+      throw new ForbiddenException(actionMessage);
+    }
+  }
+
+  private async validateMemberAndCycle(
+    group: {
+      id: string;
+      cycleDuration: number;
+      memberships?: Array<{
+        userId: string;
+        position: number;
+        user: { name: string };
+        preferredPaymentMethod?: PaymentMethodType | null;
+      }>;
+    },
+    memberUserId: string,
+    cycleNumber?: number,
+  ) {
+    const targetMember = group.memberships?.find(
+      (m) => m.userId === memberUserId,
+    );
+    if (!targetMember) {
+      throw new NotFoundException('Member not found in this group');
+    }
+
+    const currentCycleNum = cycleNumber || 1;
+
+    if (currentCycleNum > group.cycleDuration) {
+      throw new BadRequestException(
+        `Cycle ${currentCycleNum} does not exist for this group`,
+      );
+    }
+
+    if (currentCycleNum > 1) {
+      const unpaidBefore =
+        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
+          group.id,
+          currentCycleNum,
+        );
+      if (unpaidBefore > 0) {
+        throw new ConflictException(
+          `Cycle ${currentCycleNum} cannot open until all previous cycle payouts are completed`,
+        );
+      }
+    }
+
+    return { targetMember, currentCycleNum };
+  }
 
   async getPendingPayments(groupId?: string, organizerUserId?: string) {
     if (!organizerUserId) {
@@ -40,11 +91,11 @@ export class PaymentsManagementService {
         groupId,
         organizerUserId,
       );
-      if (group.organizerId !== organizerUserId) {
-        throw new ForbiddenException(
-          'Only the organizer can view pending verification queue',
-        );
-      }
+      this.ensureOrganizer(
+        group,
+        organizerUserId,
+        'Only the organizer can view pending verification queue',
+      );
       return this.paymentsRepository.findPendingPaymentsByGroupId(groupId);
     }
 
@@ -65,11 +116,11 @@ export class PaymentsManagementService {
       groupId,
       organizerUserId,
     );
-    if (group.organizerId !== organizerUserId) {
-      throw new ForbiddenException(
-        'Only the organizer can mark members as paid',
-      );
-    }
+    this.ensureOrganizer(
+      group,
+      organizerUserId,
+      'Only the organizer can mark members as paid',
+    );
     if (!group.startDate) {
       throw new ConflictException('Group cycle has not started yet');
     }
@@ -81,42 +132,20 @@ export class PaymentsManagementService {
       );
     }
 
-    const targetMember = group.memberships?.find(
-      (m) => m.userId === memberUserId,
+    const { targetMember, currentCycleNum } = await this.validateMemberAndCycle(
+      group,
+      memberUserId,
+      cycleNumber,
     );
-    if (!targetMember) {
-      throw new NotFoundException('Member not found in this group');
-    }
 
-    const currentCycleNum = cycleNumber || 1;
-
-    if (currentCycleNum > group.cycleDuration) {
-      throw new BadRequestException(
-        `Cycle ${currentCycleNum} does not exist for this group`,
-      );
-    }
-
-    if (currentCycleNum > 1) {
-      const unpaidBefore =
-        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
-          groupId,
-          currentCycleNum,
-        );
-      if (unpaidBefore > 0) {
-        throw new ConflictException(
-          `Cycle ${currentCycleNum} cannot open until all previous cycle payouts are completed`,
-        );
-      }
-    }
-
-    const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
     const totalMembers = group.memberships?.length || 1;
-    const step = calculateRoundStep(
+    const targetDate = calculateMemberTargetDate(
+      group.startDate,
+      group.billingCycle,
       currentCycleNum,
       targetMember.position,
       totalMembers,
     );
-    const targetDate = calculateTargetDate(group.startDate, step, intervalDays);
 
     const cycleInfo = cycleNumber ? ` (Cycle ${cycleNumber})` : '';
     const refInfo = referenceNumber ? ` [Ref: ${referenceNumber}]` : '';
@@ -217,46 +246,26 @@ export class PaymentsManagementService {
       groupId,
       organizerUserId,
     );
-    if (group.organizerId !== organizerUserId) {
-      throw new ForbiddenException('Only the organizer can reject payments');
-    }
-
-    const targetMember = group.memberships?.find(
-      (m) => m.userId === memberUserId,
+    this.ensureOrganizer(
+      group,
+      organizerUserId,
+      'Only the organizer can reject payments',
     );
-    if (!targetMember) {
-      throw new NotFoundException('Member not found in this group');
-    }
 
-    const currentCycleNum = cycleNumber || 1;
+    const { targetMember, currentCycleNum } = await this.validateMemberAndCycle(
+      group,
+      memberUserId,
+      cycleNumber,
+    );
 
-    if (currentCycleNum > group.cycleDuration) {
-      throw new BadRequestException(
-        `Cycle ${currentCycleNum} does not exist for this group`,
-      );
-    }
-
-    if (currentCycleNum > 1) {
-      const unpaidBefore =
-        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
-          groupId,
-          currentCycleNum,
-        );
-      if (unpaidBefore > 0) {
-        throw new ConflictException(
-          `Cycle ${currentCycleNum} cannot open until all previous cycle payouts are completed`,
-        );
-      }
-    }
-
-    const intervalDays = BILLING_CYCLE_DAYS[group.billingCycle] || 30;
     const totalMembers = group.memberships?.length || 1;
-    const step = calculateRoundStep(
+    const targetDate = calculateMemberTargetDate(
+      group.startDate,
+      group.billingCycle,
       currentCycleNum,
       targetMember.position,
       totalMembers,
     );
-    const targetDate = calculateTargetDate(group.startDate, step, intervalDays);
 
     const cycleInfo = cycleNumber ? ` (Cycle ${cycleNumber})` : '';
     const reasonInfo = reason ? `: ${reason}` : '';

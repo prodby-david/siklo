@@ -1,3 +1,6 @@
+import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
+import { BillingCycle } from '@/generated/prisma/client';
+
 export function calculatePenaltyAmount(
   now: Date,
   targetDate: Date,
@@ -36,4 +39,16 @@ export function calculateRoundStep(
   totalMembers: number,
 ): number {
   return (cycleNumber - 1) * totalMembers + position;
+}
+
+export function calculateMemberTargetDate(
+  startDate: string | Date | null | undefined,
+  billingCycle: BillingCycle,
+  cycleNumber: number,
+  position: number,
+  totalMembers: number,
+): Date {
+  const intervalDays = BILLING_CYCLE_DAYS[billingCycle] || 30;
+  const step = calculateRoundStep(cycleNumber, position, totalMembers);
+  return calculateTargetDate(startDate, step, intervalDays);
 }

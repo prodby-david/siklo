@@ -20,6 +20,26 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
+  private async getExistingUser(userId: string) {
+    const user = await this.usersRepository.findUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return user;
+  }
+
+  private async getExistingUserWithPassword(userId: string) {
+    const user = await this.usersRepository.findUserWithPasswordById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return user;
+  }
+
   async createUser(user: CreateUserDTO) {
     const emailIsUsed = await this.usersRepository.findByEmail(user.email);
 
@@ -40,21 +60,11 @@ export class UsersService {
   }
 
   async getCurrentUserName(userId: string) {
-    const user = await this.usersRepository.findUserById(userId);
-
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
-
-    return user;
+    return this.getExistingUser(userId);
   }
 
   async updateUserProfile(id: string, dto: UserProfileSettingDTO) {
-    const user = await this.usersRepository.findUserById(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
+    await this.getExistingUser(id);
 
     await this.usersRepository.updateUserProfile(id, dto);
 
@@ -64,11 +74,7 @@ export class UsersService {
   }
 
   async changeUserPassword(id: string, dto: ChangePasswordDTO) {
-    const user = await this.usersRepository.findUserWithPasswordById(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
+    const user = await this.getExistingUserWithPassword(id);
 
     const isCurrentPasswordValid = await this.authService.comparePassword(
       dto.currentPassword,
@@ -89,11 +95,7 @@ export class UsersService {
   }
 
   async updatePaymentAccounts(id: string, dto: PaymentAccountDetailsDTO) {
-    const user = await this.usersRepository.findUserById(id);
-
-    if (!user) {
-      throw new NotFoundException('User not found.');
-    }
+    await this.getExistingUser(id);
 
     await this.usersRepository.updatePaymentAccounts(id, dto);
 
