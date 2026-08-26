@@ -73,16 +73,18 @@ export default function TurnDetailPanel({
     selectedMembership?.position === currentTurn
   );
 
+  const selectedMemberUserId = selectedMembership?.userId;
+
   const memberPayments = useMemo(() => {
-    if (!selectedMembership?.userId) return [];
+    if (!selectedMemberUserId) return [];
     const allPayments = group.payments || [];
     const matched = allPayments.filter(
-      (p) => p.userId === selectedMembership.userId
+      (p) => p.userId === selectedMemberUserId
     );
     return [...matched].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
-  }, [group.payments, selectedMembership?.userId]);
+  }, [group.payments, selectedMemberUserId]);
 
   const getPaymentRoundInfo = (roundId: string) => {
     const round = group.rounds?.find((r) => r.id === roundId);

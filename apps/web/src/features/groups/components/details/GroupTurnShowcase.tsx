@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { RotateCw, Users, Info, CheckCircle2 } from "lucide-react";
 import { useDisbursePayout } from "@/features/payments/hooks/useDisbursePayout";
@@ -48,9 +47,6 @@ export default function GroupTurnShowcase({
   const {
     selectedTurn,
     setSelectedTurn,
-    paidMemberUserIds,
-    pendingMemberUserIds,
-    rejectedMemberUserIds,
     paidUserIdsByTurn,
     pendingUserIdsByTurn,
     rejectedUserIdsByTurn,

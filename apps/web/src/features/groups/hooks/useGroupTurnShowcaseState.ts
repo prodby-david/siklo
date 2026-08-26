@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo } from "react";
 import useGetGroupActivities from "./useGetGroupActivities";
 import { Membership, PaymentRecord, GroupRound } from "../types/group.types";
 import { ApiActivity } from "../types/group.activity.types";
@@ -170,13 +170,8 @@ export function useGroupTurnShowcaseState(
     };
   }, [activities, payments, rounds, sortedMemberships, cycleDuration, hasStarted]);
 
-  const [selectedTurn, setSelectedTurn] = useState<number>(currentTurn);
-
-  useEffect(() => {
-    if (currentTurn) {
-      setSelectedTurn(currentTurn);
-    }
-  }, [currentTurn]);
+  const [selectedTurnOverride, setSelectedTurnOverride] = useState<number | null>(null);
+  const selectedTurn = selectedTurnOverride ?? currentTurn;
 
   const activeKey = `${currentCycle}-${selectedTurn}`;
 
@@ -193,7 +188,7 @@ export function useGroupTurnShowcaseState(
   }, [rejectedUserIdsByTurn, activeKey]);
 
   const handleSelectTurn = useCallback((turn: number) => {
-    setSelectedTurn(turn);
+    setSelectedTurnOverride(turn);
   }, []);
 
   return {
