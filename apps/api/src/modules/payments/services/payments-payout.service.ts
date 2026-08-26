@@ -158,7 +158,7 @@ export class PaymentsPayoutService {
     const currentCycle = dto.cycleNumber || 1;
     const targetTurn = dto.turnNumber || 1;
 
-    let round = await this.resolveRound(
+    const round = await this.resolveRound(
       dto.groupId,
       dto.roundId,
       currentCycle,
