@@ -55,17 +55,21 @@ export default function ShowcaseTurnCard({
       </div>
 
       <div className="flex items-center gap-1.5 shrink-0">
-        {isOrganizerSlot ? (
+        {isPaid ? (
+          <span className="text-[9px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3" /> Paid
+          </span>
+        ) : isCurrent ? (
+          <span className="text-[9px] font-extrabold uppercase tracking-wider text-brand-accent bg-brand-accent/15 border border-brand-accent/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+            <Clock className="w-3 h-3 text-brand-accent" /> Active
+          </span>
+        ) : isOrganizerSlot ? (
           <span className="text-[9px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
             <Crown className="w-3 h-3 text-amber-500" /> Organizer
           </span>
-        ) : isPaid ? (
-          <span className="text-[9px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3" /> Paid
-          </span>
         ) : membership ? (
           <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-subtext bg-neutral-subtext/10 px-2 py-0.5 rounded-full flex items-center gap-1">
-            <User className="w-3 h-3" /> Member
+            <User className="w-3 h-3" /> Upcoming
           </span>
         ) : (
           <span className="text-[9px] font-semibold text-brand-accent bg-brand-accent/10 px-2 py-0.5 rounded-full">

@@ -61,11 +61,14 @@ export interface TurnDetailPanelProps {
     gracePeriodDays?: number;
     latePenaltyAmount?: number;
     rounds?: GroupRound[];
+    payments?: PaymentRecord[];
   };
   isOrganizer: boolean;
   isCurrentTurn: boolean;
   isCycleDone: boolean;
   currentCycle: number;
+  currentTurn?: number;
+  onJumpToCurrentTurn?: () => void;
   hasStarted?: boolean;
   currentUserId?: string;
   onSelectSlot?: (position: number) => Promise<void>;

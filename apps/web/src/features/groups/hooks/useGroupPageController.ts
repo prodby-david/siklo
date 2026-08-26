@@ -75,26 +75,36 @@ export function useGroupPageController() {
       if (p.status === "PENDING") pendingByRound[key].add(p.userId);
     });
 
-    const nextRound = [...(data.rounds ?? [])]
-      .filter((r: GroupRound) => r.status !== "PAID")
-      .sort(
-        (a: GroupRound, b: GroupRound) =>
-          a.cycleNumber !== b.cycleNumber
-            ? a.cycleNumber - b.cycleNumber
-            : a.roundNumber - b.roundNumber
-      )[0];
+    let activeCycle = 1;
+    let activeTurn = 1;
+    let foundIncomplete = false;
+
+    if (totalMembers > 0) {
+      for (let c = 1; c <= duration; c++) {
+        for (let t = 1; t <= totalMembers; t++) {
+          const key = `${c}-${t}`;
+          if (!completedKeys.has(key) && !foundIncomplete) {
+            activeCycle = c;
+            activeTurn = t;
+            foundIncomplete = true;
+          }
+        }
+      }
+
+      if (!foundIncomplete) {
+        activeCycle = duration;
+        activeTurn = totalMembers;
+      }
+    }
 
     const allFinished =
-      hasStarted && completedKeys.size >= totalMembers * duration;
-
-    const activeCycle = nextRound ? nextRound.cycleNumber : duration;
-    const activeTurn = nextRound ? nextRound.roundNumber : totalMembers;
+      hasStarted && totalMembers > 0 && completedKeys.size >= totalMembers * duration;
 
     const activeKey = `${activeCycle}-${activeTurn}`;
-    const currentMemberPaid = currentUser?.id && nextRound
+    const currentMemberPaid = currentUser?.id && !allFinished
       ? Boolean(paidByRound[activeKey]?.has(currentUser.id))
       : false;
-    const currentMemberPending = currentUser?.id && nextRound
+    const currentMemberPending = currentUser?.id && !allFinished
       ? Boolean(pendingByRound[activeKey]?.has(currentUser.id))
       : false;
 

@@ -102,11 +102,11 @@ export default function DisbursePayoutModal({
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">
               <CheckCircle2 className="w-5 h-5 text-brand-accent" />
-              <span>Disburse Lump-Sum Payout</span>
+              <span>Disburse Payout & Advance Round</span>
             </DialogTitle>
             <DialogDescription>
               <span className="text-xs text-neutral-subtext block">
-                Disburse pooled funds to {recipientName} for Turn #{turnNumber}. The member will be notified to confirm receipt.
+                Disburse ₱{poolTotal.toLocaleString()} pooled funds to {recipientName} for Turn #{turnNumber}. This will complete Turn #{turnNumber} and advance the group.
               </span>
             </DialogDescription>
           </DialogHeader>
@@ -194,7 +194,7 @@ export default function DisbursePayoutModal({
                 className="w-full rounded-2xl py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-bold shadow-sm cursor-pointer"
               >
                 <Send className="w-4 h-4 mr-1.5" />
-                {isDisbursing ? "Disbursing..." : "Disburse & Notify Member"}
+                {isDisbursing ? "Disbursing..." : "Disburse & Advance Round"}
               </Button>
             </div>
           </form>

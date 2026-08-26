@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import useGetGroupActivities from "./useGetGroupActivities";
 import { Membership, PaymentRecord, GroupRound } from "../types/group.types";
 import { ApiActivity } from "../types/group.activity.types";
@@ -12,7 +12,6 @@ export function useGroupTurnShowcaseState(
   payments: PaymentRecord[] = [],
   rounds: GroupRound[] = [],
 ) {
-  const [selectedTurn, setSelectedTurn] = useState<number>(1);
   const { data: activities = [] } = useGetGroupActivities(groupId);
 
   const hasStarted = !!startDate;
@@ -125,11 +124,9 @@ export function useGroupTurnShowcaseState(
 
       if (act.activity === "PAYOUT_DISBURSED") {
         disbursedSet.add(key);
+        confirmedSet.add(key);
         if (act.createdAt) {
           disbursementDates[turnNum] = new Date(act.createdAt);
-        }
-        if (desc.includes("confirmed receipt") || desc.includes("confirmed")) {
-          confirmedSet.add(key);
         }
       }
     });
@@ -172,6 +169,14 @@ export function useGroupTurnShowcaseState(
       isCycleDone: allFinished,
     };
   }, [activities, payments, rounds, sortedMemberships, cycleDuration, hasStarted]);
+
+  const [selectedTurn, setSelectedTurn] = useState<number>(currentTurn);
+
+  useEffect(() => {
+    if (currentTurn) {
+      setSelectedTurn(currentTurn);
+    }
+  }, [currentTurn]);
 
   const activeKey = `${currentCycle}-${selectedTurn}`;
 
