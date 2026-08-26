@@ -44,6 +44,7 @@ describe('PaymentsService', () => {
       updatePaymentStatusRejected: jest.fn(),
       findGroupByGroupId: jest.fn(),
       findRoundByRoundId: jest.fn(),
+      findRoundByGroupCycleAndNumber: jest.fn(),
       findMembership: jest.fn(),
       createPayment: jest.fn(),
       findPaymentByGroupRoundAndUser: jest.fn(),
@@ -53,6 +54,7 @@ describe('PaymentsService', () => {
       updateRoundStatus: jest.fn(),
       findNextUnpaidRoundAfter: jest.fn(),
       findUserActiveGroupsWithMemberships: jest.fn().mockResolvedValue([]),
+      findVerifiedPaymentsByGroupId: jest.fn().mockResolvedValue([]),
     };
 
     activityService = {
@@ -285,6 +287,82 @@ describe('PaymentsService', () => {
         'payment-1',
         expect.objectContaining({ status: 'PENDING' }),
         undefined,
+      );
+    });
+  });
+
+  describe('disbursePayout', () => {
+    it('should throw BadRequestException if not all members have completed verified contributions', async () => {
+      groupsCoreService.getExistingGroup.mockResolvedValue({
+        id: 'group-1',
+        startDate: new Date(),
+        organizerId: 'organizer-1',
+        contributionAmount: 1000,
+        maxMembers: 2,
+        cycleDuration: 2,
+        memberships: [
+          { userId: 'user-1', position: 1, user: { name: 'Member 1' } },
+          { userId: 'user-2', position: 2, user: { name: 'Member 2' } },
+        ],
+      });
+      paymentsRepository.findRoundByGroupCycleAndNumber.mockResolvedValue(null);
+      paymentsRepository.findVerifiedPaymentsByGroupId.mockResolvedValue([
+        { roundId: 'r-1', round: { cycleNumber: 1, roundNumber: 1 } },
+      ]);
+
+      await expect(
+        service.disbursePayout(
+          { groupId: 'group-1', cycleNumber: 1, turnNumber: 1 },
+          'organizer-1',
+        ),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should disburse payout and complete round when all members are paid', async () => {
+      groupsCoreService.getExistingGroup.mockResolvedValue({
+        id: 'group-1',
+        startDate: new Date(),
+        organizerId: 'organizer-1',
+        contributionAmount: 1000,
+        maxMembers: 2,
+        cycleDuration: 2,
+        billingCycle: 'MONTHLY',
+        memberships: [
+          { userId: 'user-1', position: 1, user: { name: 'Member 1' } },
+          { userId: 'user-2', position: 2, user: { name: 'Member 2' } },
+        ],
+      });
+      paymentsRepository.findRoundByGroupCycleAndNumber.mockResolvedValue({
+        id: 'r-1',
+        status: 'PENDING',
+        roundNumber: 1,
+        recipientId: 'user-1',
+      });
+      paymentsRepository.findVerifiedPaymentsByGroupId.mockResolvedValue([
+        { roundId: 'r-1', round: { cycleNumber: 1, roundNumber: 1 } },
+        { roundId: 'r-1', round: { cycleNumber: 1, roundNumber: 1 } },
+      ]);
+      paymentsRepository.updateRoundStatus.mockResolvedValue({
+        id: 'r-1',
+        status: 'PAID',
+      });
+      paymentsRepository.findNextUnpaidRoundAfter.mockResolvedValue({
+        id: 'r-2',
+        cycleNumber: 1,
+        roundNumber: 2,
+      });
+
+      const result = await service.disbursePayout(
+        { groupId: 'group-1', cycleNumber: 1, turnNumber: 1 },
+        'organizer-1',
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.round.status).toBe('PAID');
+      expect(notificationsService.createNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringContaining('contributions are now open'),
+        }),
       );
     });
   });
