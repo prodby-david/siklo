@@ -28,8 +28,15 @@ export const createGroupSchema = baseCreateGroupSchema.extend({
     .max(7, "Grace period is capped at 7 days maximum"),
   latePenaltyAmount: z
     .number({ message: "Daily late penalty is required" })
-    .min(1, "Daily late penalty must be at least 1% per day")
+    .min(0, "Daily penalty rate cannot be negative")
     .max(10, "Daily late penalty rate cannot exceed 10% per day"),
+  isOrganizerParticipating: z.boolean().default(true),
+  organizerFeeAmount: z
+    .number()
+    .int("Organizer fee must be a whole integer amount")
+    .min(0, "Organizer fee cannot be negative")
+    .max(1000, "Organizer fee is capped at ₱1,000")
+    .default(0),
   startDate: z.date().optional(),
   totalPayout: z.number().optional(),
 });

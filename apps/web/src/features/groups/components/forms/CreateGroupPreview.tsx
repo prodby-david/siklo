@@ -1,6 +1,6 @@
 import { BILLING_CYCLE_LABELS } from "@/features/groups/constants/billing-cycle.constants";
 import { PAYOUT_SEQUENCE_LABELS } from "@/features/groups/constants/payout-sequence.constants";
-import { Info, Clock, AlertTriangle } from "lucide-react";
+import { Info, Clock, AlertTriangle, Crown } from "lucide-react";
 import { CreateGroupPreviewProps } from "@/features/groups/types/group.types";
 
 export default function CreateGroupPreview({
@@ -12,6 +12,8 @@ export default function CreateGroupPreview({
   const allowedMethods = watchedFields.allowedPaymentMethods || ["E_WALLET", "BANK_TRANSFER", "CASH"];
   const graceDays = Number(watchedFields.gracePeriodDays || 0);
   const penaltyRate = Number(watchedFields.latePenaltyAmount || 0);
+  const organizerFee = Number(watchedFields.organizerFeeAmount || 0);
+  const isParticipating = watchedFields.isOrganizerParticipating !== false;
   const estimatedDailyPenalty = Math.round(
     Number(watchedFields.contributionAmount || 0) * (penaltyRate / 100)
   );
@@ -22,6 +24,10 @@ export default function CreateGroupPreview({
         <div className="mb-3 flex items-center justify-between">
           <span className="rounded-full bg-brand-accent/15 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-brand-accent">
             Live Preview
+          </span>
+          <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-subtext">
+            <Crown className="w-3 h-3 text-amber-500" />
+            <span>{isParticipating ? "Participating Saver" : "Manager Only"}</span>
           </span>
         </div>
 
@@ -75,7 +81,7 @@ export default function CreateGroupPreview({
           </div>
         </div>
 
-        {(graceDays > 0 || penaltyRate > 0) && (
+        {(graceDays > 0 || penaltyRate > 0 || organizerFee > 0) && (
           <div className="mt-3 grid grid-cols-2 gap-2 pt-3 border-t border-neutral-border/20 text-[10px]">
             {graceDays > 0 && (
               <div className="flex items-center gap-1 text-neutral-subtext">
@@ -89,6 +95,12 @@ export default function CreateGroupPreview({
                 <span>Penalty: <strong>{penaltyRate}% (₱{estimatedDailyPenalty}/d)</strong></span>
               </div>
             )}
+            {organizerFee > 0 && (
+              <div className="flex items-center gap-1 text-foreground col-span-2">
+                <Crown className="w-3 h-3 text-amber-500 shrink-0" />
+                <span>One-Time Organizer Fee: <strong>₱{organizerFee.toLocaleString()}</strong></span>
+              </div>
+            )}
           </div>
         )}
 
@@ -96,6 +108,12 @@ export default function CreateGroupPreview({
           <div className="flex items-start gap-2.5 rounded-xl border border-neutral-border/10 bg-neutral-subtext/5 p-3">
             <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-accent" />
             <div className="flex-1 text-[11px] space-y-1">
+              <div className="flex justify-between">
+                <span className="text-neutral-subtext">Organizer Role:</span>
+                <span className="font-bold text-foreground">
+                  {isParticipating ? "Saver & Recipient" : "Facilitator (No Rotation)"}
+                </span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-neutral-subtext">Total Payout Rounds:</span>
                 <span className="font-bold text-foreground">{totalRounds}</span>

@@ -14,6 +14,7 @@ import {
   Banknote,
   Check,
   RefreshCw,
+  Crown,
 } from "lucide-react";
 import { CreateGroupFormFieldsProps } from "@/features/groups/types/create-group-field.types";
 import { PaymentMethodKey } from "@/features/groups/types/group.types";
@@ -285,6 +286,121 @@ export default function CreateGroupFormFields(
             />
           </div>
 
+          <div className="space-y-2">
+            <div className="space-y-0.5">
+              <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Crown className="w-4 h-4 text-amber-500" />
+                <span>Organizer Cycle Participation</span>
+              </label>
+              <p className="text-[10px] text-neutral-subtext">
+                Choose whether you will participate as a saver in the rotation or purely manage the cycle.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() =>
+                  setValue("isOrganizerParticipating", true, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  })
+                }
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-3 ${
+                  watch("isOrganizerParticipating") !== false
+                    ? "bg-brand-accent/10 border-brand-accent text-foreground shadow-xs"
+                    : "bg-background border-neutral-border/80 text-neutral-subtext hover:border-neutral-border"
+                }`}
+              >
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-foreground block">
+                    Participating Saver
+                  </span>
+                  <span className="text-[10px] text-neutral-subtext block">
+                    Save, contribute, & receive a payout turn in rotation
+                  </span>
+                </div>
+                <div
+                  className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${
+                    watch("isOrganizerParticipating") !== false
+                      ? "border-brand-accent bg-brand-accent text-white"
+                      : "border-neutral-border bg-background"
+                  }`}
+                >
+                  {watch("isOrganizerParticipating") !== false && (
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  )}
+                </div>
+              </button>
+
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() =>
+                  setValue("isOrganizerParticipating", false, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  })
+                }
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-start justify-between gap-3 ${
+                  watch("isOrganizerParticipating") === false
+                    ? "bg-brand-accent/10 border-brand-accent text-foreground shadow-xs"
+                    : "bg-background border-neutral-border/80 text-neutral-subtext hover:border-neutral-border"
+                }`}
+              >
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-foreground block">
+                    Manager Only (Excluded)
+                  </span>
+                  <span className="text-[10px] text-neutral-subtext block">
+                    Manage proofs & disbursements without saving
+                  </span>
+                </div>
+                <div
+                  className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center transition-all ${
+                    watch("isOrganizerParticipating") === false
+                      ? "border-brand-accent bg-brand-accent text-white"
+                      : "border-neutral-border bg-background"
+                  }`}
+                >
+                  {watch("isOrganizerParticipating") === false && (
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  )}
+                </div>
+              </button>
+            </div>
+            <input type="hidden" {...register("isOrganizerParticipating")} />
+          </div>
+
+          <Input
+            label="organizerFeeAmount"
+            labelText="One-Time Organizer Fee (₱0 - ₱1,000)"
+            type="number"
+            min={0}
+            max={1000}
+            disabled={isPending}
+            {...register("organizerFeeAmount", { valueAsNumber: true })}
+            onKeyDown={(e) => {
+              if ([".", ",", "-", "e", "E", "+"].includes(e.key))
+                e.preventDefault();
+            }}
+            onChange={(e) => {
+              const cleaned = e.target.value.replace(/\D/g, "");
+              const val = parseInt(cleaned, 10);
+              if (isNaN(val) || cleaned === "") {
+                setValue("organizerFeeAmount", 0, { shouldValidate: true });
+              } else if (val > 1000) {
+                setValue("organizerFeeAmount", 1000, { shouldValidate: true });
+              } else if (val < 0) {
+                setValue("organizerFeeAmount", 0, { shouldValidate: true });
+              } else {
+                setValue("organizerFeeAmount", val, { shouldValidate: true });
+              }
+            }}
+            errors={errors}
+            icon={<PhilippinePeso className="w-4 h-4 text-brand-accent" />}
+          />
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">

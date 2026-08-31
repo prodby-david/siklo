@@ -399,6 +399,7 @@ export default function TurnDetailPanel({
                     onClose={() => setIsPayModalOpen(false)}
                     roundId={currentRound.id}
                     baseAmount={contributionNum}
+                    organizerFeeAmount={group.organizerFeeAmount}
                     targetDueDate={calculatedPayoutDate}
                     gracePeriodDays={group.gracePeriodDays ?? 0}
                     latePenaltyRate={group.latePenaltyAmount ?? 0}

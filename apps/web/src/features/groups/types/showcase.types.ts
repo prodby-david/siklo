@@ -21,6 +21,7 @@ export interface GroupTurnShowcaseProps {
   paymentDetails?: string | null;
   gracePeriodDays?: number;
   latePenaltyAmount?: number;
+  organizerFeeAmount?: number;
   onRefresh?: () => void;
 }
 
@@ -60,6 +61,7 @@ export interface TurnDetailPanelProps {
     paymentDetails?: string | null;
     gracePeriodDays?: number;
     latePenaltyAmount?: number;
+    organizerFeeAmount?: number;
     rounds?: GroupRound[];
     payments?: PaymentRecord[];
   };

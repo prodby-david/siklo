@@ -33,6 +33,7 @@ export default function GroupTurnShowcase({
   paymentDetails,
   gracePeriodDays,
   latePenaltyAmount,
+  organizerFeeAmount,
   onRefresh,
 }: GroupTurnShowcaseProps) {
   const { mutateAsync: selectSlot, isPending: isSelectingSlot } =
@@ -274,6 +275,7 @@ export default function GroupTurnShowcase({
             paymentDetails,
             gracePeriodDays,
             latePenaltyAmount,
+            organizerFeeAmount,
             rounds,
             payments,
           }}

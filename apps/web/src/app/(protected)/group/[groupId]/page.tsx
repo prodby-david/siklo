@@ -96,9 +96,12 @@ export default function GroupPage() {
           hasStarted={hasStarted}
           isCycleDone={isCycleDone}
           isOrganizer={isOrganizer}
+          isOrganizerParticipating={data.isOrganizerParticipating !== false}
+          isUserMember={Boolean(currentMembership)}
           allowedMethods={data.allowedPaymentMethods || ["E_WALLET", "BANK_TRANSFER", "CASH"]}
           organizerPaymentDetails={data.paymentDetails}
           contributionAmount={data.contributionAmount}
+          organizerFeeAmount={data.organizerFeeAmount}
           gracePeriodDays={data.gracePeriodDays}
           latePenaltyAmount={data.latePenaltyAmount}
           currentMemberMethod={currentMembership?.preferredPaymentMethod}
@@ -166,6 +169,7 @@ export default function GroupPage() {
           paymentDetails={data.paymentDetails}
           gracePeriodDays={data.gracePeriodDays}
           latePenaltyAmount={data.latePenaltyAmount}
+          organizerFeeAmount={data.organizerFeeAmount}
           onRefresh={refetch}
         />
 

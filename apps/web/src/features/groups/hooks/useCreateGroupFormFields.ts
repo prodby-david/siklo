@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Control, FieldErrors, Resolver, UseFormRegister, UseFormSetValue, UseFormWatch, useForm } from "react-hook-form";
+import { Control, FieldErrors, Resolver, SubmitHandler, UseFormRegister, UseFormSetValue, UseFormWatch, useForm } from "react-hook-form";
 import useCreateGroup from "./useCreateGroup";
 import {
   CreateGroupData,
@@ -24,6 +24,8 @@ export default function useCreateGroupFormFields(
       paymentDetails: "",
       gracePeriodDays: 0,
       latePenaltyAmount: 0,
+      isOrganizerParticipating: true,
+      organizerFeeAmount: 0,
     },
   });
   const internalMutation = useCreateGroup();
@@ -39,9 +41,11 @@ export default function useCreateGroupFormFields(
         e.preventDefault();
         props.onSubmit?.(e);
       }
-    : internalForm.handleSubmit((data: CreateGroupData) =>
-        internalMutation.mutate(data),
-      );
+    : (e?: React.BaseSyntheticEvent) => {
+        const handler: SubmitHandler<CreateGroupData> = (data) =>
+          internalMutation.mutate(data);
+        return internalForm.handleSubmit(handler)(e);
+      };
 
   const selectedBillingCycle =
     props.selectedBillingCycle || watch("billingCycle") || "DAILY";

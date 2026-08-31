@@ -34,6 +34,7 @@ export interface PaymentRecord {
   paymentMethod: "E_WALLET" | "BANK_TRANSFER" | "CASH";
   baseAmount: number;
   penaltyAmount: number;
+  organizerFeeAmount?: number;
   totalAmount: number;
   referenceNumber?: string | null;
   proofUrl?: string | null;
@@ -70,6 +71,8 @@ export interface Group {
   description?: string | null;
   inviteCode?: string;
   organizerId: string;
+  isOrganizerParticipating?: boolean;
+  organizerFeeAmount?: number;
   organizer?: {
     id: string;
     name: string;
@@ -117,9 +120,12 @@ export interface GroupHeroProps {
   hasStarted?: boolean;
   isCycleDone?: boolean;
   isOrganizer?: boolean;
+  isOrganizerParticipating?: boolean;
+  isUserMember?: boolean;
   allowedMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
   organizerPaymentDetails?: string | null;
   contributionAmount?: number;
+  organizerFeeAmount?: number;
   gracePeriodDays?: number;
   latePenaltyAmount?: number;
   roundId?: string;

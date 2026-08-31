@@ -22,9 +22,12 @@ export default function GroupHero({
   hasStarted,
   isCycleDone = false,
   isOrganizer = false,
+  isOrganizerParticipating = true,
+  isUserMember = true,
   allowedMethods = ["E_WALLET", "BANK_TRANSFER", "CASH"],
   organizerPaymentDetails,
   contributionAmount = 1000,
+  organizerFeeAmount = 0,
   gracePeriodDays = 0,
   latePenaltyAmount = 0,
   roundId = "",
@@ -91,7 +94,12 @@ export default function GroupHero({
                 <span>All Cycle Rotations Completed</span>
               </div>
             ) : hasStarted ? (
-              isCurrentUserPaid ? (
+              isOrganizer && !isOrganizerParticipating ? (
+                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-brand-accent bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Facilitating Turn #{currentTurn}</span>
+                </div>
+              ) : isCurrentUserPaid ? (
                 <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
                   <ShieldCheck className="w-4 h-4" />
                   <span>Turn #{currentTurn} Contribution Paid</span>
@@ -101,7 +109,7 @@ export default function GroupHero({
                   <Clock className="w-4 h-4" />
                   <span>Contribution Awaiting Verification</span>
                 </div>
-              ) : roundId ? (
+              ) : roundId && isUserMember ? (
                 <button
                   onClick={() => setIsPayModalOpen(true)}
                   className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
@@ -165,6 +173,7 @@ export default function GroupHero({
           onClose={() => setIsPayModalOpen(false)}
           roundId={roundId}
           baseAmount={contributionAmount}
+          organizerFeeAmount={organizerFeeAmount}
           gracePeriodDays={gracePeriodDays}
           latePenaltyRate={latePenaltyAmount}
           allowedMethods={allowedMethods}

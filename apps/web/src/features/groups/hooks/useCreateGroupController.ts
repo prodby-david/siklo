@@ -39,6 +39,8 @@ export function useCreateGroupController() {
       paymentDetails: "",
       gracePeriodDays: undefined as unknown as number,
       latePenaltyAmount: undefined as unknown as number,
+      isOrganizerParticipating: true,
+      organizerFeeAmount: 0,
     },
   });
 
