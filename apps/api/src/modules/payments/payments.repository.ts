@@ -40,9 +40,9 @@ export class PaymentsRepository {
     return this.prisma.payment.findUnique({
       where: { id },
       include: {
-        group: true,
-        user: true,
-        round: true,
+        group: { select: { id: true, organizerId: true } },
+        user: { select: { id: true, name: true } },
+        round: { select: { id: true, cycleNumber: true, roundNumber: true } },
       },
     });
   }
@@ -82,9 +82,9 @@ export class PaymentsRepository {
         status: PaymentStatus.PENDING,
       },
       include: {
-        user: true,
-        round: true,
-        group: true,
+        user: { select: { id: true, name: true, email: true } },
+        round: { select: { id: true, cycleNumber: true, roundNumber: true } },
+        group: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -97,9 +97,9 @@ export class PaymentsRepository {
         status: PaymentStatus.PENDING,
       },
       include: {
-        user: true,
-        round: true,
-        group: true,
+        user: { select: { id: true, name: true, email: true } },
+        round: { select: { id: true, cycleNumber: true, roundNumber: true } },
+        group: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -125,7 +125,7 @@ export class PaymentsRepository {
           groupId,
         },
       },
-      include: { user: true },
+      include: { user: { select: { id: true, name: true } } },
     });
   }
 
@@ -134,7 +134,7 @@ export class PaymentsRepository {
       where: { id: groupId },
       include: {
         memberships: {
-          include: { user: true },
+          include: { user: { select: { id: true, name: true } } },
         },
       },
     });
@@ -143,6 +143,16 @@ export class PaymentsRepository {
   async findRoundByRoundId(roundId: string) {
     return this.prisma.round.findUnique({
       where: { id: roundId },
+    });
+  }
+
+  async findCurrentRoundByGroupId(groupId: string) {
+    return this.prisma.round.findFirst({
+      where: {
+        groupId,
+        status: RoundStatus.PENDING,
+      },
+      orderBy: [{ cycleNumber: 'asc' }, { roundNumber: 'asc' }],
     });
   }
 
@@ -156,7 +166,7 @@ export class PaymentsRepository {
       },
       include: {
         memberships: {
-          include: { user: true },
+          include: { user: { select: { id: true, name: true } } },
         },
         rounds: {
           include: {
@@ -309,7 +319,7 @@ export class PaymentsRepository {
       where: {
         groupId,
         cycleNumber: { lt: cycleNumber },
-        status: { not: RoundStatus.PAID },
+        status: RoundStatus.PENDING,
       },
     });
   }
@@ -322,7 +332,7 @@ export class PaymentsRepository {
     return this.prisma.round.findFirst({
       where: {
         groupId,
-        status: { not: RoundStatus.PAID },
+        status: RoundStatus.PENDING,
         OR: [
           { cycleNumber: { gt: cycleNumber } },
           { cycleNumber, roundNumber: { gt: roundNumber } },
@@ -342,5 +352,27 @@ export class PaymentsRepository {
       where: { id: roundId },
       data: { status },
     });
+  }
+
+  async transitionRoundStatus(
+    roundId: string,
+    currentStatus: RoundStatus,
+    nextStatus: RoundStatus,
+    data: {
+      disbursedAt?: Date;
+      receivedAt?: Date;
+      disbursementReferenceNumber?: string | null;
+      disbursementProofUrl?: string | null;
+      receiptNotes?: string | null;
+    },
+    tx: Prisma.TransactionClient,
+  ) {
+    const result = await tx.round.updateMany({
+      where: { id: roundId, status: currentStatus },
+      data: { status: nextStatus, ...data },
+    });
+
+    if (result.count !== 1) return null;
+    return tx.round.findUnique({ where: { id: roundId } });
   }
 }

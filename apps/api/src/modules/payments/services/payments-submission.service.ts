@@ -10,11 +10,9 @@ import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
 import { PAYMENT_STATUS } from '../constants/payment.constants';
-import {
-  calculatePenaltyAmount,
-  calculateMemberTargetDate,
-} from '../utils/paymentCalculator';
+import { calculatePenaltyAmount } from '../utils/paymentCalculator';
 import { PrismaService } from '@/database/prisma.service';
+import { RoundStatus } from '@/generated/prisma/client';
 
 @Injectable()
 export class PaymentsSubmissionService {
@@ -54,81 +52,53 @@ export class PaymentsSubmissionService {
   }
 
   async submitPayment(dto: SubmitPaymentDTO, userId: string) {
-    const group = await this.paymentsRepository.findGroupByGroupId(dto.groupId);
+    const round = await this.paymentsRepository.findRoundByRoundId(dto.roundId);
+    if (!round) {
+      throw new NotFoundException('Payment round not found');
+    }
+
+    const group = await this.paymentsRepository.findGroupByGroupId(
+      round.groupId,
+    );
     if (!group) {
       throw new NotFoundException('Group not found');
     }
 
+    if (!group.startDate) {
+      throw new ConflictException('Group cycle has not started yet');
+    }
+
+    if (round.status !== RoundStatus.PENDING) {
+      throw new ConflictException('This payment round is no longer open');
+    }
+
+    const currentRound =
+      await this.paymentsRepository.findCurrentRoundByGroupId(group.id);
+    if (!currentRound || currentRound.id !== round.id) {
+      throw new ConflictException(
+        'Payments are only open for the current round',
+      );
+    }
+
+    if (!group.allowedPaymentMethods.includes(dto.paymentMethod)) {
+      throw new BadRequestException(
+        'This payment method is not allowed for the group',
+      );
+    }
+
     const membership = await this.paymentsRepository.findMembership(
       userId,
-      dto.groupId,
+      group.id,
     );
     if (!membership) {
       throw new ForbiddenException('You are not a member of this group');
     }
 
-    const targetCycleNum = dto.cycleNumber || 1;
-    const targetTurnNum = dto.turnNumber || membership.position;
-
-    if (targetCycleNum > 1) {
-      const unpaidBefore =
-        await this.paymentsRepository.countUnpaidRoundsBeforeCycle(
-          dto.groupId,
-          targetCycleNum,
-        );
-      if (unpaidBefore > 0) {
-        throw new ConflictException(
-          `Cycle ${targetCycleNum} cannot open until all previous cycle payouts are completed`,
-        );
-      }
-    }
-
     const { savedPayment, cycleNumber, turnNumber } =
       await this.prisma.$transaction(async (tx) => {
-        let round =
-          dto.roundId && dto.roundId !== 'current'
-            ? await this.paymentsRepository.findRoundByRoundId(dto.roundId)
-            : null;
-
-        if (round && round.groupId !== dto.groupId) {
-          throw new ForbiddenException('Invalid round for this group');
-        }
-
-        if (!round) {
-          if (targetCycleNum > group.cycleDuration) {
-            throw new BadRequestException(
-              `Cycle ${targetCycleNum} does not exist for this group`,
-            );
-          }
-
-          const totalMembers = group.memberships?.length || 1;
-          const targetDate = calculateMemberTargetDate(
-            group.startDate,
-            group.billingCycle,
-            targetCycleNum,
-            targetTurnNum,
-            totalMembers,
-          );
-
-          const recipientMember = group.memberships?.find(
-            (m) => m.position === targetTurnNum,
-          );
-
-          round = await this.paymentsRepository.findOrCreateRound(
-            {
-              groupId: dto.groupId,
-              cycleNumber: targetCycleNum,
-              roundNumber: targetTurnNum,
-              recipientId: recipientMember?.userId || membership.userId,
-              targetDate,
-            },
-            tx,
-          );
-        }
-
         const existingPayment =
           await this.paymentsRepository.findPaymentByGroupRoundAndUser(
-            dto.groupId,
+            group.id,
             round.id,
             userId,
             tx,
@@ -183,7 +153,7 @@ export class PaymentsSubmissionService {
             )
           : await this.paymentsRepository.createPayment(
               {
-                groupId: dto.groupId,
+                groupId: group.id,
                 roundId: round.id,
                 userId,
                 paymentMethod: dto.paymentMethod,
@@ -200,7 +170,7 @@ export class PaymentsSubmissionService {
         await this.activityService.createActivity(
           {
             userId: group.organizerId,
-            groupId: dto.groupId,
+            groupId: group.id,
             activityType: 'PAYMENT',
             description: `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}`,
           },
@@ -216,7 +186,7 @@ export class PaymentsSubmissionService {
 
     await this.notificationsService.createNotification({
       userId: group.organizerId,
-      groupId: dto.groupId,
+      groupId: group.id,
       notificationType: 'PAYMENT',
       description: `${membership.user.name} submitted payment proof for Cycle #${cycleNumber} (Turn #${turnNumber}). Please review and verify.`,
     });

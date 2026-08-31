@@ -123,7 +123,8 @@ export class PaymentsScheduleService {
 
       const nextOwnRound = sortByCycleAndRound(group.rounds ?? []).find(
         (round) =>
-          round.recipientId === userId && round.status !== ('PAID' as const),
+          round.recipientId === userId &&
+          round.status !== ('RECEIVED' as const),
       );
       if (!nextOwnRound) continue;
 

@@ -23,6 +23,8 @@ describe('PaymentsService', () => {
     updatePaymentStatusRejected: jest.Mock;
     findGroupByGroupId: jest.Mock;
     findRoundByRoundId: jest.Mock;
+    findRoundByGroupCycleAndNumber: jest.Mock;
+    findCurrentRoundByGroupId: jest.Mock;
     findMembership: jest.Mock;
     createPayment: jest.Mock;
     findPaymentByGroupRoundAndUser: jest.Mock;
@@ -32,6 +34,8 @@ describe('PaymentsService', () => {
     updateRoundStatus: jest.Mock;
     findNextUnpaidRoundAfter: jest.Mock;
     findUserActiveGroupsWithMemberships: jest.Mock;
+    findVerifiedPaymentsByGroupId: jest.Mock;
+    transitionRoundStatus: jest.Mock;
   };
   let activityService: { createActivity: jest.Mock };
   let notificationsService: { createNotification: jest.Mock };
@@ -45,6 +49,7 @@ describe('PaymentsService', () => {
       findGroupByGroupId: jest.fn(),
       findRoundByRoundId: jest.fn(),
       findRoundByGroupCycleAndNumber: jest.fn(),
+      findCurrentRoundByGroupId: jest.fn(),
       findMembership: jest.fn(),
       createPayment: jest.fn(),
       findPaymentByGroupRoundAndUser: jest.fn(),
@@ -55,6 +60,7 @@ describe('PaymentsService', () => {
       findNextUnpaidRoundAfter: jest.fn(),
       findUserActiveGroupsWithMemberships: jest.fn().mockResolvedValue([]),
       findVerifiedPaymentsByGroupId: jest.fn().mockResolvedValue([]),
+      transitionRoundStatus: jest.fn(),
     };
 
     activityService = {
@@ -174,45 +180,54 @@ describe('PaymentsService', () => {
   });
 
   describe('submitPayment', () => {
-    it('should throw BadRequestException for a cycle beyond group duration', async () => {
+    it('should reject a round that is not currently open', async () => {
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
+        id: 'round-future',
+        groupId: 'group-1',
+        status: 'PENDING',
+      });
       paymentsRepository.findGroupByGroupId.mockResolvedValue({
         id: 'group-1',
+        startDate: new Date(),
         cycleDuration: 3,
+        allowedPaymentMethods: ['CASH'],
         memberships: [{ userId: 'user-1', position: 1 }],
       });
-      paymentsRepository.findMembership.mockResolvedValue({
-        userId: 'user-1',
-        position: 1,
-        user: { name: 'User One' },
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'round-current',
       });
 
       await expect(
         service.submitPayment(
-          { groupId: 'group-1', cycleNumber: 5, paymentMethod: 'CASH' },
+          { roundId: 'round-future', paymentMethod: 'CASH' },
           'user-1',
         ),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(ConflictException);
       expect(paymentsRepository.createPayment).not.toHaveBeenCalled();
     });
   });
 
   describe('cycle gating', () => {
     it('should block contributions into a cycle with unfinished prior payouts', async () => {
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
+        id: 'round-2',
+        groupId: 'group-1',
+        status: 'PENDING',
+      });
       paymentsRepository.findGroupByGroupId.mockResolvedValue({
         id: 'group-1',
+        startDate: new Date(),
         cycleDuration: 3,
+        allowedPaymentMethods: ['CASH'],
         memberships: [{ userId: 'user-1', position: 1 }],
       });
-      paymentsRepository.findMembership.mockResolvedValue({
-        userId: 'user-1',
-        position: 1,
-        user: { name: 'User One' },
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'round-1',
       });
-      paymentsRepository.countUnpaidRoundsBeforeCycle.mockResolvedValue(2);
 
       await expect(
         service.submitPayment(
-          { groupId: 'group-1', cycleNumber: 2, paymentMethod: 'CASH' },
+          { roundId: 'round-2', paymentMethod: 'CASH' },
           'user-1',
         ),
       ).rejects.toThrow(ConflictException);
@@ -222,7 +237,12 @@ describe('PaymentsService', () => {
     it('should block resubmission while a payment is awaiting verification', async () => {
       paymentsRepository.findGroupByGroupId.mockResolvedValue({
         id: 'group-1',
+        startDate: new Date(),
         cycleDuration: 3,
+        contributionAmount: 1000,
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        allowedPaymentMethods: ['CASH'],
         memberships: [{ userId: 'user-1', position: 1 }],
       });
       paymentsRepository.findMembership.mockResolvedValue({
@@ -230,10 +250,14 @@ describe('PaymentsService', () => {
         position: 1,
         user: { name: 'User One' },
       });
-      paymentsRepository.findRoundByRoundId.mockResolvedValue(null);
-      paymentsRepository.findOrCreateRound.mockResolvedValue({
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
         id: 'round-1',
+        groupId: 'group-1',
+        status: 'PENDING',
         targetDate: new Date('2026-08-01'),
+      });
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'round-1',
       });
       paymentsRepository.findPaymentByGroupRoundAndUser.mockResolvedValue({
         id: 'payment-1',
@@ -242,7 +266,7 @@ describe('PaymentsService', () => {
 
       await expect(
         service.submitPayment(
-          { groupId: 'group-1', paymentMethod: 'CASH' },
+          { roundId: 'round-1', paymentMethod: 'CASH' },
           'user-1',
         ),
       ).rejects.toThrow(ConflictException);
@@ -253,7 +277,12 @@ describe('PaymentsService', () => {
     it('should allow resubmission after rejection by replacing the proof', async () => {
       paymentsRepository.findGroupByGroupId.mockResolvedValue({
         id: 'group-1',
+        startDate: new Date(),
         cycleDuration: 3,
+        contributionAmount: 1000,
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        allowedPaymentMethods: ['CASH'],
         memberships: [{ userId: 'user-1', position: 1 }],
       });
       paymentsRepository.findMembership.mockResolvedValue({
@@ -261,10 +290,14 @@ describe('PaymentsService', () => {
         position: 1,
         user: { name: 'User One' },
       });
-      paymentsRepository.findRoundByRoundId.mockResolvedValue(null);
-      paymentsRepository.findOrCreateRound.mockResolvedValue({
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
         id: 'round-1',
+        groupId: 'group-1',
+        status: 'PENDING',
         targetDate: new Date('2026-08-01'),
+      });
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'round-1',
       });
       paymentsRepository.findPaymentByGroupRoundAndUser.mockResolvedValue({
         id: 'payment-1',
@@ -278,7 +311,7 @@ describe('PaymentsService', () => {
       notificationsService.createNotification.mockResolvedValue({});
 
       const result = await service.submitPayment(
-        { groupId: 'group-1', paymentMethod: 'CASH', proofUrl: 'proof.png' },
+        { roundId: 'round-1', paymentMethod: 'CASH', proofUrl: 'proof.png' },
         'user-1',
       );
 
@@ -305,14 +338,28 @@ describe('PaymentsService', () => {
           { userId: 'user-2', position: 2, user: { name: 'Member 2' } },
         ],
       });
-      paymentsRepository.findRoundByGroupCycleAndNumber.mockResolvedValue(null);
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
+        id: 'r-1',
+        groupId: 'group-1',
+        status: 'PENDING',
+        recipientId: 'user-1',
+        cycleNumber: 1,
+        roundNumber: 1,
+      });
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'r-1',
+      });
       paymentsRepository.findVerifiedPaymentsByGroupId.mockResolvedValue([
-        { roundId: 'r-1', round: { cycleNumber: 1, roundNumber: 1 } },
+        { roundId: 'r-1', userId: 'user-1' },
       ]);
 
       await expect(
         service.disbursePayout(
-          { groupId: 'group-1', cycleNumber: 1, turnNumber: 1 },
+          {
+            roundId: 'r-1',
+            referenceNumber: 'REF-12345',
+            proofUrl: 'proof.png',
+          },
           'organizer-1',
         ),
       ).rejects.toThrow(BadRequestException);
@@ -332,19 +379,24 @@ describe('PaymentsService', () => {
           { userId: 'user-2', position: 2, user: { name: 'Member 2' } },
         ],
       });
-      paymentsRepository.findRoundByGroupCycleAndNumber.mockResolvedValue({
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
         id: 'r-1',
+        groupId: 'group-1',
         status: 'PENDING',
+        cycleNumber: 1,
         roundNumber: 1,
         recipientId: 'user-1',
       });
-      paymentsRepository.findVerifiedPaymentsByGroupId.mockResolvedValue([
-        { roundId: 'r-1', round: { cycleNumber: 1, roundNumber: 1 } },
-        { roundId: 'r-1', round: { cycleNumber: 1, roundNumber: 1 } },
-      ]);
-      paymentsRepository.updateRoundStatus.mockResolvedValue({
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
         id: 'r-1',
-        status: 'PAID',
+      });
+      paymentsRepository.findVerifiedPaymentsByGroupId.mockResolvedValue([
+        { roundId: 'r-1', userId: 'user-1' },
+        { roundId: 'r-1', userId: 'user-2' },
+      ]);
+      paymentsRepository.transitionRoundStatus.mockResolvedValue({
+        id: 'r-1',
+        status: 'DISBURSED',
       });
       paymentsRepository.findNextUnpaidRoundAfter.mockResolvedValue({
         id: 'r-2',
@@ -353,17 +405,12 @@ describe('PaymentsService', () => {
       });
 
       const result = await service.disbursePayout(
-        { groupId: 'group-1', cycleNumber: 1, turnNumber: 1 },
+        { roundId: 'r-1', referenceNumber: 'REF-12345', proofUrl: 'proof.png' },
         'organizer-1',
       );
 
       expect(result.success).toBe(true);
-      expect(result.round.status).toBe('PAID');
-      expect(notificationsService.createNotification).toHaveBeenCalledWith(
-        expect.objectContaining({
-          description: expect.stringContaining('contributions are now open'),
-        }),
-      );
+      expect(result.round.status).toBe('DISBURSED');
     });
   });
 
@@ -389,14 +436,17 @@ describe('PaymentsService', () => {
           },
         ],
       });
-      paymentsRepository.findOrCreateRound.mockResolvedValue({
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
         id: 'round-1',
-        status: 'PENDING',
+        groupId: 'group-1',
+        recipientId: 'user-1',
+        cycleNumber: 1,
+        status: 'DISBURSED',
         roundNumber: 1,
       });
-      paymentsRepository.updateRoundStatus.mockResolvedValue({
+      paymentsRepository.transitionRoundStatus.mockResolvedValue({
         id: 'round-1',
-        status: 'PAID',
+        status: 'RECEIVED',
       });
       paymentsRepository.findNextUnpaidRoundAfter.mockResolvedValue({
         id: 'round-2',
@@ -405,7 +455,7 @@ describe('PaymentsService', () => {
       });
 
       const result = await service.confirmPayoutReceipt(
-        { groupId: 'group-1' },
+        { roundId: 'round-1' },
         'user-1',
       );
 

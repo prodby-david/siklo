@@ -7,6 +7,7 @@ import {
   Query,
   UseGuards,
   Patch,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
@@ -45,7 +46,7 @@ export class PaymentsController {
   @Patch(':paymentId/verification')
   @UseGuards(JwtAuthGuard)
   async verifyPayment(
-    @Param('paymentId') paymentId: string,
+    @Param('paymentId', ParseUUIDPipe) paymentId: string,
     @CurrentUser('sub') userId: string,
   ) {
     return this.paymentsService.verifyPayment(paymentId, userId);
@@ -54,7 +55,7 @@ export class PaymentsController {
   @Patch(':paymentId/rejection')
   @UseGuards(JwtAuthGuard)
   async rejectPayment(
-    @Param('paymentId') paymentId: string,
+    @Param('paymentId', ParseUUIDPipe) paymentId: string,
     @Body(new ZodValidationPipe(rejectPaymentSchema)) body: RejectPaymentDTO,
     @CurrentUser('sub') userId: string,
   ) {
@@ -64,7 +65,8 @@ export class PaymentsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getPendingPayments(
-    @Query('groupId') groupId: string | undefined,
+    @Query('groupId', new ParseUUIDPipe({ optional: true }))
+    groupId: string | undefined,
     @CurrentUser('sub') userId: string,
   ) {
     return this.paymentsService.getPendingPayments(groupId, userId);

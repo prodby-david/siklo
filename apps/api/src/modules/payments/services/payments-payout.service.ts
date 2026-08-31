@@ -15,7 +15,6 @@ import { ActivityService } from '../../activity/activity.service';
 import { GroupsCoreService } from '../../groups/services/groups-core.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { PaymentsRepository } from '../payments.repository';
-import { calculateMemberTargetDate } from '../utils/paymentCalculator';
 import { PrismaService } from '@/database/prisma.service';
 
 @Injectable()
@@ -35,34 +34,14 @@ export class PaymentsPayoutService {
     return (contributionAmount || 0) * totalMembers;
   }
 
-  private async resolveRound(
-    groupId: string,
-    roundId?: string,
-    cycleNumber?: number,
-    turnNumber?: number,
-  ) {
-    let round = roundId
-      ? await this.paymentsRepository.findRoundByRoundId(roundId)
-      : null;
-
-    if (round && round.groupId !== groupId) {
-      throw new ForbiddenException('Invalid round for this group');
-    }
-
-    if (!round && cycleNumber && turnNumber) {
-      round = await this.paymentsRepository.findRoundByGroupCycleAndNumber(
-        groupId,
-        cycleNumber,
-        turnNumber,
-      );
-    }
-
-    return round;
-  }
-
   async requestAdvancePayout(dto: RequestAdvancePayoutDTO, userId: string) {
+    const round = await this.paymentsRepository.findRoundByRoundId(dto.roundId);
+    if (!round) {
+      throw new NotFoundException('Payout round not found');
+    }
+
     const group = await this.groupsCoreService.getExistingGroup(
-      dto.groupId,
+      round.groupId,
       userId,
     );
 
@@ -76,35 +55,33 @@ export class PaymentsPayoutService {
       throw new ForbiddenException('You are not a member of this group');
     }
 
-    const currentCycle = dto.cycleNumber || 1;
-    const targetTurn = dto.turnNumber || userMembership.position;
-
-    if (userMembership.position !== targetTurn) {
+    if (round.recipientId !== userId) {
       throw new ForbiddenException(
-        'You can only request payout for your assigned turn position',
+        'Only the assigned recipient can request this payout',
       );
     }
 
-    const round = await this.resolveRound(
-      dto.groupId,
-      dto.roundId,
-      currentCycle,
-      targetTurn,
-    );
+    const currentRound =
+      await this.paymentsRepository.findCurrentRoundByGroupId(group.id);
+    if (!currentRound || currentRound.id !== round.id) {
+      throw new ConflictException(
+        'Only the current payout round can be requested',
+      );
+    }
 
     const groupPayments =
-      await this.paymentsRepository.findVerifiedPaymentsByGroupId(dto.groupId);
-
-    const verifiedRoundPayments = groupPayments.filter((p) => {
-      if (round && p.roundId === round.id) return true;
-      return (
-        p.round?.cycleNumber === currentCycle &&
-        p.round?.roundNumber === targetTurn
-      );
-    });
+      await this.paymentsRepository.findVerifiedPaymentsByGroupId(group.id);
+    const verifiedUserIds = new Set(
+      groupPayments
+        .filter((payment) => payment.roundId === round.id)
+        .map((payment) => payment.userId),
+    );
 
     const totalMembers = memberships.length || group.maxMembers;
-    if (verifiedRoundPayments.length < totalMembers) {
+    if (
+      verifiedUserIds.size !== memberships.length ||
+      memberships.some((membership) => !verifiedUserIds.has(membership.userId))
+    ) {
       throw new BadRequestException(
         `Advance payout is only available after all ${totalMembers} members have completed verified contributions for this round`,
       );
@@ -115,11 +92,11 @@ export class PaymentsPayoutService {
       totalMembers,
     );
     const notesInfo = dto.notes ? ` (Note: ${dto.notes})` : '';
-    const description = `${userMembership.user.name} requested an advance payout of ₱${poolTotal.toLocaleString()} for Turn #${targetTurn} (Cycle ${currentCycle}) [Payout Details: ${dto.accountDetails}]${notesInfo}.`;
+    const description = `${userMembership.user.name} requested an advance payout of ₱${poolTotal.toLocaleString()} for Turn #${round.roundNumber} (Cycle ${round.cycleNumber}) [Payout Details: ${dto.accountDetails}]${notesInfo}.`;
 
     await this.activityService.createActivity({
       userId,
-      groupId: dto.groupId,
+      groupId: group.id,
       activityType: 'PAYMENT',
       description,
     });
@@ -127,9 +104,9 @@ export class PaymentsPayoutService {
     if (group.organizerId && group.organizerId !== userId) {
       await this.notificationsService.createNotification({
         userId: group.organizerId,
-        groupId: dto.groupId,
+        groupId: group.id,
         notificationType: 'PAYOUT',
-        description: `${userMembership.user.name} has requested an advance payout of ₱${poolTotal.toLocaleString()} for Turn #${targetTurn} (Cycle ${currentCycle}).`,
+        description: `${userMembership.user.name} has requested an advance payout of ₱${poolTotal.toLocaleString()} for Turn #${round.roundNumber} (Cycle ${round.cycleNumber}).`,
       });
     }
 
@@ -137,14 +114,19 @@ export class PaymentsPayoutService {
       success: true,
       message: 'Advance payout request submitted to group organizer',
       poolTotal,
-      targetTurn,
-      cycleNumber: currentCycle,
+      targetTurn: round.roundNumber,
+      cycleNumber: round.cycleNumber,
     };
   }
 
   async disbursePayout(dto: DisbursePayoutDTO, organizerUserId: string) {
+    const round = await this.paymentsRepository.findRoundByRoundId(dto.roundId);
+    if (!round) {
+      throw new NotFoundException('Payout round not found');
+    }
+
     const group = await this.groupsCoreService.getExistingGroup(
-      dto.groupId,
+      round.groupId,
       organizerUserId,
     );
 
@@ -154,26 +136,27 @@ export class PaymentsPayoutService {
       );
     }
 
-    const memberships = group.memberships || [];
-    const currentCycle = dto.cycleNumber || 1;
-    const targetTurn = dto.turnNumber || 1;
+    if (!group.startDate) {
+      throw new ConflictException('Group cycle has not started yet');
+    }
 
-    const round = await this.resolveRound(
-      dto.groupId,
-      dto.roundId,
-      currentCycle,
-      targetTurn,
-    );
-
-    if (!round && currentCycle > group.cycleDuration) {
-      throw new BadRequestException(
-        `Cycle ${currentCycle} does not exist for this group`,
+    if (round.status !== RoundStatus.PENDING) {
+      throw new ConflictException(
+        'This payout round is not awaiting disbursement',
       );
     }
 
+    const currentRound =
+      await this.paymentsRepository.findCurrentRoundByGroupId(group.id);
+    if (!currentRound || currentRound.id !== round.id) {
+      throw new ConflictException(
+        'Only the current payout round can be disbursed',
+      );
+    }
+
+    const memberships = group.memberships || [];
     const recipientMembership = memberships.find(
-      (m) =>
-        (round && m.userId === round.recipientId) || m.position === targetTurn,
+      (membership) => membership.userId === round.recipientId,
     );
 
     if (!recipientMembership) {
@@ -181,39 +164,22 @@ export class PaymentsPayoutService {
     }
 
     const totalMembers = memberships.length || group.maxMembers;
-
     const groupPayments =
-      await this.paymentsRepository.findVerifiedPaymentsByGroupId(dto.groupId);
+      await this.paymentsRepository.findVerifiedPaymentsByGroupId(group.id);
+    const verifiedUserIds = new Set(
+      groupPayments
+        .filter((payment) => payment.roundId === round.id)
+        .map((payment) => payment.userId),
+    );
 
-    const verifiedRoundPayments = groupPayments.filter((p) => {
-      if (round && p.roundId === round.id) return true;
-      return (
-        p.round?.cycleNumber === currentCycle &&
-        p.round?.roundNumber === targetTurn
-      );
-    });
-
-    if (verifiedRoundPayments.length < totalMembers) {
+    if (
+      verifiedUserIds.size !== memberships.length ||
+      memberships.some((membership) => !verifiedUserIds.has(membership.userId))
+    ) {
       throw new BadRequestException(
         `All ${totalMembers} members must complete verified contributions before releasing payout`,
       );
     }
-
-    const newRoundData = !round
-      ? {
-          groupId: dto.groupId,
-          cycleNumber: currentCycle,
-          roundNumber: recipientMembership.position,
-          recipientId: recipientMembership.userId,
-          targetDate: calculateMemberTargetDate(
-            group.startDate || new Date(),
-            group.billingCycle,
-            currentCycle,
-            recipientMembership.position,
-            totalMembers,
-          ),
-        }
-      : undefined;
 
     const recipientName =
       recipientMembership.user?.name || 'Scheduled Beneficiary';
@@ -232,28 +198,28 @@ export class PaymentsPayoutService {
       : 'Preferred Gateway';
 
     const refInfo = dto.referenceNumber ? ` [Ref: ${dto.referenceNumber}]` : '';
-    const description = `Organizer disbursed the lump-sum payout of ₱${poolTotal.toLocaleString()} to ${recipientName} for Turn #${targetTurn} (Cycle ${currentCycle}) via ${gatewayInfo}${refInfo}.`;
+    const description = `Organizer disbursed the lump-sum payout of ₱${poolTotal.toLocaleString()} to ${recipientName} for Turn #${round.roundNumber} (Cycle ${round.cycleNumber}) via ${gatewayInfo}${refInfo}.`;
 
     const updatedRound = await this.prisma.$transaction(async (tx) => {
-      let activeRound = round;
-      if (newRoundData) {
-        activeRound = await this.paymentsRepository.findOrCreateRound(
-          newRoundData,
-          tx,
-        );
-      }
-      if (activeRound) {
-        activeRound = await this.paymentsRepository.updateRoundStatus(
-          activeRound.id,
-          RoundStatus.PAID,
-          tx,
-        );
+      const activeRound = await this.paymentsRepository.transitionRoundStatus(
+        round.id,
+        RoundStatus.PENDING,
+        RoundStatus.DISBURSED,
+        {
+          disbursedAt: new Date(),
+          disbursementReferenceNumber: dto.referenceNumber || null,
+          disbursementProofUrl: dto.proofUrl || null,
+        },
+        tx,
+      );
+      if (!activeRound) {
+        throw new ConflictException('This payout round has already changed');
       }
 
       await this.activityService.createActivity(
         {
           userId: organizerUserId,
-          groupId: dto.groupId,
+          groupId: group.id,
           activityType: 'PAYOUT_DISBURSED',
           description,
         },
@@ -266,32 +232,15 @@ export class PaymentsPayoutService {
     if (recipientUserId && recipientUserId !== organizerUserId) {
       await this.notificationsService.createNotification({
         userId: recipientUserId,
-        groupId: dto.groupId,
+        groupId: group.id,
         notificationType: 'PAYOUT',
-        description: `Organizer has disbursed your payout of ₱${poolTotal.toLocaleString()} for Turn #${targetTurn} (Cycle ${currentCycle}).`,
+        description: `Organizer has disbursed your payout of ₱${poolTotal.toLocaleString()} for Turn #${round.roundNumber} (Cycle ${round.cycleNumber}).`,
       });
-    }
-
-    const nextRound = await this.paymentsRepository.findNextUnpaidRoundAfter(
-      dto.groupId,
-      currentCycle,
-      targetTurn,
-    );
-
-    if (nextRound) {
-      for (const member of memberships) {
-        await this.notificationsService.createNotification({
-          userId: member.userId,
-          groupId: dto.groupId,
-          notificationType: 'PAYOUT',
-          description: `Turn #${nextRound.roundNumber} (Cycle ${nextRound.cycleNumber}) contributions are now open.`,
-        });
-      }
     }
 
     return {
       success: true,
-      message: 'Payout marked as disbursed and round completed successfully',
+      message: 'Payout marked as disbursed and awaiting recipient confirmation',
       round: updatedRound,
       poolTotal,
       recipientName,
@@ -302,8 +251,13 @@ export class PaymentsPayoutService {
     dto: ConfirmPayoutReceiptDTO,
     recipientUserId: string,
   ) {
+    const round = await this.paymentsRepository.findRoundByRoundId(dto.roundId);
+    if (!round) {
+      throw new NotFoundException('Payout round not found');
+    }
+
     const group = await this.groupsCoreService.getExistingGroup(
-      dto.groupId,
+      round.groupId,
       recipientUserId,
     );
 
@@ -319,50 +273,18 @@ export class PaymentsPayoutService {
       throw new ForbiddenException('You are not a member of this group');
     }
 
-    const currentCycle = dto.cycleNumber || 1;
-    const targetTurn = dto.turnNumber || userMembership.position;
-
-    if (userMembership.position !== targetTurn) {
+    if (round.recipientId !== recipientUserId) {
       throw new ForbiddenException(
-        'You can only confirm payout receipt for your assigned turn position',
-      );
-    }
-
-    let round = await this.resolveRound(
-      dto.groupId,
-      dto.roundId,
-      currentCycle,
-      targetTurn,
-    );
-
-    if (!round && currentCycle > group.cycleDuration) {
-      throw new BadRequestException(
-        `Cycle ${currentCycle} does not exist for this group`,
+        'Only the assigned recipient can confirm this payout receipt',
       );
     }
 
     const totalMembers = memberships.length || group.maxMembers;
-    if (!round) {
-      const targetDate = calculateMemberTargetDate(
-        group.startDate,
-        group.billingCycle,
-        currentCycle,
-        userMembership.position,
-        totalMembers,
-      );
-
-      round = await this.paymentsRepository.findOrCreateRound({
-        groupId: dto.groupId,
-        cycleNumber: currentCycle,
-        roundNumber: userMembership.position,
-        recipientId: recipientUserId,
-        targetDate,
-      });
-    }
-
-    if (round.status === RoundStatus.PAID) {
+    if (round.status !== RoundStatus.DISBURSED) {
       throw new ConflictException(
-        'Payout receipt for this round has already been confirmed',
+        round.status === RoundStatus.RECEIVED
+          ? 'Payout receipt for this round has already been confirmed'
+          : 'The organizer has not disbursed this payout yet',
       );
     }
 
@@ -371,40 +293,45 @@ export class PaymentsPayoutService {
       totalMembers,
     );
     const notesInfo = dto.notes ? ` (Note: ${dto.notes})` : '';
-    const description = `${userMembership.user.name} confirmed receipt of ₱${poolTotal.toLocaleString()} payout for Turn #${targetTurn} (Cycle ${currentCycle})${notesInfo}.`;
+    const description = `${userMembership.user.name} confirmed receipt of ₱${poolTotal.toLocaleString()} payout for Turn #${round.roundNumber} (Cycle ${round.cycleNumber})${notesInfo}.`;
 
     const updatedRound = await this.prisma.$transaction(async (tx) => {
-      const paidRound = await this.paymentsRepository.updateRoundStatus(
+      const receivedRound = await this.paymentsRepository.transitionRoundStatus(
         round.id,
-        RoundStatus.PAID,
+        RoundStatus.DISBURSED,
+        RoundStatus.RECEIVED,
+        { receivedAt: new Date(), receiptNotes: dto.notes || null },
         tx,
       );
+      if (!receivedRound) {
+        throw new ConflictException('This payout round has already changed');
+      }
 
       await this.activityService.createActivity(
         {
           userId: recipientUserId,
-          groupId: dto.groupId,
-          activityType: 'PAYOUT_DISBURSED',
+          groupId: group.id,
+          activityType: 'PAYOUT_RECEIVED',
           description,
         },
         tx,
       );
 
-      return paidRound;
+      return receivedRound;
     });
 
     if (group.organizerId && group.organizerId !== recipientUserId) {
       await this.notificationsService.createNotification({
         userId: group.organizerId,
-        groupId: dto.groupId,
+        groupId: group.id,
         notificationType: 'PAYOUT',
-        description: `${userMembership.user.name} confirmed receiving their ₱${poolTotal.toLocaleString()} payout for Turn #${targetTurn} (Cycle ${currentCycle}).`,
+        description: `${userMembership.user.name} confirmed receiving their ₱${poolTotal.toLocaleString()} payout for Turn #${round.roundNumber} (Cycle ${round.cycleNumber}).`,
       });
     }
 
     const nextRound = await this.paymentsRepository.findNextUnpaidRoundAfter(
-      dto.groupId,
-      currentCycle,
+      group.id,
+      round.cycleNumber,
       round.roundNumber,
     );
 
@@ -413,7 +340,7 @@ export class PaymentsPayoutService {
         if (member.userId === recipientUserId) continue;
         await this.notificationsService.createNotification({
           userId: member.userId,
-          groupId: dto.groupId,
+          groupId: group.id,
           notificationType: 'PAYOUT',
           description: `Turn #${nextRound.roundNumber} (Cycle ${nextRound.cycleNumber}) contributions are now open.`,
         });
