@@ -89,3 +89,5 @@ export {
   type NotificationDTO,
   type MarkNotificationReadDTO,
 } from "./notifications/create-notification.schema.js";
+
+export { uuidSchema, optionalProofSchema } from "./common/identifier.schema.js";
