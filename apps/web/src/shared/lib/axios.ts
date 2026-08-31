@@ -10,7 +10,6 @@ const PROTECTED_ROUTE_PREFIXES = [
   "/chat",
   "/dashboard",
   "/group",
-  "/invites",
   "/settings",
 ];
 
