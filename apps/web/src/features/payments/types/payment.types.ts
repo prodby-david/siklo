@@ -47,6 +47,7 @@ export interface PaymentErrorAlertProps {
 export interface PaymentSummaryBreakdownProps {
   baseAmount: number;
   lateFee: number;
+  organizerFee?: number;
   totalAmount: number;
 }
 
@@ -73,6 +74,7 @@ export interface PaymentSubmissionModalProps {
   onClose: () => void;
   roundId: string;
   baseAmount: number;
+  organizerFeeAmount?: number;
   targetDueDate?: Date | string | null;
   gracePeriodDays?: number;
   latePenaltyRate?: number;

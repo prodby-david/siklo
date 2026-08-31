@@ -36,6 +36,7 @@ export default function PaymentSubmissionModal({
   onClose,
   roundId,
   baseAmount,
+  organizerFeeAmount = 0,
   targetDueDate,
   gracePeriodDays = 0,
   latePenaltyRate = 0,
@@ -57,7 +58,7 @@ export default function PaymentSubmissionModal({
     latePenaltyRate,
     daysOverdue,
   );
-  const totalAmount = baseAmount + lateFee;
+  const totalAmount = baseAmount + lateFee + organizerFeeAmount;
 
   const {
     register,
@@ -152,6 +153,7 @@ export default function PaymentSubmissionModal({
           <PaymentSummaryBreakdown
             baseAmount={baseAmount}
             lateFee={lateFee}
+            organizerFee={organizerFeeAmount}
             totalAmount={totalAmount}
           />
 
