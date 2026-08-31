@@ -6,4 +6,3 @@ export async function selectSlot(groupId: string, position: number) {
   });
   return data;
 }
-

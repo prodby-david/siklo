@@ -32,7 +32,6 @@ export default function GroupHero({
   payoutSequence = "MANUAL",
   isCurrentUserPaid = false,
   isCurrentUserPending = false,
-  currentCycle = 1,
   currentTurn = 1,
   nextPayoutee,
   onRefresh,
@@ -102,7 +101,7 @@ export default function GroupHero({
                   <Clock className="w-4 h-4" />
                   <span>Contribution Awaiting Verification</span>
                 </div>
-              ) : (
+              ) : roundId ? (
                 <button
                   onClick={() => setIsPayModalOpen(true)}
                   className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
@@ -110,6 +109,11 @@ export default function GroupHero({
                   <CreditCard className="w-4 h-4" />
                   <span>Pay Contribution (Turn #{currentTurn})</span>
                 </button>
+              ) : (
+                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded-2xl border border-rose-500/25">
+                  <Clock className="w-4 h-4" />
+                  <span>Current contribution round is unavailable</span>
+                </div>
               )
             ) : (
               <div className="text-xs text-neutral-subtext">
@@ -155,14 +159,11 @@ export default function GroupHero({
         )}
       </div>
 
-      {groupId && isPayModalOpen && (
+      {roundId && isPayModalOpen && (
         <PaymentSubmissionModal
           isOpen={isPayModalOpen}
           onClose={() => setIsPayModalOpen(false)}
-          groupId={groupId}
-          roundId={roundId || "current"}
-          cycleNumber={currentCycle}
-          turnNumber={currentTurn}
+          roundId={roundId}
           baseAmount={contributionAmount}
           gracePeriodDays={gracePeriodDays}
           latePenaltyRate={latePenaltyAmount}

@@ -1,4 +1,11 @@
-import { UseFormRegister, FieldErrors, Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import {
+  UseFormRegister,
+  FieldErrors,
+  Control,
+  UseFormSetValue,
+  UseFormWatch,
+} from "react-hook-form";
+import { PaymentAccountDetailsDTO } from "@siklo/shared-schemas";
 import { CreateGroupInput } from "../validator/create-group.validator";
 
 export type PaymentMethodKey = "E_WALLET" | "BANK_TRANSFER" | "CASH";
@@ -7,6 +14,7 @@ export interface User {
   id: string;
   name: string;
   contactNumber?: string;
+  paymentAccounts?: PaymentAccountDetailsDTO | null;
 }
 
 export interface Membership {
@@ -43,7 +51,7 @@ export interface GroupRound {
   roundNumber: number;
   recipientId: string;
   targetDate: string | Date;
-  status: "PENDING" | "PAID";
+  status: "PENDING" | "DISBURSED" | "RECEIVED" | "PAID";
   payments?: PaymentRecord[];
 }
 
@@ -81,6 +89,7 @@ export interface Group {
   memberships?: Membership[];
   rounds?: GroupRound[];
   payments?: PaymentRecord[];
+  activities?: { id: string; activity: string; createdAt: string | Date }[];
   nextPayoutee?: NextPayoutee | null;
 }
 
@@ -120,7 +129,6 @@ export interface GroupHeroProps {
   payoutSequence?: string;
   isCurrentUserPaid?: boolean;
   isCurrentUserPending?: boolean;
-  currentCycle?: number;
   currentTurn?: number;
   nextPayoutee?: NextPayoutee | null;
   onRefresh?: () => void;

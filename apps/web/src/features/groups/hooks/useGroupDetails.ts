@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import useGetGroupById from "./useGetGroupById";
-import { calculateGroupTimeline } from "../utils/calculateGroupTimeline";
+import { calculateGroupTimeline } from "../utils/groupCalculations";
 import { toast } from "sonner";
 
 export function useGroupDetails() {

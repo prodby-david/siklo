@@ -8,8 +8,9 @@ import useGetGroupById from "./useGetGroupById";
 import useStartGroupCycle from "./useStartGroupCycle";
 import useDeleteGroup from "./useDeleteGroup";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
-import { calculateCycleDetails } from "../utils/group.calculations";
-import { GroupRound, PaymentRecord } from "../types/group.types";
+import { calculateGroupTurnState } from "../utils/groupTurnCalculator";
+import { calculateCycleDetails } from "../utils/groupCalculations";
+import { GroupRound } from "../types/group.types";
 
 export function useGroupPageController() {
   const params = useParams();
@@ -18,18 +19,26 @@ export function useGroupPageController() {
 
   const { data, isLoading, refetch } = useGetGroupById(groupId);
   const { data: currentUser } = useGetCurrentName();
-  const { mutateAsync: startCycle, isPending: isStarting } = useStartGroupCycle();
+  const { mutateAsync: startCycle, isPending: isStarting } =
+    useStartGroupCycle();
   const { mutateAsync: deleteGroup, isPending: isDeleting } = useDeleteGroup();
 
   const [copied, setCopied] = useState(false);
 
   const hasStarted = Boolean(data?.startDate);
   const isOrganizer = Boolean(
-    currentUser?.id && data?.organizerId && currentUser.id === data.organizerId
+    currentUser?.id && data?.organizerId && currentUser.id === data.organizerId,
   );
-  const isMembersFull = (data?.memberships?.length ?? 0) >= (data?.maxMembers ?? 0);
+  const isMembersFull =
+    (data?.memberships?.length ?? 0) >= (data?.maxMembers ?? 0);
 
-  const { isCycleDone, currentCycle, currentTurn, isCurrentUserPaid, isCurrentUserPending } = useMemo(() => {
+  const {
+    isCycleDone,
+    currentCycle,
+    currentTurn,
+    isCurrentUserPaid,
+    isCurrentUserPending,
+  } = useMemo(() => {
     if (!data?.memberships) {
       return {
         isCycleDone: false,
@@ -39,79 +48,30 @@ export function useGroupPageController() {
         isCurrentUserPending: false,
       };
     }
-    const duration = data.cycleDuration || 1;
-    const totalMembers = data.memberships.length;
 
-    const paidByRound: Record<string, Set<string>> = {};
-    const pendingByRound: Record<string, Set<string>> = {};
-    const completedKeys = new Set<string>();
+    const state = calculateGroupTurnState(
+      data.memberships,
+      data.rounds ?? [],
+      data.payments ?? [],
+      [],
+      data.cycleDuration || 1,
+      hasStarted,
+    );
 
-    for (let c = 1; c <= duration; c++) {
-      for (let t = 1; t <= Math.max(totalMembers, 1); t++) {
-        paidByRound[`${c}-${t}`] = new Set<string>();
-        pendingByRound[`${c}-${t}`] = new Set<string>();
-      }
-    }
-
-    (data.rounds ?? []).forEach((rnd: GroupRound) => {
-      const key = `${rnd.cycleNumber}-${rnd.roundNumber}`;
-      if (!paidByRound[key]) paidByRound[key] = new Set<string>();
-      if (!pendingByRound[key]) pendingByRound[key] = new Set<string>();
-      if (rnd.status === "PAID") completedKeys.add(key);
-
-      rnd.payments?.forEach((p: PaymentRecord) => {
-        if (p.status === "VERIFIED") paidByRound[key].add(p.userId);
-        if (p.status === "PENDING") pendingByRound[key].add(p.userId);
-      });
-    });
-
-    data.payments?.forEach((p: PaymentRecord) => {
-      const matchedRound = data.rounds?.find((r: GroupRound) => r.id === p.roundId);
-      if (!matchedRound) return;
-      const key = `${matchedRound.cycleNumber}-${matchedRound.roundNumber}`;
-      if (!paidByRound[key]) paidByRound[key] = new Set<string>();
-      if (!pendingByRound[key]) pendingByRound[key] = new Set<string>();
-      if (p.status === "VERIFIED") paidByRound[key].add(p.userId);
-      if (p.status === "PENDING") pendingByRound[key].add(p.userId);
-    });
-
-    let activeCycle = 1;
-    let activeTurn = 1;
-    let foundIncomplete = false;
-
-    if (totalMembers > 0) {
-      for (let c = 1; c <= duration; c++) {
-        for (let t = 1; t <= totalMembers; t++) {
-          const key = `${c}-${t}`;
-          if (!completedKeys.has(key) && !foundIncomplete) {
-            activeCycle = c;
-            activeTurn = t;
-            foundIncomplete = true;
-          }
-        }
-      }
-
-      if (!foundIncomplete) {
-        activeCycle = duration;
-        activeTurn = totalMembers;
-      }
-    }
-
-    const allFinished =
-      hasStarted && totalMembers > 0 && completedKeys.size >= totalMembers * duration;
-
-    const activeKey = `${activeCycle}-${activeTurn}`;
-    const currentMemberPaid = currentUser?.id && !allFinished
-      ? Boolean(paidByRound[activeKey]?.has(currentUser.id))
-      : false;
-    const currentMemberPending = currentUser?.id && !allFinished
-      ? Boolean(pendingByRound[activeKey]?.has(currentUser.id))
-      : false;
+    const activeKey = `${state.currentCycle}-${state.currentTurn}`;
+    const currentMemberPaid =
+      currentUser?.id && !state.isCycleDone
+        ? Boolean(state.paidUserIdsByTurn[activeKey]?.has(currentUser.id))
+        : false;
+    const currentMemberPending =
+      currentUser?.id && !state.isCycleDone
+        ? Boolean(state.pendingUserIdsByTurn[activeKey]?.has(currentUser.id))
+        : false;
 
     return {
-      isCycleDone: allFinished,
-      currentCycle: activeCycle,
-      currentTurn: activeTurn,
+      isCycleDone: state.isCycleDone,
+      currentCycle: state.currentCycle,
+      currentTurn: state.currentTurn,
       isCurrentUserPaid: currentMemberPaid,
       isCurrentUserPending: currentMemberPending,
     };
@@ -126,8 +86,8 @@ export function useGroupPageController() {
       const message = axios.isAxiosError(err)
         ? err.response?.data?.message || err.message
         : err instanceof Error
-        ? err.message
-        : "Failed to start cycle";
+          ? err.message
+          : "Failed to start cycle";
       toast.error(message);
     }
   };
@@ -142,8 +102,8 @@ export function useGroupPageController() {
       const message = axios.isAxiosError(err)
         ? err.response?.data?.message || err.message
         : err instanceof Error
-        ? err.message
-        : "Failed to delete group";
+          ? err.message
+          : "Failed to delete group";
       toast.error(message);
     }
   };
@@ -162,12 +122,12 @@ export function useGroupPageController() {
       data.contributionAmount,
       data.maxMembers,
       data.cycleDuration,
-      data.billingCycle
+      data.billingCycle,
     );
 
     const startDateObj = data.startDate ? new Date(data.startDate) : new Date();
     const endDateObj = new Date(
-      startDateObj.getTime() + details.totalDays * 24 * 60 * 60 * 1000
+      startDateObj.getTime() + details.totalDays * 24 * 60 * 60 * 1000,
     );
 
     return {
@@ -176,6 +136,16 @@ export function useGroupPageController() {
       endDate: endDateObj,
     };
   }, [data]);
+
+  const currentRoundId = useMemo(
+    () =>
+      data?.rounds?.find(
+        (round: GroupRound) =>
+          round.cycleNumber === currentCycle &&
+          round.roundNumber === currentTurn,
+      )?.id,
+    [data?.rounds, currentCycle, currentTurn],
+  );
 
   return {
     data,
@@ -189,6 +159,7 @@ export function useGroupPageController() {
     isCycleDone,
     currentCycle,
     currentTurn,
+    currentRoundId,
     isCurrentUserPaid,
     isCurrentUserPending,
     handleStartCycle,

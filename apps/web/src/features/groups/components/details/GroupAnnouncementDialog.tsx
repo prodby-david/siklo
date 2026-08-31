@@ -6,6 +6,7 @@ import { useSendAnnouncement } from "../../hooks/useSendAnnouncement";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import { GroupAnnouncementDialogProps } from "@/features/groups/types/group.types";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function GroupAnnouncementDialog({
   groupId,
@@ -42,6 +43,7 @@ export default function GroupAnnouncementDialog({
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in fade-in duration-200">
+          {isPending && <Loader text="Broadcasting announcement..." />}
           <div className="bg-background border border-neutral-border rounded-3xl p-6 shadow-2xl max-w-md w-full relative">
             <button
               onClick={() => setIsOpen(false)}

@@ -6,4 +6,3 @@ export async function sendAnnouncement(groupId: string, message: string) {
   });
   return data;
 }
-

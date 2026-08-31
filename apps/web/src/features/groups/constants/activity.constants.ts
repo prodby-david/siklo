@@ -38,6 +38,11 @@ export const ACTIVITY_TYPE_CONFIG: Record<string, ActivityConfig> = {
     iconColor: "text-violet-500 bg-violet-500/10 border-violet-500/20",
     label: "Payout Disbursed",
   },
+  PAYOUT_RECEIVED: {
+    icon: CheckCircle2,
+    iconColor: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+    label: "Payout Received",
+  },
   PENALTY_APPLIED: {
     icon: ShieldAlert,
     iconColor: "text-red-500 bg-red-500/10 border-red-500/20",

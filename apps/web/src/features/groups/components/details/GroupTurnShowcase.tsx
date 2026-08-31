@@ -1,13 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { RotateCw, Users, Info, CheckCircle2 } from "lucide-react";
+import { RotateCw, Users, CheckCircle2 } from "lucide-react";
 import { useDisbursePayout } from "@/features/payments/hooks/useDisbursePayout";
 import { useConfirmPayoutReceipt } from "@/features/payments/hooks/useConfirmPayoutReceipt";
 import { useSelectSlot } from "../../hooks/useSelectSlot";
 import { useRemoveMember } from "../../hooks/useRemoveMember";
 import { useGroupTurnShowcaseState } from "../../hooks/useGroupTurnShowcaseState";
-import { getPayoutDate } from "../../utils/group.calculations";
+import { getPayoutDate } from "../../utils/groupCalculations";
 import GroupAnnouncementDialog from "./GroupAnnouncementDialog";
 import ShowcaseTurnCard from "./showcase/ShowcaseTurnCard";
 import TurnDetailPanel from "./showcase/TurnDetailPanel";
@@ -62,11 +62,11 @@ export default function GroupTurnShowcase({
     startDate,
     cycleDuration,
     payments,
-    rounds
+    rounds,
   );
 
   const sortedMemberships = [...memberships].sort(
-    (a, b) => a.position - b.position
+    (a, b) => a.position - b.position,
   );
 
   const currentTurnKey = `${currentCycle}-${selectedTurn}`;
@@ -75,47 +75,57 @@ export default function GroupTurnShowcase({
     (paidUserIdsByTurn[currentTurnKey]?.size || 0) >= sortedMemberships.length;
 
   const matchedRound = rounds.find(
-    (r) => r.cycleNumber === currentCycle && r.roundNumber === selectedTurn
+    (r) => r.cycleNumber === currentCycle && r.roundNumber === selectedTurn,
   );
   const isRoundDisbursed =
-    disbursedTurns.has(currentTurnKey) || matchedRound?.status === "PAID";
+    disbursedTurns.has(currentTurnKey) ||
+    matchedRound?.status === "DISBURSED" ||
+    matchedRound?.status === "RECEIVED" ||
+    matchedRound?.status === "PAID";
   const isRoundConfirmed =
-    confirmedTurns.has(currentTurnKey) || matchedRound?.status === "PAID";
+    confirmedTurns.has(currentTurnKey) ||
+    matchedRound?.status === "DISBURSED" ||
+    matchedRound?.status === "RECEIVED" ||
+    matchedRound?.status === "PAID";
 
   const selectedMembership = sortedMemberships.find(
-    (m) => m.position === selectedTurn
+    (m) => m.position === selectedTurn,
   );
   const selectedMemberName = selectedMembership?.user?.name || "Available Slot";
   const selectedMemberUserId = selectedMembership?.userId;
   const currentActiveTurnKey = `${currentCycle}-${currentTurn}`;
   const isSelectedPaid = selectedMemberUserId
-    ? Boolean(paidUserIdsByTurn[currentActiveTurnKey]?.has(selectedMemberUserId))
+    ? Boolean(
+        paidUserIdsByTurn[currentActiveTurnKey]?.has(selectedMemberUserId),
+      )
     : false;
   const isSelectedPending = selectedMemberUserId
-    ? Boolean(pendingUserIdsByTurn[currentActiveTurnKey]?.has(selectedMemberUserId))
+    ? Boolean(
+        pendingUserIdsByTurn[currentActiveTurnKey]?.has(selectedMemberUserId),
+      )
     : false;
   const isSelectedRejected = selectedMemberUserId
-    ? Boolean(rejectedUserIdsByTurn[currentActiveTurnKey]?.has(selectedMemberUserId))
+    ? Boolean(
+        rejectedUserIdsByTurn[currentActiveTurnKey]?.has(selectedMemberUserId),
+      )
     : false;
 
   const calculatedPayoutDate = getPayoutDate(
     startDate,
     selectedTurn,
     billingCycle,
-    completedDisbursementDates
+    completedDisbursementDates,
   );
 
   const totalPayoutNum = (Number(contributionAmount) || 0) * maxMembers;
 
   const handleDisbursePayout = async (data: {
-    referenceNumber?: string;
-    proofUrl?: string;
+    referenceNumber: string;
+    proofUrl: string;
   }) => {
+    if (!matchedRound) return;
     await disburse({
-      groupId,
-      roundId: matchedRound?.id,
-      cycleNumber: currentCycle,
-      turnNumber: selectedTurn,
+      roundId: matchedRound.id,
       referenceNumber: data.referenceNumber,
       proofUrl: data.proofUrl,
     });
@@ -123,11 +133,9 @@ export default function GroupTurnShowcase({
   };
 
   const handleConfirmPayoutReceipt = async (data: { notes?: string }) => {
+    if (!matchedRound) return;
     await confirmReceipt({
-      groupId,
-      roundId: matchedRound?.id,
-      cycleNumber: currentCycle,
-      turnNumber: selectedTurn,
+      roundId: matchedRound.id,
       notes: data.notes,
     });
     onRefresh?.();
@@ -143,42 +151,38 @@ export default function GroupTurnShowcase({
 
   const sequenceBadge =
     payoutSequence === "RANDOM" ? (
-      <span className="text-[10px] font-bold text-sky-500 bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 rounded-full">
+      <span className="text-[10px] font-bold text-sky-500 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-full">
         Random Sequence
       </span>
     ) : payoutSequence === "FREECHOOSING" ? (
-      <span className="text-[10px] font-bold text-violet-500 bg-violet-500/10 border border-violet-500/20 px-2.5 py-0.5 rounded-full">
+      <span className="text-[10px] font-bold text-violet-500 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-full">
         Free Choice Slots
       </span>
     ) : (
-      <span className="text-[10px] font-bold text-indigo-500 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 rounded-full">
+      <span className="text-[10px] font-bold text-indigo-500 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full">
         First Come First Served
       </span>
     );
-
-  const activeTurnBeneficiary = sortedMemberships.find(
-    (m) => m.position === currentTurn
-  )?.user?.name || `Slot #${currentTurn}`;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full rounded-3xl border border-neutral-border bg-background p-4 sm:p-6 shadow-sm relative overflow-hidden"
+      className="w-full rounded-3xl border border-neutral-border bg-background p-4 sm:p-6 shadow-xs relative overflow-hidden space-y-4"
     >
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-neutral-border/60 pb-5 mb-6 gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between border-b border-neutral-border/60 pb-4 gap-3">
         <div>
           <div className="flex items-center gap-2.5 mb-1 flex-wrap">
-            <div className="flex items-center justify-center w-8 h-8 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/30 shrink-0">
-              <RotateCw className="w-4 h-4 animate-spin-slow" />
+            <div className="flex items-center justify-center w-8 h-8 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/25 shrink-0">
+              <RotateCw className="w-4 h-4" />
             </div>
             <h3 className="text-base sm:text-lg font-extrabold text-foreground flex items-center gap-2 flex-wrap">
               Cycle Turn Queue & Rotations {sequenceBadge}
             </h3>
           </div>
           <p className="text-xs text-neutral-subtext">
-            Click on any member turn to inspect payout details, manage payments, and confirm payout releases.
+            Select any member slot in the rotation to view details, contribute, or release payouts.
           </p>
         </div>
 
@@ -190,15 +194,15 @@ export default function GroupTurnShowcase({
           <div className="flex items-center gap-2 bg-neutral-table-stripe p-1 rounded-2xl border border-neutral-border/60 shrink-0">
             {isCycleDone ? (
               <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-xl border border-emerald-500/30 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> All Member Payouts Completed
+                <CheckCircle2 className="w-3 h-3" /> Cycle Finished
               </span>
             ) : (
               <>
-                <span className="text-[11px] font-bold text-brand-accent px-3 py-1 bg-transparent rounded-xl border border-neutral-border/40">
+                <span className="text-[11px] font-bold text-brand-accent px-2.5 py-1 bg-transparent rounded-xl border border-neutral-border/40">
                   Cycle {currentCycle} of {cycleDuration}
                 </span>
                 <span className="text-[11px] font-semibold text-neutral-subtext px-2">
-                  ₱{totalPayoutNum.toLocaleString()} Payout Pool
+                  ₱{totalPayoutNum.toLocaleString()} Pool
                 </span>
               </>
             )}
@@ -206,66 +210,31 @@ export default function GroupTurnShowcase({
         </div>
       </div>
 
-      <div className="text-xs leading-relaxed text-neutral-subtext bg-brand-accent/5 p-3.5 rounded-2xl border border-brand-accent/10 flex items-start gap-2.5 mb-6">
-        <Info className="w-4.5 h-4.5 text-brand-accent shrink-0 mt-0.5" />
-        <p>
-          Paluwagans run on a rotating payout system. Slots are filled by order of joining. Each round, one member receives the full pooled fund. Once all member payouts are received, the cycle advances.
-        </p>
-      </div>
-
-      {hasStarted && !isCycleDone && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-brand-accent/10 border border-brand-accent/25 px-4 py-3 rounded-2xl mb-6">
-          <div className="flex items-center gap-2.5">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-accent"></span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div className="lg:col-span-5 flex flex-col gap-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-extrabold text-neutral-subtext uppercase tracking-wider flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-brand-accent" /> Turn Queue ({sortedMemberships.length}/{maxMembers})
             </span>
-            <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-wider text-brand-accent">
-                Turn #{currentTurn} of {maxMembers} in Progress (Cycle {currentCycle})
-              </span>
-              <span className="text-xs sm:text-sm font-bold text-foreground">
-                Beneficiary: {activeTurnBeneficiary}
-              </span>
-            </div>
           </div>
-          {selectedTurn !== currentTurn && (
-            <button
-              onClick={() => setSelectedTurn(currentTurn)}
-              className="inline-flex items-center gap-1 text-xs font-bold text-brand-accent hover:underline cursor-pointer shrink-0"
-            >
-              <span>View Active Turn (Turn #{currentTurn})</span>
-              <span aria-hidden="true">&rarr;</span>
-            </button>
-          )}
-        </div>
-      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-5 flex flex-col gap-3">
-          <span className="text-[11px] font-extrabold text-neutral-subtext uppercase tracking-wider flex items-center gap-1.5">
-            <Users className="w-3.5 h-3.5 text-brand-accent" /> Group Member Turn Queue
-          </span>
-
-          <div className="flex flex-col gap-2.5">
+          <div className="max-h-[440px] overflow-y-auto pr-1 space-y-2 no-scrollbar">
             {Array.from({ length: maxMembers }).map((_, index) => {
               const position = index + 1;
               const membership = sortedMemberships.find(
-                (m) => m.position === position
+                (m) => m.position === position,
               );
               const isSelected = selectedTurn === position;
               const cardKey = `${currentCycle}-${position}`;
               const isConfirmed = confirmedTurns.has(cardKey);
               const isCurrent = position === currentTurn;
-              const isTurnPaid =
-                isConfirmed ||
-                position < currentTurn;
+              const isTurnPaid = isConfirmed || position < currentTurn;
 
               const calculatedDate = getPayoutDate(
                 startDate,
                 position,
                 billingCycle,
-                completedDisbursementDates
+                completedDisbursementDates,
               );
 
               return (
@@ -313,7 +282,6 @@ export default function GroupTurnShowcase({
           isCycleDone={isCycleDone}
           currentCycle={currentCycle}
           currentTurn={currentTurn}
-          onJumpToCurrentTurn={() => setSelectedTurn(currentTurn)}
           hasStarted={hasStarted}
           currentUserId={currentUserId}
           onSelectSlot={handleSelectSlot}

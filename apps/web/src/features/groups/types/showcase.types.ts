@@ -78,9 +78,33 @@ export interface TurnDetailPanelProps {
   isRoundAllContributionsPaid?: boolean;
   isRoundDisbursed?: boolean;
   isRoundConfirmed?: boolean;
-  onDisbursePayout?: (data: { referenceNumber?: string; proofUrl?: string }) => Promise<void>;
+  onDisbursePayout?: (data: { referenceNumber: string; proofUrl: string }) => Promise<void>;
   isDisbursingPayout?: boolean;
   onConfirmPayoutReceipt?: (data: { notes?: string }) => Promise<void>;
   isConfirmingPayoutReceipt?: boolean;
   onRefresh?: () => void;
+}
+
+export interface MemberPaymentHistoryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  memberName: string;
+  payments: PaymentRecord[];
+  rounds?: GroupRound[];
+  currentCycle: number;
+  selectedTurn: number;
+}
+
+export interface GroupRoundsStatusCardProps {
+  groupName: string;
+  hasStarted: boolean;
+  isCycleDone: boolean;
+  currentCycle: number;
+  currentTurn: number;
+  maxMembers: number;
+  cycleDuration: number;
+  contributionAmount: number | string;
+  rounds?: GroupRound[];
+  payments?: PaymentRecord[];
+  memberships?: Membership[];
 }

@@ -3,8 +3,8 @@
 import React, { useMemo } from "react";
 import { TrendingUp, Calendar, Clock, ShieldCheck, Wallet } from "lucide-react";
 import { GroupPayoutProgressProps } from "../../types/group.types";
-import { ApiActivity } from "../../types/group.activity.types";
-import { getPayoutDate } from "../../utils/group.calculations";
+import { ApiActivity } from "../../types/group-activity.types";
+import { getPayoutDate } from "../../utils/groupCalculations";
 import useGetGroupActivities from "../../hooks/useGetGroupActivities";
 import formatDate from "@/shared/utils/formatDate";
 

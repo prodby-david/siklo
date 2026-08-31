@@ -33,6 +33,7 @@ import {
 import PayoutSequenceSelector from "../forms/PayoutSequenceSelector";
 import { EditGroupModalProps, PaymentMethodKey } from "../../types/group.types";
 import { PAYMENT_METHOD_OPTIONS } from "../../constants/group.constants";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function EditGroupModal({
   isOpen,
@@ -141,6 +142,7 @@ export default function EditGroupModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+        {isSubmitting && <Loader text="Updating group settings..." />}
         <form onSubmit={handleSubmit} className="space-y-5 p-1">
           <DialogHeader>
             <DialogTitle className="text-lg font-extrabold flex items-center gap-2 text-foreground">

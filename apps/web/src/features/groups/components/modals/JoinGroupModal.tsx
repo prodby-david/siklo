@@ -12,6 +12,7 @@ import useInviteCode from "../../hooks/useInviteCode";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import { hasUsablePaymentAccount } from "@/shared/utils/hasUsablePaymentAccount";
 import { LogIn, Wallet } from "lucide-react";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function JoinGroupModal() {
   const {
@@ -50,7 +51,9 @@ export default function JoinGroupModal() {
             </a>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <>
+            {isSubmitting && <Loader text="Joining group..." />}
+            <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Join Group</DialogTitle>
               <DialogDescription>
@@ -76,6 +79,7 @@ export default function JoinGroupModal() {
               {isSubmitting ? "Joining Group..." : "Join Group"}
             </button>
           </form>
+          </>
         )}
       </DialogContent>
     </Dialog>

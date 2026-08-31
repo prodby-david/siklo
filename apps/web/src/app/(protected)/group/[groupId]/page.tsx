@@ -8,6 +8,7 @@ import GroupInfoCard from "@/features/groups/components/details/GroupInfoCard";
 import UnstartedCyclePreparationGuide from "@/features/groups/components/details/UnstartedCyclePreparationGuide";
 import GroupActivityLogs from "@/features/groups/components/details/GroupActivityLogs";
 import GroupTurnShowcase from "@/features/groups/components/details/GroupTurnShowcase";
+import GroupRoundsStatusCard from "@/features/groups/components/details/GroupRoundsStatusCard";
 import IncomingPaymentsVerificationSection from "@/features/payments/components/IncomingPaymentsVerificationSection";
 import Loader from "@/shared/components/loader/Loader";
 import { useGroupPageController } from "@/features/groups/hooks/useGroupPageController";
@@ -26,6 +27,7 @@ export default function GroupPage() {
     isCycleDone,
     currentCycle,
     currentTurn,
+    currentRoundId,
     isCurrentUserPaid,
     isCurrentUserPending,
     handleStartCycle,
@@ -105,8 +107,8 @@ export default function GroupPage() {
           payoutSequence={data.payoutSequence}
           isCurrentUserPaid={isCurrentUserPaid}
           isCurrentUserPending={isCurrentUserPending}
-          currentCycle={currentCycle}
           currentTurn={currentTurn}
+          roundId={currentRoundId}
           nextPayoutee={data.nextPayoutee}
           onRefresh={refetch}
         />
@@ -128,6 +130,20 @@ export default function GroupPage() {
             onRefreshGroup={refetch}
           />
         )}
+
+        <GroupRoundsStatusCard
+          groupName={data.name}
+          hasStarted={hasStarted}
+          isCycleDone={isCycleDone}
+          currentCycle={currentCycle}
+          currentTurn={currentTurn}
+          maxMembers={data.maxMembers}
+          cycleDuration={data.cycleDuration}
+          contributionAmount={data.contributionAmount}
+          rounds={data.rounds}
+          payments={data.payments}
+          memberships={data.memberships}
+        />
 
         <GroupTurnShowcase
           groupId={data.id}

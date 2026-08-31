@@ -10,7 +10,7 @@ import useCreateGroup from "@/features/groups/hooks/useCreateGroup";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { calculateCycleDetails } from "@/features/groups/utils/group.calculations";
+import { calculateCycleDetails } from "@/features/groups/utils/groupCalculations";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 
 export function useCreateGroupController() {

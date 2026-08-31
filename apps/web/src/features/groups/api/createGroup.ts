@@ -5,4 +5,3 @@ export const createGroup = async (data: CreateGroupData) => {
   const res = await api.post("/groups", data);
   return res.data;
 };
-

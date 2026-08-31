@@ -24,6 +24,7 @@ import {
 } from "@siklo/shared-schemas";
 import PayoutSequenceSelector from "./PayoutSequenceSelector";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function CreateGroupFormFields(
   props: CreateGroupFormFieldsProps,
@@ -98,6 +99,7 @@ export default function CreateGroupFormFields(
 
   return (
     <div className="lg:col-span-7 bg-background border border-neutral-border rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+      {isPending && <Loader text="Creating paluwagan group..." />}
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-1 pb-4 border-b border-neutral-border/60">
           <h2 className="text-xl font-extrabold text-foreground tracking-tight">
