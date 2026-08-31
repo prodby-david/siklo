@@ -5,4 +5,3 @@ export async function submitPayment(dto: SubmitPaymentDTO) {
   const response = await api.post("/payments", dto);
   return response.data;
 }
-

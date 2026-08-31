@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Check, Eye, UserX, Users } from "lucide-react";
+import { ShieldCheck, Eye, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { verifyPayment } from "../api/verifyPayment";
 import { usePendingPayments } from "../hooks/usePendingPayments";
-import { IncomingPaymentsVerificationSectionProps } from "../types/payment.types";
+import {
+  IncomingPaymentsVerificationSectionProps,
+  IncomingPaymentItem,
+} from "../types/payment.types";
 import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import ReceiptImagePreviewModal from "./modals/ReceiptImagePreviewModal";
 import PaymentRejectionReasonModal from "./modals/PaymentRejectionReasonModal";
@@ -17,7 +20,8 @@ export default function IncomingPaymentsVerificationSection({
   onRefreshGroup,
 }: IncomingPaymentsVerificationSectionProps) {
   const queryClient = useQueryClient();
-  const [selectedProofUrl, setSelectedProofUrl] = useState<string | null>(null);
+  const [selectedPayment, setSelectedPayment] =
+    useState<IncomingPaymentItem | null>(null);
   const [rejectingPayment, setRejectingPayment] = useState<{
     id: string;
     name: string;
@@ -109,40 +113,13 @@ export default function IncomingPaymentsVerificationSection({
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end border-t sm:border-t-0 border-neutral-border/60 pt-2 sm:pt-0">
-              {p.proofUrl && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedProofUrl(p.proofUrl!)}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-brand-accent hover:underline px-3 py-1.5 rounded-xl border border-brand-accent/30 bg-brand-accent/10 cursor-pointer"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>Preview Receipt</span>
-                </button>
-              )}
-
               <button
                 type="button"
-                disabled={processingId === p.id}
-                onClick={() => handleApprove(p.id)}
-                className="inline-flex items-center gap-1 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 px-3.5 py-1.5 rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs disabled:opacity-50"
+                onClick={() => setSelectedPayment(p)}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-accent hover:text-white bg-brand-accent/10 hover:bg-brand-accent px-3.5 py-2 rounded-xl border border-brand-accent/25 transition-all duration-200 cursor-pointer shadow-2xs active:scale-95 shrink-0"
               >
-                <Check className="w-3.5 h-3.5" />
-                <span>{processingId === p.id ? "Approving..." : "Approve"}</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={processingId === p.id}
-                onClick={() =>
-                  setRejectingPayment({
-                    id: p.id,
-                    name: p.user?.name || "Member",
-                  })
-                }
-                className="inline-flex items-center gap-1 text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/20 px-3.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/50 transition-all active:scale-95 cursor-pointer disabled:opacity-50"
-              >
-                <UserX className="w-3.5 h-3.5" />
-                <span>Reject</span>
+                <Eye className="w-3.5 h-3.5" />
+                <span>Preview Receipt</span>
               </button>
             </div>
           </div>
@@ -150,9 +127,13 @@ export default function IncomingPaymentsVerificationSection({
       </div>
 
       <ReceiptImagePreviewModal
-        isOpen={Boolean(selectedProofUrl)}
-        onClose={() => setSelectedProofUrl(null)}
-        imageUrl={selectedProofUrl}
+        isOpen={Boolean(selectedPayment)}
+        onClose={() => setSelectedPayment(null)}
+        imageUrl={selectedPayment?.proofUrl || null}
+        payment={selectedPayment}
+        onApprove={handleApprove}
+        onReject={(paymentId, name) => setRejectingPayment({ id: paymentId, name })}
+        isProcessing={Boolean(processingId)}
       />
 
       {rejectingPayment && (

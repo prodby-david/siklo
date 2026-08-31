@@ -21,12 +21,13 @@ import {
   confirmPayoutReceiptSchema,
   ConfirmPayoutReceiptDTO,
 } from "@siklo/shared-schemas";
+import Loader from "@/shared/components/loader/Loader";
 
 interface ConfirmPayoutReceiptModalProps {
   isOpen: boolean;
   onClose: () => void;
   groupId: string;
-  roundId?: string;
+  roundId: string;
   cycleNumber: number;
   turnNumber: number;
   poolTotal: number;
@@ -37,7 +38,6 @@ interface ConfirmPayoutReceiptModalProps {
 export default function ConfirmPayoutReceiptModal({
   isOpen,
   onClose,
-  groupId,
   roundId,
   cycleNumber,
   turnNumber,
@@ -52,10 +52,7 @@ export default function ConfirmPayoutReceiptModal({
   } = useForm<ConfirmPayoutReceiptDTO>({
     resolver: zodResolver(confirmPayoutReceiptSchema),
     defaultValues: {
-      groupId,
       roundId,
-      cycleNumber,
-      turnNumber,
       notes: "",
     },
   });
@@ -68,6 +65,7 @@ export default function ConfirmPayoutReceiptModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
+        {isConfirming && <Loader text="Confirming payout receipt..." />}
         <div className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">
@@ -76,7 +74,8 @@ export default function ConfirmPayoutReceiptModal({
             </DialogTitle>
             <DialogDescription>
               <span className="text-xs text-neutral-subtext block">
-                Please verify that you have successfully received your lump-sum payout of ₱{poolTotal.toLocaleString()} for Turn #{turnNumber}.
+                Please verify that you have successfully received your lump-sum
+                payout of ₱{poolTotal.toLocaleString()} for Turn #{turnNumber}.
               </span>
             </DialogDescription>
           </DialogHeader>

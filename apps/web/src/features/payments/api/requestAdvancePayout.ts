@@ -5,4 +5,3 @@ export async function requestAdvancePayout(dto: RequestAdvancePayoutDTO) {
   const response = await api.post("/payments/payout-requests", dto);
   return response.data;
 }
-

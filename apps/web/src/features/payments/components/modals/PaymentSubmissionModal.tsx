@@ -29,14 +29,12 @@ import PaymentAccountDetailsCopyBox from "../elements/PaymentAccountDetailsCopyB
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
 import PaymentSummaryBreakdown from "../elements/PaymentSummaryBreakdown";
 import PaymentErrorAlert from "../elements/PaymentErrorAlert";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function PaymentSubmissionModal({
   isOpen,
   onClose,
-  groupId,
   roundId,
-  cycleNumber,
-  turnNumber,
   baseAmount,
   targetDueDate,
   gracePeriodDays = 0,
@@ -53,10 +51,7 @@ export default function PaymentSubmissionModal({
     targetDueDate,
     gracePeriodDays,
   );
-  const daysOverdue = calculateDaysOverdue(
-    effectiveDeadline,
-    currentTimestamp,
-  );
+  const daysOverdue = calculateDaysOverdue(effectiveDeadline, currentTimestamp);
   const lateFee = calculateLatePenalty(
     baseAmount,
     latePenaltyRate,
@@ -69,6 +64,7 @@ export default function PaymentSubmissionModal({
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<PaymentSubmissionInput>({
@@ -79,6 +75,8 @@ export default function PaymentSubmissionModal({
       proofUrl: "",
     },
   });
+
+  const selectedPaymentMethod = watch("paymentMethod");
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -108,16 +106,18 @@ export default function PaymentSubmissionModal({
     setSubmissionError(null);
     try {
       await submitPayment({
-        groupId,
-        roundId: roundId && roundId !== "current" ? roundId : undefined,
-        cycleNumber,
-        turnNumber,
+        roundId,
         paymentMethod: data.paymentMethod,
-        referenceNumber: data.referenceNumber?.trim() || undefined,
+        referenceNumber:
+          data.paymentMethod === "CASH"
+            ? undefined
+            : data.referenceNumber?.trim() || undefined,
         proofUrl: data.proofUrl || undefined,
       });
 
-      toast.success("Payment proof submitted! Awaiting organizer verification.");
+      toast.success(
+        "Payment proof submitted! Awaiting organizer verification.",
+      );
       reset();
       setPreviewImage(null);
       if (onSuccess) onSuccess();
@@ -135,6 +135,7 @@ export default function PaymentSubmissionModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
+        {isSubmitting && <Loader text="Submitting payment proof..." />}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">
@@ -166,35 +167,46 @@ export default function PaymentSubmissionModal({
             )}
           />
 
-          <PaymentAccountDetailsCopyBox details={organizerPaymentDetails} />
+          {selectedPaymentMethod !== "CASH" && (
+            <PaymentAccountDetailsCopyBox details={organizerPaymentDetails} />
+          )}
+
+          {selectedPaymentMethod !== "CASH" && (
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <Receipt className="w-3.5 h-3.5 text-brand-accent" />
+                <span>Transaction Reference Number</span>
+              </label>
+              <input
+                type="text"
+                {...register("referenceNumber")}
+                placeholder="e.g. GCash Ref #123456789 or Bank Ref"
+                className={`w-full text-xs p-2.5 rounded-xl border bg-background text-foreground focus:outline-none ${
+                  errors.referenceNumber
+                    ? "border-rose-500 focus:border-rose-500"
+                    : "border-neutral-border focus:border-brand-accent"
+                }`}
+              />
+              {errors.referenceNumber && (
+                <p className="text-[11px] text-rose-500 font-semibold">
+                  {errors.referenceNumber.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-              <Receipt className="w-3.5 h-3.5 text-brand-accent" />
-              <span>Transaction Reference Number</span>
-            </label>
-            <input
-              type="text"
-              {...register("referenceNumber")}
-              placeholder="e.g. GCash Ref #123456789 or Bank Ref"
-              className={`w-full text-xs p-2.5 rounded-xl border bg-background text-foreground focus:outline-none ${
-                errors.referenceNumber
-                  ? "border-rose-500 focus:border-rose-500"
-                  : "border-neutral-border focus:border-brand-accent"
-              }`}
+            <PaymentReceiptUploader
+              previewImage={previewImage}
+              onImageChange={handleImageChange}
+              onClearImage={handleClearImage}
             />
-            {errors.referenceNumber && (
+            {errors.proofUrl && (
               <p className="text-[11px] text-rose-500 font-semibold">
-                {errors.referenceNumber.message}
+                {errors.proofUrl.message}
               </p>
             )}
           </div>
-
-          <PaymentReceiptUploader
-            previewImage={previewImage}
-            onImageChange={handleImageChange}
-            onClearImage={handleClearImage}
-          />
 
           <PaymentErrorAlert message={submissionError} />
 

@@ -5,4 +5,3 @@ export async function disbursePayout(dto: DisbursePayoutDTO) {
   const response = await api.post("/payments/disbursements", dto);
   return response.data;
 }
-

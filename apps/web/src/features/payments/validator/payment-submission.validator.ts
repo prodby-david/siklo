@@ -11,16 +11,23 @@ export const paymentSubmissionSchema = z
       .or(z.literal("")),
     proofUrl: z.string().optional().or(z.literal("")),
   })
-  .refine(
-    (data) =>
-      (Boolean(data.referenceNumber) &&
-        data.referenceNumber!.trim().length >= 3) ||
-      (Boolean(data.proofUrl) && data.proofUrl!.trim().length > 0),
-    {
-      message:
-        "Please provide either a reference number (min 3 chars) or upload a receipt image",
-      path: ["referenceNumber"],
-    },
-  );
+  .superRefine((data, ctx) => {
+    if (data.paymentMethod !== "CASH") {
+      if (!data.referenceNumber || data.referenceNumber.trim().length < 3) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Transaction reference number is required (min 3 characters)",
+          path: ["referenceNumber"],
+        });
+      }
+      if (!data.proofUrl || data.proofUrl.trim().length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Payment receipt or proof screenshot is required",
+          path: ["proofUrl"],
+        });
+      }
+    }
+  });
 
 export type PaymentSubmissionInput = z.infer<typeof paymentSubmissionSchema>;

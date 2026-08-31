@@ -71,10 +71,7 @@ export interface PaymentReceiptUploaderProps {
 export interface PaymentSubmissionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  groupId: string;
-  roundId?: string;
-  cycleNumber?: number;
-  turnNumber?: number;
+  roundId: string;
   baseAmount: number;
   targetDueDate?: Date | string | null;
   gracePeriodDays?: number;
@@ -97,6 +94,10 @@ export interface ReceiptImagePreviewModalProps {
   onClose: () => void;
   imageUrl: string | null;
   title?: string;
+  payment?: IncomingPaymentItem | null;
+  onApprove?: (paymentId: string) => Promise<void>;
+  onReject?: (paymentId: string, memberName: string) => void;
+  isProcessing?: boolean;
 }
 
 export interface IncomingPaymentsVerificationSectionProps {

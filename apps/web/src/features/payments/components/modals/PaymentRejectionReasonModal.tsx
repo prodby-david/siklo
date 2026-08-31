@@ -18,6 +18,7 @@ import { PaymentRejectionReasonModalProps } from "../../types/payment.types";
 import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
 import PaymentErrorAlert from "../elements/PaymentErrorAlert";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function PaymentRejectionReasonModal({
   isOpen,
@@ -93,6 +94,7 @@ export default function PaymentRejectionReasonModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
+        {isSubmitting && <Loader text="Rejecting payment..." />}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-rose-600 dark:text-rose-400">
