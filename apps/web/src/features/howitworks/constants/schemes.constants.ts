@@ -1,28 +1,26 @@
-import { CheckCircle2, ShieldAlert, RotateCw, CalendarCheck } from "lucide-react";
+import { RotateCw, Users, HandCoins } from "lucide-react";
+import { PayoutSchemeData } from "../types/howitworks.types";
 
-export const schemesData = [
+export const schemesData: PayoutSchemeData[] = [
   {
     id: 1,
-    title: "Draw Lots / Random",
-    desc: "Members use a randomizer or draw numbers to assign payout turns. This is the fairest method when all members have similar savings goals.",
-    icon: RotateCw,
+    title: "First-Come, First-Served (Manual)",
+    badge: "Sequential Order",
+    desc: "Payout turns are assigned sequentially in the exact chronological order members join the group (Slot #1, Slot #2, Slot #3). Ideal for pre-arranged queue agreements.",
+    icon: Users,
   },
   {
     id: 2,
-    title: "Seniority / Priority Need",
-    desc: "Turns are assigned based on financial situations or member agreement (e.g., tuition or emergency dates), keeping your circle supportive.",
-    icon: CheckCircle2,
+    title: "Randomized Sequence (Draw Lots)",
+    badge: "System Shuffled",
+    desc: "The system automatically shuffles and randomizes member slot positions upon cycle start. The fairest, unbiased method when all savers share equal timing preference.",
+    icon: RotateCw,
   },
   {
     id: 3,
-    title: "First-Come / Slot Reservation",
-    desc: "Members reserve available payout turn positions directly on a first-come, first-served basis upon joining or accepting group invites.",
-    icon: CalendarCheck,
-  },
-  {
-    id: 4,
-    title: "Custom Agreement",
-    desc: "A custom payout order agreed upon and locked by circle members. Group organizers can manually lock and verify this turn sequence.",
-    icon: ShieldAlert,
+    title: "Free Choice Slot Reservation",
+    badge: "Self Selected",
+    desc: "Members freely browse open rotation slots and reserve their preferred payout position upon joining before the cycle begins. Perfect for goal-based target dates.",
+    icon: HandCoins,
   },
 ];

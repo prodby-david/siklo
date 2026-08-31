@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import PayoutSchemeItem from "./PayoutSchemeItem";
 import { PayoutSchemesGridProps } from "../types/howitworks.types";
@@ -18,7 +17,7 @@ export default function PayoutSchemesGrid({
         Understanding Payout Schemes
       </h4>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="flex flex-col gap-3">
         {schemes.map((scheme, index) => (
           <motion.div
             key={scheme.id}
@@ -26,10 +25,10 @@ export default function PayoutSchemesGrid({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: index * 0.08 }}
-            className="h-full flex flex-col"
           >
             <PayoutSchemeItem
               title={scheme.title}
+              badge={scheme.badge}
               desc={scheme.desc}
               icon={scheme.icon}
             />
