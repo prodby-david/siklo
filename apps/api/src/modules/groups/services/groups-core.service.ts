@@ -67,6 +67,9 @@ export class GroupsCoreService {
       }
 
       const inviteCode = generateInviteCode();
+      const isOrganizerParticipating = dto.isOrganizerParticipating ?? true;
+      const organizerFeeAmount = dto.organizerFeeAmount ?? 0;
+
       const group = await tx.group.create({
         data: {
           name: dto.name,
@@ -80,30 +83,45 @@ export class GroupsCoreService {
           paymentDetails: dto.paymentDetails,
           gracePeriodDays: dto.gracePeriodDays ?? 0,
           latePenaltyAmount: dto.latePenaltyAmount ?? 0,
+          isOrganizerParticipating,
+          organizerFeeAmount,
           inviteCode,
           organizerId: userId,
           startDate: dto.startDate,
         },
       });
 
-      await this.groupsRepository.createMembership(
-        tx,
-        {
-          groupId: group.id,
-          userId,
-        },
-        1,
-      );
+      if (isOrganizerParticipating) {
+        await this.groupsRepository.createMembership(
+          tx,
+          {
+            groupId: group.id,
+            userId,
+          },
+          1,
+        );
 
-      await this.activityService.createActivity(
-        {
-          userId,
-          groupId: group.id,
-          activityType: 'ROTATED',
-          description: 'Joined the group as Organizer at Slot #1',
-        },
-        tx,
-      );
+        await this.activityService.createActivity(
+          {
+            userId,
+            groupId: group.id,
+            activityType: 'ROTATED',
+            description: 'Joined the group as Organizer at Slot #1',
+          },
+          tx,
+        );
+      } else {
+        await this.activityService.createActivity(
+          {
+            userId,
+            groupId: group.id,
+            activityType: 'ANNOUNCEMENT',
+            description:
+              'Created group as Manager / Facilitator (Excluded from cycle)',
+          },
+          tx,
+        );
+      }
 
       return {
         message: 'Group created successfully',

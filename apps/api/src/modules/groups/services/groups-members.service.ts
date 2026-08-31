@@ -64,6 +64,12 @@ export class GroupsMembersService {
         );
       }
 
+      if (userId === group.organizerId && !group.isOrganizerParticipating) {
+        throw new ForbiddenException(
+          'Organizer is excluded from cycle participation in this group',
+        );
+      }
+
       const existingMemberships =
         await this.groupsRepository.findMembershipsByGroupId(tx, group.id);
 

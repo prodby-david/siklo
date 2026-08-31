@@ -38,6 +38,8 @@ model Group {
   maxMembers            Int
   inviteCode            String?             @unique
   organizerId           String
+  isOrganizerParticipating Boolean          @default(true)
+  organizerFeeAmount    Int                 @default(0)
   startDate             DateTime?
   gracePeriodDays       Int                 @default(0)
   latePenaltyAmount     Int                 @default(0)
@@ -99,6 +101,7 @@ model Payment {
   paymentMethod     PaymentMethodType
   baseAmount        Int
   penaltyAmount     Int               @default(0)
+  organizerFeeAmount Int              @default(0)
   totalAmount       Int
   referenceNumber   String?
   proofUrl          String?
