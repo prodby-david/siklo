@@ -7,7 +7,7 @@ import { TokenService } from '../token/token.service';
 describe('AuthService', () => {
   let service: AuthService;
   let prisma: { user: { findUnique: jest.Mock } };
-  let tokenService: { generateToken: jest.Mock };
+  let tokenService: { generateAccessToken: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
@@ -17,7 +17,7 @@ describe('AuthService', () => {
     };
 
     tokenService = {
-      generateToken: jest.fn(),
+      generateAccessToken: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -57,6 +57,7 @@ describe('AuthService', () => {
         id: 'user-123',
         email: 'test@example.com',
         password: 'hashed-password',
+        sessionVersion: 0,
       };
       prisma.user.findUnique.mockResolvedValue(mockUser);
 
@@ -75,15 +76,15 @@ describe('AuthService', () => {
         id: 'user-123',
         email: 'test@example.com',
         password: 'hashed-password',
+        sessionVersion: 0,
       };
       const mockTokens = {
         accessToken: 'mock-access-token',
-        refreshToken: 'mock-refresh-token',
       };
 
       prisma.user.findUnique.mockResolvedValue(mockUser);
       jest.spyOn(service, 'comparePassword').mockResolvedValue(true);
-      tokenService.generateToken.mockResolvedValue(mockTokens);
+      tokenService.generateAccessToken.mockResolvedValue(mockTokens);
 
       const result = await service.signIn(signInDto);
 
@@ -95,9 +96,9 @@ describe('AuthService', () => {
         signInDto.password,
         mockUser.password,
       );
-      expect(tokenService.generateToken).toHaveBeenCalledWith(
+      expect(tokenService.generateAccessToken).toHaveBeenCalledWith(
         mockUser.id,
-        mockUser.email,
+        mockUser.sessionVersion,
       );
     });
   });

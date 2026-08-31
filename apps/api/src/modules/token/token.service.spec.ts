@@ -28,44 +28,34 @@ describe('TokenService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('generateToken', () => {
-    it('should generate access and refresh tokens', async () => {
-      jwtService.signAsync
-        .mockResolvedValueOnce('mock-access-token')
-        .mockResolvedValueOnce('mock-refresh-token');
+  describe('generateAccessToken', () => {
+    it('should generate an access token with the session version', async () => {
+      jwtService.signAsync.mockResolvedValueOnce('mock-access-token');
 
-      const result = await service.generateToken(
-        'user-123',
-        'test@example.com',
-      );
+      const result = await service.generateAccessToken('user-123', 2);
 
       expect(result).toEqual({
         accessToken: 'mock-access-token',
-        refreshToken: 'mock-refresh-token',
       });
-      expect(jwtService.signAsync).toHaveBeenCalledTimes(2);
-      expect(jwtService.signAsync).toHaveBeenNthCalledWith(
-        1,
-        { sub: 'user-123', email: 'test@example.com' },
+      expect(jwtService.signAsync).toHaveBeenCalledTimes(1);
+      expect(jwtService.signAsync).toHaveBeenCalledWith(
+        { sub: 'user-123', sessionVersion: 2 },
         { secret: process.env.JWT_ACCESS_TOKEN, expiresIn: '1d' },
-      );
-      expect(jwtService.signAsync).toHaveBeenNthCalledWith(
-        2,
-        { sub: 'user-123', email: 'test@example.com' },
-        { secret: process.env.JWT_REFRESH_TOKEN, expiresIn: '7d' },
       );
     });
   });
 
   describe('verifyAccessToken', () => {
     it('should verify an access token', async () => {
-      const mockPayload = { sub: 'user-123', email: 'test@example.com' };
+      const mockPayload = { sub: 'user-123', sessionVersion: 2 };
       jwtService.verifyAsync.mockResolvedValue(mockPayload);
 
       const result = await service.verifyAccessToken('some-token');
 
       expect(result).toEqual(mockPayload);
-      expect(jwtService.verifyAsync).toHaveBeenCalledWith('some-token');
+      expect(jwtService.verifyAsync).toHaveBeenCalledWith('some-token', {
+        secret: process.env.JWT_ACCESS_TOKEN,
+      });
     });
   });
 });

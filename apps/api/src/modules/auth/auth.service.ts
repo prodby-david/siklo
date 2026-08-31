@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
 import bcrypt from 'bcrypt';
 import { TokenService } from '../token/token.service';
-import { SignInDTO } from './schema/signin.schema';
+import { SignInDTO } from '@siklo/shared-schemas';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +33,10 @@ export class AuthService {
       );
     }
 
-    const tokens = await this.tokenService.generateToken(user.id, user.email);
+    const tokens = await this.tokenService.generateAccessToken(
+      user.id,
+      user.sessionVersion,
+    );
 
     return tokens;
   }

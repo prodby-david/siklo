@@ -3,14 +3,7 @@ import { AuthService } from './auth.service';
 import { signInSchema, type SignInDTO } from '@siklo/shared-schemas';
 import type { Response } from 'express';
 import { ZodValidationPipe } from '@/commons/pipes/zod-validation.pipe';
-
-const isProduction = process.env.NODE_ENV === 'production';
-
-const cookieOptions = {
-  httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? ('none' as const) : ('lax' as const),
-};
+import { getAccessTokenCookieOptions } from './auth.constants';
 
 @Controller('auth')
 export class AuthController {
@@ -22,15 +15,11 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const user = await this.authService.signIn(data);
+    const cookieOptions = getAccessTokenCookieOptions();
 
     res.cookie('access_token', user.accessToken, {
       ...cookieOptions,
       maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    res.cookie('refresh_token', user.refreshToken, {
-      ...cookieOptions,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return {
@@ -40,8 +29,7 @@ export class AuthController {
 
   @Post('signout')
   async signOut(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('access_token', cookieOptions);
-    res.clearCookie('refresh_token', cookieOptions);
+    res.clearCookie('access_token', getAccessTokenCookieOptions());
 
     return {
       message: 'Logout successful',

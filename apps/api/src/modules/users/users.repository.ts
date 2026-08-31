@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
-import { CreateUserDTO } from './schema/user.schema';
-import { UserProfileSettingDTO } from '@siklo/shared-schemas';
+import { CreateUserDTO, UserProfileSettingDTO } from '@siklo/shared-schemas';
 import { Prisma } from '@/generated/prisma/client';
 
 @Injectable()
@@ -41,9 +40,14 @@ export class UsersRepository {
   }
 
   async changePassword(id: string, password: string) {
-    return this.prisma.user.update({
-      where: { id },
-      data: { password },
+    return this.prisma.$transaction(async (tx) => {
+      return tx.user.update({
+        where: { id },
+        data: {
+          password,
+          sessionVersion: { increment: 1 },
+        },
+      });
     });
   }
 

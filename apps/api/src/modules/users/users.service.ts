@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { AuthService } from '../auth/auth.service';
-import { CreateUserDTO } from './schema/user.schema';
 import {
+  type CreateUserDTO,
   type ChangePasswordDTO,
   type UserProfileSettingDTO,
   type PaymentAccountDetailsDTO,
