@@ -1,4 +1,4 @@
-import { PAID_ROUND_STATUS } from './computeGroupCompletion';
+import { COMPLETED_ROUND_STATUSES } from './computeGroupCompletion';
 
 export interface NextPayoutRoundInput {
   cycleNumber: number;
@@ -35,7 +35,7 @@ export function computeNextPayoutee(
   group: NextPayouteeInput,
 ): NextPayouteeResult | null {
   const nextRound = [...(group.rounds ?? [])]
-    .filter((round) => round.status !== PAID_ROUND_STATUS)
+    .filter((round) => !COMPLETED_ROUND_STATUSES.has(round.status))
     .sort((a, b) =>
       a.cycleNumber !== b.cycleNumber
         ? a.cycleNumber - b.cycleNumber

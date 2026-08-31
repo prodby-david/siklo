@@ -9,20 +9,21 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  password      String
-  name          String
-  contactNumber String   @unique
-  createdAt     DateTime @default(now())
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  name           String
+  contactNumber  String   @unique
+  createdAt      DateTime @default(now())
+  sessionVersion Int      @default(0)
 
   paymentAccounts Json?
 
-  memberships Membership[]
-  ownedGroups Group[]      @relation("GroupOwner")
-  payouts     Round[]      @relation("RoundRecipient")
-  activities  Activity[]
-  payments    Payment[]
+  memberships   Membership[]
+  ownedGroups   Group[]        @relation("GroupOwner")
+  payouts       Round[]        @relation("RoundRecipient")
+  activities    Activity[]
+  payments      Payment[]
   notifications Notification[]
 }
 
@@ -44,23 +45,28 @@ model Group {
   paymentDetails        String?
   createdAt             DateTime            @default(now())
 
-  organizer   User         @relation("GroupOwner", fields: [organizerId], references: [id])
-  memberships Membership[]
-  rounds      Round[]
-  activities  Activity[]
-  payments    Payment[]
+  organizer     User           @relation("GroupOwner", fields: [organizerId], references: [id])
+  memberships   Membership[]
+  rounds        Round[]
+  activities    Activity[]
+  payments      Payment[]
   notifications Notification[]
 }
 
 model Round {
-  id          String      @id @default(uuid())
-  groupId     String
-  cycleNumber Int
-  roundNumber Int
-  recipientId String
-  targetDate  DateTime
-  status      RoundStatus @default(PENDING)
-  updatedAt   DateTime    @updatedAt
+  id                          String      @id @default(uuid())
+  groupId                     String
+  cycleNumber                 Int
+  roundNumber                 Int
+  recipientId                 String
+  targetDate                  DateTime
+  status                      RoundStatus @default(PENDING)
+  disbursedAt                 DateTime?
+  receivedAt                  DateTime?
+  disbursementReferenceNumber String?
+  disbursementProofUrl        String?
+  receiptNotes                String?
+  updatedAt                   DateTime    @updatedAt
 
   group     Group     @relation(fields: [groupId], references: [id])
   recipient User      @relation("RoundRecipient", fields: [recipientId], references: [id])
@@ -104,7 +110,7 @@ model Payment {
   updatedAt         DateTime          @updatedAt
 
   group Group @relation(fields: [groupId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
   round Round @relation(fields: [roundId], references: [id])
 
   @@unique([groupId, roundId, userId])
@@ -126,13 +132,13 @@ model Activity {
 }
 
 model Notification {
-  id               String             @id @default(uuid())
+  id               String           @id @default(uuid())
   userId           String
   groupId          String
   notificationType NotificationType
   description      String
-  isRead           Boolean            @default(false)
-  createdAt        DateTime           @default(now())
+  isRead           Boolean          @default(false)
+  createdAt        DateTime         @default(now())
 
   user  User  @relation(fields: [userId], references: [id])
   group Group @relation(fields: [groupId], references: [id])
@@ -147,6 +153,7 @@ enum ActivityType {
   PAYMENT_VERIFIED
   PAYMENT_REJECTED
   PAYOUT_DISBURSED
+  PAYOUT_RECEIVED
   PENALTY_APPLIED
   CYCLE_STARTED
   CYCLE_CLOSED
@@ -164,7 +171,8 @@ enum BillingCycle {
 
 enum RoundStatus {
   PENDING
-  PAID
+  DISBURSED
+  RECEIVED
 }
 
 enum PayoutSequence {

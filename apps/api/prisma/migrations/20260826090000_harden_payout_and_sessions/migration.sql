@@ -1,0 +1,15 @@
+ALTER TYPE "RoundStatus" RENAME VALUE 'PAID' TO 'DISBURSED';
+
+ALTER TYPE "RoundStatus" ADD VALUE 'RECEIVED';
+
+ALTER TYPE "ActivityType" ADD VALUE 'PAYOUT_RECEIVED';
+
+ALTER TABLE "User"
+ADD COLUMN "sessionVersion" INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE "Round"
+ADD COLUMN "disbursedAt" TIMESTAMP(3),
+ADD COLUMN "receivedAt" TIMESTAMP(3),
+ADD COLUMN "disbursementReferenceNumber" TEXT,
+ADD COLUMN "disbursementProofUrl" TEXT,
+ADD COLUMN "receiptNotes" TEXT;

@@ -11,6 +11,7 @@ import { WebsocketModule } from './modules/websocket/websocket.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { envSchema } from './configs/env.schema';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     WebsocketModule,
     ActivityModule,
     NotificationsModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

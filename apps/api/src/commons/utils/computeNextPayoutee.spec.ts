@@ -15,7 +15,7 @@ describe('computeNextPayoutee', () => {
           roundNumber: 1,
           recipientId: 'u1',
           targetDate: null,
-          status: 'PAID',
+          status: 'RECEIVED',
         },
         {
           cycleNumber: 1,
@@ -44,7 +44,7 @@ describe('computeNextPayoutee', () => {
           roundNumber: 2,
           recipientId: 'u2',
           targetDate: null,
-          status: 'PAID',
+          status: 'RECEIVED',
         },
         {
           cycleNumber: 2,
@@ -72,7 +72,7 @@ describe('computeNextPayoutee', () => {
           roundNumber: 1,
           recipientId: 'u1',
           targetDate: null,
-          status: 'PAID',
+          status: 'RECEIVED',
         },
       ],
     });

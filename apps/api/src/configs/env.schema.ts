@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
 export const envSchema = z.object({
+  NODE_ENV: z
+    .enum(['development', 'test', 'production'])
+    .default('development'),
   DATABASE_URL: z.string().url(),
   DIRECT_URL: z.string().url(),
-  JWT_ACCESS_TOKEN: z.string().min(1),
-  JWT_REFRESH_TOKEN: z.string().min(1),
+  JWT_ACCESS_TOKEN: z.string().min(32),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().min(1),
   FRONTEND_URL: z.string().url(),
   RESEND_API_KEY: z.string().min(1),

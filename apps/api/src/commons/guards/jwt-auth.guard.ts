@@ -5,10 +5,15 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '@/database/prisma.service';
+import type { JwtPayload } from '@/modules/token/token.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -20,7 +25,18 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
+        secret: process.env.JWT_ACCESS_TOKEN,
+      });
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: { sessionVersion: true },
+      });
+
+      if (!user || user.sessionVersion !== payload.sessionVersion) {
+        throw new UnauthorizedException('Invalid session');
+      }
 
       request.user = payload;
 

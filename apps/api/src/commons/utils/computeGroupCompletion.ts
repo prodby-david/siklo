@@ -1,5 +1,9 @@
 export const VERIFIED_PAYMENT_STATUS = 'VERIFIED';
-export const PAID_ROUND_STATUS = 'PAID';
+export const COMPLETED_ROUND_STATUSES = new Set([
+  'DISBURSED',
+  'RECEIVED',
+  'PAID',
+]);
 
 export interface GroupCompletionPayment {
   status: string;
@@ -64,8 +68,8 @@ export function computeGroupCompletion(
   ).length;
 
   const totalRequiredPayouts = memberCount * duration;
-  const paidRounds = (group.rounds ?? []).filter(
-    (r) => r.status === PAID_ROUND_STATUS,
+  const paidRounds = (group.rounds ?? []).filter((r) =>
+    COMPLETED_ROUND_STATUSES.has(r.status),
   ).length;
 
   const isFullyCollected =
