@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '@/database/prisma.service';
 
 describe('NotificationsController', () => {
   let controller: NotificationsController;
@@ -23,6 +24,10 @@ describe('NotificationsController', () => {
           useValue: {
             verifyAsync: jest.fn(),
           },
+        },
+        {
+          provide: PrismaService,
+          useValue: { user: { findUnique: jest.fn() } },
         },
       ],
     }).compile();

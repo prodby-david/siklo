@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGroupData } from './schema/create-group.schema';
 import {
+  CreateGroupDTO as CreateGroupData,
   JoinGroupBodyDTO,
   UpdateMemberPaymentPreferenceDTO,
   UpdateGroupDTO,

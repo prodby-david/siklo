@@ -22,6 +22,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AiController } from './ai.controller';
 import { AiService } from './ai.service';
 import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '@/database/prisma.service';
 
 describe('AiController', () => {
   let controller: AiController;
@@ -37,6 +38,10 @@ describe('AiController', () => {
         {
           provide: JwtService,
           useValue: { verifyAsync: jest.fn() },
+        },
+        {
+          provide: PrismaService,
+          useValue: { user: { findUnique: jest.fn() } },
         },
       ],
     }).compile();

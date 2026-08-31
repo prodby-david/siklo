@@ -9,6 +9,7 @@ export const CreateActivitySchema = z.object({
     'PAYMENT_VERIFIED',
     'PAYMENT_REJECTED',
     'PAYOUT_DISBURSED',
+    'PAYOUT_RECEIVED',
     'PENALTY_APPLIED',
     'CYCLE_STARTED',
     'CYCLE_CLOSED',

@@ -53,6 +53,15 @@ export class WebsocketGateway
       }
 
       const payload = await this.tokenService.verifyAccessToken(accessToken);
+      const user = await this.prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: { sessionVersion: true },
+      });
+
+      if (!user || user.sessionVersion !== payload.sessionVersion) {
+        client.disconnect();
+        return;
+      }
 
       client.data.user = payload.sub;
       client.join(`user_${payload.sub}`);

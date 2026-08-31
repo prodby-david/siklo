@@ -1,4 +1,11 @@
-import { Controller, Get, Patch, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
 import { NotificationsService } from './notifications.service';
@@ -16,7 +23,7 @@ export class NotificationsController {
   @Patch(':notificationId/read')
   @UseGuards(JwtAuthGuard)
   async markNotificationRead(
-    @Param('notificationId') notificationId: string,
+    @Param('notificationId', ParseUUIDPipe) notificationId: string,
     @CurrentUser('sub') userId: string,
   ) {
     return this.notificationService.markNotificationRead(

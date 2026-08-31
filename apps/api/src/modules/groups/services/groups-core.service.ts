@@ -8,8 +8,10 @@ import {
 import { PrismaService } from '@/database/prisma.service';
 import generateInviteCode from '@/commons/utils/generateInviteCode';
 import { GroupsRepository } from '../groups.repository';
-import { CreateGroupData } from '../schema/create-group.schema';
-import { UpdateGroupDTO } from '@siklo/shared-schemas';
+import {
+  CreateGroupDTO as CreateGroupData,
+  UpdateGroupDTO,
+} from '@siklo/shared-schemas';
 import { ActivityService } from '../../activity/activity.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { shuffle } from '../utils/shuffleMembers';

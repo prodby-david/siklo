@@ -1,4 +1,10 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import { JwtAuthGuard } from '@/commons/guards/jwt-auth.guard';
 import { CurrentUser } from '@/commons/decorators/current-user.decorator';
@@ -10,7 +16,7 @@ export class ActivityController {
   @Get('group/:groupId')
   @UseGuards(JwtAuthGuard)
   async getGroupActivities(
-    @Param('groupId') groupId: string,
+    @Param('groupId', ParseUUIDPipe) groupId: string,
     @CurrentUser('sub') userId: string,
   ) {
     return this.activityService.getGroupActivities(groupId, userId);

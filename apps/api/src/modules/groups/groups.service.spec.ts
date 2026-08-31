@@ -97,6 +97,8 @@ describe('GroupsService', () => {
         cycleDuration: 4,
         maxMembers: 5,
         allowedPaymentMethods: ['E_WALLET' as const],
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
       };
       const userId = 'user-1';
 
@@ -131,6 +133,8 @@ describe('GroupsService', () => {
         cycleDuration: 4,
         maxMembers: 5,
         allowedPaymentMethods: ['E_WALLET' as const],
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
       };
       const userId = 'user-1';
 

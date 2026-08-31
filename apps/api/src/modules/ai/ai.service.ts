@@ -23,13 +23,13 @@ const model =
 export class AiService {
   constructor(private readonly toolRegistry: AiToolRegistry) {}
 
-  async handleMessage(messages: UIMessage[], userId: string) {
+  async handleMessage(messages: UIMessage[]) {
     const { text, toolResults } = await generateText({
       model: model,
       system: SIKLO_SYSTEM_PROMPT,
       messages: await convertToModelMessages(messages),
       stopWhen: isStepCount(5),
-      tools: this.toolRegistry.getTools(userId),
+      tools: this.toolRegistry.getTools(),
     });
     return { text, toolResults };
   }

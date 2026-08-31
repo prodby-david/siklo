@@ -1,5 +1,4 @@
 import { tool } from 'ai';
-import { GroupsService } from '../groups.service';
 import { createGroupSchema } from '@siklo/shared-schemas';
 import { z } from 'zod';
 
@@ -7,18 +6,15 @@ const aiCreateGroupSchema = createGroupSchema.extend({
   startDate: z.string().optional(),
 });
 
-export function createGroupTool(groupsService: GroupsService, userId: string) {
+export function prepareGroupCreationTool() {
   return tool({
-    description: 'Create a new paluwagan group',
+    description:
+      'Validate and prepare paluwagan group details for the user to review before creating the group',
     inputSchema: aiCreateGroupSchema,
-    execute: async (params: z.infer<typeof aiCreateGroupSchema>) => {
-      return groupsService.createGroup(
-        {
-          ...params,
-          startDate: params.startDate ? new Date(params.startDate) : undefined,
-        },
-        userId,
-      );
-    },
+    execute: async (params) => ({
+      action: 'CREATE_GROUP',
+      requiresConfirmation: true,
+      payload: params,
+    }),
   });
 }

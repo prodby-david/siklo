@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@/generated/prisma/client';
 import { PrismaService } from '@/database/prisma.service';
-import type { CreateGroupDTO } from './schema/create-group.schema';
-import type { JoinGroupDTO } from './schema/join-group.schema';
+import type {
+  CreateGroupFullDTO as CreateGroupDTO,
+  JoinGroupDTO,
+} from '@siklo/shared-schemas';
 
 @Injectable()
 export class GroupsRepository {
@@ -41,7 +43,9 @@ export class GroupsRepository {
             id: true,
             userId: true,
             position: true,
-            user: { select: { id: true, name: true } },
+            user: {
+              select: { id: true, name: true, paymentAccounts: true },
+            },
           },
         },
         activities: {
@@ -96,6 +100,7 @@ export class GroupsRepository {
                 id: true,
                 name: true,
                 contactNumber: true,
+                paymentAccounts: true,
               },
             },
           },
