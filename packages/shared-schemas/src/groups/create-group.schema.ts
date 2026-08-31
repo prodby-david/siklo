@@ -45,6 +45,13 @@ export const createGroupFullSchema = z.object({
     .min(0, "Daily penalty rate cannot be negative")
     .max(10, "Daily penalty rate is capped at 10% per day maximum")
     .default(0),
+  isOrganizerParticipating: z.boolean().default(true),
+  organizerFeeAmount: z.coerce
+    .number()
+    .int("Organizer fee must be a whole integer amount")
+    .min(0, "Organizer fee cannot be negative")
+    .max(1000, "Organizer fee cannot exceed ₱1,000")
+    .default(0),
   inviteCode: z.string().length(12),
   organizerId: z.string(),
 });
