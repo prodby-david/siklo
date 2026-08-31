@@ -14,6 +14,7 @@ export interface CreatePaymentRecordData {
   paymentMethod: PaymentMethodType;
   baseAmount: number;
   penaltyAmount: number;
+  organizerFeeAmount?: number;
   totalAmount: number;
   referenceNumber?: string;
   proofUrl?: string;
@@ -279,6 +280,21 @@ export class PaymentsRepository {
     });
   }
 
+  async findPriorVerifiedPayment(
+    groupId: string,
+    userId: string,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.payment.findFirst({
+      where: {
+        groupId,
+        userId,
+        status: PaymentStatus.VERIFIED,
+      },
+    });
+  }
+
   async updatePaymentRecord(
     id: string,
     data: {
@@ -290,6 +306,7 @@ export class PaymentsRepository {
       proofUrl?: string | null;
       baseAmount?: number;
       penaltyAmount?: number;
+      organizerFeeAmount?: number;
       totalAmount?: number;
       paymentMethod?: PaymentMethodType;
     },

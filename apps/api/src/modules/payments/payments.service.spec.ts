@@ -53,6 +53,7 @@ describe('PaymentsService', () => {
       findMembership: jest.fn(),
       createPayment: jest.fn(),
       findPaymentByGroupRoundAndUser: jest.fn(),
+      findPriorVerifiedPayment: jest.fn().mockResolvedValue(null),
       updatePaymentRecord: jest.fn(),
       countUnpaidRoundsBeforeCycle: jest.fn().mockResolvedValue(0),
       findOrCreateRound: jest.fn(),

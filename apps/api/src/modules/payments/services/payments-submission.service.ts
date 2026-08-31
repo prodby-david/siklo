@@ -131,7 +131,20 @@ export class PaymentsSubmissionService {
           group.latePenaltyAmount,
         );
 
-        const totalAmount = group.contributionAmount + penaltyAmount;
+        const hasPriorVerifiedPayment =
+          await this.paymentsRepository.findPriorVerifiedPayment(
+            group.id,
+            userId,
+            tx,
+          );
+
+        const isFirstPaymentForMember =
+          !hasPriorVerifiedPayment && userId !== group.organizerId;
+        const organizerFeeAmount = isFirstPaymentForMember
+          ? group.organizerFeeAmount || 0
+          : 0;
+        const totalAmount =
+          group.contributionAmount + penaltyAmount + organizerFeeAmount;
 
         const refLabel = dto.referenceNumber
           ? ` (Ref: ${dto.referenceNumber})`
@@ -144,6 +157,7 @@ export class PaymentsSubmissionService {
                 paymentMethod: dto.paymentMethod,
                 baseAmount: group.contributionAmount,
                 penaltyAmount,
+                organizerFeeAmount,
                 totalAmount,
                 referenceNumber: dto.referenceNumber,
                 proofUrl: dto.proofUrl,
@@ -159,6 +173,7 @@ export class PaymentsSubmissionService {
                 paymentMethod: dto.paymentMethod,
                 baseAmount: group.contributionAmount,
                 penaltyAmount,
+                organizerFeeAmount,
                 totalAmount,
                 referenceNumber: dto.referenceNumber,
                 proofUrl: dto.proofUrl,
