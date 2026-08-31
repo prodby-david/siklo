@@ -1,0 +1,79 @@
+"use client";
+
+import Link from "next/link";
+import { Activity, Clock, CheckCircle2, Megaphone, ArrowRight } from "lucide-react";
+import { formatDateTime12h } from "@/shared/utils/formatDate";
+import { DashboardActivityFeedProps } from "../../types/dashboard.types";
+
+export default function DashboardActivityFeed({
+  activities,
+}: DashboardActivityFeedProps) {
+  return (
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-background shadow-xs space-y-4">
+      <div className="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25">
+            <Activity className="w-4 h-4" />
+          </div>
+          <div>
+            <h3 className="text-sm font-extrabold text-foreground leading-tight">
+              Recent Group Activity
+            </h3>
+            <span className="text-[10px] text-neutral-subtext">
+              Updates across all joined circles
+            </span>
+          </div>
+        </div>
+
+        <Link
+          href="/group"
+          className="inline-flex items-center gap-1 text-[10px] font-bold text-brand-accent hover:underline cursor-pointer"
+        >
+          <span>All Groups</span>
+          <ArrowRight className="w-3 h-3" />
+        </Link>
+      </div>
+
+      {activities.length === 0 ? (
+        <div className="py-8 px-4 rounded-2xl border border-dashed border-neutral-border text-center flex flex-col items-center justify-center gap-1.5">
+          <Clock className="w-5 h-5 text-neutral-subtext" />
+          <p className="text-xs font-bold text-foreground">No Recent Activity</p>
+          <p className="text-[10px] text-neutral-subtext">
+            Activity updates will show up as group members contribute and complete turns.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-2.5 max-h-[320px] overflow-y-auto pr-1 no-scrollbar">
+          {activities.map((act) => {
+            const isAnnouncement = act.type === "ANNOUNCEMENT";
+            const Icon = isAnnouncement ? Megaphone : CheckCircle2;
+
+            return (
+              <div
+                key={act.id}
+                className="p-3 rounded-2xl border border-neutral-border/70 hover:border-neutral-border bg-background hover:bg-neutral-table-stripe/30 transition-all flex items-start gap-2.5 shadow-2xs"
+              >
+                <div className="w-6 h-6 rounded-lg bg-brand-accent/10 border border-brand-accent/20 text-brand-accent flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon className="w-3 h-3" />
+                </div>
+                <div className="flex-1 min-w-0 space-y-0.5">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[10px] font-extrabold text-brand-accent truncate">
+                      {act.groupName}
+                    </span>
+                    <span className="text-[9px] font-medium text-neutral-subtext shrink-0">
+                      {formatDateTime12h(act.date)}
+                    </span>
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-snug">
+                    {act.text}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}

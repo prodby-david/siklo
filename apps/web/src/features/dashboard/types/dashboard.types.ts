@@ -25,33 +25,64 @@ export interface TotalSavingsCardProps {
   activeGroupsCount?: number;
 }
 
-export interface InviteItem {
+export interface ActionAlertItem {
   id: string;
-  group: {
-    id: string;
-    name: string;
-    description: string | null;
-    contributionAmount: number;
-    billingCycle: string;
-    maxMembers: number;
-    organizer: {
-      id: string;
-      name: string;
-    };
-  };
-  createdAt: string;
+  type: "PAYMENT_DUE" | "PAYMENT_PENDING" | "ORGANIZER_VERIFY" | "CONFIRM_PAYOUT";
+  title: string;
+  subtitle: string;
+  amount?: number;
+  dueDate?: Date | string | null;
+  groupId: string;
+  groupName: string;
+  actionUrl: string;
+  actionLabel: string;
 }
 
-export interface RequestItem {
+export interface RotationAgendaItem {
   id: string;
-  group: {
-    id: string;
-    name: string;
-  };
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  createdAt: string;
+  groupId: string;
+  groupName: string;
+  type: "CONTRIBUTION_DUE" | "PAYOUT_SCHEDULED";
+  amount: number;
+  targetDate?: Date | string | null;
+  turnNumber: number;
+  maxMembers: number;
+  status: "PENDING" | "PAID" | "VERIFIED" | "DISBURSED";
+  billingCycle: string;
+  isCurrentUserTurn: boolean;
+}
+
+export interface SaverHealthStats {
+  totalSavingsCollected: number;
+  totalContributionsPaid: number;
+  activeCyclesCount: number;
+  completedCyclesCount: number;
+  onTimeReliabilityPercent: number;
+}
+
+export interface DashboardActivityItem {
+  id: string;
+  groupId: string;
+  groupName: string;
+  text: string;
+  date: Date;
+  type: "PAYMENT" | "ANNOUNCEMENT" | "CYCLE" | "JOIN";
+}
+
+export interface ActionRequiredBannerProps {
+  alerts: ActionAlertItem[];
+}
+
+export interface RotationAgendaListProps {
+  agenda: RotationAgendaItem[];
+  isLoading?: boolean;
+}
+
+export interface SaverHealthTrackerCardProps {
+  stats: SaverHealthStats;
+}
+
+export interface DashboardActivityFeedProps {
+  activities: DashboardActivityItem[];
+  isLoading?: boolean;
 }

@@ -1,7 +1,10 @@
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
+import { usePendingPayments } from "@/features/payments/hooks/usePendingPayments";
 import { fetchNearestDue } from "../api/fetchNearestDue";
+import { deriveDashboardInsights } from "../utils/dashboardAgenda";
 import { ExtendedGroup as Group } from "../types/groups.types";
 
 const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
@@ -15,6 +18,8 @@ const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
 export function useDashboardData() {
   const { data: user, isLoading: isUserLoading } = useGetCurrentName();
   const { data: groups = [], isLoading: isGroupsLoading } = useGetGroup();
+  const { data: pendingPayments = [], isLoading: isPendingPaymentsLoading } =
+    usePendingPayments(undefined, Boolean(user?.id));
 
   const { data: nearestDue, isLoading: isNearestDueLoading } = useQuery({
     queryKey: ["nearest-due"],
@@ -59,10 +64,26 @@ export function useDashboardData() {
   const nextPayoutGroupName = nearestDue?.nextPayoutGroupName || "";
   const nextPayoutGroupId = nearestDue?.nextPayoutGroupId || "";
 
+  const insights = useMemo(() => {
+    return deriveDashboardInsights(
+      groups,
+      user?.id || "",
+      pendingPayments.length,
+    );
+  }, [groups, user?.id, pendingPayments.length]);
+
   return {
     firstName,
     groups,
-    isLoading: isUserLoading || isGroupsLoading || isNearestDueLoading,
+    alerts: insights.alerts,
+    agenda: insights.agenda,
+    healthStats: insights.healthStats,
+    activities: insights.activities,
+    isLoading:
+      isUserLoading ||
+      isGroupsLoading ||
+      isNearestDueLoading ||
+      isPendingPaymentsLoading,
     stats: {
       totalPayoutPool,
       totalMonthlyContributions,
