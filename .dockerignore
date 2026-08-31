@@ -5,6 +5,6 @@
 .gitignore
 Dockerfile
 docker-compose.yml
-.env
-.env.*
+**/.env
+**/.env.*
 coverage
