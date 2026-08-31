@@ -29,3 +29,13 @@ export type CoreValueItem = {
   highlightText: string;
   iconName: string;
 };
+
+export type PaluwaganTermItem = {
+  id: string;
+  term: string;
+  simpleTitle: string;
+  badge: string;
+  iconName: string;
+  description: string;
+  example: string;
+};

@@ -3,6 +3,7 @@ import AboutSection from "@/features/about/ui/AboutSection";
 import TrustCards from "@/features/about/components/TrustCards";
 import PaluwaganSafetyStandards from "@/features/about/components/PaluwaganSafetyStandards";
 import AboutCoreValues from "@/features/about/components/AboutCoreValues";
+import PaluwaganTermsGuide from "@/features/about/components/PaluwaganTermsGuide";
 import Navbar from "@/shared/components/nav/Navbar";
 import Footer from "@/shared/components/footer/Footer";
 import { defaultAboutItems } from "@/features/about/constants/about.constants";
@@ -33,7 +34,13 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section id="transparency" className="w-full bg-transparent relative z-10 py-16 sm:py-24 border-b border-neutral-border/80 scroll-mt-24">
+        <section id="terms-guide" className="w-full bg-transparent relative z-10 py-16 sm:py-24 border-b border-brand-accent/20 transition-colors duration-300 scroll-mt-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <PaluwaganTermsGuide />
+          </div>
+        </section>
+
+        <section id="transparency" className="w-full bg-transparent relative z-10 py-16 sm:py-24 border-b border-brand-accent/20 scroll-mt-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <TrustCards />
           </div>

@@ -68,7 +68,7 @@ export default function PaluwaganSafetyStandards() {
               transition={{ duration: 0.45, delay: index * 0.1, ease: "easeOut" }}
               className="h-full"
             >
-              <div className="h-full rounded-3xl border border-neutral-border/80 bg-background/80 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between gap-6 shadow-xs hover:border-brand-accent/40 transition-all duration-300">
+              <div className="h-full rounded-3xl border border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between gap-6 shadow-xs hover:border-brand-accent/50 transition-all duration-300">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between">
                     <div className="w-10 h-10 rounded-2xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25 flex items-center justify-center">
@@ -98,7 +98,7 @@ export default function PaluwaganSafetyStandards() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="w-full rounded-3xl border border-brand-accent/30 bg-gradient-to-r from-brand-accent/10 via-background/80 to-brand-accent/10 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-xl"
+        className="w-full rounded-3xl border border-brand-accent/30 bg-gradient-to-r from-brand-accent/10 via-background/80 to-brand-accent/10 dark:from-brand-accent/10 dark:via-card/80 dark:to-brand-accent/10 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-xl shadow-xs"
       >
         <div className="flex items-center gap-3 text-center sm:text-left">
           <div className="w-10 h-10 rounded-2xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25 flex items-center justify-center shrink-0 hidden sm:flex">

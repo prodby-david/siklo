@@ -21,16 +21,16 @@ export default function SimulatorMemberRow({
     <div
       className={`p-3 sm:p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
         isCurrentRecipient && !simulationFinished
-          ? "border-brand-accent/35 bg-brand-accent/5 ring-1 ring-brand-accent/20"
-          : "border-neutral-border bg-background"
+          ? "border-brand-accent/40 bg-brand-accent/10 ring-1 ring-brand-accent/30"
+          : "border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 backdrop-blur-xl"
       }`}
     >
       <div className="flex items-center gap-3">
         <div
           className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
             isCurrentRecipient && !simulationFinished
-              ? "bg-brand-accent/15 text-brand-accent"
-              : "bg-neutral-subtext/10 text-neutral-subtext"
+              ? "bg-brand-accent/20 text-brand-accent"
+              : "bg-brand-accent/10 text-brand-accent"
           }`}
         >
           <User className="w-4 h-4" />
@@ -39,7 +39,7 @@ export default function SimulatorMemberRow({
           <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
             {member.name}
             {isCurrentRecipient && !simulationFinished && (
-              <span className="text-[9px] font-bold text-brand-accent bg-brand-accent/10 px-1.5 py-0.5 rounded-full uppercase tracking-wider">
+              <span className="text-[9px] font-bold text-brand-accent bg-brand-accent/15 px-1.5 py-0.5 rounded-full uppercase tracking-wider border border-brand-accent/25">
                 Recipient
               </span>
             )}
@@ -59,7 +59,7 @@ export default function SimulatorMemberRow({
             {simulationFinished ? (
               <span className="text-neutral-subtext">Cycle Finished</span>
             ) : isCurrentRecipient ? (
-              <span className="text-success flex items-center gap-0.5">
+              <span className="text-emerald-500 font-bold flex items-center gap-0.5">
                 <ArrowUpRight className="w-3 h-3" />
                 Receiving ₱{(amount * membersCount).toLocaleString()}
               </span>
@@ -79,7 +79,7 @@ export default function SimulatorMemberRow({
           <div
             className={`text-xs font-extrabold ${
               member.netBalance > 0
-                ? "text-success"
+                ? "text-emerald-500"
                 : member.netBalance < 0
                 ? "text-danger"
                 : "text-foreground"

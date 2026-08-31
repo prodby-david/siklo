@@ -3,8 +3,8 @@ import { Notebook } from "lucide-react";
 
 export default function AboutStatusCard() {
   return (
-    <div className="border border-neutral-border/80 rounded-3xl p-5 bg-neutral-table-stripe flex flex-col gap-3 max-w-md transition-all duration-300">
-      <div className="flex justify-between items-center text-xs font-bold text-neutral-subtext pb-2.5 border-b border-neutral-border/60">
+    <div className="border border-brand-accent/20 dark:border-brand-accent/25 rounded-3xl p-5 bg-background/80 dark:bg-card/80 backdrop-blur-xl flex flex-col gap-3 max-w-md transition-all duration-300 shadow-xs">
+      <div className="flex justify-between items-center text-xs font-bold text-neutral-subtext pb-2.5 border-b border-brand-accent/15">
         <div className="flex items-center gap-2">
           <Notebook className="w-4 h-4 text-brand-accent" />
           <span className="text-foreground font-extrabold">Notebook Status</span>

@@ -35,8 +35,8 @@ export default function SimulatorSetup({
               onClick={() => onChange("contributionAmount", option.value)}
               className={`py-2 text-xs font-semibold border rounded-2xl cursor-pointer transition-all ${
                 config.contributionAmount === option.value
-                  ? "bg-brand-accent/15 border-brand-accent text-brand-accent shadow-sm"
-                  : "bg-background border-neutral-border text-neutral-subtext hover:bg-neutral-table-stripe"
+                  ? "bg-brand-accent/15 border-brand-accent text-brand-accent shadow-xs"
+                  : "bg-background/80 dark:bg-card/80 border-brand-accent/20 dark:border-brand-accent/25 text-neutral-subtext hover:border-brand-accent/40"
               }`}
             >
               {option.label}
@@ -57,8 +57,8 @@ export default function SimulatorSetup({
               onClick={() => onChange("membersCount", count)}
               className={`py-2 text-xs font-semibold border rounded-2xl cursor-pointer transition-all ${
                 config.membersCount === count
-                  ? "bg-brand-accent/15 border-brand-accent text-brand-accent shadow-sm"
-                  : "bg-background border-neutral-border text-neutral-subtext hover:bg-neutral-table-stripe"
+                  ? "bg-brand-accent/15 border-brand-accent text-brand-accent shadow-xs"
+                  : "bg-background/80 dark:bg-card/80 border-brand-accent/20 dark:border-brand-accent/25 text-neutral-subtext hover:border-brand-accent/40"
               }`}
             >
               {count} Members
@@ -79,8 +79,8 @@ export default function SimulatorSetup({
               onClick={() => onChange("payoutScheme", option.value)}
               className={`py-2 text-[10px] sm:text-xs font-semibold border rounded-2xl cursor-pointer transition-all ${
                 config.payoutScheme === option.value
-                  ? "bg-brand-accent/15 border-brand-accent text-brand-accent shadow-sm"
-                  : "bg-background border-neutral-border text-neutral-subtext hover:bg-neutral-table-stripe"
+                  ? "bg-brand-accent/15 border-brand-accent text-brand-accent shadow-xs"
+                  : "bg-background/80 dark:bg-card/80 border-brand-accent/20 dark:border-brand-accent/25 text-neutral-subtext hover:border-brand-accent/40"
               }`}
             >
               {option.label}
@@ -92,7 +92,7 @@ export default function SimulatorSetup({
       <button
         type="button"
         onClick={onStart}
-        className="w-full mt-4 bg-brand-accent hover:opacity-95 text-white py-3 rounded-2xl font-semibold active:scale-[0.98] transition-all shadow-sm flex items-center justify-center gap-2 text-xs cursor-pointer"
+        className="w-full mt-4 bg-brand-accent hover:bg-brand-accent-hover text-white py-3 rounded-2xl font-bold active:scale-[0.98] transition-all shadow-xs flex items-center justify-center gap-2 text-xs cursor-pointer"
       >
         <Play className="w-3.5 h-3.5 fill-current" />
         <span>Initialize Paluwagan Simulation</span>

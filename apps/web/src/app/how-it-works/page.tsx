@@ -27,7 +27,7 @@ export default function HowItWorksPage() {
           </div>
         </section>
 
-        <section id="best-practices" className="w-full bg-transparent relative z-10 py-16 sm:py-24 border-b border-neutral-border/80 scroll-mt-24">
+        <section id="best-practices" className="w-full bg-transparent relative z-10 py-16 sm:py-24 border-b border-brand-accent/20 scroll-mt-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <PaluwaganGuide />
           </div>
