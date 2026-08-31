@@ -1,3 +1,7 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 
 type LoaderProps = {
@@ -5,12 +9,25 @@ type LoaderProps = {
   variant?: "fullScreen" | "container" | "inline";
 };
 
-export default function Loader({ text = "Loading...", variant = "fullScreen" }: LoaderProps) {
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
+export default function Loader({
+  text = "Loading...",
+  variant = "fullScreen",
+}: LoaderProps) {
+  const isMounted = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
+
   const spinnerElement = (
     <div className="relative flex flex-col items-center justify-center gap-5">
       <div className="relative w-28 h-28 flex items-center justify-center">
-        <div className="absolute inset-0 border border-neutral-border/20 dark:border-neutral-border/10 rounded-full"></div>
-        <div className="absolute inset-0 border border-brand-accent border-t-transparent rounded-full animate-spin [animation-duration:1.6s]"></div>
+        <div className="absolute inset-0 border border-neutral-border/20 dark:border-neutral-border/10 rounded-full" />
+        <div className="absolute inset-0 border border-brand-accent border-t-transparent rounded-full animate-spin [animation-duration:1.6s]" />
         <div className="relative w-20 h-20 animate-siklo-float flex items-center justify-center">
           <Image
             src="/images/siklo-loading.png"
@@ -34,8 +51,8 @@ export default function Loader({ text = "Loading...", variant = "fullScreen" }: 
     return (
       <div className="relative inline-flex items-center gap-2">
         <div className="relative w-6 h-6 flex items-center justify-center">
-          <div className="absolute inset-0 border border-neutral-border/20 dark:border-neutral-border/10 rounded-full"></div>
-          <div className="absolute inset-0 border border-brand-accent border-t-transparent rounded-full animate-spin [animation-duration:1.2s]"></div>
+          <div className="absolute inset-0 border border-neutral-border/20 dark:border-neutral-border/10 rounded-full" />
+          <div className="absolute inset-0 border border-brand-accent border-t-transparent rounded-full animate-spin [animation-duration:1.2s]" />
           <div className="relative w-4 h-4 animate-siklo-float flex items-center justify-center">
             <Image
               src="/images/siklo-loading.png"
@@ -64,11 +81,17 @@ export default function Loader({ text = "Loading...", variant = "fullScreen" }: 
     );
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/40 dark:bg-background/25 backdrop-blur-sm animate-fade-in">
-      <div className="relative flex flex-col items-center justify-center bg-background/85 dark:bg-background/75 border border-neutral-border/30 dark:border-neutral-border/10 py-8 px-10 rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] backdrop-blur-xl max-w-[260px] w-full mx-4">
+  const fullScreenOverlay = (
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-background/50 dark:bg-background/40 backdrop-blur-md animate-fade-in pointer-events-auto">
+      <div className="relative flex flex-col items-center justify-center bg-background/90 dark:bg-background/85 border border-neutral-border/40 dark:border-neutral-border/20 py-8 px-10 rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] backdrop-blur-xl max-w-[260px] w-full mx-4">
         {spinnerElement}
       </div>
     </div>
   );
+
+  if (!isMounted || typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(fullScreenOverlay, document.body);
 }

@@ -6,6 +6,7 @@ import {
   ListOrdered,
   Calculator,
   Lightbulb,
+  HelpCircle,
   LucideIcon,
 } from "lucide-react";
 
@@ -42,6 +43,13 @@ export const NAV_LINKS: NavLinkItem[] = [
         description: "Built on radical transparency, equity, and trust.",
         href: "/about#core-pillars",
         icon: Scale,
+      },
+      {
+        id: "about-terms-guide",
+        name: "Terms & Guide",
+        description: "Plain-language guide for Paluwagan words and rules.",
+        href: "/about#terms-guide",
+        icon: HelpCircle,
       },
       {
         id: "about-transparency",
