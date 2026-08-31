@@ -5,6 +5,7 @@ import { User, Mail, Lock, Phone } from "lucide-react";
 import useSignup from "../hooks/useSignup";
 import { Input, PasswordInput, ContactNumberInput } from "@/shared/components/inputs";
 import Submit from "./buttons/SubmitButton";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function SignupFormInputs() {
   const { register, errors, isSubmitting, handleSubmit, isRedirecting } =
@@ -14,7 +15,11 @@ export default function SignupFormInputs() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <>
+      {(isSubmitting || isRedirecting) && (
+        <Loader text="Creating your account..." />
+      )}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="flex flex-1 flex-col gap-4">
         <Input
           label="name"
@@ -80,5 +85,6 @@ export default function SignupFormInputs() {
         />
       </div>
     </form>
+    </>
   );
 }

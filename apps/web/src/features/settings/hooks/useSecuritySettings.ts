@@ -7,8 +7,10 @@ import {
 import { toast } from "sonner";
 import { changeUserPassword } from "../api/changeUserPassword";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function useSecuritySettings() {
+  const router = useRouter();
   const {
     handleSubmit,
     register,
@@ -26,8 +28,9 @@ export default function useSecuritySettings() {
   const onSubmit = async (data: ChangePasswordDTO) => {
     try {
       await changeUserPassword(data);
-      toast.success("Password changed successfully");
+      toast.success("Password changed successfully. Please sign in again.");
       reset();
+      router.replace("/signin");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message =

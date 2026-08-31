@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Mail, Lock, Loader2, LogIn } from "lucide-react";
 import { useSignin } from "../hooks/useSignin";
 import { Input, PasswordInput } from "@/shared/components/inputs";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function SigninForm() {
   const {
@@ -17,7 +18,9 @@ export default function SigninForm() {
   } = useSignin();
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <>
+      {(isSubmitting || isRedirecting) && <Loader text="Signing in..." />}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Input
         label="email"
         labelText="Email Address"
@@ -70,5 +73,6 @@ export default function SigninForm() {
         )}
       </button>
     </form>
+    </>
   );
 }

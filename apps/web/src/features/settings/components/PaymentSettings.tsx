@@ -3,6 +3,7 @@
 import { Wallet, Landmark, ShieldCheck, Building2, CreditCard, User } from "lucide-react";
 import { FormInput as Input } from "@/shared/components/inputs";
 import { usePaymentSettings } from "../hooks/usePaymentSettings";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function PaymentSettings() {
   const { formData, handleChange, handleSubmit, isSubmitting } =
@@ -10,6 +11,7 @@ export default function PaymentSettings() {
 
   return (
     <div className="space-y-6 max-w-xl">
+      {isSubmitting && <Loader text="Saving payment accounts..." />}
       <div>
         <h3 className="text-base font-bold text-foreground">
           Payment & Payout Accounts

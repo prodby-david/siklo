@@ -6,6 +6,7 @@ import { User, Mail, Phone, X, Save } from "lucide-react";
 import { Input, ContactNumberInput } from "@/shared/components/inputs";
 import { Button } from "@/shared/components/ui/button";
 import { ProfileEditSheetProps } from "../types/settings.types";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function ProfileEditSheet({
   isOpen,
@@ -45,6 +46,7 @@ export default function ProfileEditSheet({
             transition={{ type: "spring", damping: 25, stiffness: 280 }}
             className="relative z-10 w-full sm:w-[460px] h-full bg-background border-l border-neutral-border shadow-2xl flex flex-col overflow-hidden"
           >
+            {isSubmitting && <Loader text="Updating profile..." />}
             <div className="flex items-center justify-between p-5 sm:p-6 border-b border-neutral-border/60 bg-background/95 sticky top-0 z-20 backdrop-blur-md">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-2xl bg-brand-accent/15 text-brand-accent flex items-center justify-center border border-brand-accent/20">

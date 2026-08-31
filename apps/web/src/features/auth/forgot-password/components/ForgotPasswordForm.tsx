@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Mail, Loader2, SendHorizontal, LogIn, Undo2, CheckCircle2, RotateCcw } from "lucide-react";
 import { Input } from "@/shared/components/inputs";
 import { useForgotPassword } from "../hooks/useForgotPassword";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function ForgotPasswordForm() {
   const {
@@ -57,7 +58,9 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <>
+      {isSubmitting && <Loader text="Sending password reset link..." />}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <Input
         label="email"
         labelText="Email Address"
@@ -93,5 +96,6 @@ export default function ForgotPasswordForm() {
         </Link>
       </div>
     </form>
+    </>
   );
 }

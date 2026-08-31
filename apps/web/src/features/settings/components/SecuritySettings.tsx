@@ -4,14 +4,16 @@ import { useState } from "react";
 import { Lock, KeyRound, ShieldCheck } from "lucide-react";
 import { PasswordInput } from "@/shared/components/inputs";
 import useSecuritySettings from "../hooks/useSecuritySettings";
+import Loader from "@/shared/components/loader/Loader";
 
 export default function SecuritySettings() {
   const [twoFactor, setTwoFactor] = useState(false);
 
-  const { register, handleSubmit } = useSecuritySettings();
+  const { register, handleSubmit, isSubmitting } = useSecuritySettings();
 
   return (
     <div className="space-y-8">
+      {isSubmitting && <Loader text="Changing password..." />}
       <div>
         <h3 className="text-base font-bold text-foreground">
           Login & Security
