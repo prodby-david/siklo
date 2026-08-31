@@ -1,22 +1,56 @@
+import {
+  UserPlus,
+  ClipboardCheck,
+  Coins,
+  KeyRound,
+  CreditCard,
+  Sparkles,
+} from "lucide-react";
 import { HowItWorksStep, PaluwaganRules, BestPracticeItem } from "../types/howitworks.types";
 
-export const defaultSteps: HowItWorksStep[] = [
+export const organizerSteps: HowItWorksStep[] = [
   {
     stepNumber: 1,
     title: "Set Up Your Paluwagan Group",
-    description: "Enter your group name, contribution amount, billing frequency, member capacity, and select your payout sequence method.",
+    description: "Define your group name, contribution amount, billing frequency, member capacity, and payout sequence order.",
+    icon: UserPlus,
   },
   {
     stepNumber: 2,
-    title: "Track Member Contributions",
-    description: "When members send their contributions via GCash, Maya, or bank transfer, mark them as paid in your transparent shared group ledger.",
+    title: "Review & Verify Contributions",
+    description: "Track incoming member payments via GCash, Maya, or bank transfer, and approve valid proofs on the transparent ledger.",
+    icon: ClipboardCheck,
   },
   {
     stepNumber: 3,
-    title: "Hand Over the Payout",
-    description: "Give the collected pool money to the member whose turn it is. The app automatically advances your circle to the next payout round.",
+    title: "Disburse Lump-Sum Payouts",
+    description: "Release pooled payout funds to the designated turn beneficiary and advance the circle to the next rotation automatically.",
+    icon: Coins,
   },
 ];
+
+export const memberSteps: HowItWorksStep[] = [
+  {
+    stepNumber: 1,
+    title: "Join with Invite Code & Claim Slot",
+    description: "Enter the group's 12-character invite code, review the contribution schedule, and reserve or receive your rotation turn slot.",
+    icon: KeyRound,
+  },
+  {
+    stepNumber: 2,
+    title: "Send Contribution & Upload Proof",
+    description: "Send your turn contribution using the organizer's verified payment details and submit your reference number with receipt proof.",
+    icon: CreditCard,
+  },
+  {
+    stepNumber: 3,
+    title: "Receive Your Payout & Confirm Receipt",
+    description: "Collect your full pooled lump-sum payout when your assigned turn arrives, and confirm receipt on the shared circle ledger.",
+    icon: Sparkles,
+  },
+];
+
+export const defaultSteps: HowItWorksStep[] = organizerSteps;
 
 export const defaultPlannerRules: PaluwaganRules = {
   contributionAmount: 1000,
@@ -35,9 +69,8 @@ export const frequencyOptions = [
 
 export const payoutSchemeOptions = [
   { label: "Draw Lots / Random", value: "draw-lots" },
-  { label: "Seniority / First-Come", value: "seniority" },
-  { label: "First-Come Slot Reservation", value: "first-come" },
-  { label: "Custom Turn Order", value: "custom" },
+  { label: "First-Come, First-Served", value: "seniority" },
+  { label: "Free Choice Slot Reservation", value: "first-come" },
 ] as const;
 
 export const gracePeriodOptions = [
