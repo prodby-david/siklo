@@ -16,8 +16,10 @@ export {
 } from "./users/payment-accounts.schema.js";
 
 export {
+  createGroupBaseSchema,
   createGroupFullSchema,
   createGroupSchema,
+  type CreateGroupBaseDTO,
   type CreateGroupFullDTO,
   type CreateGroupDTO,
 } from "./groups/create-group.schema.js";

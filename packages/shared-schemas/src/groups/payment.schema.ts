@@ -11,6 +11,7 @@ export const submitPaymentSchema = z
     paymentMethod: z.enum(PAYMENT_METHODS),
     referenceNumber: z.string().trim().max(100).optional(),
     proofUrl: optionalProofSchema,
+    includeOrganizerFee: z.boolean().optional(),
   })
   .strict();
 

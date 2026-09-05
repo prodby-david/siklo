@@ -3,7 +3,7 @@ import { BILLING_CYCLES } from "../enums/billing-cycle.js";
 import { PAYOUT_SEQUENCES } from "../enums/payout-sequence.js";
 import { PAYMENT_METHODS } from "../enums/payment-method.js";
 
-export const createGroupFullSchema = z.object({
+export const createGroupBaseSchema = z.object({
   name: z
     .string({ message: "Group name is required" })
     .min(3, "Group name must be at least 3 characters long")
@@ -52,14 +52,47 @@ export const createGroupFullSchema = z.object({
     .min(0, "Organizer fee cannot be negative")
     .max(1000, "Organizer fee cannot exceed ₱1,000")
     .default(0),
-  inviteCode: z.string().length(12),
-  organizerId: z.string(),
 });
 
-export const createGroupSchema = createGroupFullSchema.omit({
-  inviteCode: true,
-  organizerId: true,
+export const createGroupFullSchema = createGroupBaseSchema
+  .extend({
+    inviteCode: z.string().length(12),
+    organizerId: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.isOrganizerParticipating && (data.organizerFeeAmount || 0) > 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Participating organizers cannot charge a one-time fee",
+        path: ["organizerFeeAmount"],
+      });
+    }
+    if (!data.isOrganizerParticipating && (!data.organizerFeeAmount || data.organizerFeeAmount <= 0)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Organizer fee is required when you do not participate in the cycle",
+        path: ["organizerFeeAmount"],
+      });
+    }
+  });
+
+export const createGroupSchema = createGroupBaseSchema.superRefine((data, ctx) => {
+  if (data.isOrganizerParticipating && (data.organizerFeeAmount || 0) > 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Participating organizers cannot charge a one-time fee",
+      path: ["organizerFeeAmount"],
+    });
+  }
+  if (!data.isOrganizerParticipating && (!data.organizerFeeAmount || data.organizerFeeAmount <= 0)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Organizer fee is required when you do not participate in the cycle",
+      path: ["organizerFeeAmount"],
+    });
+  }
 });
 
+export type CreateGroupBaseDTO = z.infer<typeof createGroupBaseSchema>;
 export type CreateGroupFullDTO = z.infer<typeof createGroupFullSchema>;
 export type CreateGroupDTO = z.infer<typeof createGroupSchema>;
