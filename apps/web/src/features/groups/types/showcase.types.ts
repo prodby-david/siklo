@@ -29,16 +29,30 @@ export interface ShowcaseTurnCardProps {
   position: number;
   membership?: Membership;
   isSelected: boolean;
-  isPaid: boolean;
+  isReceived?: boolean;
+  isDisbursed?: boolean;
   isCurrent: boolean;
+  hasStarted?: boolean;
   calculatedDate: Date | null;
   onSelect: (position: number) => void;
   organizerId?: string;
 }
 
-export interface TurnPaidBadgeProps {
-  currentCycle: number;
-  isOrganizer?: boolean;
+export interface TurnDetailGroup {
+  id?: string;
+  contributionAmount: number | string;
+  maxMembers: number;
+  billingCycle: string;
+  startDate?: string | null;
+  payoutSequence?: "RANDOM" | "MANUAL" | "FREECHOOSING";
+  organizerId?: string;
+  allowedPaymentMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
+  paymentDetails?: string | null;
+  gracePeriodDays?: number;
+  latePenaltyAmount?: number;
+  organizerFeeAmount?: number;
+  rounds?: GroupRound[];
+  payments?: PaymentRecord[];
 }
 
 export interface TurnDetailPanelProps {
@@ -48,23 +62,10 @@ export interface TurnDetailPanelProps {
   isSelectedPaid: boolean;
   isSelectedPending?: boolean;
   isSelectedRejected?: boolean;
+  isSelectedTurnReceived?: boolean;
+  isSelectedTurnDisbursed?: boolean;
   calculatedPayoutDate: Date | null;
-  group: {
-    id?: string;
-    contributionAmount: number | string;
-    maxMembers: number;
-    billingCycle: string;
-    startDate?: string | null;
-    payoutSequence?: "RANDOM" | "MANUAL" | "FREECHOOSING";
-    organizerId?: string;
-    allowedPaymentMethods?: ("E_WALLET" | "BANK_TRANSFER" | "CASH")[];
-    paymentDetails?: string | null;
-    gracePeriodDays?: number;
-    latePenaltyAmount?: number;
-    organizerFeeAmount?: number;
-    rounds?: GroupRound[];
-    payments?: PaymentRecord[];
-  };
+  group: TurnDetailGroup;
   isOrganizer: boolean;
   isCurrentTurn: boolean;
   isCycleDone: boolean;
@@ -73,6 +74,8 @@ export interface TurnDetailPanelProps {
   onJumpToCurrentTurn?: () => void;
   hasStarted?: boolean;
   currentUserId?: string;
+  hasSelectedMemberPaidOrganizerFee?: boolean;
+  hasCurrentMemberPaidOrganizerFee?: boolean;
   onSelectSlot?: (position: number) => Promise<void>;
   isSelectingSlot?: boolean;
   onRemoveMember?: (memberUserId: string) => Promise<void>;
@@ -106,6 +109,8 @@ export interface GroupRoundsStatusCardProps {
   maxMembers: number;
   cycleDuration: number;
   contributionAmount: number | string;
+  organizerId?: string;
+  organizerFeeAmount?: number;
   rounds?: GroupRound[];
   payments?: PaymentRecord[];
   memberships?: Membership[];

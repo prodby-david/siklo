@@ -76,12 +76,12 @@ export default function GroupPayoutProgress({
             Round {hasStarted ? activeRound : 0} of {totalRounds}
           </span>
         </div>
-        <div className="w-full h-2.5 bg-neutral-table-stripe rounded-full overflow-hidden border border-neutral-border/60">
-          <div
-            className="h-full bg-gradient-to-r from-brand-accent to-emerald-500 transition-all duration-500 rounded-full"
-            style={{ width: `${progressPercentage}%` }}
-          />
-        </div>
+        <progress
+          className="siklo-progress h-2.5 block border border-neutral-border/60"
+          value={progressPercentage}
+          max={100}
+          aria-label={`${progressPercentage}% of rounds completed`}
+        />
       </div>
 
       <div className="p-4 rounded-2xl bg-neutral-table-stripe/60 border border-neutral-border/80 space-y-3">
@@ -105,7 +105,7 @@ export default function GroupPayoutProgress({
       <div className="grid grid-cols-2 gap-3">
         <div className="p-3 rounded-2xl bg-background border border-neutral-border flex flex-col gap-1">
           <span className="text-[10px] text-neutral-subtext font-medium flex items-center gap-1">
-            <Wallet className="w-3 h-3 text-emerald-500" /> Pool Per Round
+            <Wallet className="h-3 w-3 text-success" /> Pool Per Round
           </span>
           <span className="text-sm font-black text-foreground">
             ₱{totalPoolPerRound.toLocaleString()}
@@ -116,7 +116,7 @@ export default function GroupPayoutProgress({
           <span className="text-[10px] text-neutral-subtext font-medium flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-brand-accent" /> Guarantee
           </span>
-          <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+          <span className="text-xs font-bold text-success">
             100% Protected
           </span>
         </div>

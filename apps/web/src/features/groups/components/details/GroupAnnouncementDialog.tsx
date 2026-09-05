@@ -92,7 +92,7 @@ export default function GroupAnnouncementDialog({
                 <button
                   type="submit"
                   disabled={isPending || !message.trim()}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-background text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? (
                     <>

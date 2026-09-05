@@ -1,21 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Layers, Flame, CheckCircle2 } from "lucide-react";
+import { Layers, Flame, Clock, CheckCircle2 } from "lucide-react";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
 import Loader from "@/shared/components/loader/Loader";
 import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
 import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
 import EmptyGroupState from "@/features/dashboard/components/EmptyGroupState";
 import GroupCardItem from "@/features/groups/components/cards/GroupCardItem";
-import { ExtendedGroup } from "@/features/dashboard/types/groups.types";
-
-interface GroupWithCycle extends ExtendedGroup {
-  isCycleDone?: boolean;
-}
+import { ExtendedGroup } from "@/features/groups/types/group.types";
 
 export default function ShowGroup() {
-  const [filter, setFilter] = useState<"ALL" | "ACTIVE" | "COMPLETED">("ALL");
+  const [filter, setFilter] = useState<"ALL" | "ACTIVE" | "PENDING" | "COMPLETED">("ALL");
   const { data: allGroups = [], isLoading } = useGetGroup("ALL");
 
   if (isLoading) {
@@ -23,12 +19,20 @@ export default function ShowGroup() {
   }
 
   const allCount = allGroups.length;
-  const activeCount = allGroups.filter((g: GroupWithCycle) => !g.isCycleDone).length;
-  const completedCount = allGroups.filter((g: GroupWithCycle) => g.isCycleDone).length;
+  const activeCount = allGroups.filter(
+    (g: ExtendedGroup) => Boolean(g.startDate) && !g.isCycleDone,
+  ).length;
+  const pendingCount = allGroups.filter(
+    (g: ExtendedGroup) => !g.startDate && !g.isCycleDone,
+  ).length;
+  const completedCount = allGroups.filter(
+    (g: ExtendedGroup) => Boolean(g.isCycleDone),
+  ).length;
 
-  const displayGroups = allGroups.filter((g: GroupWithCycle) => {
-    if (filter === "ACTIVE") return !g.isCycleDone;
-    if (filter === "COMPLETED") return g.isCycleDone;
+  const displayGroups = allGroups.filter((g: ExtendedGroup) => {
+    if (filter === "ACTIVE") return Boolean(g.startDate) && !g.isCycleDone;
+    if (filter === "PENDING") return !g.startDate && !g.isCycleDone;
+    if (filter === "COMPLETED") return Boolean(g.isCycleDone);
     return true;
   });
 
@@ -55,7 +59,7 @@ export default function ShowGroup() {
             onClick={() => setFilter("ALL")}
             className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               filter === "ALL"
-                ? "bg-brand-accent text-background border-brand-accent shadow-sm"
+                ? "bg-brand-accent text-brand-accent-foreground border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
             }`}
           >
@@ -66,7 +70,7 @@ export default function ShowGroup() {
             onClick={() => setFilter("ACTIVE")}
             className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               filter === "ACTIVE"
-                ? "bg-brand-accent text-background border-brand-accent shadow-sm"
+                ? "bg-brand-accent text-brand-accent-foreground border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
             }`}
           >
@@ -74,10 +78,21 @@ export default function ShowGroup() {
             <span>Active ({activeCount})</span>
           </button>
           <button
+            onClick={() => setFilter("PENDING")}
+            className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
+              filter === "PENDING"
+                ? "bg-brand-accent text-brand-accent-foreground border-brand-accent shadow-sm"
+                : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>Pending ({pendingCount})</span>
+          </button>
+          <button
             onClick={() => setFilter("COMPLETED")}
             className={`inline-flex items-center justify-center gap-1.5 h-9 sm:h-8 px-4 text-xs font-bold rounded-2xl transition-all duration-150 border cursor-pointer select-none whitespace-nowrap w-full sm:w-auto ${
               filter === "COMPLETED"
-                ? "bg-brand-accent text-background border-brand-accent shadow-sm"
+                ? "bg-brand-accent text-brand-accent-foreground border-brand-accent shadow-sm"
                 : "bg-background text-neutral-subtext hover:text-foreground border-neutral-border hover:bg-neutral-subtext/5"
             }`}
           >

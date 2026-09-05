@@ -32,17 +32,18 @@ export default function CreateGroupPage() {
             <CreditCard className="w-6 h-6" />
           </div>
           <p className="text-lg font-bold text-foreground">
-            Payment setup required
+            Payment Account Setup Required
           </p>
-          <p className="text-sm text-neutral-subtext">
-            Add at least one payment account number in your settings before
-            creating a group. Members will send their contributions to it.
+          <p className="text-sm text-neutral-subtext leading-relaxed">
+            Configure your receiving payment account (GCash, Maya, or Bank
+            Transfer) in settings before creating a group. Members will send
+            their rotation contributions to this account.
           </p>
           <Link
             href="/settings"
-            className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+            className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
           >
-            Go to Settings
+            Configure Payment Settings
           </Link>
         </div>
       </main>

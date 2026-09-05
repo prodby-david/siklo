@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { RotateCw, Users, CheckCircle2 } from "lucide-react";
+import { RotateCw, CheckCircle2 } from "lucide-react";
 import { useDisbursePayout } from "@/features/payments/hooks/useDisbursePayout";
 import { useConfirmPayoutReceipt } from "@/features/payments/hooks/useConfirmPayoutReceipt";
 import { useSelectSlot } from "../../hooks/useSelectSlot";
@@ -9,8 +9,8 @@ import { useRemoveMember } from "../../hooks/useRemoveMember";
 import { useGroupTurnShowcaseState } from "../../hooks/useGroupTurnShowcaseState";
 import { getPayoutDate } from "../../utils/groupCalculations";
 import GroupAnnouncementDialog from "./GroupAnnouncementDialog";
-import ShowcaseTurnCard from "./showcase/ShowcaseTurnCard";
 import TurnDetailPanel from "./showcase/TurnDetailPanel";
+import TurnQueue from "./showcase/TurnQueue";
 import { GroupTurnShowcaseProps } from "../../types/showcase.types";
 
 export default function GroupTurnShowcase({
@@ -33,7 +33,7 @@ export default function GroupTurnShowcase({
   paymentDetails,
   gracePeriodDays,
   latePenaltyAmount,
-  organizerFeeAmount,
+  organizerFeeAmount = 0,
   onRefresh,
 }: GroupTurnShowcaseProps) {
   const { mutateAsync: selectSlot, isPending: isSelectingSlot } =
@@ -51,6 +51,7 @@ export default function GroupTurnShowcase({
     paidUserIdsByTurn,
     pendingUserIdsByTurn,
     rejectedUserIdsByTurn,
+    paidOrganizerFeeUserIds,
     disbursedTurns,
     confirmedTurns,
     completedDisbursementDates,
@@ -64,6 +65,7 @@ export default function GroupTurnShowcase({
     cycleDuration,
     payments,
     rounds,
+    organizerFeeAmount,
   );
 
   const sortedMemberships = [...memberships].sort(
@@ -78,15 +80,19 @@ export default function GroupTurnShowcase({
   const matchedRound = rounds.find(
     (r) => r.cycleNumber === currentCycle && r.roundNumber === selectedTurn,
   );
-  const isRoundDisbursed =
-    disbursedTurns.has(currentTurnKey) ||
-    matchedRound?.status === "DISBURSED" ||
+  const isSelectedTurnReceived =
     matchedRound?.status === "RECEIVED" ||
+    confirmedTurns.has(currentTurnKey) ||
+    (hasStarted && currentTurn !== undefined && selectedTurn < currentTurn);
+  const isSelectedTurnDisbursed =
+    matchedRound?.status === "DISBURSED" ||
+    disbursedTurns.has(currentTurnKey);
+  const isRoundDisbursed =
+    isSelectedTurnDisbursed ||
+    isSelectedTurnReceived ||
     matchedRound?.status === "PAID";
   const isRoundConfirmed =
-    confirmedTurns.has(currentTurnKey) ||
-    matchedRound?.status === "DISBURSED" ||
-    matchedRound?.status === "RECEIVED" ||
+    isSelectedTurnReceived ||
     matchedRound?.status === "PAID";
 
   const selectedMembership = sortedMemberships.find(
@@ -160,10 +166,17 @@ export default function GroupTurnShowcase({
         Free Choice Slots
       </span>
     ) : (
-      <span className="text-[10px] font-bold text-indigo-500 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded-full">
+      <span className="rounded-full border border-winner-payout/20 bg-winner-payout-bg px-2 py-0.5 text-[10px] font-bold text-winner-payout">
         First Come First Served
       </span>
     );
+
+  const hasSelectedMemberPaidOrganizerFee = selectedMemberUserId
+    ? paidOrganizerFeeUserIds.has(selectedMemberUserId)
+    : false;
+  const hasCurrentMemberPaidOrganizerFee = currentUserId
+    ? paidOrganizerFeeUserIds.has(currentUserId)
+    : false;
 
   return (
     <motion.div
@@ -194,7 +207,7 @@ export default function GroupTurnShowcase({
 
           <div className="flex items-center gap-2 bg-neutral-table-stripe p-1 rounded-2xl border border-neutral-border/60 shrink-0">
             {isCycleDone ? (
-              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-xl border border-emerald-500/30 flex items-center gap-1">
+              <span className="flex items-center gap-1 rounded-xl border border-success/30 bg-success-bg px-3 py-1 text-[11px] font-bold text-success">
                 <CheckCircle2 className="w-3 h-3" /> Cycle Finished
               </span>
             ) : (
@@ -212,48 +225,22 @@ export default function GroupTurnShowcase({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        <div className="lg:col-span-5 flex flex-col gap-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-extrabold text-neutral-subtext uppercase tracking-wider flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-brand-accent" /> Turn Queue ({sortedMemberships.length}/{maxMembers})
-            </span>
-          </div>
-
-          <div className="max-h-[440px] overflow-y-auto pr-1 space-y-2 no-scrollbar">
-            {Array.from({ length: maxMembers }).map((_, index) => {
-              const position = index + 1;
-              const membership = sortedMemberships.find(
-                (m) => m.position === position,
-              );
-              const isSelected = selectedTurn === position;
-              const cardKey = `${currentCycle}-${position}`;
-              const isConfirmed = confirmedTurns.has(cardKey);
-              const isCurrent = position === currentTurn;
-              const isTurnPaid = isConfirmed || position < currentTurn;
-
-              const calculatedDate = getPayoutDate(
-                startDate,
-                position,
-                billingCycle,
-                completedDisbursementDates,
-              );
-
-              return (
-                <ShowcaseTurnCard
-                  key={position}
-                  position={position}
-                  membership={membership}
-                  isSelected={isSelected}
-                  isPaid={Boolean(isTurnPaid)}
-                  isCurrent={isCurrent}
-                  calculatedDate={calculatedDate}
-                  onSelect={setSelectedTurn}
-                  organizerId={organizerId}
-                />
-              );
-            })}
-          </div>
-        </div>
+        <TurnQueue
+          memberships={sortedMemberships}
+          rounds={rounds}
+          maxMembers={maxMembers}
+          selectedTurn={selectedTurn}
+          currentCycle={currentCycle}
+          currentTurn={currentTurn}
+          hasStarted={hasStarted}
+          startDate={startDate}
+          billingCycle={billingCycle}
+          completedDisbursementDates={completedDisbursementDates}
+          confirmedTurns={confirmedTurns}
+          disbursedTurns={disbursedTurns}
+          organizerId={organizerId}
+          onSelectTurn={setSelectedTurn}
+        />
 
         <TurnDetailPanel
           selectedTurn={selectedTurn}
@@ -262,6 +249,8 @@ export default function GroupTurnShowcase({
           isSelectedPaid={isSelectedPaid}
           isSelectedPending={isSelectedPending}
           isSelectedRejected={isSelectedRejected}
+          isSelectedTurnReceived={Boolean(isSelectedTurnReceived)}
+          isSelectedTurnDisbursed={Boolean(isSelectedTurnDisbursed)}
           calculatedPayoutDate={calculatedPayoutDate}
           group={{
             id: groupId,
@@ -286,6 +275,8 @@ export default function GroupTurnShowcase({
           currentTurn={currentTurn}
           hasStarted={hasStarted}
           currentUserId={currentUserId}
+          hasSelectedMemberPaidOrganizerFee={hasSelectedMemberPaidOrganizerFee}
+          hasCurrentMemberPaidOrganizerFee={hasCurrentMemberPaidOrganizerFee}
           onSelectSlot={handleSelectSlot}
           isSelectingSlot={isSelectingSlot}
           onRemoveMember={handleRemoveMember}

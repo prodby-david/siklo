@@ -94,10 +94,10 @@ export default function MemberPaymentHistoryModal({
                       <div
                         className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
                           isVerified
-                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                            ? "border border-success/30 bg-success-bg text-success"
                             : isPending
-                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
-                            : "bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                            ? "border border-warning/30 bg-warning-bg text-warning"
+                            : "border border-danger-border bg-danger-bg text-danger"
                         }`}
                       >
                         #{roundInfo.roundNumber}
@@ -122,15 +122,15 @@ export default function MemberPaymentHistoryModal({
                         ₱{Number(p.totalAmount || 0).toLocaleString()}
                       </span>
                       {isVerified ? (
-                        <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="flex items-center gap-1 rounded-full border border-success/30 bg-success-bg px-2 py-0.5 text-[9px] font-bold text-success">
                           <ShieldCheck className="w-3 h-3" /> Verified
                         </span>
                       ) : isPending ? (
-                        <span className="text-[9px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="flex items-center gap-1 rounded-full border border-warning/30 bg-warning-bg px-2 py-0.5 text-[9px] font-bold text-warning">
                           <Clock className="w-3 h-3" /> Pending Approval
                         </span>
                       ) : (
-                        <span className="text-[9px] font-bold text-rose-600 dark:text-rose-400 bg-rose-500/15 border border-rose-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <span className="flex items-center gap-1 rounded-full border border-danger-border bg-danger-bg px-2 py-0.5 text-[9px] font-bold text-danger">
                           <AlertCircle className="w-3 h-3" /> Rejected
                         </span>
                       )}
@@ -144,7 +144,7 @@ export default function MemberPaymentHistoryModal({
                   )}
 
                   {isRejected && p.rejectionReason && (
-                    <div className="p-2.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-xs text-rose-600 dark:text-rose-400 space-y-0.5">
+                    <div className="space-y-0.5 rounded-xl border border-danger-border bg-danger-bg p-2.5 text-xs text-danger">
                       <span className="text-[10px] font-bold uppercase tracking-wider block">
                         Rejection Reason
                       </span>

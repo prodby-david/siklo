@@ -68,7 +68,7 @@ export default function DeleteGroupDialog({
                 type="button"
                 disabled={isDeleting}
                 onClick={handleDelete}
-                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold rounded-2xl bg-danger text-white hover:bg-danger/90 cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-danger px-4 py-2 text-xs font-bold text-brand-accent-foreground transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
               >
                 {isDeleting ? (
                   <>

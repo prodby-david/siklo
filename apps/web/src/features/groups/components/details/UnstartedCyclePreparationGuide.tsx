@@ -63,14 +63,14 @@ export default function UnstartedCyclePreparationGuide({
             {progressPercent}% Complete
           </span>
         </div>
-        <div className="w-full h-2.5 bg-neutral-subtext/10 rounded-full overflow-hidden p-0.5 border border-neutral-border/50">
-          <div
-            className="h-full bg-brand-accent rounded-full transition-all duration-500"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
+        <progress
+          className="siklo-progress h-2.5 block border border-neutral-border/50"
+          value={progressPercent}
+          max={100}
+          aria-label={`${membershipsCount} of ${maxMembers} member slots filled`}
+        />
         {!isReadyToStart && (
-          <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1 mt-1">
+          <p className="mt-1 flex items-center gap-1 text-[11px] font-medium text-warning">
             <AlertCircle className="w-3.5 h-3.5 shrink-0" />
             Need at least {minRequiredMembers} members to start. ({minRequiredMembers - membershipsCount} more needed)
           </p>
@@ -83,7 +83,7 @@ export default function UnstartedCyclePreparationGuide({
             <CheckCircle2
               className={`w-4 h-4 shrink-0 ${
                 membershipsCount >= minRequiredMembers
-                  ? "text-emerald-500"
+                  ? "text-success"
                   : "text-neutral-subtext/50"
               }`}
             />
@@ -114,7 +114,7 @@ export default function UnstartedCyclePreparationGuide({
 
         <div className="h-full p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 hover:border-brand-accent/40 transition-all flex flex-col justify-between gap-2">
           <div className="flex items-center gap-2">
-            <Wallet className="w-4 h-4 text-indigo-500 shrink-0" />
+            <Wallet className="h-4 w-4 shrink-0 text-winner-payout" />
             <span className="text-xs font-bold text-foreground">
               3. Payout Details Setup
             </span>
@@ -126,7 +126,7 @@ export default function UnstartedCyclePreparationGuide({
 
         <div className="h-full p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 hover:border-brand-accent/40 transition-all flex flex-col justify-between gap-2">
           <div className="flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-amber-500 shrink-0" />
+            <ShieldAlert className="h-4 w-4 shrink-0 text-warning" />
             <span className="text-xs font-bold text-foreground">
               4. Starting the Group
             </span>
@@ -160,11 +160,11 @@ export default function UnstartedCyclePreparationGuide({
             <button
               type="button"
               onClick={onCopyInviteCode}
-              className="p-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-background transition-all active:scale-95 cursor-pointer shrink-0"
+              className="p-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground transition-all active:scale-95 cursor-pointer shrink-0"
               title="Copy Code"
             >
               {copied ? (
-                <Check className="w-3.5 h-3.5 text-background" />
+                <Check className="w-3.5 h-3.5 text-brand-accent-foreground" />
               ) : (
                 <Copy className="w-3.5 h-3.5" />
               )}

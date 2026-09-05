@@ -28,6 +28,7 @@ export default function GroupHero({
   organizerPaymentDetails,
   contributionAmount = 1000,
   organizerFeeAmount = 0,
+  hasAlreadyPaidOrganizerFee = false,
   gracePeriodDays = 0,
   latePenaltyAmount = 0,
   roundId = "",
@@ -47,7 +48,7 @@ export default function GroupHero({
     billingCycle;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-indigo-500/10 p-6 sm:p-8 backdrop-blur-md dark:from-brand-accent/10 dark:to-indigo-500/5 shadow-sm">
+    <div className="relative overflow-hidden rounded-3xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-winner-payout-bg p-6 shadow-sm backdrop-blur-md sm:p-8">
       <div className="absolute top-0 right-0 p-8 opacity-10 dark:opacity-5 pointer-events-none">
         <RotateCw className="w-32 h-32 text-brand-accent" />
       </div>
@@ -58,7 +59,7 @@ export default function GroupHero({
             <span
               className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
                 isCycleDone
-                  ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                  ? "border border-success/30 bg-success-bg text-success"
                   : hasStarted
                   ? "bg-brand-accent/15 text-brand-accent"
                   : "bg-warning/15 text-warning"
@@ -89,7 +90,7 @@ export default function GroupHero({
 
           <div className="flex flex-wrap items-center gap-2 pt-1">
             {isCycleDone ? (
-              <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+              <div className="flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-4 py-2 text-xs font-bold text-success">
                 <ShieldCheck className="w-4 h-4" />
                 <span>All Cycle Rotations Completed</span>
               </div>
@@ -100,25 +101,25 @@ export default function GroupHero({
                   <span>Facilitating Turn #{currentTurn}</span>
                 </div>
               ) : isCurrentUserPaid ? (
-                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+                <div className="flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-4 py-2 text-xs font-bold text-success">
                   <ShieldCheck className="w-4 h-4" />
                   <span>Turn #{currentTurn} Contribution Paid</span>
                 </div>
               ) : isCurrentUserPending ? (
-                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 rounded-2xl border border-amber-500/25">
+                <div className="flex items-center gap-1.5 rounded-2xl border border-warning/25 bg-warning-bg px-4 py-2 text-xs font-bold text-warning">
                   <Clock className="w-4 h-4" />
                   <span>Contribution Awaiting Verification</span>
                 </div>
               ) : roundId && isUserMember ? (
                 <button
                   onClick={() => setIsPayModalOpen(true)}
-                  className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+                  className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
                 >
                   <CreditCard className="w-4 h-4" />
                   <span>Pay Contribution (Turn #{currentTurn})</span>
                 </button>
               ) : (
-                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-500/10 rounded-2xl border border-rose-500/25">
+                <div className="flex items-center gap-1.5 rounded-2xl border border-danger-border bg-danger-bg px-4 py-2 text-xs font-bold text-danger">
                   <Clock className="w-4 h-4" />
                   <span>Current contribution round is unavailable</span>
                 </div>
@@ -174,6 +175,8 @@ export default function GroupHero({
           roundId={roundId}
           baseAmount={contributionAmount}
           organizerFeeAmount={organizerFeeAmount}
+          isOrganizer={isOrganizer}
+          hasAlreadyPaidOrganizerFee={hasAlreadyPaidOrganizerFee}
           gracePeriodDays={gracePeriodDays}
           latePenaltyRate={latePenaltyAmount}
           allowedMethods={allowedMethods}

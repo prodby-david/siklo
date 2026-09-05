@@ -15,7 +15,13 @@ import { GroupRound } from "../types/group.types";
 export function useGroupPageController() {
   const params = useParams();
   const router = useRouter();
-  const groupId = params.groupId as string;
+  const rawGroupId = params?.groupId;
+  const groupId =
+    typeof rawGroupId === "string"
+      ? rawGroupId
+      : Array.isArray(rawGroupId)
+        ? rawGroupId[0]
+        : "";
 
   const { data, isLoading, refetch } = useGetGroupById(groupId);
   const { data: currentUser } = useGetCurrentName();
@@ -119,15 +125,15 @@ export function useGroupPageController() {
   const timeline = useMemo(() => {
     if (!data) return null;
     const details = calculateCycleDetails(
-      data.contributionAmount,
-      data.maxMembers,
-      data.cycleDuration,
-      data.billingCycle,
+      data.contributionAmount || 0,
+      data.maxMembers || 0,
+      data.cycleDuration || 1,
+      data.billingCycle || "MONTHLY",
     );
 
     const startDateObj = data.startDate ? new Date(data.startDate) : new Date();
     const endDateObj = new Date(
-      startDateObj.getTime() + details.totalDays * 24 * 60 * 60 * 1000,
+      startDateObj.getTime() + (details.totalDays || 0) * 24 * 60 * 60 * 1000,
     );
 
     return {

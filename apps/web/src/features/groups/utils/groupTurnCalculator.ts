@@ -5,6 +5,7 @@ export interface GroupTurnStateResult {
   paidUserIdsByTurn: Record<string, Set<string>>;
   pendingUserIdsByTurn: Record<string, Set<string>>;
   rejectedUserIdsByTurn: Record<string, Set<string>>;
+  paidOrganizerFeeUserIds: Set<string>;
   disbursedTurns: Set<string>;
   confirmedTurns: Set<string>;
   completedDisbursementDates: Record<number, Date>;
@@ -20,6 +21,8 @@ export function calculateGroupTurnState(
   activities: ApiActivity[] = [],
   cycleDuration: number = 1,
   hasStarted: boolean = false,
+  organizerId?: string,
+  organizerFeeAmount: number = 0,
 ): GroupTurnStateResult {
   const sortedMemberships = [...memberships].sort(
     (a, b) => a.position - b.position,
@@ -28,6 +31,7 @@ export function calculateGroupTurnState(
   const paidMap: Record<string, Set<string>> = {};
   const pendingMap: Record<string, Set<string>> = {};
   const rejectedMap: Record<string, Set<string>> = {};
+  const paidOrganizerFeeUserIds = new Set<string>();
   const disbursedSet = new Set<string>();
   const confirmedSet = new Set<string>();
   const disbursementDates: Record<number, Date> = {};
@@ -51,6 +55,9 @@ export function calculateGroupTurnState(
         rnd.payments.forEach((p) => {
           if (p.status === "VERIFIED") {
             paidMap[key].add(p.userId);
+            if ((p.organizerFeeAmount || 0) > 0) {
+              paidOrganizerFeeUserIds.add(p.userId);
+            }
           } else if (p.status === "PENDING") {
             pendingMap[key].add(p.userId);
           } else if (p.status === "REJECTED") {
@@ -86,6 +93,9 @@ export function calculateGroupTurnState(
 
       if (p.status === "VERIFIED") {
         paidMap[key].add(p.userId);
+        if ((p.organizerFeeAmount || 0) > 0) {
+          paidOrganizerFeeUserIds.add(p.userId);
+        }
       } else if (p.status === "PENDING") {
         pendingMap[key].add(p.userId);
       } else if (p.status === "REJECTED") {
@@ -154,8 +164,20 @@ export function calculateGroupTurnState(
     if (!foundIncomplete) {
       activeCycle = cycleDuration;
       activeTurn = totalMembers;
+
+      const nonOrganizerMembers = sortedMemberships.filter(
+        (m) => m.userId !== organizerId,
+      );
+      const areOrganizerFeesPaid =
+        organizerFeeAmount <= 0 ||
+        nonOrganizerMembers.every((m) =>
+          paidOrganizerFeeUserIds.has(m.userId),
+        );
+
       allFinished =
-        hasStarted && confirmedSet.size >= totalMembers * cycleDuration;
+        hasStarted &&
+        confirmedSet.size >= totalMembers * cycleDuration &&
+        areOrganizerFeesPaid;
     }
   }
 
@@ -163,6 +185,7 @@ export function calculateGroupTurnState(
     paidUserIdsByTurn: paidMap,
     pendingUserIdsByTurn: pendingMap,
     rejectedUserIdsByTurn: rejectedMap,
+    paidOrganizerFeeUserIds,
     disbursedTurns: disbursedSet,
     confirmedTurns: confirmedSet,
     completedDisbursementDates: disbursementDates,

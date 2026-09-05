@@ -76,17 +76,15 @@ export default function GroupStatsGrid({
                 / {maxMembers}
               </span>
             </p>
-            <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 mt-1.5 overflow-hidden">
-              <div
-                className="bg-brand-accent h-1.5 rounded-full transition-all duration-500"
-                style={{
-                  width: `${filledPercentage}%`,
-                }}
-              />
-            </div>
+            <progress
+              className="siklo-progress h-1.5 mt-1.5 block"
+              value={filledPercentage}
+              max={100}
+              aria-label={`${membershipsCount} of ${maxMembers} members joined`}
+            />
           </div>
-          <div className="flex items-center justify-center w-10 h-10 bg-sky-500/10 rounded-2xl shrink-0">
-            <Users className="w-5 h-5 text-sky-600" />
+          <div className="flex items-center justify-center w-10 h-10 bg-success-bg rounded-2xl shrink-0">
+            <Users className="w-5 h-5 text-success" />
           </div>
         </div>
 
@@ -105,8 +103,8 @@ export default function GroupStatsGrid({
               {totalRounds} total payout rounds
             </span>
           </div>
-          <div className="flex items-center justify-center w-10 h-10 bg-indigo-500/10 rounded-2xl shrink-0">
-            <Clock className="w-5 h-5 text-indigo-600" />
+          <div className="flex items-center justify-center w-10 h-10 bg-winner-payout-bg rounded-2xl shrink-0">
+            <Clock className="w-5 h-5 text-winner-payout" />
           </div>
         </div>
       </div>

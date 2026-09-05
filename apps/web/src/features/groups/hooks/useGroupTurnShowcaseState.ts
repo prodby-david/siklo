@@ -12,6 +12,7 @@ export function useGroupTurnShowcaseState(
   cycleDuration: number = 1,
   payments: PaymentRecord[] = [],
   rounds: GroupRound[] = [],
+  organizerFeeAmount: number = 0,
 ) {
   const { data: activities = [] } = useGetGroupActivities(groupId);
 
@@ -25,6 +26,7 @@ export function useGroupTurnShowcaseState(
     paidUserIdsByTurn,
     pendingUserIdsByTurn,
     rejectedUserIdsByTurn,
+    paidOrganizerFeeUserIds,
     disbursedTurns,
     confirmedTurns,
     completedDisbursementDates,
@@ -39,6 +41,8 @@ export function useGroupTurnShowcaseState(
       activities as ApiActivity[],
       cycleDuration,
       hasStarted,
+      organizerId,
+      organizerFeeAmount,
     );
   }, [
     activities,
@@ -47,6 +51,8 @@ export function useGroupTurnShowcaseState(
     memberships,
     cycleDuration,
     hasStarted,
+    organizerId,
+    organizerFeeAmount,
   ]);
 
   const [selectedTurnOverride, setSelectedTurnOverride] = useState<
@@ -83,6 +89,7 @@ export function useGroupTurnShowcaseState(
     paidUserIdsByTurn,
     pendingUserIdsByTurn,
     rejectedUserIdsByTurn,
+    paidOrganizerFeeUserIds,
     disbursedTurns,
     confirmedTurns,
     completedDisbursementDates,

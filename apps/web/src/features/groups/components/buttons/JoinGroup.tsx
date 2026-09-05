@@ -5,7 +5,7 @@ export default function JoinGroupButton({ onClick }: JoinGroupProps) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 text-xs font-semibold px-4 py-2 bg-brand-accent text-background px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer"
+      className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl border border-brand-accent/30 bg-brand-accent/15 px-4 py-2 text-xs font-semibold text-brand-accent transition-all duration-150 hover:bg-brand-accent/25 active:scale-95 shadow-xs"
     >
       <LogIn size={14} />
       Join Group

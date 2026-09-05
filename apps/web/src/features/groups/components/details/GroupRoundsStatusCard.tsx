@@ -9,6 +9,7 @@ import {
   Coins,
   CheckCircle2,
   Users,
+  HandCoins,
 } from "lucide-react";
 import { GroupRoundsStatusCardProps } from "@/features/groups/types/showcase.types";
 
@@ -21,18 +22,20 @@ export default function GroupRoundsStatusCard({
   maxMembers,
   cycleDuration,
   contributionAmount,
+  organizerId,
+  organizerFeeAmount = 0,
   rounds = [],
   payments = [],
   memberships = [],
 }: GroupRoundsStatusCardProps) {
   const contributionNum = Number(contributionAmount) || 0;
   const poolTotal = contributionNum * maxMembers;
+  const organizerFeeNum = organizerFeeAmount || 0;
 
   const currentRound = useMemo(
     () =>
       rounds.find(
-        (r) =>
-          r.cycleNumber === currentCycle && r.roundNumber === currentTurn,
+        (r) => r.cycleNumber === currentCycle && r.roundNumber === currentTurn,
       ),
     [rounds, currentCycle, currentTurn],
   );
@@ -59,6 +62,32 @@ export default function GroupRoundsStatusCard({
     Math.round((verifiedPaymentsCount / maxMembers) * 100),
   );
 
+  const nonOrganizerMembers = useMemo(
+    () => memberships.filter((m) => m.userId !== organizerId),
+    [memberships, organizerId],
+  );
+
+  const paidOrganizerFeeCount = useMemo(() => {
+    if (organizerFeeNum <= 0) return 0;
+    const paidIds = new Set<string>();
+    payments.forEach((p) => {
+      if (p.status === "VERIFIED" && (p.organizerFeeAmount || 0) > 0) {
+        paidIds.add(p.userId);
+      }
+    });
+    return nonOrganizerMembers.filter((m) => paidIds.has(m.userId)).length;
+  }, [payments, nonOrganizerMembers, organizerFeeNum]);
+
+  const feeProgressPercent =
+    nonOrganizerMembers.length > 0
+      ? Math.min(
+          100,
+          Math.round(
+            (paidOrganizerFeeCount / nonOrganizerMembers.length) * 100,
+          ),
+        )
+      : 100;
+
   const isRoundDisbursed = currentRound?.status === "DISBURSED";
   const isRoundReceived = currentRound?.status === "RECEIVED";
   const isRoundAllPaid = verifiedPaymentsCount >= maxMembers;
@@ -82,7 +111,7 @@ export default function GroupRoundsStatusCard({
 
         <div className="flex items-center gap-2">
           {isCycleDone ? (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success-bg px-3 py-1 text-[10px] font-black uppercase tracking-wider text-success">
               <CheckCircle2 className="w-3.5 h-3.5" /> All Cycles Completed
             </span>
           ) : hasStarted ? (
@@ -94,8 +123,8 @@ export default function GroupRoundsStatusCard({
               Active Cycle {currentCycle} of {cycleDuration}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
-              <Clock className="w-3.5 h-3.5" /> Unstarted • Forming
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/30 bg-warning-bg px-3 py-1 text-[10px] font-black uppercase tracking-wider text-warning">
+              <Clock className="w-3.5 h-3.5" /> Unstarted • Pending
             </span>
           )}
         </div>
@@ -107,7 +136,8 @@ export default function GroupRoundsStatusCard({
             <Coins className="w-3 h-3 text-brand-accent" /> Round Concept
           </span>
           <p className="text-xs font-semibold text-foreground leading-snug">
-            Each round is 1 rotation where all {maxMembers} members contribute ₱{contributionNum.toLocaleString()} for 1 recipient.
+            Each round is 1 rotation where all {maxMembers} members contribute ₱
+            {contributionNum.toLocaleString()} for 1 recipient.
           </p>
           <span className="text-[10px] text-neutral-subtext">
             Pool total: ₱{poolTotal.toLocaleString()} per round
@@ -116,13 +146,16 @@ export default function GroupRoundsStatusCard({
 
         <div className="p-3.5 rounded-2xl border border-neutral-border/70 bg-neutral-subtext/3 flex flex-col justify-between gap-1.5">
           <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider flex items-center gap-1">
-            <Award className="w-3 h-3 text-brand-accent" /> Current Round Recipient
+            <Award className="w-3 h-3 text-brand-accent" /> Current Round
+            Recipient
           </span>
           <p className="text-sm font-extrabold text-foreground truncate">
             {hasStarted ? activeBeneficiaryName : "Pending Cycle Start"}
           </p>
           <span className="text-[10px] text-brand-accent font-bold">
-            {hasStarted ? `Turn #${currentTurn} Beneficiary` : "Waiting for organizer"}
+            {hasStarted
+              ? `Turn #${currentTurn} Beneficiary`
+              : "Waiting for organizer"}
           </span>
         </div>
 
@@ -132,23 +165,23 @@ export default function GroupRoundsStatusCard({
           </span>
           <div>
             {isCycleDone ? (
-              <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-extrabold text-success">
                 Completed
               </span>
             ) : isRoundReceived ? (
-              <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-extrabold text-success">
                 Payout Confirmed Received
               </span>
             ) : isRoundDisbursed ? (
-              <span className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400">
+              <span className="text-xs font-extrabold text-winner-payout">
                 Payout Disbursed
               </span>
             ) : isRoundAllPaid ? (
-              <span className="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs font-extrabold text-success">
                 Ready for Payout Release
               </span>
             ) : hasStarted ? (
-              <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400">
+              <span className="text-xs font-extrabold text-warning">
                 Collecting Contributions
               </span>
             ) : (
@@ -158,27 +191,53 @@ export default function GroupRoundsStatusCard({
             )}
           </div>
           <span className="text-[10px] text-neutral-subtext">
-            {hasStarted ? `${verifiedPaymentsCount} of ${maxMembers} members verified` : "0 members contributed"}
+            {hasStarted
+              ? `${verifiedPaymentsCount} of ${maxMembers} members verified`
+              : "0 members contributed"}
           </span>
         </div>
       </div>
 
       {hasStarted && !isCycleDone && (
-        <div className="p-4 rounded-2xl border border-brand-accent/25 bg-brand-accent/5 space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-foreground flex items-center gap-1.5">
-              <Users className="w-3.5 h-3.5 text-brand-accent" /> Active Turn #{currentTurn} Contribution Progress
-            </span>
-            <span className="font-black text-brand-accent">
-              {verifiedPaymentsCount} / {maxMembers} Paid
-            </span>
-          </div>
-          <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-brand-accent h-2 rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${progressPercent}%` }}
+        <div className="space-y-3">
+          <div className="p-4 rounded-2xl border border-brand-accent/25 bg-brand-accent/5 space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-bold text-foreground flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-brand-accent" /> Active Turn
+                #{currentTurn} Contribution Progress
+              </span>
+              <span className="font-black text-brand-accent">
+                {verifiedPaymentsCount} / {maxMembers} Paid
+              </span>
+            </div>
+            <progress
+              className="siklo-progress h-2 block"
+              value={progressPercent}
+              max={100}
+              aria-label={`${verifiedPaymentsCount} of ${maxMembers} contributions verified`}
             />
           </div>
+
+          {organizerFeeNum > 0 && (
+            <div className="space-y-2 rounded-2xl border border-warning/25 bg-warning-bg p-4">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-foreground flex items-center gap-1.5">
+                  <HandCoins className="h-3.5 w-3.5 text-warning" /> One-Time
+                  Organizer Fee Progress (₱{organizerFeeNum.toLocaleString()} /
+                  member)
+                </span>
+                <span className="font-black text-warning">
+                  {paidOrganizerFeeCount} / {nonOrganizerMembers.length} Paid
+                </span>
+              </div>
+              <progress
+                className="siklo-progress siklo-progress-warning h-2 block"
+                value={feeProgressPercent}
+                max={100}
+                aria-label={`${paidOrganizerFeeCount} of ${nonOrganizerMembers.length} organizer fees paid`}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

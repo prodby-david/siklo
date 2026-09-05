@@ -20,13 +20,13 @@ export default function CreateGroupPreview({
 
   return (
     <div className="lg:col-span-5 lg:sticky lg:top-6 self-start flex flex-col gap-4">
-      <div className="relative overflow-hidden rounded-2xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-indigo-500/10 p-5 backdrop-blur-md dark:from-brand-accent/10 dark:to-indigo-500/5 shadow-xs h-auto">
+      <div className="relative h-auto overflow-hidden rounded-2xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-winner-payout-bg p-5 shadow-xs backdrop-blur-md">
         <div className="mb-3 flex items-center justify-between">
           <span className="rounded-full bg-brand-accent/15 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-brand-accent">
             Live Preview
           </span>
           <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-subtext">
-            <Crown className="w-3 h-3 text-amber-500" />
+            <Crown className="h-3 w-3 text-warning" />
             <span>{isParticipating ? "Participating Saver" : "Manager Only"}</span>
           </span>
         </div>
@@ -81,7 +81,9 @@ export default function CreateGroupPreview({
           </div>
         </div>
 
-        {(graceDays > 0 || penaltyRate > 0 || organizerFee > 0) && (
+        {(graceDays > 0 ||
+          penaltyRate > 0 ||
+          (!isParticipating && organizerFee > 0)) && (
           <div className="mt-3 grid grid-cols-2 gap-2 pt-3 border-t border-neutral-border/20 text-[10px]">
             {graceDays > 0 && (
               <div className="flex items-center gap-1 text-neutral-subtext">
@@ -90,14 +92,14 @@ export default function CreateGroupPreview({
               </div>
             )}
             {penaltyRate > 0 && (
-              <div className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
+              <div className="flex items-center gap-1 text-warning">
                 <AlertTriangle className="w-3 h-3 shrink-0" />
                 <span>Penalty: <strong>{penaltyRate}% (₱{estimatedDailyPenalty}/d)</strong></span>
               </div>
             )}
-            {organizerFee > 0 && (
+            {!isParticipating && organizerFee > 0 && (
               <div className="flex items-center gap-1 text-foreground col-span-2">
-                <Crown className="w-3 h-3 text-amber-500 shrink-0" />
+                <Crown className="h-3 w-3 shrink-0 text-warning" />
                 <span>One-Time Organizer Fee: <strong>₱{organizerFee.toLocaleString()}</strong></span>
               </div>
             )}

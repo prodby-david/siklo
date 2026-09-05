@@ -51,10 +51,10 @@ export default function GroupActivityLogs({
 
         <div className="flex items-center gap-2">
           {isConnected && !isCycleDone ? (
-            <span className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/25">
+            <span className="flex items-center gap-1 rounded-full border border-success/25 bg-success-bg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-success">
               <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
               </span>
               Live Sync
             </span>
@@ -91,7 +91,7 @@ export default function GroupActivityLogs({
                   key={event.id}
                   className="flex items-start gap-3 p-3.5 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 shadow-2xs"
                 >
-                  <span className="w-7 h-7 rounded-xl border border-brand-accent/30 bg-brand-accent text-white flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                  <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border border-brand-accent/30 bg-brand-accent text-brand-accent-foreground shadow-2xs">
                     <Megaphone className="w-3.5 h-3.5" />
                   </span>
                   <div className="flex flex-col gap-1 min-w-0 flex-1">

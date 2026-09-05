@@ -105,9 +105,9 @@ export default function GroupInfoCard({
 
           <div className="flex justify-between items-center">
             <span className="text-neutral-subtext flex items-center gap-1.5">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-500" /> Daily Late Penalty
+              <AlertTriangle className="h-3.5 w-3.5 text-warning" /> Daily Late Penalty
             </span>
-            <span className="font-bold text-amber-600 dark:text-amber-400">
+            <span className="font-bold text-warning">
               {latePenaltyAmount && latePenaltyAmount > 0
                 ? `${latePenaltyAmount}% / day`
                 : "None"}
@@ -173,7 +173,7 @@ export default function GroupInfoCard({
               <button
                 disabled={isStarting || isDeleting}
                 onClick={onStartCycle}
-                className="w-full h-11 text-xs flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 rounded-2xl font-bold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50"
+                className="w-full h-11 text-xs flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-4 rounded-2xl font-bold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50"
               >
                 <RefreshCw
                   size={16}

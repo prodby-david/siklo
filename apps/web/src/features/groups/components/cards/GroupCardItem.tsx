@@ -32,7 +32,7 @@ export default function GroupCardItem({ group }: GroupCardItemProps) {
             <span
               className={`rounded-full px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1 ${
                 isOrganizer
-                  ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30"
+                  ? "border border-warning/30 bg-warning-bg text-warning"
                   : "bg-brand-accent/15 text-brand-accent border border-brand-accent/30"
               }`}
             >
@@ -46,12 +46,20 @@ export default function GroupCardItem({ group }: GroupCardItemProps) {
                 </>
               )}
             </span>
-            <span className="rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-indigo-500">
+            <span className="rounded-full bg-winner-payout-bg px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-winner-payout">
               {group.billingCycle} Cycle
             </span>
-            {!isCycleDone && group.startDate && (
-              <span className="rounded-full bg-emerald-500/15 text-emerald-500 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest">
+            {isCycleDone ? (
+              <span className="rounded-full bg-winner-payout-bg px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-winner-payout">
+                Completed
+              </span>
+            ) : group.startDate ? (
+              <span className="rounded-full bg-success-bg px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-success">
                 Active
+              </span>
+            ) : (
+              <span className="rounded-full bg-warning-bg px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-warning">
+                Pending
               </span>
             )}
           </div>
@@ -97,18 +105,18 @@ export default function GroupCardItem({ group }: GroupCardItemProps) {
               {membershipsCount} / {group.maxMembers}
             </span>
           </div>
-          <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-            <div
-              className="bg-brand-accent h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${percentFilled}%` }}
-            />
-          </div>
+          <progress
+            className="siklo-progress h-1.5 block"
+            value={percentFilled}
+            max={100}
+            aria-label={`${membershipsCount} of ${group.maxMembers} members joined`}
+          />
         </div>
       </div>
 
       <Link
         href={`/group/${group.id}`}
-        className="mt-2 flex h-10 items-center justify-center gap-2 text-xs font-bold text-background bg-brand-accent hover:bg-brand-accent-hover px-4 rounded-2xl transition-all duration-200 active:scale-95 text-center cursor-pointer shadow-sm"
+        className="mt-2 flex h-10 items-center justify-center gap-2 text-xs font-bold text-brand-accent-foreground bg-brand-accent hover:bg-brand-accent-hover px-4 rounded-2xl transition-all duration-200 active:scale-95 text-center cursor-pointer shadow-sm"
       >
         <LogIn className="w-4 h-4" />
         <span>Open Group</span>

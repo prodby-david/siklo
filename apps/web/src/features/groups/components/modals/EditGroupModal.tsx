@@ -1,39 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import { AlertCircle, Loader2, Save, Settings } from "lucide-react";
+import Loader from "@/shared/components/loader/Loader";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/shared/components/ui/dialog";
-import {
-  Settings,
-  FileText,
-  AlignLeft,
-  PhilippinePeso,
-  Users,
-  Clock,
-  AlertTriangle,
-  CreditCard,
-  Check,
-  AlertCircle,
-  Loader2,
-  Save,
-} from "lucide-react";
-
-import { updateGroup } from "../../api/updateGroup";
-
-import {
-  BILLING_CYCLE_LABELS,
-  type BillingCycle,
-  type PayoutSequence,
-} from "@siklo/shared-schemas";
-import PayoutSequenceSelector from "../forms/PayoutSequenceSelector";
-import { EditGroupModalProps, PaymentMethodKey } from "../../types/group.types";
-import { PAYMENT_METHOD_OPTIONS } from "../../constants/group.constants";
-import Loader from "@/shared/components/loader/Loader";
+import useEditGroupForm from "../../hooks/useEditGroupForm";
+import type { EditGroupModalProps } from "../../types/group.types";
+import EditGroupBasicsFields from "../forms/EditGroupBasicsFields";
+import EditGroupPaymentFields from "../forms/EditGroupPaymentFields";
+import EditGroupScheduleFields from "../forms/EditGroupScheduleFields";
 
 export default function EditGroupModal({
   isOpen,
@@ -42,115 +22,27 @@ export default function EditGroupModal({
   initialData,
   onSuccess,
 }: EditGroupModalProps) {
-  const [name, setName] = useState(initialData.name || "");
-  const [description, setDescription] = useState(initialData.description || "");
-  const [contributionAmount, setContributionAmount] = useState(
-    initialData.contributionAmount || 1000,
-  );
-  const [maxMembers, setMaxMembers] = useState(initialData.maxMembers || 6);
-  const [gracePeriodDays, setGracePeriodDays] = useState(
-    initialData.gracePeriodDays ?? 0,
-  );
-  const [latePenaltyAmount, setLatePenaltyAmount] = useState(
-    initialData.latePenaltyAmount ?? 0,
-  );
-  const [allowedMethods, setAllowedMethods] = useState<PaymentMethodKey[]>(
-    (initialData.allowedPaymentMethods as PaymentMethodKey[]) || [
-      "E_WALLET",
-      "BANK_TRANSFER",
-      "CASH",
-    ],
-  );
-  const [paymentDetails, setPaymentDetails] = useState(
-    initialData.paymentDetails || "",
-  );
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>(
-    (initialData.billingCycle as BillingCycle) || "MONTHLY",
-  );
-  const [payoutSequence, setPayoutSequence] = useState<PayoutSequence>(
-    (initialData.payoutSequence as PayoutSequence) || "MANUAL",
-  );
-
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const togglePaymentMethod = (method: PaymentMethodKey) => {
-    let current = [...allowedMethods];
-    if (current.includes(method)) {
-      if (current.length === 1) return;
-      current = current.filter((m) => m !== method);
-    } else {
-      current.push(method);
-    }
-    setAllowedMethods(current);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage("");
-
-    if (!name.trim() || name.trim().length < 3) {
-      setErrorMessage("Group name must be at least 3 characters long");
-      return;
-    }
-    if (contributionAmount < 50 || contributionAmount > 10000) {
-      setErrorMessage("Contribution amount must be between ₱50 and ₱10,000");
-      return;
-    }
-    if (maxMembers < 3 || maxMembers > 15) {
-      setErrorMessage("Member capacity must be between 3 and 15 members");
-      return;
-    }
-    if (allowedMethods.length === 0) {
-      setErrorMessage("Please select at least 1 allowed payment method");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await updateGroup(groupId, {
-        name: name.trim(),
-        description: description.trim() || undefined,
-        contributionAmount,
-        maxMembers,
-        gracePeriodDays,
-        latePenaltyAmount,
-        allowedPaymentMethods: allowedMethods,
-        paymentDetails: paymentDetails.trim() || undefined,
-        billingCycle,
-        payoutSequence,
-      });
-
-      if (onSuccess) onSuccess();
-      onClose();
-    } catch (err: unknown) {
-      const msg =
-        err && typeof err === "object" && "response" in err
-          ? (err as { response?: { data?: { message?: string } } }).response
-              ?.data?.message
-          : undefined;
-      setErrorMessage(
-        msg || "Failed to update group settings. Please try again.",
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const {
+    values,
+    setValue,
+    togglePaymentMethod,
+    handleSubmit,
+    isSubmitting,
+    errorMessage,
+  } = useEditGroupForm({ groupId, initialData, onClose, onSuccess });
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         {isSubmitting && <Loader text="Updating group settings..." />}
         <form onSubmit={handleSubmit} className="space-y-5 p-1">
           <DialogHeader>
-            <DialogTitle className="text-lg font-extrabold flex items-center gap-2 text-foreground">
-              <Settings className="w-5 h-5 text-brand-accent" />
+            <DialogTitle className="flex items-center gap-2 text-lg font-extrabold text-foreground">
+              <Settings className="h-5 w-5 text-brand-accent" />
               <span>Edit Group Settings</span>
             </DialogTitle>
             <DialogDescription>
-              <span className="text-xs text-neutral-subtext block">
+              <span className="block text-xs text-neutral-subtext">
                 Update parameters, contribution amount, penalties, and payment
                 channels before cycle starts.
               </span>
@@ -158,245 +50,62 @@ export default function EditGroupModal({
           </DialogHeader>
 
           <div className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <FileText className="w-4 h-4 text-neutral-subtext" />
-                <span>Group Name</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Office Savings Pool"
-                disabled={isSubmitting}
-                className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                <AlignLeft className="w-4 h-4 text-neutral-subtext" />
-                <span>Group Description (Optional)</span>
-              </label>
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g. Monthly savings circle for team members"
-                disabled={isSubmitting}
-                className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <PhilippinePeso className="w-4 h-4 text-neutral-subtext" />
-                  <span>Contribution Amount</span>
-                </label>
-                <input
-                  type="number"
-                  value={contributionAmount}
-                  onKeyDown={(e) => {
-                    if (["-", "e", "E", "+", "."].includes(e.key)) e.preventDefault();
-                  }}
-                  onChange={(e) => {
-                    const cleaned = e.target.value.replace(/\D/g, "");
-                    const val = Number(cleaned);
-                    setContributionAmount(isNaN(val) ? 0 : val > 10000 ? 10000 : val);
-                  }}
-                  disabled={isSubmitting}
-                  className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-neutral-subtext" />
-                  <span>Member Capacity</span>
-                </label>
-                <input
-                  type="number"
-                  value={maxMembers}
-                  onKeyDown={(e) => {
-                    if ([".", ",", "-", "e", "E", "+"].includes(e.key))
-                      e.preventDefault();
-                  }}
-                  onChange={(e) => {
-                    const cleaned = e.target.value.replace(/\D/g, "");
-                    const val = parseInt(cleaned, 10);
-                    setMaxMembers(isNaN(val) ? 3 : val > 50 ? 50 : val);
-                  }}
-                  disabled={isSubmitting}
-                  className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-brand-accent" />
-                  <span>Grace Period (0 - 7 Days)</span>
-                </label>
-                <input
-                  type="number"
-                  min={0}
-                  max={7}
-                  value={gracePeriodDays}
-                  onKeyDown={(e) => {
-                    if ([".", ",", "-", "e", "E", "+"].includes(e.key))
-                      e.preventDefault();
-                  }}
-                  onChange={(e) => {
-                    const cleaned = e.target.value.replace(/\D/g, "");
-                    const val = Number(cleaned);
-                    setGracePeriodDays(isNaN(val) ? 0 : val > 7 ? 7 : val < 0 ? 0 : val);
-                  }}
-                  disabled={isSubmitting}
-                  className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <AlertTriangle className="w-4 h-4 text-amber-500" />
-                  <span>Daily Late Penalty (1% - 10% per day)</span>
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min={1}
-                  max={10}
-                  value={latePenaltyAmount}
-                  onKeyDown={(e) => {
-                    if ([".", ",", "-", "e", "E", "+"].includes(e.key))
-                      e.preventDefault();
-                  }}
-                  onChange={(e) => {
-                    const cleaned = e.target.value.replace(/\D/g, "");
-                    const val = Number(cleaned);
-                    setLatePenaltyAmount(isNaN(val) ? 0 : val > 10 ? 10 : val);
-                  }}
-                  disabled={isSubmitting}
-                  className="w-full text-xs p-3 rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent"
-                />
-              </div>
-            </div>
-
-
-            <div className="space-y-3">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-foreground flex items-center gap-1.5">
-                  <CreditCard className="w-4 h-4 text-brand-accent" />
-                  <span>Allowed Payment Methods</span>
-                </label>
-                <span className="text-[10px] text-neutral-subtext block">
-                  Select 1 or more payment channels members can use.
-                </span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 pt-1">
-                {PAYMENT_METHOD_OPTIONS.map(
-                  ({ key, label, icon: IconComponent }) => {
-                    const isSelected = allowedMethods.includes(key);
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        disabled={isSubmitting}
-                        onClick={() => togglePaymentMethod(key)}
-                        className={`relative py-3 px-3 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                          isSelected
-                            ? "bg-brand-accent text-white border-brand-accent shadow-xs"
-                            : "bg-background border-neutral-border text-neutral-subtext hover:border-neutral-border"
-                        }`}
-                      >
-                        <IconComponent className="w-3.5 h-3.5 shrink-0" />
-                        <span>{label}</span>
-                        {isSelected && (
-                          <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-4 h-4 bg-emerald-500 text-white rounded-full border-2 border-background shadow-xs">
-                            <Check className="w-2.5 h-2.5 stroke-[3]" />
-                          </span>
-                        )}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-
-              <div className="space-y-1 pt-1">
-                <label className="text-xs font-bold text-foreground">
-                  Organizer Payment Account Details
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="e.g. GCash: 09171234567 (Juan D.)&#10;BDO Bank: 1234567890 (Juan Dela Cruz)&#10;Maya: 09171234567"
-                  disabled={isSubmitting}
-                  value={paymentDetails}
-                  onChange={(e) => setPaymentDetails(e.target.value)}
-                  className="w-full text-xs p-3 min-h-[84px] rounded-xl border border-neutral-border bg-background text-foreground focus:outline-none focus:border-brand-accent resize-none leading-relaxed"
-                />
-              </div>
-            </div>
-
-            <PayoutSequenceSelector
-              selectedSequence={payoutSequence}
-              isPending={isSubmitting}
-              onSelectSequence={(seq) => setPayoutSequence(seq)}
+            <EditGroupBasicsFields
+              values={values}
+              isSubmitting={isSubmitting}
+              onChange={setValue}
             />
-
-            <div className="space-y-2">
-              <label className="text-[11px] font-bold text-neutral-subtext uppercase tracking-wider">
-                Billing Cycle
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                {Object.entries(BILLING_CYCLE_LABELS).map(([key, label]) => (
-                  <button
-                    key={key}
-                    type="button"
-                    disabled={isSubmitting}
-                    onClick={() => setBillingCycle(key as BillingCycle)}
-                    className={`p-2.5 text-center rounded-2xl border text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
-                      billingCycle === key
-                        ? "bg-brand-accent text-white border-brand-accent shadow-xs"
-                        : "bg-background border-neutral-border text-neutral-subtext hover:border-brand-accent/40"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <EditGroupPaymentFields
+              allowedMethods={values.allowedPaymentMethods}
+              paymentDetails={values.paymentDetails}
+              isSubmitting={isSubmitting}
+              onToggleMethod={togglePaymentMethod}
+              onPaymentDetailsChange={(paymentDetails) =>
+                setValue("paymentDetails", paymentDetails)
+              }
+            />
+            <EditGroupScheduleFields
+              billingCycle={values.billingCycle}
+              payoutSequence={values.payoutSequence}
+              isSubmitting={isSubmitting}
+              onBillingCycleChange={(billingCycle) =>
+                setValue("billingCycle", billingCycle)
+              }
+              onPayoutSequenceChange={(payoutSequence) =>
+                setValue("payoutSequence", payoutSequence)
+              }
+            />
           </div>
 
           {errorMessage && (
-            <p className="text-xs text-danger font-semibold bg-danger/10 p-3 rounded-xl border border-danger/20 flex items-center gap-1.5">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <p className="flex items-center gap-1.5 rounded-xl border border-danger-border bg-danger-bg p-3 text-xs font-semibold text-danger">
+              <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{errorMessage}</span>
             </p>
           )}
 
-          <div className="pt-3 flex justify-end gap-2 border-t border-neutral-border/60">
+          <div className="flex justify-end gap-2 border-t border-neutral-border/60 pt-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-2xl border border-neutral-border hover:bg-neutral-subtext/5 text-xs font-bold text-foreground cursor-pointer transition-all active:scale-95"
+              className="cursor-pointer rounded-2xl border border-neutral-border px-4 py-2.5 text-xs font-bold text-foreground transition-all hover:bg-neutral-table-stripe active:scale-95"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-extrabold cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+              className="inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-brand-accent px-5 py-2.5 text-xs font-extrabold text-brand-accent-foreground transition-all hover:bg-brand-accent-hover active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Saving Changes...
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving Changes...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4" /> Save Changes
+                  <Save className="h-4 w-4" />
+                  Save Changes
                 </>
               )}
             </button>

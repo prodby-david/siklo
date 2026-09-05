@@ -94,6 +94,8 @@ export interface Group {
   payments?: PaymentRecord[];
   activities?: { id: string; activity: string; createdAt: string | Date }[];
   nextPayoutee?: NextPayoutee | null;
+  isCycleDone?: boolean;
+  status?: string;
 }
 
 export interface ExtendedGroup extends Omit<Group, "billingCycle"> {
@@ -126,6 +128,7 @@ export interface GroupHeroProps {
   organizerPaymentDetails?: string | null;
   contributionAmount?: number;
   organizerFeeAmount?: number;
+  hasAlreadyPaidOrganizerFee?: boolean;
   gracePeriodDays?: number;
   latePenaltyAmount?: number;
   roundId?: string;

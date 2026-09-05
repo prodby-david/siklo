@@ -10,9 +10,10 @@ import GroupActivityLogs from "@/features/groups/components/details/GroupActivit
 import GroupTurnShowcase from "@/features/groups/components/details/GroupTurnShowcase";
 import GroupRoundsStatusCard from "@/features/groups/components/details/GroupRoundsStatusCard";
 import IncomingPaymentsVerificationSection from "@/features/payments/components/IncomingPaymentsVerificationSection";
-import Loader from "@/shared/components/loader/Loader";
 import { useGroupPageController } from "@/features/groups/hooks/useGroupPageController";
-import { Membership } from "@/features/groups/types/group.types";
+import { Membership, PaymentRecord } from "@/features/groups/types/group.types";
+import GroupPageLoadingState from "@/features/groups/components/details/states/GroupPageLoadingState";
+import GroupNotFoundState from "@/features/groups/components/details/states/GroupNotFoundState";
 
 export default function GroupPage() {
   const {
@@ -39,44 +40,33 @@ export default function GroupPage() {
   } = useGroupPageController();
 
   if (isLoading) {
-    return (
-      <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen flex items-center justify-center">
-        <Loader text="Loading group details..." />
-      </main>
-    );
+    return <GroupPageLoadingState />;
   }
 
   if (!data || !timeline) {
-    return (
-      <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-3 bg-background p-8 rounded-2xl border border-neutral-border shadow-sm max-w-md">
-          <p className="text-lg font-bold text-foreground">Group not found</p>
-          <p className="text-sm text-neutral-subtext">
-            The group you are looking for does not exist or you do not have
-            permission to view it.
-          </p>
-          <Link
-            href="/group"
-            className="inline-flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-background px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-          </Link>
-        </div>
-      </main>
-    );
+    return <GroupNotFoundState />;
   }
 
   const currentMembership = data.memberships?.find(
-    (m: Membership) => m.userId === currentUserId
+    (m: Membership) => m.userId === currentUserId,
+  );
+  const hasAlreadyPaidOrganizerFee = Boolean(
+    currentUserId &&
+      (data.payments || []).some(
+        (p: PaymentRecord) =>
+          p.userId === currentUserId &&
+          p.status === "VERIFIED" &&
+          (p.organizerFeeAmount || 0) > 0,
+      ),
   );
 
   return (
-    <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen">
+    <main className="min-h-screen flex-1 bg-neutral-table-stripe p-6 md:p-10">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
         <div className="flex items-center gap-3">
           <Link
             href="/group"
-            className="flex items-center justify-center p-2 rounded-2xl border border-neutral-border bg-background hover:bg-neutral-subtext/5 text-neutral-subtext hover:text-foreground transition-all duration-150 active:scale-95 cursor-pointer"
+            className="flex cursor-pointer items-center justify-center rounded-2xl border border-neutral-border bg-card p-2 text-neutral-subtext transition-colors duration-150 hover:bg-neutral-table-stripe hover:text-foreground active:scale-95"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
@@ -102,6 +92,7 @@ export default function GroupPage() {
           organizerPaymentDetails={data.paymentDetails}
           contributionAmount={data.contributionAmount}
           organizerFeeAmount={data.organizerFeeAmount}
+          hasAlreadyPaidOrganizerFee={hasAlreadyPaidOrganizerFee}
           gracePeriodDays={data.gracePeriodDays}
           latePenaltyAmount={data.latePenaltyAmount}
           currentMemberMethod={currentMembership?.preferredPaymentMethod}
@@ -143,6 +134,8 @@ export default function GroupPage() {
           maxMembers={data.maxMembers}
           cycleDuration={data.cycleDuration}
           contributionAmount={data.contributionAmount}
+          organizerId={data.organizerId}
+          organizerFeeAmount={data.organizerFeeAmount}
           rounds={data.rounds}
           payments={data.payments}
           memberships={data.memberships}
