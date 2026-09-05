@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, LogOut } from "lucide-react";
-import { Button } from "@/shared/components/ui/button";
 import { SidebarMobileDrawerProps } from "../../types/sidebar.types";
 import { NAV_ITEMS } from "../../constants/sidebar.constants";
 import SidebarUnreadBadge from "./SidebarUnreadBadge";
@@ -96,13 +95,15 @@ export default function SidebarMobileDrawer({
                       onClick={onClose}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-medium transition-all duration-150 ${
                         isActive
-                          ? "bg-brand-accent text-white shadow-sm"
+                          ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
                           : "text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground"
                       }`}
                     >
                       <IconComponent
                         className={`w-5 h-5 ${
-                          isActive ? "text-white" : "text-neutral-subtext"
+                          isActive
+                            ? "text-brand-accent-foreground"
+                            : "text-neutral-subtext"
                         }`}
                       />
                       <span className="text-sm font-medium">{item.label}</span>
@@ -112,16 +113,17 @@ export default function SidebarMobileDrawer({
               </nav>
             </div>
 
-            <div className="space-y-2 w-full">
+            <div className="pt-3 border-t border-neutral-border/60 space-y-1 w-full">
               <ThemeToggle showLabel />
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 onClick={onSignOut}
-                className="w-full flex items-center justify-center gap-2.5 px-3 py-2.5 cursor-pointer hover:text-danger hover:bg-danger-bg hover:border-danger-border rounded-2xl border border-neutral-border transition-all duration-200"
+                title="Sign out"
+                className="group flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-neutral-subtext transition-all duration-150 hover:bg-danger-bg hover:text-danger active:scale-95"
               >
-                <LogOut className="w-4 h-4" />
-                <span className="text-xs font-medium">Sign out</span>
-              </Button>
+                <LogOut className="h-5 w-5 text-neutral-subtext transition-colors group-hover:text-danger" />
+                <span>Sign out</span>
+              </button>
             </div>
           </motion.aside>
         </div>

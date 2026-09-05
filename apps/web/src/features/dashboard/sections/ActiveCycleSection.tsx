@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import ViewAllButton from "@/shared/components/buttons/ViewAll";
 import CycleCards from "../components/cards/CycleCards";
 import { Layers } from "lucide-react";
 
 export default function ActiveCycleSection() {
-  const [selectedStatus, setSelectedStatus] = useState<string>("ACTIVE");
+  const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
 
   return (
     <div className="flex flex-col gap-4">
@@ -28,38 +27,36 @@ export default function ActiveCycleSection() {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center p-1 bg-neutral-table-stripe rounded-2xl border border-neutral-border/60 text-xs">
             <button
+              onClick={() => setSelectedStatus("ALL")}
+              className={`px-3 py-1 rounded-xl font-bold text-[11px] transition-all cursor-pointer ${
+                selectedStatus === "ALL"
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-2xs"
+                  : "text-neutral-subtext hover:text-foreground"
+              }`}
+            >
+              All
+            </button>
+            <button
               onClick={() => setSelectedStatus("ACTIVE")}
               className={`px-3 py-1 rounded-xl font-bold text-[11px] transition-all cursor-pointer ${
                 selectedStatus === "ACTIVE"
-                  ? "bg-brand-accent text-white shadow-2xs"
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-2xs"
                   : "text-neutral-subtext hover:text-foreground"
               }`}
             >
               Active
             </button>
             <button
-              onClick={() => setSelectedStatus("FORMING")}
+              onClick={() => setSelectedStatus("PENDING")}
               className={`px-3 py-1 rounded-xl font-bold text-[11px] transition-all cursor-pointer ${
-                selectedStatus === "FORMING"
-                  ? "bg-brand-accent text-white shadow-2xs"
+                selectedStatus === "PENDING"
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-2xs"
                   : "text-neutral-subtext hover:text-foreground"
               }`}
             >
-              Forming
-            </button>
-            <button
-              onClick={() => setSelectedStatus("ALL")}
-              className={`px-3 py-1 rounded-xl font-bold text-[11px] transition-all cursor-pointer ${
-                selectedStatus === "ALL"
-                  ? "bg-brand-accent text-white shadow-2xs"
-                  : "text-neutral-subtext hover:text-foreground"
-              }`}
-            >
-              All
+              Pending
             </button>
           </div>
-
-          <ViewAllButton href="/group" />
         </div>
       </div>
 

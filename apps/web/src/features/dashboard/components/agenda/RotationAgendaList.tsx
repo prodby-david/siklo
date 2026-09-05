@@ -64,7 +64,7 @@ export default function RotationAgendaList({
                   <div
                     className={`flex items-center justify-center w-9 h-9 rounded-xl border shrink-0 mt-0.5 sm:mt-0 ${
                       isPayout
-                        ? "bg-emerald-500/15 border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
+                        ? "border-success/30 bg-success-bg text-success"
                         : "bg-brand-accent/15 border-brand-accent/30 text-brand-accent"
                     }`}
                   >
@@ -92,7 +92,7 @@ export default function RotationAgendaList({
                       <span
                         className={`font-black ${
                           isPayout
-                            ? "text-emerald-600 dark:text-emerald-400"
+                            ? "text-success"
                             : "text-foreground"
                         }`}
                       >
@@ -105,15 +105,15 @@ export default function RotationAgendaList({
 
                 <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
                   {item.status === "PAID" ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-xl">
+                    <span className="inline-flex items-center gap-1 rounded-xl border border-success/30 bg-success-bg px-2.5 py-1 text-[10px] font-bold text-success">
                       <CheckCircle2 className="w-3 h-3" /> Paid
                     </span>
                   ) : isPayout ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-xl">
+                    <span className="inline-flex items-center gap-1 rounded-xl border border-success/30 bg-success-bg px-2.5 py-1 text-[10px] font-bold text-success">
                       <Award className="w-3 h-3" /> Recipient Turn
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl">
+                    <span className="inline-flex items-center gap-1 rounded-xl border border-warning/30 bg-warning-bg px-2.5 py-1 text-[10px] font-bold text-warning">
                       <Clock className="w-3 h-3" /> Open for Payment
                     </span>
                   )}

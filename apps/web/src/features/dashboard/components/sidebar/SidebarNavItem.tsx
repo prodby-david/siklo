@@ -30,7 +30,7 @@ export default function SidebarNavItem({
           isCollapsed ? "justify-center p-2.5" : "justify-between px-3.5 py-2.5"
         } ${
           isNotificationOpen
-            ? "bg-brand-accent text-white shadow-sm"
+            ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
             : "text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground"
         }`}
       >
@@ -38,7 +38,9 @@ export default function SidebarNavItem({
           <div className="relative flex items-center justify-center">
             <IconComponent
               className={`w-5 h-5 ${
-                isNotificationOpen ? "text-white" : "text-neutral-subtext"
+                isNotificationOpen
+                  ? "text-brand-accent-foreground"
+                  : "text-neutral-subtext"
               }`}
             />
             {isCollapsed && (
@@ -67,13 +69,13 @@ export default function SidebarNavItem({
         isCollapsed ? "justify-center p-2.5" : "gap-3 px-3.5 py-2.5"
       } ${
         isActive
-          ? "bg-brand-accent text-white shadow-sm"
+          ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
           : "text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground"
       }`}
     >
       <IconComponent
         className={`w-5 h-5 ${
-          isActive ? "text-white" : "text-neutral-subtext"
+          isActive ? "text-brand-accent-foreground" : "text-neutral-subtext"
         }`}
       />
       {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}

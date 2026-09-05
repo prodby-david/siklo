@@ -9,7 +9,7 @@ import { useDashboardData } from "../hooks/useDashboardData";
 import DashboardWelcomeBanner from "../components/DashboardWelcomeBanner";
 import ActionRequiredBanner from "../components/ActionRequiredBanner";
 import RotationAgendaList from "../components/agenda/RotationAgendaList";
-import SaverHealthTrackerCard from "../components/cards/SaverHealthTrackerCard";
+import SavingsFlowCard from "../components/cards/SavingsFlowCard";
 import DashboardActivityFeed from "../components/activity/DashboardActivityFeed";
 
 export default function DashboardUI() {
@@ -63,7 +63,7 @@ export default function DashboardUI() {
         </div>
 
         <div className="lg:col-span-5 flex flex-col gap-6">
-          <SaverHealthTrackerCard stats={healthStats} />
+          <SavingsFlowCard stats={healthStats} />
           <DashboardActivityFeed activities={activities} />
         </div>
       </div>

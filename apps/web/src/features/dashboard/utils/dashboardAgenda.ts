@@ -84,10 +84,23 @@ export function deriveDashboardInsights(
         if (p.status === "VERIFIED") {
           totalContributionsPaid +=
             Number(p.totalAmount || p.baseAmount) || group.contributionAmount;
+        }
+      }
+    }
+
+    if (hasStarted && userMembership) {
+      const currentTurn = state.currentTurn;
+      const currentCycle = state.currentCycle;
+
+      for (let turn = 1; turn <= currentTurn; turn++) {
+        const turnKey = `${currentCycle}-${turn}`;
+        const hasVerifiedPayment = Boolean(
+          state.paidUserIdsByTurn[turnKey]?.has(currentUserId),
+        );
+
+        totalDueRounds += 1;
+        if (hasVerifiedPayment) {
           onTimePaidRounds += 1;
-          totalDueRounds += 1;
-        } else if (p.status === "PENDING") {
-          totalDueRounds += 1;
         }
       }
     }
@@ -194,10 +207,10 @@ export function deriveDashboardInsights(
 
   activities.sort((a, b) => b.date.getTime() - a.date.getTime());
 
-  const onTimeReliabilityPercent =
-    totalDueRounds > 0
-      ? Math.round((onTimePaidRounds / totalDueRounds) * 100)
-      : 100;
+  const hasHistory = totalDueRounds > 0;
+  const onTimeReliabilityPercent = hasHistory
+    ? Math.round((onTimePaidRounds / totalDueRounds) * 100)
+    : 0;
 
   return {
     alerts,
@@ -208,6 +221,7 @@ export function deriveDashboardInsights(
       activeCyclesCount,
       completedCyclesCount,
       onTimeReliabilityPercent,
+      hasHistory,
     },
     activities: activities.slice(0, 8),
   };

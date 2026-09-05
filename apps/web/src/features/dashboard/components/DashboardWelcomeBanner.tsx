@@ -10,7 +10,7 @@ export default function DashboardWelcomeBanner({
   firstName,
 }: DashboardWelcomeBannerProps) {
   return (
-    <div className="relative rounded-2xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-indigo-500/10 p-5 sm:p-6 md:p-8 backdrop-blur-md dark:from-brand-accent/10 dark:to-indigo-500/5 shadow-sm">
+    <div className="relative rounded-2xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-winner-payout-bg p-5 shadow-sm backdrop-blur-md sm:p-6 md:p-8">
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
         <div className="absolute top-0 right-0 p-8 opacity-10 dark:opacity-5">
           <Coins className="w-24 h-24 text-brand-accent" />

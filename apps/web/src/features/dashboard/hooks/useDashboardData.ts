@@ -5,9 +5,9 @@ import useGetGroup from "@/features/groups/hooks/useGetGroup";
 import { usePendingPayments } from "@/features/payments/hooks/usePendingPayments";
 import { fetchNearestDue } from "../api/fetchNearestDue";
 import { deriveDashboardInsights } from "../utils/dashboardAgenda";
-import { ExtendedGroup as Group } from "../types/groups.types";
+import { Group } from "@/features/groups/types/group.types";
 
-const MONTHLY_MULTIPLIER: Record<Group["billingCycle"], number> = {
+const MONTHLY_MULTIPLIER: Record<string, number> = {
   DAILY: 30,
   WEEKLY: 4,
   BIMONTHLY: 2,

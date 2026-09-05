@@ -52,13 +52,16 @@ export interface RotationAgendaItem {
   isCurrentUserTurn: boolean;
 }
 
-export interface SaverHealthStats {
+export interface SavingsFlowStats {
   totalSavingsCollected: number;
   totalContributionsPaid: number;
   activeCyclesCount: number;
   completedCyclesCount: number;
-  onTimeReliabilityPercent: number;
+  onTimeReliabilityPercent?: number;
+  hasHistory?: boolean;
 }
+
+export type SaverHealthStats = SavingsFlowStats;
 
 export interface DashboardActivityItem {
   id: string;
@@ -78,8 +81,8 @@ export interface RotationAgendaListProps {
   isLoading?: boolean;
 }
 
-export interface SaverHealthTrackerCardProps {
-  stats: SaverHealthStats;
+export interface SavingsFlowCardProps {
+  stats: SavingsFlowStats;
 }
 
 export interface DashboardActivityFeedProps {

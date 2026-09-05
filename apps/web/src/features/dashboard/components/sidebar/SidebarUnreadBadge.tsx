@@ -11,8 +11,8 @@ export default function SidebarUnreadBadge({
     <span
       className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
         isNotificationOpen
-          ? "bg-white text-brand-accent"
-          : "bg-brand-accent text-white"
+          ? "bg-brand-accent-foreground text-brand-accent"
+          : "bg-brand-accent text-brand-accent-foreground"
       }`}
     >
       {unreadCount}

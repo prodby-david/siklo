@@ -31,7 +31,7 @@ export default function ActiveGroupsCard({
             className={`text-3xl font-extrabold tracking-tight mt-1 ${
               hasContribution
                 ? "text-foreground"
-                : "text-emerald-600 dark:text-emerald-400"
+                : "text-success"
             }`}
           >
             {hasContribution
@@ -41,7 +41,7 @@ export default function ActiveGroupsCard({
               : "No Due"}
           </p>
           {hasContribution ? (
-            <div className="flex items-center gap-1.5 mt-2 bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-2xl text-[11px] font-semibold border border-amber-500/20">
+            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-warning/25 bg-warning-bg px-2.5 py-1 text-[11px] font-semibold text-warning">
               <Clock className="w-3.5 h-3.5" />
               <span>
                 {groupName ? `${groupName}` : ""}
@@ -50,7 +50,7 @@ export default function ActiveGroupsCard({
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 mt-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2.5 py-1 rounded-2xl text-[11px] font-semibold border border-emerald-500/20">
+            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>
                 {count > 0
@@ -62,13 +62,13 @@ export default function ActiveGroupsCard({
         </div>
         <div
           className={`flex items-center justify-center w-12 h-12 rounded-full shrink-0 ${
-            hasContribution ? "bg-amber-500/10" : "bg-emerald-500/10"
+            hasContribution ? "bg-warning-bg" : "bg-success-bg"
           }`}
         >
           {hasContribution ? (
-            <Clock className="w-6 h-6 text-amber-500" />
+            <Clock className="h-6 w-6 text-warning" />
           ) : (
-            <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+            <CheckCircle2 className="h-6 w-6 text-success" />
           )}
         </div>
       </div>

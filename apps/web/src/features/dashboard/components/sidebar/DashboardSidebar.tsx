@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { Button } from "@/shared/components/ui/button";
 import { useSignOut } from "@/features/auth/signout/hooks/useSignOut";
 import ThemeToggle from "@/shared/components/theme/ThemeToggle";
 import { useSidebarContext } from "./SidebarContext";
@@ -51,19 +50,17 @@ export default function DashboardSidebar() {
           ))}
         </nav>
 
-        <div className="space-y-2 w-full">
-          <div className="flex items-center w-full">
-            <ThemeToggle showLabel />
-          </div>
-          <Button
-            variant="outline"
+        <div className="pt-3 border-t border-neutral-border/60 space-y-1 w-full">
+          <ThemeToggle showLabel />
+          <button
+            type="button"
             onClick={() => signOut()}
             title="Sign out"
-            className="w-full cursor-pointer hover:text-danger hover:bg-danger-bg hover:border-danger-border rounded-2xl border border-neutral-border transition-all duration-200 flex items-center justify-center gap-2.5 px-3 py-2.5"
+            className="group flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-neutral-subtext transition-all duration-150 hover:bg-danger-bg hover:text-danger active:scale-95"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="text-xs font-medium">Sign out</span>
-          </Button>
+            <LogOut className="h-5 w-5 text-neutral-subtext transition-colors group-hover:text-danger" />
+            <span>Sign out</span>
+          </button>
         </div>
       </aside>
 

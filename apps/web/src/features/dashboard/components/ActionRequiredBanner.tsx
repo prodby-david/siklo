@@ -22,16 +22,16 @@ export default function ActionRequiredBanner({
             : Clock;
 
         const badgeColor = isPayoutConfirm
-          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+          ? "border-success/30 bg-success-bg text-success"
           : isOrganizer
-            ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border-indigo-500/30"
-            : "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30";
+            ? "border-winner-payout/30 bg-winner-payout-bg text-winner-payout"
+            : "border-warning/30 bg-warning-bg text-warning";
 
         const containerBg = isPayoutConfirm
-          ? "bg-emerald-500/5 border-emerald-500/30"
+          ? "border-success/30 bg-success-bg"
           : isOrganizer
-            ? "bg-indigo-500/5 border-indigo-500/30"
-            : "bg-amber-500/5 border-amber-500/30";
+            ? "border-winner-payout/30 bg-winner-payout-bg"
+            : "border-warning/30 bg-warning-bg";
 
         return (
           <div
@@ -61,7 +61,7 @@ export default function ActionRequiredBanner({
 
             <Link
               href={alert.actionUrl}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-accent text-white hover:bg-brand-accent-hover text-xs font-bold transition-all shadow-xs cursor-pointer shrink-0 self-end sm:self-auto active:scale-95"
+              className="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 self-end rounded-xl bg-brand-accent px-3.5 py-1.5 text-xs font-bold text-brand-accent-foreground shadow-xs transition-all hover:bg-brand-accent-hover active:scale-95 sm:self-auto"
             >
               <span>{alert.actionLabel}</span>
               <ArrowRight className="w-3.5 h-3.5" />
