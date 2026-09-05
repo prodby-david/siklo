@@ -7,7 +7,6 @@ import useCreateGroupFormFields from "../../hooks/useCreateGroupFormFields";
 import buildOrganizerPaymentDetails from "../../utils/buildOrganizerPaymentDetails";
 import CreateGroupBasicsFields from "./CreateGroupBasicsFields";
 import OrganizerParticipationSelector from "./OrganizerParticipationSelector";
-import OrganizerFeeField from "./OrganizerFeeField";
 import GroupPaymentMethodSelector from "./GroupPaymentMethodSelector";
 import CreateGroupScheduleFields from "./CreateGroupScheduleFields";
 import CreateGroupSubmitButton from "./CreateGroupSubmitButton";
@@ -24,6 +23,7 @@ export default function CreateGroupFormFields(
     register,
     errors,
     setValue,
+    control,
     watch,
     selectedPayoutSequence,
     selectedBillingCycle,
@@ -38,8 +38,6 @@ export default function CreateGroupFormFields(
     "BANK_TRANSFER",
     "CASH",
   ];
-  const isOrganizerParticipating =
-    watch("isOrganizerParticipating") !== false;
 
   const handleTogglePaymentMethod = (method: PaymentMethodKey) => {
     const nextMethods = selectedPaymentMethods.includes(method)
@@ -81,19 +79,12 @@ export default function CreateGroupFormFields(
             isPending={isPending}
           />
           <OrganizerParticipationSelector
-            isParticipating={isOrganizerParticipating}
+            control={control}
             isPending={isPending}
             register={register}
             setValue={setValue}
+            errors={errors}
           />
-          {!isOrganizerParticipating && (
-            <OrganizerFeeField
-              register={register}
-              setValue={setValue}
-              errors={errors}
-              isPending={isPending}
-            />
-          )}
           <GroupPaymentMethodSelector
             selectedMethods={selectedPaymentMethods}
             organizerAccounts={organizerAccounts}

@@ -25,6 +25,7 @@ export default function OrganizerFeeField({
     <Input
       label="organizerFeeAmount"
       labelText="One-Time Organizer Fee"
+      placeholder="e.g. 100"
       type="number"
       min={0}
       max={1000}
@@ -40,7 +41,7 @@ export default function OrganizerFeeField({
         setValue(
           "organizerFeeAmount",
           value as CreateGroupData["organizerFeeAmount"],
-          { shouldValidate: true },
+          { shouldValidate: true, shouldDirty: true },
         );
       }}
       errors={errors}

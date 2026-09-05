@@ -1,4 +1,4 @@
-import { useForm, Resolver, SubmitHandler } from "react-hook-form";
+import { useForm, useWatch, Resolver, SubmitHandler } from "react-hook-form";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -44,16 +44,36 @@ export function useCreateGroupController() {
     },
   });
 
-  const contribution = watch("contributionAmount");
-  const members = watch("maxMembers");
-  const cycleDuration = watch("cycleDuration");
-  const billingCycle = watch("billingCycle");
+  const watchedValues = useWatch({ control });
+  const watchAllFields: CreateGroupInput = {
+    name: watchedValues.name ?? "",
+    description: watchedValues.description ?? "",
+    contributionAmount:
+      watchedValues.contributionAmount ?? (undefined as unknown as number),
+    billingCycle: watchedValues.billingCycle ?? "DAILY",
+    payoutSequence: watchedValues.payoutSequence ?? "MANUAL",
+    cycleDuration: watchedValues.cycleDuration ?? 1,
+    totalPayout: watchedValues.totalPayout ?? 0,
+    maxMembers: watchedValues.maxMembers ?? (undefined as unknown as number),
+    allowedPaymentMethods: watchedValues.allowedPaymentMethods ?? [
+      "E_WALLET",
+      "BANK_TRANSFER",
+      "CASH",
+    ],
+    paymentDetails: watchedValues.paymentDetails ?? "",
+    gracePeriodDays:
+      watchedValues.gracePeriodDays ?? (undefined as unknown as number),
+    latePenaltyAmount:
+      watchedValues.latePenaltyAmount ?? (undefined as unknown as number),
+    isOrganizerParticipating: watchedValues.isOrganizerParticipating !== false,
+    organizerFeeAmount: watchedValues.organizerFeeAmount ?? 0,
+  };
 
   const { totalPayout, totalRounds, totalDays } = calculateCycleDetails(
-    contribution,
-    members,
-    cycleDuration,
-    billingCycle
+    watchAllFields.contributionAmount,
+    watchAllFields.maxMembers,
+    watchAllFields.cycleDuration,
+    watchAllFields.billingCycle,
   );
 
   const { data: user } = useGetCurrentName();
@@ -93,8 +113,6 @@ export function useCreateGroupController() {
       }
     }
   }, [user, setValue]);
-
-  const watchAllFields = watch();
 
   const onSubmit = async (data: CreateGroupInput) => {
     try {

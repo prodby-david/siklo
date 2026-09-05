@@ -25,8 +25,14 @@ export default function CreateGroupPreview({
           <span className="rounded-full bg-brand-accent/15 px-2.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-brand-accent">
             Live Preview
           </span>
-          <span className="flex items-center gap-1 text-[10px] font-bold text-neutral-subtext">
-            <Crown className="h-3 w-3 text-warning" />
+          <span
+            className={`flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-bold ${
+              isParticipating
+                ? "border-brand-accent/30 bg-brand-accent/15 text-brand-accent"
+                : "border-warning/30 bg-warning-bg text-warning"
+            }`}
+          >
+            <Crown className="h-3 w-3" />
             <span>{isParticipating ? "Participating Saver" : "Manager Only"}</span>
           </span>
         </div>

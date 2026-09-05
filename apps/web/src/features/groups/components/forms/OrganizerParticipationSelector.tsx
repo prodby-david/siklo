@@ -1,21 +1,36 @@
-import type { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import type {
+  Control,
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
+import { useWatch } from "react-hook-form";
 import { Crown } from "lucide-react";
 import type { CreateGroupData } from "../../validator/create-group.validator";
 import OrganizerParticipationOption from "./OrganizerParticipationOption";
+import OrganizerFeeField from "./OrganizerFeeField";
 
 interface OrganizerParticipationSelectorProps {
-  isParticipating: boolean;
+  control: Control<CreateGroupData>;
   isPending: boolean;
   register: UseFormRegister<CreateGroupData>;
   setValue: UseFormSetValue<CreateGroupData>;
+  errors: FieldErrors<CreateGroupData>;
 }
 
 export default function OrganizerParticipationSelector({
-  isParticipating,
+  control,
   isPending,
   register,
   setValue,
+  errors,
 }: OrganizerParticipationSelectorProps) {
+  const isOrganizerParticipating = useWatch({
+    control,
+    name: "isOrganizerParticipating",
+    defaultValue: true,
+  });
+  const isParticipating = isOrganizerParticipating !== false;
   const selectParticipation = (value: boolean) => {
     setValue("isOrganizerParticipating", value, {
       shouldValidate: true,
@@ -58,6 +73,16 @@ export default function OrganizerParticipationSelector({
           onSelect={() => selectParticipation(false)}
         />
       </div>
+
+      {!isParticipating && (
+        <OrganizerFeeField
+          register={register}
+          setValue={setValue}
+          errors={errors}
+          isPending={isPending}
+        />
+      )}
+
       <input type="hidden" {...register("isOrganizerParticipating")} />
     </div>
   );
