@@ -34,8 +34,8 @@ export default function PaymentAccountDetailsCopyBox({
         >
           {copiedKey === "all" ? (
             <>
-              <Check className="w-3 h-3 text-emerald-500" />
-              <span className="text-emerald-500">Copied</span>
+              <Check className="h-3 w-3 text-success" />
+              <span className="text-success">Copied</span>
             </>
           ) : (
             <>
@@ -66,8 +66,8 @@ export default function PaymentAccountDetailsCopyBox({
                 >
                   {isCopied ? (
                     <>
-                      <Check className="w-2.5 h-2.5 text-emerald-500" />
-                      <span className="text-emerald-500">Copied</span>
+                      <Check className="h-2.5 w-2.5 text-success" />
+                      <span className="text-success">Copied</span>
                     </>
                   ) : (
                     <>

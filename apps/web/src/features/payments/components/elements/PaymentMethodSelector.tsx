@@ -30,7 +30,7 @@ export default function PaymentMethodSelector({
               }`}
             >
               {isSelected && (
-                <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-brand-accent text-white flex items-center justify-center">
+                <span className="absolute right-1.5 top-1.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-brand-accent text-brand-accent-foreground">
                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                 </span>
               )}

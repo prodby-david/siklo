@@ -75,6 +75,8 @@ export interface PaymentSubmissionModalProps {
   roundId: string;
   baseAmount: number;
   organizerFeeAmount?: number;
+  isOrganizer?: boolean;
+  hasAlreadyPaidOrganizerFee?: boolean;
   targetDueDate?: Date | string | null;
   gracePeriodDays?: number;
   latePenaltyRate?: number;

@@ -6,7 +6,7 @@ export default function PaymentLatePenaltyRow({
   if (lateFee <= 0) return null;
 
   return (
-    <div className="flex justify-between items-center text-xs text-amber-600 dark:text-amber-400 font-semibold">
+    <div className="flex items-center justify-between text-xs font-semibold text-warning">
       <span>Daily Late Penalty:</span>
       <span>+₱{lateFee.toLocaleString()}</span>
     </div>

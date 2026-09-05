@@ -97,7 +97,7 @@ export default function ReceiptImagePreviewModal({
                   onClose();
                   onReject(payment.id, payment.user?.name || "Member");
                 }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-xs font-bold transition-all active:scale-95 cursor-pointer disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-danger-border bg-danger-bg px-4 py-2 text-xs font-bold text-danger transition-all hover:opacity-80 active:scale-95 disabled:opacity-50"
               >
                 <UserX className="w-3.5 h-3.5" />
                 <span>Reject</span>
@@ -112,7 +112,7 @@ export default function ReceiptImagePreviewModal({
                   await onApprove(payment.id);
                   onClose();
                 }}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all active:scale-95 cursor-pointer shadow-xs disabled:opacity-50"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-success px-4 py-2 text-xs font-bold text-brand-accent-foreground shadow-xs transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>{isProcessing ? "Approving..." : "Approve Payment"}</span>

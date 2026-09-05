@@ -69,7 +69,7 @@ export default function ConfirmPayoutReceiptModal({
         <div className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+              <CheckCircle2 className="h-5 w-5 text-success" />
               <span>Confirm Payout Received</span>
             </DialogTitle>
             <DialogDescription>
@@ -80,21 +80,21 @@ export default function ConfirmPayoutReceiptModal({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center justify-between rounded-2xl border border-success/25 bg-success-bg p-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-success-bg font-bold text-success">
                 <PhilippinePeso className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-neutral-subtext block">
                   Lump-Sum Payout Received
                 </span>
-                <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                <span className="text-base font-black text-success">
                   ₱{poolTotal.toLocaleString()}
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/20 px-2.5 py-1 rounded-xl border border-emerald-500/30">
+            <span className="rounded-xl border border-success/30 bg-success-bg px-2.5 py-1 text-xs font-bold text-success">
               Turn #{turnNumber} • Cycle {cycleNumber}
             </span>
           </div>
@@ -112,7 +112,7 @@ export default function ConfirmPayoutReceiptModal({
                 className="w-full text-xs p-2.5 rounded-xl border border-neutral-border bg-background text-foreground focus:border-brand-accent focus:outline-none"
               />
               {errors.notes && (
-                <p className="text-[11px] text-rose-500 font-semibold">
+                <p className="text-[11px] font-semibold text-danger">
                   {errors.notes.message}
                 </p>
               )}
@@ -132,7 +132,7 @@ export default function ConfirmPayoutReceiptModal({
               <Button
                 type="submit"
                 disabled={isConfirming}
-                className="w-full rounded-2xl py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm cursor-pointer"
+                className="w-full cursor-pointer rounded-2xl bg-success py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm hover:opacity-90"
               >
                 <ShieldCheck className="w-4 h-4 mr-1.5" />
                 {isConfirming ? "Confirming..." : "I Received My Payout"}

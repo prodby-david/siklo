@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { RequestAdvancePayoutDTO } from "@siklo/shared-schemas";
 import { requestAdvancePayout } from "../api/requestAdvancePayout";
-import { getApiErrorMessage } from "../utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 
 export function useRequestAdvancePayout(groupId: string) {
   const queryClient = useQueryClient();

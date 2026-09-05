@@ -55,16 +55,16 @@ export default function IncomingPaymentsVerificationSection({
   }
 
   return (
-    <div className="w-full rounded-3xl border border-amber-500/30 bg-amber-500/5 p-5 sm:p-6 flex flex-col gap-4 shadow-xs">
+    <div className="flex w-full flex-col gap-4 rounded-3xl border border-warning/30 bg-warning-bg p-5 shadow-xs sm:p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/25 flex items-center justify-center">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-warning/25 bg-warning-bg text-warning">
             <ShieldCheck className="w-4 h-4" />
           </div>
           <div>
             <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
               <span>Incoming Payments Verification Queue</span>
-              <span className="text-[10px] font-black bg-amber-500 text-white px-2 py-0.5 rounded-full">
+              <span className="rounded-full bg-warning px-2 py-0.5 text-[10px] font-black text-brand-accent-foreground">
                 {payments.length} Pending
               </span>
             </h3>
@@ -116,7 +116,7 @@ export default function IncomingPaymentsVerificationSection({
               <button
                 type="button"
                 onClick={() => setSelectedPayment(p)}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-accent hover:text-white bg-brand-accent/10 hover:bg-brand-accent px-3.5 py-2 rounded-xl border border-brand-accent/25 transition-all duration-200 cursor-pointer shadow-2xs active:scale-95 shrink-0"
+                className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-brand-accent/25 bg-brand-accent/10 px-3.5 py-2 text-xs font-bold text-brand-accent shadow-2xs transition-all duration-200 hover:bg-brand-accent hover:text-brand-accent-foreground active:scale-95"
               >
                 <Eye className="w-3.5 h-3.5" />
                 <span>Preview Receipt</span>

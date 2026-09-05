@@ -97,7 +97,7 @@ export default function PaymentRejectionReasonModal({
         {isSubmitting && <Loader text="Rejecting payment..." />}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
-            <DialogTitle className="text-lg font-bold flex items-center gap-2 text-rose-600 dark:text-rose-400">
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-danger">
               <XCircle className="w-5 h-5" />
               <span>Reject Payment Proof</span>
             </DialogTitle>
@@ -110,7 +110,7 @@ export default function PaymentRejectionReasonModal({
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-foreground">
-              Rejection Reason <span className="text-rose-500">*</span>
+              Rejection Reason <span className="text-danger">*</span>
             </label>
             <textarea
               rows={3}
@@ -118,12 +118,12 @@ export default function PaymentRejectionReasonModal({
               placeholder="e.g. Reference number does not match receipt screenshot or transaction statement."
               className={`w-full text-xs p-2.5 rounded-xl border bg-background text-foreground focus:outline-none ${
                 errors.rejectionReason
-                  ? "border-rose-500 focus:border-rose-500"
-                  : "border-neutral-border focus:border-rose-500"
+                  ? "border-danger-border focus:border-danger"
+                  : "border-neutral-border focus:border-danger"
               }`}
             />
             {errors.rejectionReason && (
-              <p className="text-[11px] text-rose-500 font-semibold">
+              <p className="text-[11px] font-semibold text-danger">
                 {errors.rejectionReason.message}
               </p>
             )}
@@ -150,7 +150,7 @@ export default function PaymentRejectionReasonModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 text-xs bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-2xl font-bold cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+              className="flex-1 cursor-pointer rounded-2xl bg-danger py-2.5 text-xs font-bold text-brand-accent-foreground transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? "Rejecting..." : "Confirm Rejection"}
             </button>

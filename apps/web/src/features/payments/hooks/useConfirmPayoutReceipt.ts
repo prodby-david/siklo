@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ConfirmPayoutReceiptDTO } from "@siklo/shared-schemas";
 import { confirmPayoutReceipt } from "../api/confirmPayoutReceipt";
-import { getApiErrorMessage } from "../utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 
 export function useConfirmPayoutReceipt(groupId: string) {
   const queryClient = useQueryClient();

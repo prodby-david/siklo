@@ -15,20 +15,15 @@ import {
   CheckCircle2,
   Receipt,
   PhilippinePeso,
-  Wallet,
   Send,
-  Copy,
-  Check,
-  Building2,
-  Smartphone,
 } from "lucide-react";
-import { toast } from "sonner";
 import {
   disbursePayoutSchema,
   DisbursePayoutDTO,
   PaymentAccountDetailsDTO,
 } from "@siklo/shared-schemas";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
+import PayoutRecipientAccounts from "../elements/PayoutRecipientAccounts";
 import Loader from "@/shared/components/loader/Loader";
 
 interface DisbursePayoutModalProps {
@@ -61,7 +56,6 @@ export default function DisbursePayoutModal({
   isDisbursing = false,
 }: DisbursePayoutModalProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const {
     register,
@@ -76,13 +70,6 @@ export default function DisbursePayoutModal({
       proofUrl: "",
     },
   });
-
-  const handleCopy = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    toast.success(`Copied: ${text}`);
-    setTimeout(() => setCopiedKey(null), 2000);
-  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,12 +94,6 @@ export default function DisbursePayoutModal({
     onClose();
   };
 
-  const hasGcash = Boolean(recipientPaymentAccounts?.gcashNumber?.trim());
-  const hasMaya = Boolean(recipientPaymentAccounts?.mayaNumber?.trim());
-  const hasBank = Boolean(recipientPaymentAccounts?.bankAccountNumber?.trim());
-  const hasLegacyDetails = Boolean(recipientAccountDetails?.trim());
-  const hasDigitalAccounts = hasGcash || hasMaya || hasBank || hasLegacyDetails;
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
@@ -132,16 +113,16 @@ export default function DisbursePayoutModal({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="p-4 bg-emerald-500/10 border border-emerald-500/25 rounded-2xl flex items-center justify-between">
+          <div className="flex items-center justify-between rounded-2xl border border-success/25 bg-success-bg p-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-success-bg font-bold text-success">
                 <PhilippinePeso className="w-5 h-5" />
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-neutral-subtext block">
                   Total Disbursed Pool
                 </span>
-                <span className="text-base font-black text-emerald-600 dark:text-emerald-400">
+                <span className="text-base font-black text-success">
                   ₱{poolTotal.toLocaleString()}
                 </span>
               </div>
@@ -156,167 +137,11 @@ export default function DisbursePayoutModal({
             </div>
           </div>
 
-          <div className="p-3.5 bg-background border border-brand-accent/20 dark:border-brand-accent/25 rounded-2xl space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] uppercase font-extrabold text-brand-accent flex items-center gap-1.5 tracking-wider">
-                <Wallet className="w-3.5 h-3.5" />
-                <span>Recipient Payout Accounts</span>
-              </span>
-              {recipientPaymentMethod && (
-                <span className="text-[10px] font-bold text-neutral-subtext bg-neutral-table-stripe px-2 py-0.5 rounded-full border border-neutral-border/60">
-                  {recipientPaymentMethod.replace("_", " ")}
-                </span>
-              )}
-            </div>
-
-            {hasDigitalAccounts ? (
-              <div className="space-y-2">
-                {hasGcash && (
-                  <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-neutral-border/70 bg-neutral-table-stripe/60 text-xs">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Smartphone className="w-4 h-4 text-blue-500 shrink-0" />
-                      <div className="truncate">
-                        <span className="font-bold text-foreground block truncate">
-                          GCash: {recipientPaymentAccounts!.gcashNumber}
-                        </span>
-                        {recipientPaymentAccounts!.gcashName && (
-                          <span className="text-[10px] text-neutral-subtext block truncate">
-                            {recipientPaymentAccounts!.gcashName}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopy(recipientPaymentAccounts!.gcashNumber!, "gcash")
-                      }
-                      className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/20 px-2.5 py-1 rounded-lg border border-brand-accent/25 transition-all cursor-pointer"
-                    >
-                      {copiedKey === "gcash" ? (
-                        <>
-                          <Check className="w-3 h-3 text-emerald-500" />
-                          <span className="text-emerald-500">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-
-                {hasMaya && (
-                  <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-neutral-border/70 bg-neutral-table-stripe/60 text-xs">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Smartphone className="w-4 h-4 text-emerald-500 shrink-0" />
-                      <div className="truncate">
-                        <span className="font-bold text-foreground block truncate">
-                          Maya: {recipientPaymentAccounts!.mayaNumber}
-                        </span>
-                        {recipientPaymentAccounts!.mayaName && (
-                          <span className="text-[10px] text-neutral-subtext block truncate">
-                            {recipientPaymentAccounts!.mayaName}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopy(recipientPaymentAccounts!.mayaNumber!, "maya")
-                      }
-                      className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/20 px-2.5 py-1 rounded-lg border border-brand-accent/25 transition-all cursor-pointer"
-                    >
-                      {copiedKey === "maya" ? (
-                        <>
-                          <Check className="w-3 h-3 text-emerald-500" />
-                          <span className="text-emerald-500">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-
-                {hasBank && (
-                  <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-neutral-border/70 bg-neutral-table-stripe/60 text-xs">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <Building2 className="w-4 h-4 text-amber-500 shrink-0" />
-                      <div className="truncate">
-                        <span className="font-bold text-foreground block truncate">
-                          {recipientPaymentAccounts!.bankName || "Bank"}:{" "}
-                          {recipientPaymentAccounts!.bankAccountNumber}
-                        </span>
-                        {recipientPaymentAccounts!.bankName && (
-                          <span className="text-[10px] text-neutral-subtext block truncate">
-                            {recipientPaymentAccounts!.bankName}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleCopy(
-                          recipientPaymentAccounts!.bankAccountNumber!,
-                          "bank",
-                        )
-                      }
-                      className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/20 px-2.5 py-1 rounded-lg border border-brand-accent/25 transition-all cursor-pointer"
-                    >
-                      {copiedKey === "bank" ? (
-                        <>
-                          <Check className="w-3 h-3 text-emerald-500" />
-                          <span className="text-emerald-500">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-
-                {hasLegacyDetails && !hasGcash && !hasMaya && !hasBank && (
-                  <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl border border-neutral-border/70 bg-neutral-table-stripe/60 text-xs">
-                    <span className="font-bold text-foreground truncate">
-                      {recipientAccountDetails}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(recipientAccountDetails!, "legacy")}
-                      className="shrink-0 inline-flex items-center gap-1 text-[10px] font-bold text-brand-accent bg-brand-accent/10 hover:bg-brand-accent/20 px-2.5 py-1 rounded-lg border border-brand-accent/25 transition-all cursor-pointer"
-                    >
-                      {copiedKey === "legacy" ? (
-                        <>
-                          <Check className="w-3 h-3 text-emerald-500" />
-                          <span className="text-emerald-500">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-3 h-3" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className="text-xs text-neutral-subtext font-medium py-1">
-                Cash / In-person Handover (No digital accounts saved by member)
-              </p>
-            )}
-          </div>
+          <PayoutRecipientAccounts
+            paymentAccounts={recipientPaymentAccounts}
+            preferredPaymentMethod={recipientPaymentMethod}
+            legacyAccountDetails={recipientAccountDetails}
+          />
 
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
             <div className="space-y-1.5">
@@ -330,12 +155,12 @@ export default function DisbursePayoutModal({
                 placeholder="e.g. GCash Ref #987654321 or Bank Transfer Ref"
                 className={`w-full text-xs p-2.5 rounded-xl border bg-background text-foreground focus:outline-none ${
                   errors.referenceNumber
-                    ? "border-rose-500 focus:border-rose-500"
+                    ? "border-danger-border focus:border-danger"
                     : "border-neutral-border focus:border-brand-accent"
                 }`}
               />
               {errors.referenceNumber && (
-                <p className="text-[11px] text-rose-500 font-semibold">
+                <p className="text-[11px] font-semibold text-danger">
                   {errors.referenceNumber.message}
                 </p>
               )}
@@ -349,7 +174,7 @@ export default function DisbursePayoutModal({
                 label="Transfer Proof Screenshot / Receipt"
               />
               {errors.proofUrl && (
-                <p className="text-[11px] text-rose-500 font-semibold">
+                <p className="text-[11px] font-semibold text-danger">
                   {errors.proofUrl.message}
                 </p>
               )}
@@ -369,7 +194,7 @@ export default function DisbursePayoutModal({
               <Button
                 type="submit"
                 disabled={isDisbursing}
-                className="w-full rounded-2xl py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-bold shadow-sm cursor-pointer"
+                className="w-full cursor-pointer rounded-2xl bg-brand-accent py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm hover:bg-brand-accent-hover"
               >
                 <Send className="w-4 h-4 mr-1.5" />
                 {isDisbursing ? "Disbursing..." : "Disburse & Advance Round"}

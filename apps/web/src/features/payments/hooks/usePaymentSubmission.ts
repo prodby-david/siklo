@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { submitPayment } from "../api/submitPayment";
 import { SubmitPaymentDTO } from "@siklo/shared-schemas";
-import { getApiErrorMessage } from "../utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 
 export function usePaymentSubmission(groupId: string) {
   const queryClient = useQueryClient();

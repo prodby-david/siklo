@@ -8,7 +8,7 @@ export default function PaymentSummaryBreakdown({
   totalAmount,
 }: PaymentSummaryBreakdownProps) {
   return (
-    <div className="bg-neutral-table-stripe/60 dark:bg-neutral-table-stripe/30 p-3 rounded-2xl border border-neutral-border/60 space-y-1.5">
+    <div className="space-y-1.5 rounded-2xl border border-neutral-border/60 bg-neutral-table-stripe/60 p-3">
       <div className="flex justify-between items-center text-xs text-neutral-subtext">
         <span>Base Contribution:</span>
         <span className="font-semibold text-foreground">

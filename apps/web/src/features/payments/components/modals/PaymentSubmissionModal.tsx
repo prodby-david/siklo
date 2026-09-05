@@ -23,7 +23,7 @@ import {
   calculateDaysOverdue,
   calculateLatePenalty,
 } from "../../utils/payment.helper";
-import { getApiErrorMessage } from "../../utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import PaymentMethodSelector from "../elements/PaymentMethodSelector";
 import PaymentAccountDetailsCopyBox from "../elements/PaymentAccountDetailsCopyBox";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
@@ -37,6 +37,8 @@ export default function PaymentSubmissionModal({
   roundId,
   baseAmount,
   organizerFeeAmount = 0,
+  isOrganizer = false,
+  hasAlreadyPaidOrganizerFee = false,
   targetDueDate,
   gracePeriodDays = 0,
   latePenaltyRate = 0,
@@ -48,6 +50,10 @@ export default function PaymentSubmissionModal({
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [currentTimestamp] = useState(() => Date.now());
 
+  const isFeeEligible =
+    !isOrganizer && !hasAlreadyPaidOrganizerFee && organizerFeeAmount > 0;
+  const [payOrganizerFeeNow, setPayOrganizerFeeNow] = useState(true);
+
   const effectiveDeadline = calculateEffectiveDeadline(
     targetDueDate,
     gracePeriodDays,
@@ -58,7 +64,9 @@ export default function PaymentSubmissionModal({
     latePenaltyRate,
     daysOverdue,
   );
-  const totalAmount = baseAmount + lateFee + organizerFeeAmount;
+  const effectiveOrganizerFee =
+    isFeeEligible && payOrganizerFeeNow ? organizerFeeAmount : 0;
+  const totalAmount = baseAmount + lateFee + effectiveOrganizerFee;
 
   const {
     register,
@@ -114,6 +122,7 @@ export default function PaymentSubmissionModal({
             ? undefined
             : data.referenceNumber?.trim() || undefined,
         proofUrl: data.proofUrl || undefined,
+        includeOrganizerFee: isFeeEligible ? payOrganizerFeeNow : undefined,
       });
 
       toast.success(
@@ -153,9 +162,34 @@ export default function PaymentSubmissionModal({
           <PaymentSummaryBreakdown
             baseAmount={baseAmount}
             lateFee={lateFee}
-            organizerFee={organizerFeeAmount}
+            organizerFee={effectiveOrganizerFee}
             totalAmount={totalAmount}
           />
+
+          {isFeeEligible && (
+            <div className="p-3 rounded-2xl border border-brand-accent/30 bg-brand-accent/5 flex items-start gap-2.5">
+              <input
+                type="checkbox"
+                id="includeOrganizerFee"
+                checked={payOrganizerFeeNow}
+                onChange={(e) => setPayOrganizerFeeNow(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded text-brand-accent accent-brand-accent cursor-pointer"
+              />
+              <label
+                htmlFor="includeOrganizerFee"
+                className="text-xs cursor-pointer select-none"
+              >
+                <span className="font-bold text-foreground block">
+                  Pay One-Time Organizer Fee now (+₱
+                  {organizerFeeAmount.toLocaleString()})
+                </span>
+                <span className="text-[10px] text-neutral-subtext block">
+                  Optional: You can pay now or with a later contribution before the
+                  cycle ends.
+                </span>
+              </label>
+            </div>
+          )}
 
           <Controller
             name="paymentMethod"
@@ -185,12 +219,12 @@ export default function PaymentSubmissionModal({
                 placeholder="e.g. GCash Ref #123456789 or Bank Ref"
                 className={`w-full text-xs p-2.5 rounded-xl border bg-background text-foreground focus:outline-none ${
                   errors.referenceNumber
-                    ? "border-rose-500 focus:border-rose-500"
+                    ? "border-danger-border focus:border-danger"
                     : "border-neutral-border focus:border-brand-accent"
                 }`}
               />
               {errors.referenceNumber && (
-                <p className="text-[11px] text-rose-500 font-semibold">
+                <p className="text-[11px] font-semibold text-danger">
                   {errors.referenceNumber.message}
                 </p>
               )}
@@ -204,7 +238,7 @@ export default function PaymentSubmissionModal({
               onClearImage={handleClearImage}
             />
             {errors.proofUrl && (
-              <p className="text-[11px] text-rose-500 font-semibold">
+              <p className="text-[11px] font-semibold text-danger">
                 {errors.proofUrl.message}
               </p>
             )}
@@ -223,7 +257,7 @@ export default function PaymentSubmissionModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 text-xs bg-brand-accent hover:bg-brand-accent-hover text-white py-2.5 rounded-2xl font-bold shadow-sm cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+              className="flex-1 cursor-pointer rounded-2xl bg-brand-accent py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm transition-all hover:bg-brand-accent-hover active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? "Submitting..." : "Submit Payment"}
             </button>

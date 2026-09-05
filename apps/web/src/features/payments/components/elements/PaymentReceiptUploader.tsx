@@ -10,9 +10,13 @@ export default function PaymentReceiptUploader({
   label = "Payment Receipt / Proof Image",
   isRejection = false,
 }: PaymentReceiptUploaderProps) {
-  const accentBorder = isRejection ? "border-rose-500/40" : "border-brand-accent/40";
-  const hoverBorder = isRejection ? "hover:border-rose-500/40" : "hover:border-brand-accent/40";
-  const iconColor = isRejection ? "text-rose-500" : "text-brand-accent";
+  const accentBorder = isRejection
+    ? "border-danger-border"
+    : "border-brand-accent/40";
+  const hoverBorder = isRejection
+    ? "hover:border-danger"
+    : "hover:border-brand-accent/40";
+  const iconColor = isRejection ? "text-danger" : "text-brand-accent";
 
   return (
     <div className="space-y-1.5">

@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { DisbursePayoutDTO } from "@siklo/shared-schemas";
 import { disbursePayout } from "../api/disbursePayout";
-import { getApiErrorMessage } from "../utils/error.helper";
+import { getApiErrorMessage } from "@/shared/utils/error.helper";
 
 export function useDisbursePayout(groupId: string) {
   const queryClient = useQueryClient();

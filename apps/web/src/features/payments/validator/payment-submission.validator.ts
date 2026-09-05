@@ -10,6 +10,7 @@ export const paymentSubmissionSchema = z
       .optional()
       .or(z.literal("")),
     proofUrl: z.string().optional().or(z.literal("")),
+    includeOrganizerFee: z.boolean().optional(),
   })
   .superRefine((data, ctx) => {
     if (data.paymentMethod !== "CASH") {
