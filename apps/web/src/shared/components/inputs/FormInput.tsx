@@ -22,7 +22,8 @@ export default function FormInput({
   ...props
 }: InputProps) {
   const registerProps = register && label ? register(label as never) : {};
-  const hasError = label && errors && errors[label];
+  const errorKey = label || props.name || props.id || "";
+  const hasError = errorKey && errors && errors[errorKey];
 
   return (
     <div className="flex flex-col gap-1.5 flex-1">
@@ -45,7 +46,7 @@ export default function FormInput({
           name={label || props.name}
           placeholder={placeholder}
           type={type}
-          className={`w-full py-2.5 text-xs font-medium border rounded-2xl transition-all duration-200 disabled:bg-muted focus:outline-none ${
+          className={`w-full py-2.5 text-xs font-medium border rounded-2xl transition-all duration-200 disabled:bg-muted disabled:text-neutral-subtext disabled:cursor-not-allowed focus:outline-none ${
             icon ? "pl-10" : "px-3.5"
           } ${
             hasError
@@ -58,7 +59,7 @@ export default function FormInput({
       </div>
       {hasError && (
         <p className="text-danger text-[11px] font-medium mt-0.5">
-          {errors[label]?.message}
+          {errors[errorKey]?.message}
         </p>
       )}
     </div>

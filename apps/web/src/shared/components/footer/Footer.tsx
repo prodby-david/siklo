@@ -29,8 +29,8 @@ export default function Footer() {
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-brand-accent/10 text-brand-accent border border-brand-accent/20">
                 <ShieldCheck className="w-3.5 h-3.5" /> 100% Transparent
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                <Activity className="w-3 h-3 text-emerald-500" /> Systems Operational
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-success/25 bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
+                <Activity className="h-3 w-3 text-success" /> Systems Operational
               </span>
             </div>
           </div>

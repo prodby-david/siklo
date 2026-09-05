@@ -43,7 +43,7 @@ export default function GetStartedButton({
     </>
   );
 
-  const baseStyles = `flex items-center justify-center rounded-2xl bg-brand-accent text-white hover:bg-brand-accent-hover cursor-pointer transition-all duration-150 shadow-md hover:shadow-brand-accent/20 ${sizeStyles[size]} ${className}`;
+  const baseStyles = `flex items-center justify-center rounded-2xl bg-brand-accent text-brand-accent-foreground hover:bg-brand-accent-hover cursor-pointer transition-all duration-150 shadow-md hover:shadow-brand-accent/20 ${sizeStyles[size]} ${className}`;
 
   if (href) {
     return (

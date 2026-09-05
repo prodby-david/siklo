@@ -29,7 +29,8 @@ export default function RootLayout({
           richColors
           toastOptions={{
             classNames: {
-              toast: "bg-brand-accent text-foreground border-neutral-border",
+              toast:
+                "bg-brand-accent text-brand-accent-foreground border-neutral-border",
               success: "text-success bg-success-bg border-success/20",
               error: "text-danger bg-danger-bg border-color-danger-border",
             },

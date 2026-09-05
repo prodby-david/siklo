@@ -40,7 +40,7 @@ export default function Loader({
         </div>
       </div>
       {text && (
-        <p className="text-[10px] font-bold text-neutral-subtext dark:text-neutral-subtext/80 uppercase tracking-widest animate-pulse text-center leading-relaxed max-w-[200px]">
+        <p className="max-w-[200px] animate-pulse text-center text-[10px] font-bold uppercase leading-relaxed tracking-widest text-neutral-subtext">
           {text}
         </p>
       )}
@@ -65,7 +65,7 @@ export default function Loader({
           </div>
         </div>
         {text && (
-          <span className="text-[9px] font-bold text-neutral-subtext dark:text-neutral-subtext/80 uppercase tracking-wider">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-neutral-subtext">
             {text}
           </span>
         )}
@@ -75,15 +75,15 @@ export default function Loader({
 
   if (variant === "container") {
     return (
-      <div className="w-full min-h-[250px] flex items-center justify-center p-8 bg-neutral-subtext/2 dark:bg-neutral-subtext/5 rounded-[20px] border border-neutral-border/20 dark:border-neutral-border/10 backdrop-blur-sm">
+      <div className="flex min-h-[250px] w-full items-center justify-center rounded-[20px] border border-neutral-border/20 bg-neutral-table-stripe/30 p-8 backdrop-blur-sm">
         {spinnerElement}
       </div>
     );
   }
 
   const fullScreenOverlay = (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-background/50 dark:bg-background/40 backdrop-blur-md animate-fade-in pointer-events-auto">
-      <div className="relative flex flex-col items-center justify-center bg-background/90 dark:bg-background/85 border border-neutral-border/40 dark:border-neutral-border/20 py-8 px-10 rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] backdrop-blur-xl max-w-[260px] w-full mx-4">
+    <div className="pointer-events-auto fixed inset-0 z-[99999] flex items-center justify-center bg-background/50 backdrop-blur-md animate-fade-in">
+      <div className="relative mx-4 flex w-full max-w-[260px] flex-col items-center justify-center rounded-[24px] border border-neutral-border/40 bg-card/90 px-10 py-8 shadow-xl backdrop-blur-xl">
         {spinnerElement}
       </div>
     </div>
