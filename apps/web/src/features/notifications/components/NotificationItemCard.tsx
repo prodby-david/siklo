@@ -18,7 +18,7 @@ export default function NotificationItemCard({
       className={`group relative flex items-start gap-3.5 p-4 rounded-2xl border transition-all duration-150 ${
         item.isRead
           ? "bg-background/60 border-neutral-border/50 opacity-75 hover:opacity-100 hover:bg-background"
-          : "bg-neutral-table-stripe/80 dark:bg-neutral-table-stripe/40 border-brand-accent/30 shadow-xs"
+          : "border-brand-accent/30 bg-neutral-table-stripe/80 shadow-xs"
       }`}
     >
       {!item.isRead && (

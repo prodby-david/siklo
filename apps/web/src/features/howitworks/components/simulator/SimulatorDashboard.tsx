@@ -52,7 +52,7 @@ export default function SimulatorDashboard({
         </button>
       </div>
 
-      <div className="p-4 rounded-2xl bg-background/80 dark:bg-card/80 border border-brand-accent/20 dark:border-brand-accent/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-xl shadow-xs">
+      <div className="p-4 rounded-2xl bg-card/80 border border-brand-accent/25 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 backdrop-blur-xl shadow-xs">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent shrink-0">
             <Landmark className="w-5 h-5" />
@@ -66,12 +66,12 @@ export default function SimulatorDashboard({
             </div>
           </div>
         </div>
-        <div className="text-[10px] text-neutral-subtext font-semibold bg-background/90 dark:bg-card/90 border border-brand-accent/20 dark:border-brand-accent/25 px-2.5 py-1 rounded-2xl">
+        <div className="text-[10px] text-neutral-subtext font-semibold bg-card/90 border border-brand-accent/25 px-2.5 py-1 rounded-2xl">
           ₱{config.contributionAmount.toLocaleString()} × {config.membersCount} Members
         </div>
       </div>
 
-      <div className="p-3.5 rounded-2xl border bg-background/80 dark:bg-card/80 flex flex-col gap-1 border-brand-accent/20 dark:border-brand-accent/25 backdrop-blur-xl shadow-xs">
+      <div className="p-3.5 rounded-2xl border bg-card/80 flex flex-col gap-1 border-brand-accent/25 backdrop-blur-xl shadow-xs">
         <div className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
           Cycle Status Message
         </div>
@@ -110,7 +110,7 @@ export default function SimulatorDashboard({
         <button
           type="button"
           onClick={onReset}
-          className="flex-1 flex items-center justify-center gap-2 border border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 hover:bg-neutral-subtext/10 text-foreground py-2.5 rounded-2xl text-xs font-semibold cursor-pointer active:scale-95 transition-all shadow-xs"
+          className="flex-1 flex items-center justify-center gap-2 border border-brand-accent/25 bg-card/80 hover:bg-neutral-table-stripe text-foreground py-2.5 rounded-2xl text-xs font-semibold cursor-pointer active:scale-95 transition-all shadow-xs"
         >
           <RotateCcw className="w-3.5 h-3.5 text-neutral-subtext" />
           Restart Simulation
@@ -120,7 +120,7 @@ export default function SimulatorDashboard({
           <button
             type="button"
             onClick={onNext}
-            className="flex-1 flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-white py-2.5 rounded-2xl text-xs font-semibold cursor-pointer active:scale-95 transition-all shadow-xs"
+            className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl bg-brand-accent py-2.5 text-xs font-semibold text-brand-accent-foreground shadow-xs transition-all hover:bg-brand-accent-hover active:scale-95"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             Next Round

@@ -16,7 +16,7 @@ export default function PolicyTabSwitcher({
         onClick={() => onTabChange("privacy")}
         className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-2xl transition-all cursor-pointer ${
           activeTab === "privacy"
-            ? "bg-brand-accent text-white shadow-sm"
+            ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
             : "text-neutral-subtext hover:text-foreground hover:bg-neutral-border/30"
         }`}
       >
@@ -27,7 +27,7 @@ export default function PolicyTabSwitcher({
         onClick={() => onTabChange("terms")}
         className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-2xl transition-all cursor-pointer ${
           activeTab === "terms"
-            ? "bg-brand-accent text-white shadow-sm"
+            ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
             : "text-neutral-subtext hover:text-foreground hover:bg-neutral-border/30"
         }`}
       >

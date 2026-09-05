@@ -27,9 +27,9 @@ export default function ShowcaseTurnCard({
         <div
           className={`flex items-center justify-center w-8 h-8 rounded-xl font-extrabold text-xs shrink-0 ${
             isCurrent
-              ? "bg-brand-accent text-white"
+              ? "bg-brand-accent text-brand-accent-foreground"
               : isPaid
-              ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/30"
+              ? "border border-success/30 bg-success-bg text-success"
               : "bg-neutral-subtext/10 text-neutral-subtext"
           }`}
         >
@@ -50,12 +50,12 @@ export default function ShowcaseTurnCard({
       <div className="flex items-center justify-between sm:justify-end gap-2.5">
         <div className="flex items-center gap-1.5">
           {isPaid && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 text-[10px] font-extrabold border border-emerald-500/20">
+            <span className="inline-flex items-center gap-1 rounded-full border border-success/25 bg-success-bg px-2.5 py-0.5 text-[10px] font-extrabold text-success">
               <CheckCircle2 className="w-3 h-3" /> Paid
             </span>
           )}
           {isCurrent && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-brand-accent text-white text-[10px] font-extrabold shadow-xs">
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-accent px-2.5 py-0.5 text-[10px] font-extrabold text-brand-accent-foreground shadow-xs">
               <Award className="w-3 h-3" /> Receiving Now
             </span>
           )}

@@ -8,7 +8,7 @@ export const HeroStatsWidget = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full">
       <div className="relative group rounded-3xl border border-neutral-border/80 bg-background/80 backdrop-blur-xl p-4 sm:p-5 transition-all duration-300 hover:border-brand-accent/50">
         <div className="flex items-center justify-between mb-2.5 sm:mb-3">
-          <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-brand-accent to-teal-400 text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-accent to-brand-accent-hover text-brand-accent-foreground sm:h-10 sm:w-10">
             <Coins className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-success bg-success-bg/80 border border-success/30 px-2 sm:px-2.5 py-0.5 rounded-full">
@@ -28,7 +28,7 @@ export const HeroStatsWidget = () => {
 
       <div className="relative group rounded-3xl border border-neutral-border/80 bg-background/80 backdrop-blur-xl p-4 sm:p-5 transition-all duration-300 hover:border-brand-accent/50">
         <div className="flex items-center justify-between mb-2.5 sm:mb-3">
-          <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-brand-accent to-emerald-400 text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand-accent to-success text-brand-accent-foreground sm:h-10 sm:w-10">
             <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
           <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-2 sm:px-2.5 py-0.5 rounded-full">

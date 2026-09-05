@@ -44,7 +44,7 @@ export default function HelpContactForm() {
           </p>
           <button
             onClick={handleReset}
-            className="px-4 py-2 bg-brand-accent text-white text-xs font-bold rounded-2xl cursor-pointer hover:opacity-90 transition-opacity"
+            className="cursor-pointer rounded-2xl bg-brand-accent px-4 py-2 text-xs font-bold text-brand-accent-foreground transition-opacity hover:opacity-90"
           >
             Send Another Message
           </button>
@@ -93,7 +93,7 @@ export default function HelpContactForm() {
 
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 mt-2 px-4 py-2 bg-brand-accent text-white text-xs font-bold rounded-2xl cursor-pointer hover:opacity-90 transition-opacity"
+            className="mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-brand-accent px-4 py-2 text-xs font-bold text-brand-accent-foreground transition-opacity hover:opacity-90"
           >
             <Send className="w-3.5 h-3.5" />
             Submit Request

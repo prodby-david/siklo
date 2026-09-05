@@ -6,7 +6,8 @@ interface StepCardProps {
 }
 
 const getStepIcon = (stepNumber: number) => {
-  const className = "h-5 w-5 text-brand-accent group-hover:text-white transition-colors duration-300";
+  const className =
+    "h-5 w-5 text-brand-accent transition-colors duration-300 group-hover:text-brand-accent-foreground";
   switch (stepNumber) {
     case 1:
       return <UserPlus className={className} />;
@@ -23,14 +24,14 @@ export const StepCard = ({ step }: StepCardProps) => {
   const IconComponent = step.icon;
 
   return (
-    <div className="group backdrop-blur-xl relative z-10 rounded-3xl border border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 p-6 sm:p-7 flex flex-col justify-start gap-4 hover:border-brand-accent/50 transition-all duration-300 h-full min-h-[220px] flex-1 shadow-xs">
+    <div className="group backdrop-blur-xl relative z-10 rounded-3xl border border-brand-accent/25 bg-card/80 p-6 sm:p-7 flex flex-col justify-start gap-4 hover:border-brand-accent/50 transition-all duration-300 h-full min-h-[220px] flex-1 shadow-xs">
       <div className="flex items-center justify-between">
-        <span className="rounded-full bg-brand-accent/10 px-3 py-1 text-xs font-extrabold text-brand-accent group-hover:bg-brand-accent group-hover:text-white transition-all duration-300 border border-brand-accent/20">
+        <span className="rounded-full border border-brand-accent/20 bg-brand-accent/10 px-3 py-1 text-xs font-extrabold text-brand-accent transition-all duration-300 group-hover:bg-brand-accent group-hover:text-brand-accent-foreground">
           Step 0{step.stepNumber}
         </span>
         <div className="h-10 w-10 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center group-hover:bg-brand-accent transition-all duration-300">
           {IconComponent ? (
-            <IconComponent className="h-5 w-5 text-brand-accent group-hover:text-white transition-colors duration-300" />
+            <IconComponent className="h-5 w-5 text-brand-accent transition-colors duration-300 group-hover:text-brand-accent-foreground" />
           ) : (
             getStepIcon(step.stepNumber)
           )}

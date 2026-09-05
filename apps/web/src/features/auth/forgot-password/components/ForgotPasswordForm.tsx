@@ -47,7 +47,7 @@ export default function ForgotPasswordForm() {
 
           <Link
             href="/signin"
-            className="w-full flex h-11 items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs sm:text-sm font-extrabold text-white hover:bg-brand-accent-hover active:scale-[0.98] transition-all duration-200"
+            className="flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs font-extrabold text-brand-accent-foreground transition-all duration-200 hover:bg-brand-accent-hover active:scale-[0.98] sm:text-sm"
           >
             <LogIn className="h-4 w-4" />
             <span>Return to Sign In</span>
@@ -74,7 +74,7 @@ export default function ForgotPasswordForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full flex h-11 items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs sm:text-sm font-extrabold text-white hover:bg-brand-accent-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer mt-1 transition-all duration-200"
+        className="mt-1 flex h-11 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl bg-brand-accent text-xs font-extrabold text-brand-accent-foreground transition-all duration-200 hover:bg-brand-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
       >
         {isSubmitting ? (
           <Loader2 className="h-4 w-4 animate-spin" />

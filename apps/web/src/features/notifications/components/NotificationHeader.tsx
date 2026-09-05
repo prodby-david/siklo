@@ -22,7 +22,7 @@ export default function NotificationHeader({
                 Notifications
               </h3>
               {unreadCount > 0 && (
-                <span className="rounded-full bg-brand-accent text-white px-2 py-0.5 text-[10px] font-black uppercase tracking-wider">
+                <span className="rounded-full bg-brand-accent px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-brand-accent-foreground">
                   {unreadCount} New
                 </span>
               )}
@@ -37,7 +37,7 @@ export default function NotificationHeader({
           {unreadCount > 0 && onMarkAllAsRead && (
             <button
               onClick={onMarkAllAsRead}
-              className="px-2.5 py-1 rounded-xl text-[11px] font-extrabold bg-brand-accent/10 border border-brand-accent/20 text-brand-accent hover:bg-brand-accent hover:text-white transition-all cursor-pointer"
+              className="cursor-pointer rounded-xl border border-brand-accent/20 bg-brand-accent/10 px-2.5 py-1 text-[11px] font-extrabold text-brand-accent transition-all hover:bg-brand-accent hover:text-brand-accent-foreground"
             >
               Mark all read
             </button>
@@ -61,7 +61,7 @@ export default function NotificationHeader({
               onClick={() => setFilter(tab.id)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-150 cursor-pointer ${
                 isActive
-                  ? "bg-brand-accent text-white shadow-xs"
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-xs"
                   : "bg-neutral-table-stripe hover:bg-neutral-subtext/10 text-neutral-subtext hover:text-foreground border border-neutral-border/40"
               }`}
             >

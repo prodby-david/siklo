@@ -19,7 +19,7 @@ function HighlightedText({ text, query }: { text: string; query: string }) {
         part.toLowerCase() === query.toLowerCase() ? (
           <mark
             key={index}
-            className="bg-yellow-200 dark:bg-yellow-800 text-foreground px-0.5 rounded-2xl"
+            className="rounded-2xl bg-warning-bg px-0.5 text-foreground"
           >
             {part}
           </mark>
@@ -89,7 +89,7 @@ export default function PolicyContent({
               </p>
               <button
                 onClick={onClearSearch}
-                className="mt-4 px-4 py-2 bg-brand-accent text-white text-xs font-bold rounded-2xl cursor-pointer hover:opacity-90 transition-opacity"
+                className="mt-4 cursor-pointer rounded-2xl bg-brand-accent px-4 py-2 text-xs font-bold text-brand-accent-foreground transition-opacity hover:opacity-90"
               >
                 Clear Search
               </button>

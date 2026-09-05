@@ -81,9 +81,9 @@ export const SmartLedgerGuarantee = () => {
         whileInView="visible"
         viewport={{ once: true, margin: "-30px" }}
         variants={cardVariants}
-        className="rounded-3xl border border-emerald-500/20 bg-background/80 backdrop-blur-xl relative z-10 p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4 transition-all duration-300 hover:border-emerald-500/50 h-full sm:col-span-2 lg:col-span-1"
+        className="relative z-10 flex h-full flex-col gap-3.5 rounded-3xl border border-success/25 bg-card/80 p-5 backdrop-blur-xl transition-all duration-300 hover:border-success/50 sm:col-span-2 sm:gap-4 sm:p-6 lg:col-span-1"
       >
-        <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-success/30 bg-success-bg text-success sm:h-12 sm:w-12">
           <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
         </div>
         <div>
@@ -94,7 +94,7 @@ export const SmartLedgerGuarantee = () => {
             Every payment record and payout collection is locked with group verification so everyone enjoys total peace of mind.
           </p>
         </div>
-        <div className="mt-auto pt-3 border-t border-neutral-border/50 flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
+        <div className="mt-auto flex items-center gap-1.5 border-t border-neutral-border/50 pt-3 text-xs font-bold text-success">
           <FileCheck2 className="w-4 h-4" /> 100% Honest Records
         </div>
       </motion.div>

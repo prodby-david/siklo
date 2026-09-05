@@ -19,7 +19,7 @@ export default function PaluwaganFinalCtaSection() {
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full rounded-3xl bg-gradient-to-br from-brand-accent/20 via-brand-accent/10 to-indigo-500/10 border border-brand-accent/30 p-8 sm:p-14 relative overflow-hidden text-center flex flex-col items-center gap-6"
+          className="relative flex w-full flex-col items-center gap-6 overflow-hidden rounded-3xl border border-brand-accent/30 bg-gradient-to-br from-brand-accent/20 via-brand-accent/10 to-winner-payout-bg p-8 text-center sm:p-14"
         >
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-accent/20 border border-brand-accent/35 text-brand-accent text-xs font-extrabold relative z-10">

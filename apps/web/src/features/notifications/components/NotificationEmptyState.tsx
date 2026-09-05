@@ -16,7 +16,7 @@ export default function NotificationEmptyState({ filter }: NotificationEmptyStat
           priority
           className="mx-auto drop-shadow-sm"
         />
-        <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md">
+        <span className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-success text-brand-accent-foreground shadow-md">
           <CheckCircle2 className="w-4 h-4" />
         </span>
       </div>

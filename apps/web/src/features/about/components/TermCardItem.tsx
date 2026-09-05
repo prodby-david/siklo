@@ -25,7 +25,7 @@ export default function TermCardItem({ item }: { item: PaluwaganTermItem }) {
   const IconComponent = ICON_MAP[item.iconName] || HelpCircle;
 
   return (
-    <div className="h-full rounded-3xl border border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 backdrop-blur-xl p-5 sm:p-6 flex flex-col justify-between gap-4 transition-all duration-300 hover:border-brand-accent/50 shadow-xs">
+    <div className="h-full rounded-3xl border border-brand-accent/25 bg-card/80 backdrop-blur-xl p-5 sm:p-6 flex flex-col justify-between gap-4 transition-all duration-300 hover:border-brand-accent/50 shadow-xs">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between gap-2">
           <div className="w-10 h-10 rounded-2xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25 flex items-center justify-center font-bold">

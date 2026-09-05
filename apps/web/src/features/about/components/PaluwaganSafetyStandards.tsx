@@ -68,7 +68,7 @@ export default function PaluwaganSafetyStandards() {
               transition={{ duration: 0.45, delay: index * 0.1, ease: "easeOut" }}
               className="h-full"
             >
-              <div className="h-full rounded-3xl border border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between gap-6 shadow-xs hover:border-brand-accent/50 transition-all duration-300">
+              <div className="h-full rounded-3xl border border-brand-accent/25 bg-card/80 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between gap-6 shadow-xs hover:border-brand-accent/50 transition-all duration-300">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between">
                     <div className="w-10 h-10 rounded-2xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25 flex items-center justify-center">
@@ -116,7 +116,7 @@ export default function PaluwaganSafetyStandards() {
 
         <Link
           href="/help"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-bold rounded-2xl transition-all shadow-xs active:scale-95 whitespace-nowrap cursor-pointer"
+          className="inline-flex cursor-pointer items-center gap-2 whitespace-nowrap rounded-2xl bg-brand-accent px-5 py-2.5 text-xs font-bold text-brand-accent-foreground shadow-xs transition-all hover:bg-brand-accent-hover active:scale-95"
         >
           <span>Visit Help & Support</span>
           <ArrowRight className="w-4 h-4" />

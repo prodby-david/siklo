@@ -22,7 +22,7 @@ export default function SimulatorMemberRow({
       className={`p-3 sm:p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
         isCurrentRecipient && !simulationFinished
           ? "border-brand-accent/40 bg-brand-accent/10 ring-1 ring-brand-accent/30"
-          : "border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 backdrop-blur-xl"
+          : "border-brand-accent/25 bg-card/80 backdrop-blur-xl"
       }`}
     >
       <div className="flex items-center gap-3">
@@ -59,7 +59,7 @@ export default function SimulatorMemberRow({
             {simulationFinished ? (
               <span className="text-neutral-subtext">Cycle Finished</span>
             ) : isCurrentRecipient ? (
-              <span className="text-emerald-500 font-bold flex items-center gap-0.5">
+              <span className="flex items-center gap-0.5 font-bold text-success">
                 <ArrowUpRight className="w-3 h-3" />
                 Receiving ₱{(amount * membersCount).toLocaleString()}
               </span>
@@ -79,7 +79,7 @@ export default function SimulatorMemberRow({
           <div
             className={`text-xs font-extrabold ${
               member.netBalance > 0
-                ? "text-emerald-500"
+                ? "text-success"
                 : member.netBalance < 0
                 ? "text-danger"
                 : "text-foreground"

@@ -31,7 +31,7 @@ export default function PricingCard({ plan, interval, index = 0 }: PricingCardPr
           <Clock className="w-3 h-3 text-brand-accent" /> Coming Soon
         </span>
       ) : plan.isPopular ? (
-        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-brand-accent text-background px-3.5 py-1 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-xs">
+        <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-brand-accent text-brand-accent-foreground px-3.5 py-1 text-[10px] font-black uppercase tracking-widest flex items-center gap-1 shadow-xs">
           <Flame className="w-3 h-3" /> Most Popular
         </span>
       ) : null}
@@ -80,7 +80,7 @@ export default function PricingCard({ plan, interval, index = 0 }: PricingCardPr
           plan.isComingSoon
             ? "bg-neutral-subtext/10 text-neutral-subtext opacity-70 cursor-not-allowed pointer-events-none border border-neutral-border/40"
             : plan.isPopular
-              ? "bg-brand-accent text-background hover:bg-brand-accent-hover cursor-pointer active:scale-95"
+              ? "bg-brand-accent text-brand-accent-foreground hover:bg-brand-accent-hover cursor-pointer active:scale-95"
               : "bg-neutral-table-stripe hover:bg-neutral-subtext/10 text-foreground border border-neutral-border/60 cursor-pointer active:scale-95"
         }`}
       >

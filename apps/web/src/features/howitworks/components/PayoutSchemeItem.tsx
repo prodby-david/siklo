@@ -14,7 +14,7 @@ export default function PayoutSchemeItem({
   icon: Icon,
 }: PayoutSchemeItemProps) {
   return (
-    <div className="p-5 rounded-2xl border border-brand-accent/20 dark:border-brand-accent/25 bg-background/80 dark:bg-card/80 backdrop-blur-xl flex flex-col justify-start gap-2.5 hover:border-brand-accent/50 transition-all duration-300 h-full min-h-[160px] flex-1 shadow-xs">
+    <div className="p-5 rounded-2xl border border-brand-accent/25 bg-card/80 backdrop-blur-xl flex flex-col justify-start gap-2.5 hover:border-brand-accent/50 transition-all duration-300 h-full min-h-[160px] flex-1 shadow-xs">
       <div className="flex items-center justify-between gap-2 min-h-[2.5rem] flex-wrap">
         <div className="flex items-center gap-2.5">
           <div className="h-8 w-8 rounded-xl bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center shrink-0">

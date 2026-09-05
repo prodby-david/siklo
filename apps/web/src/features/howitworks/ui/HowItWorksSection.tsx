@@ -48,13 +48,13 @@ export const HowItWorksSection = ({
             {roleDescription}
           </p>
 
-          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl border border-brand-accent/20 bg-background/80 dark:bg-card/80 backdrop-blur-xl shadow-xs mt-2">
+          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl border border-brand-accent/25 bg-card/80 backdrop-blur-xl shadow-xs mt-2">
             <button
               type="button"
               onClick={() => setActiveRole("ORGANIZER")}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                 activeRole === "ORGANIZER"
-                  ? "bg-brand-accent text-white shadow-xs"
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-xs"
                   : "text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/5"
               }`}
             >
@@ -67,7 +67,7 @@ export const HowItWorksSection = ({
               onClick={() => setActiveRole("MEMBER")}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                 activeRole === "MEMBER"
-                  ? "bg-brand-accent text-white shadow-xs"
+                  ? "bg-brand-accent text-brand-accent-foreground shadow-xs"
                   : "text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/5"
               }`}
             >
