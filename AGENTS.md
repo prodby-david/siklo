@@ -39,6 +39,18 @@ Follow these rules for all code you write:
 - Classes: PascalCase (`UserService`, `DataController`)
 - Constants: UPPER_SNAKE_CASE (`API_KEY`, `MAX_RETRIES`)
 
+## Core Principles
+
+- Inspect the existing code before making changes.
+- Follow existing patterns and conventions.
+- Prefer simple, readable solutions over unnecessary abstractions.
+- Reuse existing components, utilities, and dependencies.
+- Do not introduce new dependencies unless necessary.
+- Keep changes focused on the requested task.
+- Avoid unrelated refactoring.
+- Do not rewrite working code without a clear reason.
+- Preserve existing behavior unless the task explicitly requires changing it.
+
 **File naming conventions:**
 
 - React Components: PascalCase (`UserCard.tsx`, `DataView.tsx`)
@@ -73,4 +85,4 @@ async function get(x) {
 
 - ✅ **Always:** Write to `apps/web/src/`, `apps/api/src/`, `packages/shared-schemas/src/`, run tests/linting checks, and follow proper naming conventions. Avoid including comments in your code. Strictly follow SoC. Maintain consistencies across codebases. Use pnpm. Provide a clear and concise explanation of your code. Follow coding style and naming conventions. Provide a high quality PR description. Provide a high quality and clean implementation plan. Always wait for my go signal when implementing the plan. Provide a clear, concise and standard git commit messages and prefixes. The message should be strictly match on what does that specific file changes has. Follow my architecture and my coding style.
 - ⚠️ **Ask first:** Database schema changes (Prisma), Modifying backend-related files, adding third-party dependencies, or modifying root environment/config files.
-- 🚫 **Never:** Commit secrets, environment credentials (`.env`), or modify files inside `node_modules/`. Run any destructive commands. Add unnecessary codes
+- 🚫 **Never:** Commit secrets, environment credentials (`.env`), or modify files inside `node_modules/`. Run any destructive commands. Add unnecessary codes. Add another abstraction.
