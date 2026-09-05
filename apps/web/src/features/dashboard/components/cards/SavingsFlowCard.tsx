@@ -7,12 +7,12 @@ import {
   ArrowUpRight,
   CheckCircle2,
   AlertCircle,
-  PlusCircle,
 } from "lucide-react";
 import { SavingsFlowCardProps } from "../../types/dashboard.types";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import { hasUsablePaymentAccount } from "@/shared/utils/hasUsablePaymentAccount";
 import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
+import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
 
 export default function SavingsFlowCard({ stats }: SavingsFlowCardProps) {
   const { data: user } = useGetCurrentName();
@@ -105,13 +105,7 @@ export default function SavingsFlowCard({ stats }: SavingsFlowCardProps) {
 
       <div className="grid grid-cols-2 gap-2 pt-1">
         <JoinGroupModal />
-        <Link
-          href="/group/create"
-          className="flex h-10 items-center justify-center gap-1.5 text-xs font-bold text-foreground bg-neutral-table-stripe hover:bg-neutral-subtext/10 border border-neutral-border px-3 rounded-2xl transition-all duration-150 active:scale-95 text-center cursor-pointer shadow-2xs"
-        >
-          <PlusCircle className="w-3.5 h-3.5 text-brand-accent" />
-          <span>New Group</span>
-        </Link>
+        <CreateGroupButton />
       </div>
     </div>
   );
