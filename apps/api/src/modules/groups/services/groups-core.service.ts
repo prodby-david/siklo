@@ -68,7 +68,15 @@ export class GroupsCoreService {
 
       const inviteCode = generateInviteCode();
       const isOrganizerParticipating = dto.isOrganizerParticipating ?? true;
-      const organizerFeeAmount = dto.organizerFeeAmount ?? 0;
+      const organizerFeeAmount = isOrganizerParticipating
+        ? 0
+        : (dto.organizerFeeAmount ?? 0);
+
+      if (!isOrganizerParticipating && organizerFeeAmount <= 0) {
+        throw new BadRequestException(
+          'Organizer fee is required when organizer is not participating in the cycle',
+        );
+      }
 
       const group = await tx.group.create({
         data: {
@@ -140,7 +148,7 @@ export class GroupsCoreService {
         ? 'COMPLETED'
         : group.startDate
           ? 'ACTIVE'
-          : 'UPCOMING';
+          : 'PENDING';
 
       return {
         ...group,
@@ -150,11 +158,15 @@ export class GroupsCoreService {
     });
 
     if (status === 'COMPLETED') {
-      return processedGroups.filter((g) => g.isCycleDone);
+      return processedGroups.filter((g) => g.status === 'COMPLETED');
     }
 
     if (status === 'ACTIVE') {
-      return processedGroups.filter((g) => !g.isCycleDone);
+      return processedGroups.filter((g) => g.status === 'ACTIVE');
+    }
+
+    if (status === 'PENDING' || status === 'FORMING' || status === 'UPCOMING') {
+      return processedGroups.filter((g) => g.status === 'PENDING');
     }
 
     return processedGroups;

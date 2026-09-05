@@ -4,6 +4,7 @@ jest.mock('ai', () => ({
 
 jest.mock('@siklo/shared-schemas', () => ({
   createGroupSchema: { extend: jest.fn(() => ({})) },
+  createGroupBaseSchema: { extend: jest.fn(() => ({})) },
 }));
 
 jest.mock('zod', () => ({

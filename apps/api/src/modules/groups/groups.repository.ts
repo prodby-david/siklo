@@ -94,6 +94,7 @@ export class GroupsRepository {
           },
         },
         memberships: {
+          orderBy: { position: 'asc' },
           include: {
             user: {
               select: {

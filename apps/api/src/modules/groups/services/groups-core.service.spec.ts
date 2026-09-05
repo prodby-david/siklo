@@ -3,6 +3,7 @@ import {
   ConflictException,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { GroupsCoreService } from './groups-core.service';
 import { GroupsRepository } from '../groups.repository';
@@ -173,6 +174,145 @@ describe('GroupsCoreService', () => {
         ConflictException,
       );
     });
+
+    it('should force organizerFeeAmount to 0 when isOrganizerParticipating is true', async () => {
+      const dto = {
+        name: 'Participating Group',
+        description: 'Test',
+        contributionAmount: 1000,
+        billingCycle: 'WEEKLY' as const,
+        payoutSequence: 'RANDOM' as const,
+        cycleDuration: 4,
+        maxMembers: 5,
+        allowedPaymentMethods: ['E_WALLET' as const],
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        isOrganizerParticipating: true,
+        organizerFeeAmount: 100,
+      };
+      const userId = 'user-1';
+      const mockCreate = jest.fn().mockImplementation(({ data }) => ({
+        id: 'group-1',
+        ...data,
+      }));
+
+      groupsRepository.findGroupByName.mockResolvedValue(null);
+      prisma.$transaction.mockImplementation(async (cb) => {
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcashNumber: '09123456789' },
+            }),
+          },
+          group: {
+            create: mockCreate,
+          },
+        });
+      });
+
+      const result = await service.createGroup(dto, userId);
+
+      expect(result.message).toBe('Group created successfully');
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            isOrganizerParticipating: true,
+            organizerFeeAmount: 0,
+          }),
+        }),
+      );
+      expect(groupsRepository.createMembership).toHaveBeenCalledWith(
+        expect.anything(),
+        { groupId: 'group-1', userId },
+        1,
+      );
+    });
+
+    it('should throw BadRequestException when isOrganizerParticipating is false and fee is 0', async () => {
+      const dto = {
+        name: 'Manager Group No Fee',
+        description: 'Test',
+        contributionAmount: 1000,
+        billingCycle: 'WEEKLY' as const,
+        payoutSequence: 'RANDOM' as const,
+        cycleDuration: 4,
+        maxMembers: 5,
+        allowedPaymentMethods: ['E_WALLET' as const],
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        isOrganizerParticipating: false,
+        organizerFeeAmount: 0,
+      };
+      const userId = 'user-1';
+
+      groupsRepository.findGroupByName.mockResolvedValue(null);
+      prisma.$transaction.mockImplementation(async (cb) => {
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcashNumber: '09123456789' },
+            }),
+          },
+        });
+      });
+
+      await expect(service.createGroup(dto, userId)).rejects.toThrow(
+        BadRequestException,
+      );
+    });
+
+    it('should allow manager-only group when fee is greater than 0 without slot #1 membership', async () => {
+      const dto = {
+        name: 'Manager Group With Fee',
+        description: 'Test',
+        contributionAmount: 1000,
+        billingCycle: 'WEEKLY' as const,
+        payoutSequence: 'RANDOM' as const,
+        cycleDuration: 4,
+        maxMembers: 5,
+        allowedPaymentMethods: ['E_WALLET' as const],
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        isOrganizerParticipating: false,
+        organizerFeeAmount: 150,
+      };
+      const userId = 'user-1';
+      const mockCreate = jest.fn().mockImplementation(({ data }) => ({
+        id: 'group-2',
+        ...data,
+      }));
+
+      groupsRepository.createMembership.mockClear();
+      groupsRepository.findGroupByName.mockResolvedValue(null);
+      prisma.$transaction.mockImplementation(async (cb) => {
+        return cb({
+          user: {
+            findUnique: jest.fn().mockResolvedValue({
+              id: userId,
+              paymentAccounts: { gcashNumber: '09123456789' },
+            }),
+          },
+          group: {
+            create: mockCreate,
+          },
+        });
+      });
+
+      const result = await service.createGroup(dto, userId);
+
+      expect(result.message).toBe('Group created successfully');
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            isOrganizerParticipating: false,
+            organizerFeeAmount: 150,
+          }),
+        }),
+      );
+      expect(groupsRepository.createMembership).not.toHaveBeenCalled();
+    });
   });
 
   describe('startGroupCycle', () => {
@@ -228,6 +368,75 @@ describe('GroupsCoreService', () => {
       await expect(service.startGroupCycle(groupId, userId)).rejects.toThrow(
         ForbiddenException,
       );
+    });
+  });
+
+  describe('getUsersGroup', () => {
+    const mockGroups = [
+      {
+        id: 'group-pending',
+        name: 'Pending Group',
+        startDate: null,
+        cycleDuration: 1,
+        maxMembers: 3,
+        rounds: [],
+        payments: [],
+        memberships: [{ userId: 'user-1' }],
+      },
+      {
+        id: 'group-active',
+        name: 'Active Group',
+        startDate: new Date(),
+        cycleDuration: 1,
+        maxMembers: 3,
+        rounds: [
+          { id: 'r1', cycleNumber: 1, roundNumber: 1, status: 'PENDING' },
+        ],
+        payments: [],
+        memberships: [{ userId: 'user-1' }],
+      },
+      {
+        id: 'group-completed',
+        name: 'Completed Group',
+        startDate: new Date(),
+        cycleDuration: 1,
+        maxMembers: 1,
+        rounds: [
+          { id: 'r1', cycleNumber: 1, roundNumber: 1, status: 'RECEIVED' },
+        ],
+        payments: [{ status: 'VERIFIED' }],
+        memberships: [{ userId: 'user-1' }],
+      },
+    ];
+
+    it('should return all groups when no status filter is provided', async () => {
+      groupsRepository.getUserGroup.mockResolvedValue(mockGroups);
+      const result = await service.getUsersGroup('user-1');
+      expect(result).toHaveLength(3);
+    });
+
+    it('should filter active groups correctly', async () => {
+      groupsRepository.getUserGroup.mockResolvedValue(mockGroups);
+      const result = await service.getUsersGroup('user-1', 'ACTIVE');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('group-active');
+      expect(result[0].status).toBe('ACTIVE');
+    });
+
+    it('should filter pending groups correctly', async () => {
+      groupsRepository.getUserGroup.mockResolvedValue(mockGroups);
+      const result = await service.getUsersGroup('user-1', 'PENDING');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('group-pending');
+      expect(result[0].status).toBe('PENDING');
+    });
+
+    it('should filter completed groups correctly', async () => {
+      groupsRepository.getUserGroup.mockResolvedValue(mockGroups);
+      const result = await service.getUsersGroup('user-1', 'COMPLETED');
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('group-completed');
+      expect(result[0].status).toBe('COMPLETED');
     });
   });
 });

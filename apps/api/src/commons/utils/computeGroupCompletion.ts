@@ -7,6 +7,8 @@ export const COMPLETED_ROUND_STATUSES = new Set([
 
 export interface GroupCompletionPayment {
   status: string;
+  userId?: string;
+  organizerFeeAmount?: number;
 }
 
 export interface GroupCompletionRound {
@@ -15,10 +17,13 @@ export interface GroupCompletionRound {
 
 export interface GroupCompletionMembership {
   id?: string;
+  userId?: string;
 }
 
 export interface GroupCompletionInput {
   startDate?: Date | string | null;
+  organizerId?: string | null;
+  organizerFeeAmount?: number | null;
   memberships?: GroupCompletionMembership[] | null;
   maxMembers?: number | null;
   cycleDuration?: number | null;
@@ -65,22 +70,41 @@ export function computeGroupCompletion(
   const totalRequiredPayments = duration * memberCount * memberCount;
   const verifiedPayments = (group.payments ?? []).filter(
     (p) => p.status === VERIFIED_PAYMENT_STATUS,
-  ).length;
+  );
+  const verifiedPaymentsCount = verifiedPayments.length;
+
+  const isContributionsCollected =
+    totalRequiredPayments > 0 && verifiedPaymentsCount >= totalRequiredPayments;
+
+  const feeAmount = group.organizerFeeAmount || 0;
+  const nonOrganizerMembers = (group.memberships ?? []).filter(
+    (m) => m.userId && m.userId !== group.organizerId,
+  );
+
+  const areOrganizerFeesCollected =
+    feeAmount <= 0 ||
+    nonOrganizerMembers.every((m) =>
+      verifiedPayments.some(
+        (p) =>
+          p.userId === m.userId && (p.organizerFeeAmount || 0) >= feeAmount,
+      ),
+    );
+
+  const isFullyCollected =
+    isContributionsCollected && areOrganizerFeesCollected;
 
   const totalRequiredPayouts = memberCount * duration;
   const paidRounds = (group.rounds ?? []).filter((r) =>
     COMPLETED_ROUND_STATUSES.has(r.status),
   ).length;
 
-  const isFullyCollected =
-    totalRequiredPayments > 0 && verifiedPayments >= totalRequiredPayments;
   const isFullyDistributed =
     totalRequiredPayouts > 0 && paidRounds >= totalRequiredPayouts;
 
   return {
     memberCount,
     totalRequiredPayments,
-    verifiedPayments,
+    verifiedPayments: verifiedPaymentsCount,
     totalRequiredPayouts,
     paidRounds,
     isFullyCollected,

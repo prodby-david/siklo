@@ -295,6 +295,22 @@ export class PaymentsRepository {
     });
   }
 
+  async findPriorVerifiedOrganizerFeePayment(
+    groupId: string,
+    userId: string,
+    tx?: Prisma.TransactionClient,
+  ) {
+    const db = tx ?? this.prisma;
+    return db.payment.findFirst({
+      where: {
+        groupId,
+        userId,
+        status: PaymentStatus.VERIFIED,
+        organizerFeeAmount: { gt: 0 },
+      },
+    });
+  }
+
   async updatePaymentRecord(
     id: string,
     data: {

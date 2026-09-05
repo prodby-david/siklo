@@ -131,18 +131,24 @@ export class PaymentsSubmissionService {
           group.latePenaltyAmount,
         );
 
-        const hasPriorVerifiedPayment =
-          await this.paymentsRepository.findPriorVerifiedPayment(
+        const hasPaidOrganizerFee =
+          await this.paymentsRepository.findPriorVerifiedOrganizerFeePayment(
             group.id,
             userId,
             tx,
           );
 
-        const isFirstPaymentForMember =
-          !hasPriorVerifiedPayment && userId !== group.organizerId;
-        const organizerFeeAmount = isFirstPaymentForMember
-          ? group.organizerFeeAmount || 0
-          : 0;
+        const isOrganizer = userId === group.organizerId;
+        const isFeeApplicable =
+          !isOrganizer &&
+          (group.organizerFeeAmount || 0) > 0 &&
+          !hasPaidOrganizerFee;
+
+        const organizerFeeAmount =
+          isFeeApplicable && dto.includeOrganizerFee === true
+            ? group.organizerFeeAmount || 0
+            : 0;
+
         const totalAmount =
           group.contributionAmount + penaltyAmount + organizerFeeAmount;
 

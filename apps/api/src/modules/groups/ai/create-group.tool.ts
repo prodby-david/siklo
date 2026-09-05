@@ -1,8 +1,8 @@
 import { tool } from 'ai';
-import { createGroupSchema } from '@siklo/shared-schemas';
+import { createGroupBaseSchema } from '@siklo/shared-schemas';
 import { z } from 'zod';
 
-const aiCreateGroupSchema = createGroupSchema.extend({
+const aiCreateGroupSchema = createGroupBaseSchema.extend({
   startDate: z.string().optional(),
 });
 
