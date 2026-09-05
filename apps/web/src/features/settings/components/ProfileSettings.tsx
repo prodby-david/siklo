@@ -42,7 +42,7 @@ export default function ProfileSettings() {
 
         <Button
           onClick={openDrawer}
-          className="bg-brand-accent text-white hover:bg-brand-accent-hover rounded-2xl flex items-center gap-2 text-xs font-bold px-4 py-2 cursor-pointer shadow-xs"
+          className="flex cursor-pointer items-center gap-2 rounded-2xl bg-brand-accent px-4 py-2 text-xs font-bold text-brand-accent-foreground shadow-xs hover:bg-brand-accent-hover"
         >
           <Edit3 className="w-4 h-4" />
           <span>Edit Profile</span>
@@ -78,7 +78,7 @@ export default function ProfileSettings() {
                   title="Copy User ID"
                 >
                   {copiedId ? (
-                    <Check className="w-3.5 h-3.5 text-emerald-500" />
+                    <Check className="h-3.5 w-3.5 text-success" />
                   ) : (
                     <Copy className="w-3.5 h-3.5" />
                   )}

@@ -45,14 +45,16 @@ export function usePaymentSettings() {
     }));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent, onSuccess?: () => void) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
       await updatePaymentSettings(formData);
       await queryClient.invalidateQueries({ queryKey: ["current-name"] });
+      setCustomData({});
       toast.success("Payment accounts updated successfully");
+      onSuccess?.();
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message =
@@ -69,6 +71,7 @@ export function usePaymentSettings() {
   return {
     user,
     formData,
+    userAccounts,
     handleChange,
     handleSubmit,
     isSubmitting,

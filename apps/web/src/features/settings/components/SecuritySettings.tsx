@@ -48,7 +48,7 @@ export default function SecuritySettings() {
         <div className="pt-2 flex items-center gap-3">
           <button
             type="submit"
-            className="px-6 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white rounded-2xl text-xs font-semibold active:scale-[0.98] transition-all shadow-sm cursor-pointer"
+            className="cursor-pointer rounded-2xl bg-brand-accent px-6 py-2.5 text-xs font-semibold text-brand-accent-foreground shadow-sm transition-all hover:bg-brand-accent-hover active:scale-[0.98]"
           >
             Update Password
           </button>
@@ -77,7 +77,7 @@ export default function SecuritySettings() {
                 : "bg-muted justify-start"
             }`}
           >
-            <div className="bg-white w-4 h-4 rounded-full shadow-sm"></div>
+            <div className="h-4 w-4 rounded-full bg-brand-accent-foreground shadow-sm" />
           </button>
         </div>
       </div>

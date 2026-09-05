@@ -33,12 +33,12 @@ export default function SettingsUI() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold transition-all duration-150 active:scale-[0.98] cursor-pointer ${
                   isActive
-                    ? "bg-brand-accent text-white shadow-sm"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-neutral-subtext/5 hover:text-foreground"
+                    ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
+                    : "text-neutral-subtext hover:bg-neutral-table-stripe hover:text-foreground"
                 }`}
               >
                 <IconComponent
-                  className={`w-4 h-4 ${isActive ? "text-white" : "text-slate-400"}`}
+                  className={`w-4 h-4 ${isActive ? "text-brand-accent-foreground" : "text-neutral-subtext"}`}
                 />
                 <span>{tab.label}</span>
               </button>

@@ -1,6 +1,6 @@
-import { LucideIcon } from "lucide-react";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { UserProfileSettingDTO } from "@siklo/shared-schemas";
+import type { LucideIcon } from "lucide-react";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
+import type { UserProfileSettingDTO } from "@siklo/shared-schemas";
 
 export type SettingsTabId =
   | "profile"
@@ -12,6 +12,17 @@ export interface SettingsTab {
   id: SettingsTabId;
   label: string;
   icon: LucideIcon;
+}
+
+export type NotificationPreferenceKey =
+  | "emailAlerts"
+  | "smsAlerts"
+  | "pushAlerts";
+
+export interface NotificationPreferences {
+  emailAlerts: boolean;
+  smsAlerts: boolean;
+  pushAlerts: boolean;
 }
 
 export interface ProfileFormValues {

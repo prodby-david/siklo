@@ -1,13 +1,59 @@
 "use client";
 
-import { Wallet, Landmark, ShieldCheck, Building2, CreditCard, User } from "lucide-react";
-import { FormInput as Input } from "@/shared/components/inputs";
+import { useState } from "react";
 import { usePaymentSettings } from "../hooks/usePaymentSettings";
 import Loader from "@/shared/components/loader/Loader";
+import PaymentAccountSection from "./PaymentAccountSection";
+import { PAYMENT_ACCOUNT_SECTIONS } from "../constants/settings.constants";
+import type { PaymentAccountId } from "../types/payment-settings.types";
 
 export default function PaymentSettings() {
-  const { formData, handleChange, handleSubmit, isSubmitting } =
-    usePaymentSettings();
+  const {
+    formData,
+    userAccounts,
+    handleChange,
+    handleSubmit,
+    isSubmitting,
+  } = usePaymentSettings();
+
+  const [editingAccount, setEditingAccount] =
+    useState<PaymentAccountId | null>(null);
+
+  const hasSavedAccountValue = (accountId: PaymentAccountId) => {
+    if (accountId === "gcash") {
+      return Boolean(userAccounts?.gcashNumber || userAccounts?.gcashName);
+    }
+    if (accountId === "maya") {
+      return Boolean(userAccounts?.mayaNumber || userAccounts?.mayaName);
+    }
+    return Boolean(
+      userAccounts?.bankAccountNumber || userAccounts?.bankName,
+    );
+  };
+
+  const restoreSavedAccount = (accountId: PaymentAccountId) => {
+    const section = PAYMENT_ACCOUNT_SECTIONS.find(
+      (account) => account.id === accountId,
+    );
+    section?.fields.forEach((field) => {
+      handleChange(field.name, userAccounts?.[field.name] || "");
+    });
+  };
+
+  const handleToggleEditing = (accountId: PaymentAccountId) => {
+    if (editingAccount === accountId) {
+      restoreSavedAccount(accountId);
+      setEditingAccount(null);
+      return;
+    }
+    setEditingAccount(accountId);
+  };
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    handleSubmit(e, () => {
+      setEditingAccount(null);
+    });
+  };
 
   return (
     <div className="space-y-6 max-w-xl">
@@ -21,107 +67,24 @@ export default function PaymentSettings() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-neutral-subtext/5 border border-neutral-border/50 p-4 rounded-2xl space-y-4">
-          <div className="flex items-center gap-2 border-b border-neutral-border/50 pb-2">
-            <Wallet className="w-4 h-4 text-brand-accent" />
-            <h4 className="text-xs font-bold text-foreground">GCash Account</h4>
-          </div>
-
-          <div className="space-y-4">
-            <Input
-              id="gcashName"
-              labelText="Account Holder Name"
-              type="text"
-              value={formData.gcashName || ""}
-              onChange={(e) => handleChange("gcashName", e.target.value)}
-              placeholder="e.g. Juan Dela Cruz"
-              icon={<User className="w-4 h-4 text-brand-accent" />}
-            />
-
-            <Input
-              id="gcashNumber"
-              labelText="GCash Mobile Number (11 digits)"
-              type="text"
-              inputMode="numeric"
-              maxLength={11}
-              value={formData.gcashNumber || ""}
-              onChange={(e) => handleChange("gcashNumber", e.target.value)}
-              placeholder="e.g. 09171234567"
-              icon={<ShieldCheck className="w-4 h-4 text-brand-accent" />}
-            />
-          </div>
-        </div>
-
-        <div className="bg-neutral-subtext/5 border border-neutral-border/50 p-4 rounded-2xl space-y-4">
-          <div className="flex items-center gap-2 border-b border-neutral-border/50 pb-2">
-            <Wallet className="w-4 h-4 text-brand-accent" />
-            <h4 className="text-xs font-bold text-foreground">Maya Account</h4>
-          </div>
-
-          <div className="space-y-4">
-            <Input
-              id="mayaName"
-              labelText="Account Holder Name"
-              type="text"
-              value={formData.mayaName || ""}
-              onChange={(e) => handleChange("mayaName", e.target.value)}
-              placeholder="e.g. Juan Dela Cruz"
-              icon={<User className="w-4 h-4 text-brand-accent" />}
-            />
-
-            <Input
-              id="mayaNumber"
-              labelText="Maya Mobile Number (11 digits)"
-              type="text"
-              inputMode="numeric"
-              maxLength={11}
-              value={formData.mayaNumber || ""}
-              onChange={(e) => handleChange("mayaNumber", e.target.value)}
-              placeholder="e.g. 09187654321"
-              icon={<ShieldCheck className="w-4 h-4 text-brand-accent" />}
-            />
-          </div>
-        </div>
-
-        <div className="bg-neutral-subtext/5 border border-neutral-border/50 p-4 rounded-2xl space-y-4">
-          <div className="flex items-center gap-2 border-b border-neutral-border/50 pb-2">
-            <Landmark className="w-4 h-4 text-brand-accent" />
-            <h4 className="text-xs font-bold text-foreground">Bank Transfer</h4>
-          </div>
-
-          <div className="space-y-4">
-            <Input
-              id="bankName"
-              labelText="Bank Name"
-              type="text"
-              value={formData.bankName || ""}
-              onChange={(e) => handleChange("bankName", e.target.value)}
-              placeholder="e.g. BDO, BPI, UnionBank"
-              icon={<Building2 className="w-4 h-4 text-brand-accent" />}
-            />
-
-            <Input
-              id="bankAccountNumber"
-              labelText="Bank Account Number"
-              type="text"
-              inputMode="numeric"
-              maxLength={20}
-              value={formData.bankAccountNumber || ""}
-              onChange={(e) =>
-                handleChange("bankAccountNumber", e.target.value)
-              }
-              placeholder="e.g. 123456789012"
-              icon={<CreditCard className="w-4 h-4 text-brand-accent" />}
-            />
-          </div>
-        </div>
+      <form onSubmit={handleFormSubmit} className="space-y-6">
+        {PAYMENT_ACCOUNT_SECTIONS.map((account) => (
+          <PaymentAccountSection
+            key={account.id}
+            config={account}
+            values={formData}
+            hasSavedValue={hasSavedAccountValue(account.id)}
+            isEditing={editingAccount === account.id}
+            onChange={handleChange}
+            onToggleEditing={() => handleToggleEditing(account.id)}
+          />
+        ))}
 
         <div className="pt-2 flex items-center gap-3">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-6 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white rounded-2xl text-xs font-semibold active:scale-[0.98] transition-all shadow-sm cursor-pointer disabled:opacity-50"
+            className="cursor-pointer rounded-2xl bg-brand-accent px-6 py-2.5 text-xs font-semibold text-brand-accent-foreground shadow-sm transition-colors hover:bg-brand-accent-hover active:scale-[0.98] disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : "Save Payment Details"}
           </button>

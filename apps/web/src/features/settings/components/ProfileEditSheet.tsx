@@ -122,7 +122,7 @@ export default function ProfileEditSheet({
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-brand-accent hover:bg-brand-accent-hover text-white rounded-2xl text-xs font-bold gap-2 cursor-pointer"
+                  className="cursor-pointer gap-2 rounded-2xl bg-brand-accent text-xs font-bold text-brand-accent-foreground hover:bg-brand-accent-hover"
                 >
                   <Save className="w-4 h-4" />
                   {isSubmitting ? "Saving..." : "Save Changes"}
