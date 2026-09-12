@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import { useQueryClient } from "@tanstack/react-query";
 import { url } from "@/shared/config/url";
 import { ACTIVITY_QUERY_KEY } from "../constants/activity.constants";
+import { PAYMENT_QUERY_KEYS } from "@/features/payments/constants/payment.constants";
 
 export default function useGroupSocket(groupId: string) {
   const queryClient = useQueryClient();
-  const socketRef = useRef<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -19,35 +19,31 @@ export default function useGroupSocket(groupId: string) {
       transports: ["websocket"],
     });
 
-    socketRef.current = socket;
+    const refreshGroup = () => {
+      void queryClient.invalidateQueries({
+        queryKey: [ACTIVITY_QUERY_KEY, groupId],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["groups"] });
+      void queryClient.invalidateQueries({
+        queryKey: [PAYMENT_QUERY_KEYS.PENDING_PAYMENTS],
+      });
+      void queryClient.invalidateQueries({ queryKey: ["nearest-due"] });
+    };
 
     socket.on("connect", () => {
       setIsConnected(true);
       socket.emit("join-group", groupId);
-      queryClient.invalidateQueries({
-        queryKey: ["groups", groupId],
-      });
+      refreshGroup();
     });
 
     socket.on("disconnect", () => {
       setIsConnected(false);
     });
 
-    socket.on("activity.created", () => {
-      queryClient.invalidateQueries({
-        queryKey: [ACTIVITY_QUERY_KEY, groupId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["groups", groupId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["groups"],
-      });
-    });
+    socket.on("activity.created", refreshGroup);
 
     return () => {
       socket.disconnect();
-      socketRef.current = null;
       setIsConnected(false);
     };
   }, [groupId, queryClient]);

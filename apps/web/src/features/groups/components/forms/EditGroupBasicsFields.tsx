@@ -1,4 +1,3 @@
-import type { KeyboardEvent } from "react";
 import {
   AlertTriangle,
   AlignLeft,
@@ -7,22 +6,9 @@ import {
   PhilippinePeso,
   Users,
 } from "lucide-react";
-import type {
-  EditGroupFormField,
-  EditGroupFormValues,
-} from "../../types/edit-group.types";
+import type { EditGroupBasicsFieldsProps } from "../../types/edit-group.types";
 import getBoundedInteger from "../../utils/getBoundedInteger";
 
-interface EditGroupBasicsFieldsProps {
-  values: EditGroupFormValues;
-  isSubmitting: boolean;
-  onChange: <Field extends EditGroupFormField>(
-    field: Field,
-    value: EditGroupFormValues[Field],
-  ) => void;
-}
-
-const BLOCKED_NUMBER_KEYS = [".", ",", "-", "e", "E", "+"];
 const INPUT_CLASS_NAME =
   "w-full rounded-xl border border-neutral-border bg-background p-3 text-xs text-foreground focus:border-brand-accent focus:outline-none";
 
@@ -31,12 +17,6 @@ export default function EditGroupBasicsFields({
   isSubmitting,
   onChange,
 }: EditGroupBasicsFieldsProps) {
-  const preventInvalidNumberKey = (
-    event: KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (BLOCKED_NUMBER_KEYS.includes(event.key)) event.preventDefault();
-  };
-
   return (
     <div className="space-y-4">
       <div className="space-y-1">
@@ -76,9 +56,9 @@ export default function EditGroupBasicsFields({
             <span>Contribution Amount</span>
           </label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             value={values.contributionAmount}
-            onKeyDown={preventInvalidNumberKey}
             onChange={(event) =>
               onChange(
                 "contributionAmount",
@@ -96,9 +76,9 @@ export default function EditGroupBasicsFields({
             <span>Member Capacity</span>
           </label>
           <input
-            type="number"
+            type="text"
+            inputMode="numeric"
             value={values.maxMembers}
-            onKeyDown={preventInvalidNumberKey}
             onChange={(event) =>
               onChange(
                 "maxMembers",
@@ -118,11 +98,9 @@ export default function EditGroupBasicsFields({
             <span>Grace Period (0 - 7 Days)</span>
           </label>
           <input
-            type="number"
-            min={0}
-            max={7}
+            type="text"
+            inputMode="numeric"
             value={values.gracePeriodDays}
-            onKeyDown={preventInvalidNumberKey}
             onChange={(event) =>
               onChange(
                 "gracePeriodDays",
@@ -140,12 +118,9 @@ export default function EditGroupBasicsFields({
             <span>Daily Late Penalty (1% - 10% per day)</span>
           </label>
           <input
-            type="number"
-            step="0.1"
-            min={1}
-            max={10}
+            type="text"
+            inputMode="numeric"
             value={values.latePenaltyAmount}
-            onKeyDown={preventInvalidNumberKey}
             onChange={(event) =>
               onChange(
                 "latePenaltyAmount",

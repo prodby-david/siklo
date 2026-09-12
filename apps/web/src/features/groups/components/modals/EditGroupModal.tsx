@@ -20,7 +20,6 @@ export default function EditGroupModal({
   onClose,
   groupId,
   initialData,
-  onSuccess,
 }: EditGroupModalProps) {
   const {
     values,
@@ -29,7 +28,7 @@ export default function EditGroupModal({
     handleSubmit,
     isSubmitting,
     errorMessage,
-  } = useEditGroupForm({ groupId, initialData, onClose, onSuccess });
+  } = useEditGroupForm({ groupId, initialData, onClose });
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

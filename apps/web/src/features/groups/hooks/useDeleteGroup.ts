@@ -6,8 +6,11 @@ export default function useDeleteGroup() {
 
   return useMutation({
     mutationFn: deleteGroup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+        queryClient.invalidateQueries({ queryKey: ["nearest-due"] }),
+      ]);
     },
   });
 }

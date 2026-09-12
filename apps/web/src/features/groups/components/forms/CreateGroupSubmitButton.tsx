@@ -1,8 +1,5 @@
 import { Loader2, Plus } from "lucide-react";
-
-interface CreateGroupSubmitButtonProps {
-  isPending: boolean;
-}
+import type { CreateGroupSubmitButtonProps } from "../../types/create-group-field.types";
 
 export default function CreateGroupSubmitButton({
   isPending,

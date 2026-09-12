@@ -6,8 +6,11 @@ export default function useJoinGroup() {
 
   return useMutation({
     mutationFn: joinGroup,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+        queryClient.invalidateQueries({ queryKey: ["nearest-due"] }),
+      ]);
     },
   });
 }

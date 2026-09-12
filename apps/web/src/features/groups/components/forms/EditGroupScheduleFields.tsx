@@ -1,14 +1,7 @@
 import { BILLING_CYCLE_LABELS } from "@siklo/shared-schemas";
-import type { BillingCycle, PayoutSequence } from "@siklo/shared-schemas";
+import type { BillingCycle } from "@siklo/shared-schemas";
+import type { EditGroupScheduleFieldsProps } from "../../types/edit-group.types";
 import PayoutSequenceSelector from "./PayoutSequenceSelector";
-
-interface EditGroupScheduleFieldsProps {
-  billingCycle: BillingCycle;
-  payoutSequence: PayoutSequence;
-  isSubmitting: boolean;
-  onBillingCycleChange: (cycle: BillingCycle) => void;
-  onPayoutSequenceChange: (sequence: PayoutSequence) => void;
-}
 
 export default function EditGroupScheduleFields({
   billingCycle,

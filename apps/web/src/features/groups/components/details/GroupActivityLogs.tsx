@@ -2,7 +2,6 @@
 
 import { formatDateTime12h } from "@/shared/utils/formatDate";
 import useGetGroupActivities from "@/features/groups/hooks/useGetGroupActivities";
-import useGroupSocket from "@/features/groups/hooks/useGroupSocket";
 import { useMemo } from "react";
 import { Activity, Loader2, Megaphone, Clock } from "lucide-react";
 import {
@@ -15,9 +14,9 @@ export default function GroupActivityLogs({
   group,
   memberships,
   isCycleDone = false,
+  isConnected = false,
 }: GroupActivityLogsProps) {
   const { data: activities = [], isLoading } = useGetGroupActivities(group.id);
-  const { isConnected } = useGroupSocket(group.id);
 
   const organizer = memberships?.find(
     (m) => m.userId === group.organizerId,

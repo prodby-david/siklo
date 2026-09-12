@@ -1,19 +1,8 @@
-import type {
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
 import { PhilippinePeso } from "lucide-react";
 import Input from "@/shared/components/inputs/Input";
 import type { CreateGroupData } from "../../validator/create-group.validator";
+import type { OrganizerFeeFieldProps } from "../../types/create-group-field.types";
 import getBoundedInteger from "../../utils/getBoundedInteger";
-
-interface OrganizerFeeFieldProps {
-  register: UseFormRegister<CreateGroupData>;
-  setValue: UseFormSetValue<CreateGroupData>;
-  errors: FieldErrors<CreateGroupData>;
-  isPending: boolean;
-}
 
 export default function OrganizerFeeField({
   register,
@@ -26,16 +15,10 @@ export default function OrganizerFeeField({
       label="organizerFeeAmount"
       labelText="One-Time Organizer Fee"
       placeholder="e.g. 100"
-      type="number"
-      min={0}
-      max={1000}
+      type="text"
+      inputMode="numeric"
       disabled={isPending}
       {...register("organizerFeeAmount", { valueAsNumber: true })}
-      onKeyDown={(event) => {
-        if ([".", ",", "-", "e", "E", "+"].includes(event.key)) {
-          event.preventDefault();
-        }
-      }}
       onChange={(event) => {
         const value = getBoundedInteger(event.target.value, 0, 1000);
         setValue(

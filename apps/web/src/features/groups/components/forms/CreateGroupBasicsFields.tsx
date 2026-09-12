@@ -1,9 +1,3 @@
-import type { KeyboardEvent } from "react";
-import type {
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
 import {
   AlertTriangle,
   AlignLeft,
@@ -15,16 +9,8 @@ import {
 } from "lucide-react";
 import Input from "@/shared/components/inputs/Input";
 import type { CreateGroupData } from "../../validator/create-group.validator";
+import type { CreateGroupBasicsFieldsProps } from "../../types/create-group-field.types";
 import getBoundedInteger from "../../utils/getBoundedInteger";
-
-interface CreateGroupBasicsFieldsProps {
-  register: UseFormRegister<CreateGroupData>;
-  setValue: UseFormSetValue<CreateGroupData>;
-  errors: FieldErrors<CreateGroupData>;
-  isPending: boolean;
-}
-
-const BLOCKED_NUMBER_KEYS = [".", ",", "-", "e", "E", "+"];
 
 export default function CreateGroupBasicsFields({
   register,
@@ -32,12 +18,6 @@ export default function CreateGroupBasicsFields({
   errors,
   isPending,
 }: CreateGroupBasicsFieldsProps) {
-  const preventInvalidNumberKey = (
-    event: KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (BLOCKED_NUMBER_KEYS.includes(event.key)) event.preventDefault();
-  };
-
   return (
     <div className="space-y-4">
       <Input
@@ -64,12 +44,10 @@ export default function CreateGroupBasicsFields({
         <Input
           label="contributionAmount"
           labelText="Contribution Amount"
-          type="number"
-          min={50}
-          max={10000}
+          type="text"
+          inputMode="numeric"
           disabled={isPending}
           {...register("contributionAmount", { valueAsNumber: true })}
-          onKeyDown={preventInvalidNumberKey}
           onChange={(event) => {
             const value = getBoundedInteger(event.target.value, 0, 10000);
             setValue(
@@ -85,12 +63,10 @@ export default function CreateGroupBasicsFields({
         <Input
           label="maxMembers"
           labelText="Member Capacity"
-          type="number"
-          min={3}
-          max={50}
+          type="text"
+          inputMode="numeric"
           disabled={isPending}
           {...register("maxMembers", { valueAsNumber: true })}
-          onKeyDown={preventInvalidNumberKey}
           onChange={(event) => {
             const value = getBoundedInteger(event.target.value, 0, 50);
             setValue("maxMembers", value as CreateGroupData["maxMembers"], {
@@ -104,12 +80,10 @@ export default function CreateGroupBasicsFields({
         <Input
           label="cycleDuration"
           labelText="Rotation Cycles"
-          type="number"
-          min={1}
-          max={10}
+          type="text"
+          inputMode="numeric"
           disabled={isPending}
           {...register("cycleDuration", { valueAsNumber: true })}
-          onKeyDown={preventInvalidNumberKey}
           onChange={(event) => {
             const value = getBoundedInteger(event.target.value, 1, 10, 1);
             setValue("cycleDuration", value || 1, { shouldValidate: true });
@@ -123,12 +97,10 @@ export default function CreateGroupBasicsFields({
         <Input
           label="gracePeriodDays"
           labelText="Grace Period"
-          type="number"
-          min={0}
-          max={7}
+          type="text"
+          inputMode="numeric"
           disabled={isPending}
           {...register("gracePeriodDays", { valueAsNumber: true })}
-          onKeyDown={preventInvalidNumberKey}
           onChange={(event) => {
             const value = getBoundedInteger(event.target.value, 0, 7, 0);
             setValue("gracePeriodDays", value || 0, { shouldValidate: true });
@@ -140,13 +112,10 @@ export default function CreateGroupBasicsFields({
         <Input
           label="latePenaltyAmount"
           labelText="Daily Late Penalty"
-          type="number"
-          step={1}
-          min={0}
-          max={10}
+          type="text"
+          inputMode="numeric"
           disabled={isPending}
           {...register("latePenaltyAmount", { valueAsNumber: true })}
-          onKeyDown={preventInvalidNumberKey}
           onChange={(event) => {
             const value = getBoundedInteger(event.target.value, 0, 10, 0);
             setValue("latePenaltyAmount", value || 0, {

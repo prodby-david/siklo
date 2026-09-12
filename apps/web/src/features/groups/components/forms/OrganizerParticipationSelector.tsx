@@ -1,22 +1,8 @@
-import type {
-  Control,
-  FieldErrors,
-  UseFormRegister,
-  UseFormSetValue,
-} from "react-hook-form";
 import { useWatch } from "react-hook-form";
 import { Crown } from "lucide-react";
-import type { CreateGroupData } from "../../validator/create-group.validator";
+import type { OrganizerParticipationSelectorProps } from "../../types/create-group-field.types";
 import OrganizerParticipationOption from "./OrganizerParticipationOption";
 import OrganizerFeeField from "./OrganizerFeeField";
-
-interface OrganizerParticipationSelectorProps {
-  control: Control<CreateGroupData>;
-  isPending: boolean;
-  register: UseFormRegister<CreateGroupData>;
-  setValue: UseFormSetValue<CreateGroupData>;
-  errors: FieldErrors<CreateGroupData>;
-}
 
 export default function OrganizerParticipationSelector({
   control,

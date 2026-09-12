@@ -17,7 +17,7 @@ export const createGroupSchema = createGroupBaseSchema
       .number({ message: "Member capacity is required" })
       .int("Member capacity must be a whole number")
       .min(3, "Member capacity must be at least 3 members")
-      .max(15, "Member capacity cannot exceed 15 members"),
+      .max(50, "Member capacity cannot exceed 50 members"),
     cycleDuration: z
       .number({ message: "Cycle duration is required" })
       .int("Cycle duration must be a whole number")

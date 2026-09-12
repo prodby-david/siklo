@@ -7,8 +7,8 @@ export function useSendAnnouncement(groupId: string) {
 
   return useMutation({
     mutationFn: (message: string) => sendAnnouncement(groupId, message),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: [ACTIVITY_QUERY_KEY, groupId],
       });
     },

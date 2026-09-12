@@ -7,16 +7,13 @@ export function useSelectSlot(groupId: string) {
 
   return useMutation({
     mutationFn: (position: number) => selectSlot(groupId, position),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [ACTIVITY_QUERY_KEY, groupId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["groups", groupId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["group", groupId],
-      });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [ACTIVITY_QUERY_KEY, groupId],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+      ]);
     },
   });
 }

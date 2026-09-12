@@ -7,10 +7,11 @@ import axios from "axios";
 import useGetGroupById from "./useGetGroupById";
 import useStartGroupCycle from "./useStartGroupCycle";
 import useDeleteGroup from "./useDeleteGroup";
+import useGroupSocket from "./useGroupSocket";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import { calculateGroupTurnState } from "../utils/groupTurnCalculator";
 import { calculateCycleDetails } from "../utils/groupCalculations";
-import { GroupRound } from "../types/group.types";
+import type { GroupRound, Membership, PaymentRecord } from "../types/group.types";
 
 export function useGroupPageController() {
   const params = useParams();
@@ -23,8 +24,11 @@ export function useGroupPageController() {
         ? rawGroupId[0]
         : "";
 
-  const { data, isLoading, refetch } = useGetGroupById(groupId);
+  const { data, isLoading } = useGetGroupById(groupId);
+  const { isConnected } = useGroupSocket(data?.id ?? "");
   const { data: currentUser } = useGetCurrentName();
+  const currentUserId = currentUser?.id;
+
   const { mutateAsync: startCycle, isPending: isStarting } =
     useStartGroupCycle();
   const { mutateAsync: deleteGroup, isPending: isDeleting } = useDeleteGroup();
@@ -33,7 +37,7 @@ export function useGroupPageController() {
 
   const hasStarted = Boolean(data?.startDate);
   const isOrganizer = Boolean(
-    currentUser?.id && data?.organizerId && currentUser.id === data.organizerId,
+    currentUserId && data?.organizerId && currentUserId === data.organizerId,
   );
   const isMembersFull =
     (data?.memberships?.length ?? 0) >= (data?.maxMembers ?? 0);
@@ -66,12 +70,12 @@ export function useGroupPageController() {
 
     const activeKey = `${state.currentCycle}-${state.currentTurn}`;
     const currentMemberPaid =
-      currentUser?.id && !state.isCycleDone
-        ? Boolean(state.paidUserIdsByTurn[activeKey]?.has(currentUser.id))
+      currentUserId && !state.isCycleDone
+        ? Boolean(state.paidUserIdsByTurn[activeKey]?.has(currentUserId))
         : false;
     const currentMemberPending =
-      currentUser?.id && !state.isCycleDone
-        ? Boolean(state.pendingUserIdsByTurn[activeKey]?.has(currentUser.id))
+      currentUserId && !state.isCycleDone
+        ? Boolean(state.pendingUserIdsByTurn[activeKey]?.has(currentUserId))
         : false;
 
     return {
@@ -81,7 +85,7 @@ export function useGroupPageController() {
       isCurrentUserPaid: currentMemberPaid,
       isCurrentUserPending: currentMemberPending,
     };
-  }, [data, hasStarted, currentUser]);
+  }, [data, hasStarted, currentUserId]);
 
   const handleStartCycle = async () => {
     if (!data?.id) return;
@@ -153,10 +157,33 @@ export function useGroupPageController() {
     [data?.rounds, currentCycle, currentTurn],
   );
 
+  const currentMembership = useMemo(
+    () =>
+      data?.memberships?.find(
+        (m: Membership) => m.userId === currentUserId,
+      ),
+    [data?.memberships, currentUserId],
+  );
+
+  const hasAlreadyPaidOrganizerFee = useMemo(
+    () =>
+      Boolean(
+        currentUserId &&
+          (data?.payments || []).some(
+            (p: PaymentRecord) =>
+              p.userId === currentUserId &&
+              p.status === "VERIFIED" &&
+              (p.organizerFeeAmount || 0) > 0,
+          ),
+      ),
+    [currentUserId, data?.payments],
+  );
+
   return {
     data,
     isLoading,
     copied,
+    isConnected,
     handleCopyInviteCode,
     timeline,
     isOrganizer,
@@ -166,13 +193,14 @@ export function useGroupPageController() {
     currentCycle,
     currentTurn,
     currentRoundId,
+    currentMembership,
+    hasAlreadyPaidOrganizerFee,
     isCurrentUserPaid,
     isCurrentUserPending,
     handleStartCycle,
     isStarting,
     handleDeleteGroup,
     isDeleting,
-    refetch,
-    currentUserId: currentUser?.id,
+    currentUserId,
   };
 }

@@ -26,4 +26,5 @@ export interface GroupActivityLogsProps {
   group: Group;
   memberships?: Membership[];
   isCycleDone?: boolean;
+  isConnected?: boolean;
 }

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import type { FormEvent } from "react";
 import type { BillingCycle, PayoutSequence } from "@siklo/shared-schemas";
 import { updateGroup } from "../api/updateGroup";
+import { ACTIVITY_QUERY_KEY } from "../constants/activity.constants";
 import type {
   EditGroupFormField,
   EditGroupFormValues,
@@ -21,15 +23,15 @@ const DEFAULT_PAYMENT_METHODS: PaymentMethodKey[] = [
 
 type UseEditGroupFormOptions = Pick<
   EditGroupModalProps,
-  "groupId" | "initialData" | "onClose" | "onSuccess"
+  "groupId" | "initialData" | "onClose"
 >;
 
 export default function useEditGroupForm({
   groupId,
   initialData,
   onClose,
-  onSuccess,
 }: UseEditGroupFormOptions) {
+  const queryClient = useQueryClient();
   const [values, setValues] = useState<EditGroupFormValues>({
     name: initialData.name || "",
     description: initialData.description || "",
@@ -111,7 +113,13 @@ export default function useEditGroupForm({
         payoutSequence: values.payoutSequence,
       });
 
-      onSuccess?.();
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+        queryClient.invalidateQueries({
+          queryKey: [ACTIVITY_QUERY_KEY, groupId],
+        }),
+        queryClient.invalidateQueries({ queryKey: ["nearest-due"] }),
+      ]);
       onClose();
     } catch (error: unknown) {
       const responseMessage =

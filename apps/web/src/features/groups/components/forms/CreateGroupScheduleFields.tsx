@@ -1,19 +1,6 @@
-import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { BILLING_CYCLE_LABELS } from "@siklo/shared-schemas";
-import type { CreateGroupData } from "../../validator/create-group.validator";
+import type { CreateGroupScheduleFieldsProps } from "../../types/create-group-field.types";
 import PayoutSequenceSelector from "./PayoutSequenceSelector";
-
-interface CreateGroupScheduleFieldsProps {
-  register: UseFormRegister<CreateGroupData>;
-  errors: FieldErrors<CreateGroupData>;
-  selectedPayoutSequence: string;
-  selectedBillingCycle: string;
-  isPending: boolean;
-  onSelectPayoutSequence: (
-    sequence: "RANDOM" | "MANUAL" | "FREECHOOSING",
-  ) => void;
-  onSelectBillingCycle: (cycle: string) => void;
-}
 
 export default function CreateGroupScheduleFields({
   register,

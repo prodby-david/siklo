@@ -1,34 +1,21 @@
 "use client";
 
-import { useState, FormEvent } from "react";
 import { Megaphone, X, Loader2, Send } from "lucide-react";
-import { useSendAnnouncement } from "../../hooks/useSendAnnouncement";
-import { toast } from "sonner";
-import { getApiErrorMessage } from "@/shared/utils/error.helper";
-import { GroupAnnouncementDialogProps } from "@/features/groups/types/group.types";
+import type { GroupAnnouncementDialogProps } from "@/features/groups/types/group.types";
 import Loader from "@/shared/components/loader/Loader";
+import { useGroupAnnouncement } from "../../hooks/useGroupAnnouncement";
 
 export default function GroupAnnouncementDialog({
   groupId,
 }: GroupAnnouncementDialogProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const { mutateAsync: sendAnnouncement, isPending } =
-    useSendAnnouncement(groupId);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) return;
-
-    try {
-      await sendAnnouncement(message.trim());
-      toast.success("Announcement posted to group!");
-      setMessage("");
-      setIsOpen(false);
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, "Failed to send announcement"));
-    }
-  };
+  const {
+    isOpen,
+    setIsOpen,
+    message,
+    setMessage,
+    isPending,
+    handleSubmit,
+  } = useGroupAnnouncement(groupId);
 
   return (
     <>

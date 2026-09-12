@@ -1,12 +1,5 @@
 import { Check } from "lucide-react";
-
-interface OrganizerParticipationOptionProps {
-  title: string;
-  description: string;
-  isSelected: boolean;
-  isPending: boolean;
-  onSelect: () => void;
-}
+import type { OrganizerParticipationOptionProps } from "../../types/create-group-field.types";
 
 export default function OrganizerParticipationOption({
   title,

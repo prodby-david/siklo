@@ -1,15 +1,7 @@
 import { Check, CreditCard } from "lucide-react";
-import type { PaymentAccountDetailsDTO } from "@siklo/shared-schemas";
 import { PAYMENT_METHOD_OPTIONS } from "../../constants/group.constants";
-import type { PaymentMethodKey } from "../../types/group.types";
+import type { GroupPaymentMethodSelectorProps } from "../../types/create-group-field.types";
 import getPaymentMethodDetails from "../../utils/getPaymentMethodDetails";
-
-interface GroupPaymentMethodSelectorProps {
-  selectedMethods: PaymentMethodKey[];
-  organizerAccounts?: PaymentAccountDetailsDTO;
-  isPending: boolean;
-  onToggleMethod: (method: PaymentMethodKey) => void;
-}
 
 export default function GroupPaymentMethodSelector({
   selectedMethods,

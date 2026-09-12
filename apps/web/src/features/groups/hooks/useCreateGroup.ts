@@ -7,8 +7,11 @@ export default function useCreateGroup() {
 
   return useMutation({
     mutationFn: (data: CreateGroupData) => createGroup(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+        queryClient.invalidateQueries({ queryKey: ["nearest-due"] }),
+      ]);
     },
   });
 }

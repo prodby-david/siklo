@@ -1,14 +1,6 @@
 import { Check, CreditCard } from "lucide-react";
 import { PAYMENT_METHOD_OPTIONS } from "../../constants/group.constants";
-import type { PaymentMethodKey } from "../../types/group.types";
-
-interface EditGroupPaymentFieldsProps {
-  allowedMethods: PaymentMethodKey[];
-  paymentDetails: string;
-  isSubmitting: boolean;
-  onToggleMethod: (method: PaymentMethodKey) => void;
-  onPaymentDetailsChange: (value: string) => void;
-}
+import type { EditGroupPaymentFieldsProps } from "../../types/edit-group.types";
 
 export default function EditGroupPaymentFields({
   allowedMethods,
