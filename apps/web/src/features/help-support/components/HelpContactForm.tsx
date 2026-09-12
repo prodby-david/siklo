@@ -1,32 +1,23 @@
-import { useState } from "react";
+"use client";
+
 import { Send, CheckCircle2 } from "lucide-react";
-import { toast } from "sonner";
 import { FormInput as Input } from "@/shared/components/inputs";
+import { useHelpContactForm } from "../hooks/useHelpContactForm";
 
 export default function HelpContactForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [subject, setSubject] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !subject || !message) {
-      toast.error("Please fill in all fields.");
-      return;
-    }
-    setSubmitted(true);
-    toast.success("Support request submitted successfully!");
-  };
-
-  const handleReset = () => {
-    setName("");
-    setEmail("");
-    setSubject("");
-    setMessage("");
-    setSubmitted(false);
-  };
+  const {
+    name,
+    setName,
+    email,
+    setEmail,
+    subject,
+    setSubject,
+    message,
+    setMessage,
+    submitted,
+    handleSubmit,
+    handleReset,
+  } = useHelpContactForm();
 
   return (
     <div className="border border-neutral-border rounded-2xl bg-background p-6 sm:p-8 shadow-sm relative z-10">

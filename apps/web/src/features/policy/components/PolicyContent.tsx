@@ -1,12 +1,5 @@
 import { Search } from "lucide-react";
-import { PolicySection, PolicyTab } from "../types/policy.types";
-
-type PolicyContentProps = {
-  activeTab: PolicyTab;
-  sections: PolicySection[];
-  searchQuery: string;
-  onClearSearch: () => void;
-};
+import type { PolicyContentProps } from "../types/policy.types";
 
 function HighlightedText({ text, query }: { text: string; query: string }) {
   if (!query) return <>{text}</>;

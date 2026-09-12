@@ -1,11 +1,6 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
-
-interface BadgeProps {
-  text: string;
-  linkText?: string;
-  href?: string;
-}
+import type { BadgeProps } from "../types/hero.types";
 
 export const Badge = ({ text, linkText, href }: BadgeProps) => {
   const content = (
@@ -34,4 +29,5 @@ export const Badge = ({ text, linkText, href }: BadgeProps) => {
 
   return content;
 };
+
 export default Badge;

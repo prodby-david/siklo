@@ -1,15 +1,5 @@
 import React from "react";
-
-interface StatsCardProps {
-  title: string;
-  value: string;
-  description?: string;
-  trend?: {
-    value: string;
-    positive: boolean;
-  };
-  className?: string;
-}
+import type { StatsCardProps } from "../types/hero.types";
 
 export const StatsCard = ({
   title,

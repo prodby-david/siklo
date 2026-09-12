@@ -1,9 +1,5 @@
 import { Search } from "lucide-react";
-
-type HelpToolbarProps = {
-  searchQuery: string;
-  onSearchChange: (value: string) => void;
-};
+import type { HelpToolbarProps } from "../types/help.types";
 
 export default function HelpToolbar({
   searchQuery,

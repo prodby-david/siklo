@@ -1,10 +1,6 @@
 import React from "react";
 import { CheckCircle2 } from "lucide-react";
-import { AboutItem } from "../types/about.types";
-
-interface AboutCardProps {
-  item: AboutItem;
-}
+import type { AboutCardProps } from "../types/about.types";
 
 export default function AboutCard({ item }: AboutCardProps) {
   return (

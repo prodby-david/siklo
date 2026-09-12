@@ -4,9 +4,9 @@ import {
   CreditCard,
   UserCheck,
   Zap,
-  LucideIcon,
+  type LucideIcon,
 } from "lucide-react";
-import { HelpCategory } from "../types/help.types";
+import type { HelpCategorySelectorProps } from "../types/help.types";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   ShieldCheck,
@@ -14,12 +14,6 @@ const ICON_MAP: Record<string, LucideIcon> = {
   UserCheck,
   Zap,
   HelpCircle,
-};
-
-type HelpCategorySelectorProps = {
-  categories: HelpCategory[];
-  activeCategoryId: string;
-  onSelectCategory: (id: string) => void;
 };
 
 export default function HelpCategorySelector({

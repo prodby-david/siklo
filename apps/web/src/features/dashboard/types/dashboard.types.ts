@@ -1,3 +1,5 @@
+import type { GroupFilterStatus } from "@/features/groups/types/group.types";
+
 export interface DashboardWelcomeBannerProps {
   firstName: string;
 }
@@ -88,4 +90,14 @@ export interface SavingsFlowCardProps {
 export interface DashboardActivityFeedProps {
   activities: DashboardActivityItem[];
   isLoading?: boolean;
+}
+
+export interface CycleCardsProps {
+  statusFilter?: string;
+}
+
+export interface EmptyGroupStateProps {
+  filter?: GroupFilterStatus;
+  title?: string;
+  description?: string;
 }

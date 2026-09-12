@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import DashboardSidebar from "@/features/dashboard/components/sidebar/DashboardSidebar";
 import DashboardMobileHeader from "@/features/dashboard/components/sidebar/DashboardMobileHeader";
 import { SidebarProvider } from "@/features/dashboard/components/sidebar/SidebarContext";
+import { useNotificationSocket } from "@/features/notifications/hooks/useNotificationSocket";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,6 +29,8 @@ export default function DashboardClientLayout({
 }: {
   children: React.ReactNode;
 }) {
+  useNotificationSocket();
+
   return (
     <SidebarProvider>
       <DashboardLayoutContent>{children}</DashboardLayoutContent>

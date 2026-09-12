@@ -1,14 +1,11 @@
 "use client";
 
 import useGetGroup from "../../../groups/hooks/useGetGroup";
-import { Group, ExtendedGroup } from "@/features/groups/types/group.types";
+import type { Group, ExtendedGroup } from "@/features/groups/types/group.types";
+import type { CycleCardsProps } from "../../types/dashboard.types";
 import EmptyGroupState from "../EmptyGroupState";
 import Loader from "@/shared/components/loader/Loader";
 import CycleCard from "./CycleCard";
-
-interface CycleCardsProps {
-  statusFilter?: string;
-}
 
 export default function CycleCards({ statusFilter = "ALL" }: CycleCardsProps) {
   const queryParam = statusFilter === "ALL" ? undefined : statusFilter;

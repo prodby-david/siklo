@@ -39,3 +39,15 @@ export type PaluwaganTermItem = {
   description: string;
   example: string;
 };
+
+export interface AboutCardProps {
+  item: AboutItem;
+}
+
+export interface CoreValueCardItemProps {
+  item: CoreValueItem;
+}
+
+export interface TrustCardItemProps {
+  item: TrustItem;
+}

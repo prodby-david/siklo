@@ -14,8 +14,13 @@ import {
   CalendarCheck,
   Wallet,
   MessageSquare,
+  Scale,
+  UserCheck,
+  FileCheck,
+  History,
+  Lock,
 } from "lucide-react";
-import { ActivityItem, ComparisonItem } from "../types/hero.types";
+import type { ActivityItem, ComparisonItem, TrackerItem } from "../types/hero.types";
 
 export const mockActivities: ActivityItem[] = [
   {
@@ -118,5 +123,56 @@ export const SIKLO_ADVANTAGES: ComparisonItem[] = [
   {
     text: "Built-in activity logs & instant activity notifications",
     icon: <MessageSquare className="h-4 w-4 text-brand-accent shrink-0 mt-0.5" />,
+  },
+];
+
+export const TRACKER_ITEMS: TrackerItem[] = [
+  {
+    id: "shared-transparency",
+    icon: Eye,
+    label: "Shared Transparency",
+    value: () => "100% Open Ledger",
+    accent: "text-brand-accent",
+    startAngle: 0,
+  },
+  {
+    id: "fair-rotation",
+    icon: Scale,
+    label: "Fair Rotation",
+    value: () => "Equal Turn Order",
+    accent: "text-brand-accent",
+    startAngle: 60,
+  },
+  {
+    id: "trusted-members",
+    icon: UserCheck,
+    label: "Trusted Members",
+    value: (stats) => `${stats.activeMembersCount} in Circle`,
+    accent: "text-brand-accent",
+    startAngle: 120,
+  },
+  {
+    id: "payment-proof",
+    icon: FileCheck,
+    label: "Payment Proof",
+    value: () => "Receipt Verified",
+    accent: "text-brand-accent",
+    startAngle: 180,
+  },
+  {
+    id: "audit-trail",
+    icon: History,
+    label: "Audit Trail",
+    value: () => "Real-Time Logs",
+    accent: "text-brand-accent",
+    startAngle: 240,
+  },
+  {
+    id: "private-circle",
+    icon: Lock,
+    label: "Private Circle",
+    value: () => "Invite-Only Access",
+    accent: "text-brand-accent",
+    startAngle: 300,
   },
 ];

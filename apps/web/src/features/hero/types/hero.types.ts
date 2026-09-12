@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
 
 export interface Member {
   id: string;
@@ -63,4 +64,44 @@ export interface ShowcaseTurnCardProps {
 
 export interface ShowcaseMemberDetailProps {
   member: Member;
+}
+
+export interface BadgeProps {
+  text: string;
+  linkText?: string;
+  href?: string;
+}
+
+export interface FeaturePillProps {
+  label: string;
+}
+
+export interface StatsCardProps {
+  title: string;
+  value: string;
+  description?: string;
+  trend?: {
+    value: string;
+    positive: boolean;
+  };
+  className?: string;
+}
+
+export interface TrackerItem {
+  id: string;
+  icon: LucideIcon;
+  label: string;
+  value: (stats: CycleStats) => string;
+  accent: string;
+  startAngle: number;
+}
+
+export interface FloatingTrackerVisualizerProps {
+  members?: Member[];
+  stats?: CycleStats;
+}
+
+export interface CycleVisualizerProps {
+  members?: Member[];
+  stats?: CycleStats;
 }

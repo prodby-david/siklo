@@ -18,3 +18,10 @@ export interface SimulationState {
   config: SimulationConfig;
   members: SimulatorMember[];
 }
+
+export interface SimulatorDashboardProps {
+  state: SimulationState;
+  onNext: () => void;
+  onReset: () => void;
+  onBack: () => void;
+}

@@ -1,18 +1,9 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import type { AuthInfoPanelProps } from "../types/auth-info.types";
 
-export interface FeatureHighlight {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}
-
-interface AuthInfoPanelProps {
-  title: string;
-  subtitle: string;
-  highlights: FeatureHighlight[];
-}
+export type { FeatureHighlight, AuthInfoPanelProps } from "../types/auth-info.types";
 
 export default function AuthInfoPanel({
   title,
@@ -21,7 +12,6 @@ export default function AuthInfoPanel({
 }: AuthInfoPanelProps) {
   return (
     <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-accent/10 via-brand-accent/5 to-transparent border-r border-brand-accent/15 p-8 flex-col justify-between relative overflow-hidden">
-
       <div className="flex flex-col gap-6 relative z-10">
         <Link
           href="/"

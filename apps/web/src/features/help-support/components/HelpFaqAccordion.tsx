@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { FaqItem } from "../types/help.types";
-
-type HelpFaqAccordionProps = {
-  items: FaqItem[];
-};
+import type { HelpFaqAccordionProps } from "../types/help.types";
 
 export default function HelpFaqAccordion({ items }: HelpFaqAccordionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

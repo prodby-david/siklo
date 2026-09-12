@@ -1,26 +1,17 @@
 "use client";
 
-import { api } from "@/shared/lib/axios";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import DashboardClientLayout from "@/features/dashboard/layout/DashboardClientLayout";
+import { useAuthGuard } from "@/features/auth/shared/hooks/useAuthGuard";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const { isAuthenticated } = useAuthGuard();
 
-  useEffect(() => {
-    api
-      .get("/users/me")
-      .then(() => setChecked(true))
-      .catch(() => router.push("/signin"));
-  }, [router]);
-
-  if (!checked) return null;
+  if (!isAuthenticated) return null;
 
   return <DashboardClientLayout>{children}</DashboardClientLayout>;
 }

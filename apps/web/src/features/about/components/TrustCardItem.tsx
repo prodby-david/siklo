@@ -1,10 +1,6 @@
 import React from "react";
-import { TrustItem } from "../types/about.types";
+import type { TrustCardItemProps } from "../types/about.types";
 import getIcon from "../utils/getIcon";
-
-interface TrustCardItemProps {
-  item: TrustItem;
-}
 
 export default function TrustCardItem({ item }: TrustCardItemProps) {
   return (

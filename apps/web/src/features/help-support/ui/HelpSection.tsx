@@ -1,26 +1,25 @@
 "use client";
 
-import { useState } from "react";
 import { ArrowLeft, Search } from "lucide-react";
-import { helpCategories } from "../constants/help.constants";
-import { searchHelpFaq } from "../utils/help.utils";
 import HelpCategorySelector from "../components/HelpCategorySelector";
 import HelpFaqAccordion from "../components/HelpFaqAccordion";
 import HelpContactForm from "../components/HelpContactForm";
 import HelpSupportSidebarCard from "../components/HelpSupportSidebarCard";
 import HelpToolbar from "../components/HelpToolbar";
+import { useHelpSection } from "../hooks/useHelpSection";
 
 export default function HelpSection() {
-  const [activeCategoryId, setActiveCategoryId] = useState("getting-started");
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const searchResults = searchHelpFaq(helpCategories, searchQuery);
-  const isSearching = searchQuery.length > 0;
-
-  const currentCategory = helpCategories.find(
-    (c) => c.id === activeCategoryId
-  );
-  const currentFaqs = currentCategory ? currentCategory.items : [];
+  const {
+    activeCategoryId,
+    setActiveCategoryId,
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching,
+    currentCategory,
+    currentFaqs,
+    helpCategories,
+  } = useHelpSection();
 
   return (
     <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">

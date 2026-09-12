@@ -1,11 +1,5 @@
 import { Share2 } from "lucide-react";
-
-type PolicyToolbarProps = {
-  searchQuery?: string;
-  onSearchChange?: (value: string) => void;
-  onPrint?: () => void;
-  onShare: () => void;
-};
+import type { PolicyToolbarProps } from "../types/policy.types";
 
 export default function PolicyToolbar({ onShare }: PolicyToolbarProps) {
   return (

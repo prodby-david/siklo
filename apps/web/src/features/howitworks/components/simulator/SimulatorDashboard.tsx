@@ -1,14 +1,7 @@
 import React, { useMemo } from "react";
-import { SimulationState } from "../../types/simulator.types";
+import type { SimulatorDashboardProps } from "../../types/simulator.types";
 import SimulatorMemberRow from "./SimulatorMemberRow";
 import { Play, RotateCcw, ArrowLeft, Landmark } from "lucide-react";
-
-interface SimulatorDashboardProps {
-  state: SimulationState;
-  onNext: () => void;
-  onReset: () => void;
-  onBack: () => void;
-}
 
 export default function SimulatorDashboard({
   state,

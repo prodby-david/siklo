@@ -1,9 +1,6 @@
 import React from "react";
 import { CheckCircle2 } from "lucide-react";
-
-interface FeaturePillProps {
-  label: string;
-}
+import type { FeaturePillProps } from "../types/hero.types";
 
 export const FeaturePill = ({ label }: FeaturePillProps) => {
   return (

@@ -1,12 +1,12 @@
+"use client";
+
 import { useState, useEffect, useRef } from "react";
 import { generateId, type UIMessage } from "ai";
 import { api } from "@/shared/lib/axios";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-
-export interface ChatFormInput {
-  message: string;
-}
+import type { ChatFormInput } from "../types/chat.types";
+import { getMessageText } from "../utils/chat.utils";
 
 export default function useChatUI() {
   const [messages, setMessages] = useState<UIMessage[]>([
@@ -89,15 +89,6 @@ export default function useChatUI() {
       }
       setStatus("error");
     }
-  };
-
-  const getMessageText = (message: UIMessage) => {
-    if (message.parts && Array.isArray(message.parts)) {
-      return message.parts
-        .map((part) => (part.type === "text" ? part.text : ""))
-        .join("");
-    }
-    return "";
   };
 
   return {

@@ -2,94 +2,20 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import {
-  Eye,
-  Scale,
-  UserCheck,
-  FileCheck,
-  History,
-  Lock,
-} from "lucide-react";
-import { Member, CycleStats } from "../types/hero.types";
+import type { FloatingTrackerVisualizerProps } from "../types/hero.types";
 import { defaultStats } from "@/shared/constants/sampleData";
-
-interface FloatingTrackerVisualizerProps {
-  members?: Member[];
-  stats?: CycleStats;
-}
-
-const getOvalKeyframes = (startAngleDeg: number, rx: number, ry: number) => {
-  const steps = 48;
-  const x: number[] = [];
-  const y: number[] = [];
-  for (let i = 0; i <= steps; i++) {
-    const angle = ((startAngleDeg + (i * 360) / steps) * Math.PI) / 180;
-    x.push(Math.round(Math.cos(angle) * rx * 10) / 10);
-    y.push(Math.round(Math.sin(angle) * ry * 10) / 10);
-  }
-  return { x, y };
-};
+import { TRACKER_ITEMS } from "../constants/hero.constants";
+import { getOvalKeyframes } from "../utils/hero.utils";
 
 export const FloatingTrackerVisualizer = ({
   stats = defaultStats,
 }: FloatingTrackerVisualizerProps) => {
-  const items = [
-    {
-      id: "shared-transparency",
-      icon: Eye,
-      label: "Shared Transparency",
-      value: "100% Open Ledger",
-      accent: "text-brand-accent",
-      startAngle: 0,
-    },
-    {
-      id: "fair-rotation",
-      icon: Scale,
-      label: "Fair Rotation",
-      value: "Equal Turn Order",
-      accent: "text-brand-accent",
-      startAngle: 60,
-    },
-    {
-      id: "trusted-members",
-      icon: UserCheck,
-      label: "Trusted Members",
-      value: `${stats.activeMembersCount} in Circle`,
-      accent: "text-brand-accent",
-      startAngle: 120,
-    },
-    {
-      id: "payment-proof",
-      icon: FileCheck,
-      label: "Payment Proof",
-      value: "Receipt Verified",
-      accent: "text-brand-accent",
-      startAngle: 180,
-    },
-    {
-      id: "audit-trail",
-      icon: History,
-      label: "Audit Trail",
-      value: "Real-Time Logs",
-      accent: "text-brand-accent",
-      startAngle: 240,
-    },
-    {
-      id: "private-circle",
-      icon: Lock,
-      label: "Private Circle",
-      value: "Invite-Only Access",
-      accent: "text-brand-accent",
-      startAngle: 300,
-    },
-  ];
-
   const rx = 460;
   const ry = 230;
 
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0 overflow-visible">
-      {items.map((item, index) => {
+      {TRACKER_ITEMS.map((item, index) => {
         const IconComponent = item.icon;
         const keyframes = getOvalKeyframes(item.startAngle, rx, ry);
         const entranceDelay = 0.6 + index * 0.15;
@@ -144,7 +70,7 @@ export const FloatingTrackerVisualizer = ({
                   {item.label}
                 </span>
                 <span className={`text-[11px] font-extrabold ${item.accent}`}>
-                  {item.value}
+                  {item.value(stats)}
                 </span>
               </div>
             </div>

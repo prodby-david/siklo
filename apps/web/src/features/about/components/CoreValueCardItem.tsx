@@ -4,9 +4,9 @@ import {
   Zap,
   Users,
   Lock,
-  LucideIcon,
+  type LucideIcon,
 } from "lucide-react";
-import { CoreValueItem } from "../types/about.types";
+import type { CoreValueCardItemProps } from "../types/about.types";
 
 const ICON_MAP: Record<string, LucideIcon> = {
   ShieldCheck,
@@ -14,10 +14,6 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Users,
   Lock,
 };
-
-interface CoreValueCardItemProps {
-  item: CoreValueItem;
-}
 
 export default function CoreValueCardItem({ item }: CoreValueCardItemProps) {
   const IconComponent = ICON_MAP[item.iconName] || ShieldCheck;
