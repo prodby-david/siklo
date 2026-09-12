@@ -1,16 +1,11 @@
 import { Loader2, UserPlus } from "lucide-react";
+import type { SubmitButtonProps } from "../../types/signup.types";
 
-type ButtonProps = {
-  isSubmitting: boolean;
-  text: string;
-  isRedirecting: boolean;
-};
-
-export default function Submit({
+export default function SubmitButton({
   isSubmitting,
   text,
   isRedirecting,
-}: ButtonProps) {
+}: SubmitButtonProps) {
   return (
     <button
       type="submit"

@@ -1,5 +1,6 @@
 import { Users, TrendingUp, ShieldCheck } from "lucide-react";
-import AuthInfoPanel, { FeatureHighlight } from "@/features/auth/shared/components/AuthInfoPanel";
+import AuthInfoPanel from "@/features/auth/shared/components/AuthInfoPanel";
+import type { FeatureHighlight } from "@/features/auth/shared/types/auth-info.types";
 
 const signupHighlights: FeatureHighlight[] = [
   {

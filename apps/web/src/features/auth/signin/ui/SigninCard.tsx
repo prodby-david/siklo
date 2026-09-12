@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import SigninForm from "../components/SigninForm";
-import { Coins, ShieldCheck, RefreshCw } from "lucide-react";
 import Image from "next/image";
-import AuthInfoPanel, { FeatureHighlight } from "@/features/auth/shared/components/AuthInfoPanel";
+import { Coins, ShieldCheck, RefreshCw } from "lucide-react";
+import SigninForm from "../components/SigninForm";
+import AuthInfoPanel from "@/features/auth/shared/components/AuthInfoPanel";
+import type { FeatureHighlight } from "@/features/auth/shared/types/auth-info.types";
 
 const signinHighlights: FeatureHighlight[] = [
   {

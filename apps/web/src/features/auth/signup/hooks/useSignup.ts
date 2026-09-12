@@ -1,13 +1,13 @@
 "use client";
 
 import axios from "axios";
-import { SignupFormData, signupSchema } from "../types/signup.types";
-import { api } from "@/shared/lib/axios";
-import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
+import { api } from "@/shared/lib/axios";
+import { type SignupFormData, signupSchema } from "../types/signup.types";
 
 export default function useSignup() {
   const {
@@ -22,6 +22,8 @@ export default function useSignup() {
   const router = useRouter();
 
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onSubmit = async (data: SignupFormData) => {
     const { confirmPassword, ...updatedData } = data;
@@ -54,5 +56,9 @@ export default function useSignup() {
     isSubmitting,
     handleSubmit: handleSubmit(onSubmit),
     isRedirecting,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
   };
 }

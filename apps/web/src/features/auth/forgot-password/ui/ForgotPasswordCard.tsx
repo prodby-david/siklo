@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { KeyRound, ShieldCheck, MailCheck } from "lucide-react";
 import ForgotPasswordForm from "../components/ForgotPasswordForm";
-import AuthInfoPanel, { FeatureHighlight } from "@/features/auth/shared/components/AuthInfoPanel";
+import AuthInfoPanel from "@/features/auth/shared/components/AuthInfoPanel";
+import type { FeatureHighlight } from "@/features/auth/shared/types/auth-info.types";
 
 const forgotPasswordHighlights: FeatureHighlight[] = [
   {
