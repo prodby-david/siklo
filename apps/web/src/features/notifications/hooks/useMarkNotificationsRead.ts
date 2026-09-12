@@ -9,15 +9,15 @@ export function useMarkNotificationsRead() {
 
   const markAsReadMutation = useMutation({
     mutationFn: markNotificationReadApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 
   const markAllAsReadMutation = useMutation({
     mutationFn: markAllNotificationsReadApi,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 

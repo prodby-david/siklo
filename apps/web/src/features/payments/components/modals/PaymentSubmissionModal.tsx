@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
+import { Controller } from "react-hook-form";
 import {
   Dialog,
   DialogContent,
@@ -11,25 +10,15 @@ import {
   DialogDescription,
 } from "@/shared/components/ui/dialog";
 import { CreditCard, Receipt } from "lucide-react";
-import { toast } from "sonner";
-import { submitPayment } from "../../api/submitPayment";
-import { paymentSubmissionSchema } from "../../validator/payment-submission.validator";
-import {
-  PaymentSubmissionInput,
-  PaymentSubmissionModalProps,
-} from "../../types/payment.types";
-import {
-  calculateEffectiveDeadline,
-  calculateDaysOverdue,
-  calculateLatePenalty,
-} from "../../utils/payment.helper";
-import { getApiErrorMessage } from "@/shared/utils/error.helper";
+import type { PaymentSubmissionModalProps } from "../../types/payment.types";
 import PaymentMethodSelector from "../elements/PaymentMethodSelector";
 import PaymentAccountDetailsCopyBox from "../elements/PaymentAccountDetailsCopyBox";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
 import PaymentSummaryBreakdown from "../elements/PaymentSummaryBreakdown";
 import PaymentErrorAlert from "../elements/PaymentErrorAlert";
 import Loader from "@/shared/components/loader/Loader";
+import useReceiptImageUpload from "../../hooks/useReceiptImageUpload";
+import usePaymentSubmissionForm from "../../hooks/usePaymentSubmissionForm";
 
 export default function PaymentSubmissionModal({
   isOpen,
@@ -44,109 +33,55 @@ export default function PaymentSubmissionModal({
   latePenaltyRate = 0,
   allowedMethods,
   organizerPaymentDetails,
-  onSuccess,
 }: PaymentSubmissionModalProps) {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [submissionError, setSubmissionError] = useState<string | null>(null);
-  const [currentTimestamp] = useState(() => Date.now());
-
-  const isFeeEligible =
-    !isOrganizer && !hasAlreadyPaidOrganizerFee && organizerFeeAmount > 0;
-  const [payOrganizerFeeNow, setPayOrganizerFeeNow] = useState(true);
-
-  const effectiveDeadline = calculateEffectiveDeadline(
-    targetDueDate,
-    gracePeriodDays,
-  );
-  const daysOverdue = calculateDaysOverdue(effectiveDeadline, currentTimestamp);
-  const lateFee = calculateLatePenalty(
-    baseAmount,
-    latePenaltyRate,
-    daysOverdue,
-  );
-  const effectiveOrganizerFee =
-    isFeeEligible && payOrganizerFeeNow ? organizerFeeAmount : 0;
-  const totalAmount = baseAmount + lateFee + effectiveOrganizerFee;
+  const {
+    previewImage,
+    errorMessage: uploadError,
+    handleImageUpload,
+    handleClearImage,
+  } = useReceiptImageUpload({
+    onImageSet: (base64Url) => setValue("proofUrl", base64Url, { shouldValidate: true }),
+    onImageClear: () => setValue("proofUrl", "", { shouldValidate: true }),
+  });
 
   const {
     register,
-    handleSubmit,
     control,
     setValue,
-    watch,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<PaymentSubmissionInput>({
-    resolver: zodResolver(paymentSubmissionSchema),
-    defaultValues: {
-      paymentMethod: allowedMethods[0] || "E_WALLET",
-      referenceNumber: "",
-      proofUrl: "",
+    errors,
+    isSubmitting,
+    submissionError,
+    selectedPaymentMethod,
+    isFeeEligible,
+    payOrganizerFeeNow,
+    setPayOrganizerFeeNow,
+    lateFee,
+    effectiveOrganizerFee,
+    totalAmount,
+    handleSubmit,
+  } = usePaymentSubmissionForm({
+    roundId,
+    baseAmount,
+    organizerFeeAmount,
+    isOrganizer,
+    hasAlreadyPaidOrganizerFee,
+    targetDueDate,
+    gracePeriodDays,
+    latePenaltyRate,
+    allowedMethods,
+    onSuccess: () => {
+      handleClearImage();
+      onClose();
     },
   });
 
-  const selectedPaymentMethod = watch("paymentMethod");
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      setSubmissionError("Receipt image size must be less than 5MB.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setPreviewImage(result);
-      setValue("proofUrl", result, { shouldValidate: true });
-      setSubmissionError(null);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleClearImage = () => {
-    setPreviewImage(null);
-    setValue("proofUrl", "", { shouldValidate: true });
-  };
-
-  const onSubmit = async (data: PaymentSubmissionInput) => {
-    setSubmissionError(null);
-    try {
-      await submitPayment({
-        roundId,
-        paymentMethod: data.paymentMethod,
-        referenceNumber:
-          data.paymentMethod === "CASH"
-            ? undefined
-            : data.referenceNumber?.trim() || undefined,
-        proofUrl: data.proofUrl || undefined,
-        includeOrganizerFee: isFeeEligible ? payOrganizerFeeNow : undefined,
-      });
-
-      toast.success(
-        "Payment proof submitted! Awaiting organizer verification.",
-      );
-      reset();
-      setPreviewImage(null);
-      if (onSuccess) onSuccess();
-      onClose();
-    } catch (err: unknown) {
-      const errorText = getApiErrorMessage(
-        err,
-        "Failed to submit payment. Please try again.",
-      );
-      setSubmissionError(errorText);
-      toast.error(errorText);
-    }
-  };
+  const activeError = submissionError || uploadError;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
         {isSubmitting && <Loader text="Submitting payment proof..." />}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">
               <CreditCard className="w-5 h-5 text-brand-accent" />
@@ -234,7 +169,7 @@ export default function PaymentSubmissionModal({
           <div className="space-y-1.5">
             <PaymentReceiptUploader
               previewImage={previewImage}
-              onImageChange={handleImageChange}
+              onImageChange={handleImageUpload}
               onClearImage={handleClearImage}
             />
             {errors.proofUrl && (
@@ -244,7 +179,7 @@ export default function PaymentSubmissionModal({
             )}
           </div>
 
-          <PaymentErrorAlert message={submissionError} />
+          <PaymentErrorAlert message={activeError} />
 
           <div className="flex gap-2 pt-2 border-t border-neutral-border/60">
             <button

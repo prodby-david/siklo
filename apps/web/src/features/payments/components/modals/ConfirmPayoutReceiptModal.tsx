@@ -22,18 +22,7 @@ import {
   ConfirmPayoutReceiptDTO,
 } from "@siklo/shared-schemas";
 import Loader from "@/shared/components/loader/Loader";
-
-interface ConfirmPayoutReceiptModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  groupId: string;
-  roundId: string;
-  cycleNumber: number;
-  turnNumber: number;
-  poolTotal: number;
-  onConfirmReceipt: (data: ConfirmPayoutReceiptDTO) => Promise<void>;
-  isConfirming?: boolean;
-}
+import type { ConfirmPayoutReceiptModalProps } from "../../types/payment.types";
 
 export default function ConfirmPayoutReceiptModal({
   isOpen,

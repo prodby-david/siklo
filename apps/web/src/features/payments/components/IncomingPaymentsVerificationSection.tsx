@@ -2,52 +2,31 @@
 
 import { useState } from "react";
 import { ShieldCheck, Eye, Users } from "lucide-react";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { verifyPayment } from "../api/verifyPayment";
+import useVerifyPayment from "../hooks/useVerifyPayment";
 import { usePendingPayments } from "../hooks/usePendingPayments";
-import {
+import type {
   IncomingPaymentsVerificationSectionProps,
   IncomingPaymentItem,
 } from "../types/payment.types";
-import { getApiErrorMessage } from "@/shared/utils/error.helper";
 import ReceiptImagePreviewModal from "./modals/ReceiptImagePreviewModal";
 import PaymentRejectionReasonModal from "./modals/PaymentRejectionReasonModal";
 
 export default function IncomingPaymentsVerificationSection({
   groupId,
   isOrganizer = true,
-  onRefreshGroup,
 }: IncomingPaymentsVerificationSectionProps) {
-  const queryClient = useQueryClient();
   const [selectedPayment, setSelectedPayment] =
     useState<IncomingPaymentItem | null>(null);
   const [rejectingPayment, setRejectingPayment] = useState<{
     id: string;
     name: string;
   } | null>(null);
-  const [processingId, setProcessingId] = useState<string | null>(null);
 
-  const { data: payments = [], refetch } = usePendingPayments(
-    groupId,
-    isOrganizer,
-  );
+  const { data: payments = [] } = usePendingPayments(groupId, isOrganizer);
+  const { verify, isVerifying } = useVerifyPayment();
 
   const handleApprove = async (paymentId: string) => {
-    setProcessingId(paymentId);
-    try {
-      await verifyPayment(paymentId);
-      toast.success("Payment verified and approved!");
-      await refetch();
-      await queryClient.invalidateQueries({ queryKey: ["groups"] });
-      await queryClient.invalidateQueries({ queryKey: ["group-activities"] });
-      await queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
-      if (onRefreshGroup) onRefreshGroup();
-    } catch (err: unknown) {
-      toast.error(getApiErrorMessage(err, "Failed to verify payment"));
-    } finally {
-      setProcessingId(null);
-    }
+    await verify(paymentId);
   };
 
   if (!isOrganizer || payments.length === 0) {
@@ -133,7 +112,7 @@ export default function IncomingPaymentsVerificationSection({
         payment={selectedPayment}
         onApprove={handleApprove}
         onReject={(paymentId, name) => setRejectingPayment({ id: paymentId, name })}
-        isProcessing={Boolean(processingId)}
+        isProcessing={isVerifying}
       />
 
       {rejectingPayment && (
@@ -142,13 +121,6 @@ export default function IncomingPaymentsVerificationSection({
           onClose={() => setRejectingPayment(null)}
           paymentId={rejectingPayment.id}
           memberName={rejectingPayment.name}
-          onSuccess={async () => {
-            await refetch();
-            await queryClient.invalidateQueries({ queryKey: ["groups"] });
-            await queryClient.invalidateQueries({ queryKey: ["group-activities"] });
-            await queryClient.invalidateQueries({ queryKey: ["dashboard-data"] });
-            if (onRefreshGroup) onRefreshGroup();
-          }}
         />
       )}
     </div>

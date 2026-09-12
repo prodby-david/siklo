@@ -51,7 +51,10 @@ export function usePaymentSettings() {
 
     try {
       await updatePaymentSettings(formData);
-      await queryClient.invalidateQueries({ queryKey: ["current-name"] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["current-name"] }),
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+      ]);
       setCustomData({});
       toast.success("Payment accounts updated successfully");
       onSuccess?.();

@@ -54,3 +54,11 @@ export interface ProfileEditSheetProps {
   errors: FieldErrors<UserProfileSettingDTO>;
   isSubmitting: boolean;
 }
+
+export interface NotificationPreferenceRowProps {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+  isEnabled: boolean;
+  onToggle: () => void;
+}

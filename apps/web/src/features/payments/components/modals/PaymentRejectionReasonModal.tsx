@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -11,14 +11,13 @@ import {
   DialogDescription,
 } from "@/shared/components/ui/dialog";
 import { XCircle } from "lucide-react";
-import { toast } from "sonner";
-import { rejectPayment } from "../../api/rejectPayment";
 import { rejectPaymentSchema, type RejectPaymentDTO } from "@siklo/shared-schemas";
-import { PaymentRejectionReasonModalProps } from "../../types/payment.types";
-import { getApiErrorMessage } from "@/shared/utils/error.helper";
+import type { PaymentRejectionReasonModalProps } from "../../types/payment.types";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
 import PaymentErrorAlert from "../elements/PaymentErrorAlert";
 import Loader from "@/shared/components/loader/Loader";
+import useRejectPayment from "../../hooks/useRejectPayment";
+import useReceiptImageUpload from "../../hooks/useReceiptImageUpload";
 
 export default function PaymentRejectionReasonModal({
   isOpen,
@@ -27,15 +26,15 @@ export default function PaymentRejectionReasonModal({
   memberName,
   onSuccess,
 }: PaymentRejectionReasonModalProps) {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { reject, isRejecting } = useRejectPayment();
 
   const {
     register,
     handleSubmit,
     setValue,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<RejectPaymentDTO>({
     resolver: zodResolver(rejectPaymentSchema),
     defaultValues: {
@@ -44,57 +43,39 @@ export default function PaymentRejectionReasonModal({
     },
   });
 
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage("Proof image size must be less than 5MB.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setPreviewImage(result);
-      setValue("rejectionProofUrl", result);
-      setErrorMessage(null);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleClearImage = () => {
-    setPreviewImage(null);
-    setValue("rejectionProofUrl", "");
-  };
+  const {
+    previewImage,
+    handleImageUpload,
+    handleClearImage,
+  } = useReceiptImageUpload({
+    onImageSet: (base64Url) => setValue("rejectionProofUrl", base64Url),
+    onImageClear: () => setValue("rejectionProofUrl", ""),
+  });
 
   const onSubmit = async (data: RejectPaymentDTO) => {
     setErrorMessage(null);
     try {
-      await rejectPayment(paymentId, {
-        rejectionReason: data.rejectionReason.trim(),
-        rejectionProofUrl: data.rejectionProofUrl?.trim() || undefined,
+      await reject({
+        paymentId,
+        data: {
+          rejectionReason: data.rejectionReason.trim(),
+          rejectionProofUrl: data.rejectionProofUrl?.trim() || undefined,
+        },
       });
 
-      toast.info("Payment rejected and member notified.");
       reset();
-      setPreviewImage(null);
-      if (onSuccess) onSuccess();
+      handleClearImage();
+      await onSuccess?.();
       onClose();
-    } catch (err: unknown) {
-      const msg = getApiErrorMessage(
-        err,
-        "Failed to reject payment. Please try again.",
-      );
-      setErrorMessage(msg);
-      toast.error(msg);
+    } catch {
+      setErrorMessage("Failed to reject payment. Please try again.");
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
-        {isSubmitting && <Loader text="Rejecting payment..." />}
+        {isRejecting && <Loader text="Rejecting payment..." />}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg font-bold text-danger">
@@ -149,10 +130,10 @@ export default function PaymentRejectionReasonModal({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isRejecting}
               className="flex-1 cursor-pointer rounded-2xl bg-danger py-2.5 text-xs font-bold text-brand-accent-foreground transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
             >
-              {isSubmitting ? "Rejecting..." : "Confirm Rejection"}
+              {isRejecting ? "Rejecting..." : "Confirm Rejection"}
             </button>
           </div>
         </form>

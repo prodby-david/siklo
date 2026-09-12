@@ -1,15 +1,5 @@
-import type { PaymentAccountDetailsDTO } from "@siklo/shared-schemas";
 import { FormInput as Input } from "@/shared/components/inputs";
-import type { PaymentAccountSectionConfig } from "../types/payment-settings.types";
-
-interface PaymentAccountSectionProps {
-  config: PaymentAccountSectionConfig;
-  values: PaymentAccountDetailsDTO;
-  hasSavedValue: boolean;
-  isEditing: boolean;
-  onChange: (field: keyof PaymentAccountDetailsDTO, value: string) => void;
-  onToggleEditing: () => void;
-}
+import type { PaymentAccountSectionProps } from "../types/payment-settings.types";
 
 export default function PaymentAccountSection({
   config,

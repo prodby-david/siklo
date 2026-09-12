@@ -11,8 +11,10 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useState } from "react";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useProfileSettings() {
+  const queryClient = useQueryClient();
   const { data: user } = useGetCurrentName();
   const {
     handleSubmit,
@@ -43,6 +45,10 @@ export default function useProfileSettings() {
   const onSubmit = async (data: UserProfileSettingDTO) => {
     try {
       await updateProfileSettings(data);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["current-name"] }),
+        queryClient.invalidateQueries({ queryKey: ["groups"] }),
+      ]);
       toast.success("Profile updated successfully");
       setIsDrawerOpen(false);
     } catch (error: unknown) {

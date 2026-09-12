@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -20,27 +20,12 @@ import {
 import {
   disbursePayoutSchema,
   DisbursePayoutDTO,
-  PaymentAccountDetailsDTO,
 } from "@siklo/shared-schemas";
 import PaymentReceiptUploader from "../elements/PaymentReceiptUploader";
 import PayoutRecipientAccounts from "../elements/PayoutRecipientAccounts";
 import Loader from "@/shared/components/loader/Loader";
-
-interface DisbursePayoutModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  groupId: string;
-  roundId: string;
-  cycleNumber?: number;
-  recipientName: string;
-  recipientPaymentAccounts?: PaymentAccountDetailsDTO | null;
-  recipientPaymentMethod?: string | null;
-  recipientAccountDetails?: string | null;
-  turnNumber: number;
-  poolTotal: number;
-  onDisburse: (data: DisbursePayoutDTO) => Promise<void>;
-  isDisbursing?: boolean;
-}
+import useReceiptImageUpload from "../../hooks/useReceiptImageUpload";
+import type { DisbursePayoutModalProps } from "../../types/payment.types";
 
 export default function DisbursePayoutModal({
   isOpen,
@@ -55,8 +40,6 @@ export default function DisbursePayoutModal({
   onDisburse,
   isDisbursing = false,
 }: DisbursePayoutModalProps) {
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
-
   const {
     register,
     handleSubmit,
@@ -71,26 +54,18 @@ export default function DisbursePayoutModal({
     },
   });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setPreviewImage(result);
-      setValue("proofUrl", result, { shouldValidate: true });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleClearImage = () => {
-    setPreviewImage(null);
-    setValue("proofUrl", "", { shouldValidate: true });
-  };
+  const {
+    previewImage,
+    handleImageUpload,
+    handleClearImage,
+  } = useReceiptImageUpload({
+    onImageSet: (base64Url) => setValue("proofUrl", base64Url, { shouldValidate: true }),
+    onImageClear: () => setValue("proofUrl", "", { shouldValidate: true }),
+  });
 
   const handleFormSubmit = async (data: DisbursePayoutDTO) => {
     await onDisburse(data);
+    handleClearImage();
     onClose();
   };
 

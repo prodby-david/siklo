@@ -1,12 +1,4 @@
-import type { LucideIcon } from "lucide-react";
-
-interface NotificationPreferenceRowProps {
-  title: string;
-  description: string;
-  icon: LucideIcon;
-  isEnabled: boolean;
-  onToggle: () => void;
-}
+import type { NotificationPreferenceRowProps } from "../types/settings.types";
 
 export default function NotificationPreferenceRow({
   title,

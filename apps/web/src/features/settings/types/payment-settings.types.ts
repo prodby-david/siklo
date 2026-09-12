@@ -18,3 +18,12 @@ export interface PaymentAccountSectionConfig {
   icon: LucideIcon;
   fields: PaymentAccountFieldConfig[];
 }
+
+export interface PaymentAccountSectionProps {
+  config: PaymentAccountSectionConfig;
+  values: PaymentAccountDetailsDTO;
+  hasSavedValue: boolean;
+  isEditing: boolean;
+  onChange: (field: keyof PaymentAccountDetailsDTO, value: string) => void;
+  onToggleEditing: () => void;
+}

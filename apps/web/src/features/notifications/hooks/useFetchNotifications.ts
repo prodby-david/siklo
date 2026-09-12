@@ -1,11 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import type { NotificationDTO } from "@siklo/shared-schemas";
 import { fetchNotifications } from "../api/fetchNotifications";
-import { useNotificationSocket } from "./useNotificationSocket";
 
 export function useFetchNotifications() {
-  useNotificationSocket();
-
   const { data: rawNotifications = [], isLoading } = useQuery<
     NotificationDTO[]
   >({

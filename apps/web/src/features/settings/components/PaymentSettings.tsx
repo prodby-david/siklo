@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { usePaymentSettings } from "../hooks/usePaymentSettings";
 import Loader from "@/shared/components/loader/Loader";
 import PaymentAccountSection from "./PaymentAccountSection";
 import { PAYMENT_ACCOUNT_SECTIONS } from "../constants/settings.constants";
 import type { PaymentAccountId } from "../types/payment-settings.types";
+import {
+  hasSavedAccountValue,
+  restoreSavedAccount,
+} from "../utils/paymentSettings.utils";
 
 export default function PaymentSettings() {
   const {
@@ -19,37 +23,16 @@ export default function PaymentSettings() {
   const [editingAccount, setEditingAccount] =
     useState<PaymentAccountId | null>(null);
 
-  const hasSavedAccountValue = (accountId: PaymentAccountId) => {
-    if (accountId === "gcash") {
-      return Boolean(userAccounts?.gcashNumber || userAccounts?.gcashName);
-    }
-    if (accountId === "maya") {
-      return Boolean(userAccounts?.mayaNumber || userAccounts?.mayaName);
-    }
-    return Boolean(
-      userAccounts?.bankAccountNumber || userAccounts?.bankName,
-    );
-  };
-
-  const restoreSavedAccount = (accountId: PaymentAccountId) => {
-    const section = PAYMENT_ACCOUNT_SECTIONS.find(
-      (account) => account.id === accountId,
-    );
-    section?.fields.forEach((field) => {
-      handleChange(field.name, userAccounts?.[field.name] || "");
-    });
-  };
-
   const handleToggleEditing = (accountId: PaymentAccountId) => {
     if (editingAccount === accountId) {
-      restoreSavedAccount(accountId);
+      restoreSavedAccount(accountId, userAccounts, handleChange);
       setEditingAccount(null);
       return;
     }
     setEditingAccount(accountId);
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: FormEvent) => {
     handleSubmit(e, () => {
       setEditingAccount(null);
     });
@@ -73,7 +56,7 @@ export default function PaymentSettings() {
             key={account.id}
             config={account}
             values={formData}
-            hasSavedValue={hasSavedAccountValue(account.id)}
+            hasSavedValue={hasSavedAccountValue(account.id, userAccounts)}
             isEditing={editingAccount === account.id}
             onChange={handleChange}
             onToggleEditing={() => handleToggleEditing(account.id)}

@@ -1,5 +1,10 @@
 import { LucideIcon } from "lucide-react";
 import React from "react";
+import type {
+  DisbursePayoutDTO,
+  ConfirmPayoutReceiptDTO,
+  PaymentAccountDetailsDTO,
+} from "@siklo/shared-schemas";
 
 export type PaymentMethod = "E_WALLET" | "BANK_TRANSFER" | "CASH";
 
@@ -82,7 +87,6 @@ export interface PaymentSubmissionModalProps {
   latePenaltyRate?: number;
   allowedMethods: PaymentMethod[];
   organizerPaymentDetails?: string | null;
-  onSuccess?: () => void;
 }
 
 export interface PaymentRejectionReasonModalProps {
@@ -90,7 +94,7 @@ export interface PaymentRejectionReasonModalProps {
   onClose: () => void;
   paymentId: string;
   memberName: string;
-  onSuccess?: () => void;
+  onSuccess?: () => void | Promise<void>;
 }
 
 export interface ReceiptImagePreviewModalProps {
@@ -107,5 +111,32 @@ export interface ReceiptImagePreviewModalProps {
 export interface IncomingPaymentsVerificationSectionProps {
   groupId?: string;
   isOrganizer?: boolean;
-  onRefreshGroup?: () => void;
+}
+
+export interface DisbursePayoutModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  groupId: string;
+  roundId: string;
+  cycleNumber?: number;
+  recipientName: string;
+  recipientPaymentAccounts?: PaymentAccountDetailsDTO | null;
+  recipientPaymentMethod?: string | null;
+  recipientAccountDetails?: string | null;
+  turnNumber: number;
+  poolTotal: number;
+  onDisburse: (data: DisbursePayoutDTO) => Promise<void>;
+  isDisbursing?: boolean;
+}
+
+export interface ConfirmPayoutReceiptModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  groupId: string;
+  roundId: string;
+  cycleNumber: number;
+  turnNumber: number;
+  poolTotal: number;
+  onConfirmReceipt: (data: ConfirmPayoutReceiptDTO) => Promise<void>;
+  isConfirming?: boolean;
 }
