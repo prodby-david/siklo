@@ -1,20 +1,10 @@
-import {
-  Info,
-  Shield,
-  Phone,
-  RefreshCw,
-  Clock,
-  AlertTriangle,
-  CreditCard,
-  Wallet,
-  Building2,
-  Banknote,
-} from "lucide-react";
-import formatDate from "@/shared/utils/formatDate";
+import { Info } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { PAYOUT_SEQUENCE_LABELS } from "../../constants/payout-sequence.constants";
-import { GroupInfoCardProps } from "../../types/group.types";
-import DeleteGroupDialog from "./DeleteGroupDialog";
+import type { GroupInfoCardProps } from "../../types/group.types";
+import GroupInfoRulesSection from "./elements/GroupInfoRulesSection";
+import GroupInfoPaymentSection from "./elements/GroupInfoPaymentSection";
+import GroupInfoOrganizerSection from "./elements/GroupInfoOrganizerSection";
 
 export default function GroupInfoCard({
   groupName,
@@ -47,12 +37,6 @@ export default function GroupInfoCard({
     payoutSequence;
   const isOnlyOrganizerLeft = membershipsCount === 1;
 
-  const methodIcons: Record<string, { label: string; icon: typeof Wallet }> = {
-    E_WALLET: { label: "E-Wallet", icon: Wallet },
-    BANK_TRANSFER: { label: "Bank Transfer", icon: Building2 },
-    CASH: { label: "Cash on Hand", icon: Banknote },
-  };
-
   return (
     <div className="p-5 border border-neutral-border rounded-2xl bg-background shadow-sm space-y-4">
       <h3 className="text-sm sm:text-base font-bold text-foreground border-b border-neutral-border pb-3 flex items-center gap-2">
@@ -60,138 +44,35 @@ export default function GroupInfoCard({
       </h3>
 
       <div className="space-y-3 text-xs sm:text-sm">
-        <div className="flex justify-between items-center">
-          <span className="text-neutral-subtext">Start Date</span>
-          <span className="font-semibold text-foreground">
-            {startDate ? formatDate(startDate) : "Pending (Not Started)"}
-          </span>
-        </div>
+        <GroupInfoRulesSection
+          startDate={startDate}
+          endDate={endDate}
+          totalDays={totalDays}
+          billingLabel={billingLabel}
+          sequenceLabel={sequenceLabel}
+          gracePeriodDays={gracePeriodDays}
+          latePenaltyAmount={latePenaltyAmount}
+        />
 
-        <div className="flex justify-between items-center">
-          <span className="text-neutral-subtext">Est. End Date</span>
-          <span className="font-semibold text-foreground">
-            {endDate ? formatDate(endDate) : "Pending"}
-          </span>
-        </div>
+        <GroupInfoPaymentSection
+          allowedMethods={allowedMethods}
+          paymentDetails={paymentDetails}
+        />
 
-        <div className="flex justify-between items-center">
-          <span className="text-neutral-subtext">Est. Duration</span>
-          <span className="font-semibold text-foreground">
-            {totalDays} day(s)
-          </span>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <span className="text-neutral-subtext">Payout Frequency</span>
-          <span className="font-semibold text-brand-accent">{billingLabel}</span>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <span className="text-neutral-subtext">Payout Sequence</span>
-          <span className="font-semibold text-foreground">{sequenceLabel}</span>
-        </div>
-
-        <div className="pt-2 border-t border-neutral-border/50 space-y-2.5">
-          <div className="flex justify-between items-center">
-            <span className="text-neutral-subtext flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-brand-accent" /> Grace Period
-            </span>
-            <span className="font-bold text-foreground">
-              {gracePeriodDays && gracePeriodDays > 0
-                ? `${gracePeriodDays} Day(s)`
-                : "None (Due Immediately)"}
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-neutral-subtext flex items-center gap-1.5">
-              <AlertTriangle className="h-3.5 w-3.5 text-warning" /> Daily Late Penalty
-            </span>
-            <span className="font-bold text-warning">
-              {latePenaltyAmount && latePenaltyAmount > 0
-                ? `${latePenaltyAmount}% / day`
-                : "None"}
-            </span>
-          </div>
-        </div>
-
-        <div className="pt-2 border-t border-neutral-border/50 space-y-2">
-          <span className="text-neutral-subtext flex items-center gap-1.5 text-xs font-semibold">
-            <CreditCard className="w-3.5 h-3.5 text-brand-accent" /> Allowed Payment Methods
-          </span>
-          <div className="flex flex-wrap gap-1.5 pt-0.5">
-            {allowedMethods.map((m) => {
-              const info = methodIcons[m] || { label: m, icon: Wallet };
-              const IconComp = info.icon;
-              return (
-                <span
-                  key={m}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-[11px] font-bold"
-                >
-                  <IconComp className="w-3 h-3" />
-                  <span>{info.label}</span>
-                </span>
-              );
-            })}
-          </div>
-        </div>
-
-        {paymentDetails && (
-          <div className="p-3 rounded-xl bg-neutral-subtext/5 border border-neutral-border/60 space-y-1">
-            <span className="text-[10px] font-extrabold uppercase tracking-wider text-neutral-subtext block">
-              Organizer Payment Account Details
-            </span>
-            <p className="text-xs font-mono font-medium text-foreground whitespace-pre-wrap leading-relaxed">
-              {paymentDetails}
-            </p>
-          </div>
-        )}
-
-        <div className="flex justify-between items-center pt-2 border-t border-neutral-border/50">
-          <span className="text-neutral-subtext flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-brand-accent" /> Organizer
-          </span>
-          <span className="font-bold text-foreground">
-            {organizerName || "Organizer"}
-          </span>
-        </div>
-
-        {organizerContact && !isCycleDone && (
-          <div className="flex justify-between items-center">
-            <span className="text-neutral-subtext flex items-center gap-1.5">
-              <Phone className="w-3.5 h-3.5 text-brand-accent" /> Contact No.
-            </span>
-            <span className="font-mono text-xs font-semibold text-foreground">
-              {organizerContact}
-            </span>
-          </div>
-        )}
-
-        {isOrganizer && !hasStarted && !isCycleDone && (
-          <div className="pt-3 border-t border-neutral-border/50 flex flex-col gap-2.5 w-full">
-            {isMembersFull && onStartCycle && (
-              <button
-                disabled={isStarting || isDeleting}
-                onClick={onStartCycle}
-                className="w-full h-11 text-xs flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-4 rounded-2xl font-bold active:opacity-90 transition-all shadow-sm cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw
-                  size={16}
-                  className={isStarting ? "animate-spin" : ""}
-                />
-                {isStarting ? "Starting..." : "Start Cycle"}
-              </button>
-            )}
-            {onDeleteGroup && isOnlyOrganizerLeft && (
-              <DeleteGroupDialog
-                isDeleting={isDeleting}
-                isStarting={isStarting}
-                onDelete={onDeleteGroup}
-                groupName={groupName}
-              />
-            )}
-          </div>
-        )}
+        <GroupInfoOrganizerSection
+          organizerName={organizerName}
+          organizerContact={organizerContact}
+          isCycleDone={isCycleDone}
+          isOrganizer={isOrganizer}
+          hasStarted={hasStarted}
+          isMembersFull={isMembersFull}
+          isOnlyOrganizerLeft={isOnlyOrganizerLeft}
+          isStarting={isStarting}
+          isDeleting={isDeleting}
+          groupName={groupName}
+          onStartCycle={onStartCycle}
+          onDeleteGroup={onDeleteGroup}
+        />
       </div>
     </div>
   );

@@ -1,24 +1,7 @@
 import { Users } from "lucide-react";
-import type { GroupRound, Membership } from "@/features/groups/types/group.types";
 import { getPayoutDate } from "@/features/groups/utils/groupCalculations";
+import type { TurnQueueProps } from "@/features/groups/types/showcase.types";
 import ShowcaseTurnCard from "./ShowcaseTurnCard";
-
-interface TurnQueueProps {
-  memberships: Membership[];
-  rounds: GroupRound[];
-  maxMembers: number;
-  selectedTurn: number;
-  currentCycle: number;
-  currentTurn: number;
-  hasStarted: boolean;
-  startDate?: string | null;
-  billingCycle: string;
-  completedDisbursementDates: Record<number, Date>;
-  confirmedTurns: Set<string>;
-  disbursedTurns: Set<string>;
-  organizerId?: string;
-  onSelectTurn: (turn: number) => void;
-}
 
 export default function TurnQueue({
   memberships,

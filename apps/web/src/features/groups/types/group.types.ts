@@ -1,3 +1,4 @@
+import React from "react";
 import {
   UseFormRegister,
   FieldErrors,
@@ -9,6 +10,8 @@ import { PaymentAccountDetailsDTO } from "@siklo/shared-schemas";
 import { CreateGroupInput } from "../validator/create-group.validator";
 
 export type PaymentMethodKey = "E_WALLET" | "BANK_TRANSFER" | "CASH";
+
+export type GroupFilterStatus = "ALL" | "ACTIVE" | "PENDING" | "COMPLETED";
 
 export interface User {
   id: string;
@@ -140,7 +143,6 @@ export interface GroupHeroProps {
   isCurrentUserPending?: boolean;
   currentTurn?: number;
   nextPayoutee?: NextPayoutee | null;
-  onRefresh?: () => void;
 }
 
 export interface GroupRotationSlotsProps {
@@ -257,7 +259,6 @@ export interface EditGroupModalProps {
     billingCycle: string;
     payoutSequence: string;
   };
-  onSuccess?: () => void;
 }
 
 export interface JoinGroupProps {
@@ -282,3 +283,72 @@ export interface CreateGroupFormFieldsProps {
   setValue: UseFormSetValue<CreateGroupInput>;
   watch: UseFormWatch<CreateGroupInput>;
 }
+
+export interface GroupHeroHeaderProps {
+  name: string;
+  description: string | null;
+  billingLabel: string;
+  hasStarted?: boolean;
+  isCycleDone?: boolean;
+  isOrganizer?: boolean;
+  onOpenEdit: () => void;
+}
+
+export interface GroupHeroActionsProps {
+  hasStarted?: boolean;
+  isCycleDone?: boolean;
+  isOrganizer?: boolean;
+  isOrganizerParticipating?: boolean;
+  isCurrentUserPaid?: boolean;
+  isCurrentUserPending?: boolean;
+  roundId?: string;
+  isUserMember?: boolean;
+  currentTurn?: number;
+  nextPayoutee?: NextPayoutee | null;
+  onOpenPay: () => void;
+}
+
+export interface PreparationGuideStepItemProps {
+  stepNumber: number;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  isComplete?: boolean;
+}
+
+export interface PreparationGuideInviteBoxProps {
+  inviteCode: string;
+  copied: boolean;
+  onCopyInviteCode: () => void;
+}
+
+export interface GroupInfoRulesSectionProps {
+  startDate?: string | Date | null;
+  endDate?: string | Date | null;
+  totalDays: number;
+  billingLabel: string;
+  sequenceLabel: string;
+  gracePeriodDays?: number;
+  latePenaltyAmount?: number;
+}
+
+export interface GroupInfoPaymentSectionProps {
+  allowedMethods?: string[];
+  paymentDetails?: string | null;
+}
+
+export interface GroupInfoOrganizerSectionProps {
+  organizerName?: string;
+  organizerContact?: string | null;
+  isCycleDone: boolean;
+  isOrganizer: boolean;
+  hasStarted: boolean;
+  isMembersFull: boolean;
+  isOnlyOrganizerLeft: boolean;
+  isStarting: boolean;
+  isDeleting: boolean;
+  groupName?: string;
+  onStartCycle?: () => void;
+  onDeleteGroup?: () => void;
+}
+

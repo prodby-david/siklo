@@ -5,13 +5,13 @@ import {
   Users,
   CheckCircle2,
   AlertCircle,
-  Copy,
-  Check,
   Calendar,
   Wallet,
   ShieldAlert,
 } from "lucide-react";
-import { UnstartedCyclePreparationGuideProps } from "../../types/group.types";
+import type { UnstartedCyclePreparationGuideProps } from "../../types/group.types";
+import PreparationGuideStepItem from "./elements/PreparationGuideStepItem";
+import PreparationGuideInviteBox from "./elements/PreparationGuideInviteBox";
 
 export default function UnstartedCyclePreparationGuide({
   isOrganizer,
@@ -78,8 +78,15 @@ export default function UnstartedCyclePreparationGuide({
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-        <div className="h-full p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 hover:border-brand-accent/40 transition-all flex flex-col justify-between gap-2">
-          <div className="flex items-center gap-2">
+        <PreparationGuideStepItem
+          stepNumber={1}
+          title="Required Members"
+          description={
+            membershipsCount >= minRequiredMembers
+              ? `Ready! ${membershipsCount} members have joined.`
+              : `Invite members until at least ${minRequiredMembers} members join your group.`
+          }
+          icon={
             <CheckCircle2
               className={`w-4 h-4 shrink-0 ${
                 membershipsCount >= minRequiredMembers
@@ -87,90 +94,45 @@ export default function UnstartedCyclePreparationGuide({
                   : "text-neutral-subtext/50"
               }`}
             />
-            <span className="text-xs font-bold text-foreground">
-              1. Required Members
-            </span>
-          </div>
-          <p className="text-[11px] text-neutral-subtext leading-relaxed">
-            {membershipsCount >= minRequiredMembers
-              ? `Ready! ${membershipsCount} members have joined.`
-              : `Invite members until at least ${minRequiredMembers} members join your group.`}
-          </p>
-        </div>
+          }
+        />
 
-        <div className="h-full p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 hover:border-brand-accent/40 transition-all flex flex-col justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-brand-accent shrink-0" />
-            <span className="text-xs font-bold text-foreground">
-              2. Turn Slot Selection
-            </span>
-          </div>
-          <p className="text-[11px] text-neutral-subtext leading-relaxed">
-            {payoutSequence === "MANUAL"
+        <PreparationGuideStepItem
+          stepNumber={2}
+          title="Turn Slot Selection"
+          description={
+            payoutSequence === "MANUAL"
               ? "Members can choose their turn position in the Turn Queue below."
-              : "Turn order will be assigned automatically when starting."}
-          </p>
-        </div>
+              : "Turn order will be assigned automatically when starting."
+          }
+          icon={<Calendar className="w-4 h-4 text-brand-accent shrink-0" />}
+        />
 
-        <div className="h-full p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 hover:border-brand-accent/40 transition-all flex flex-col justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Wallet className="h-4 w-4 shrink-0 text-winner-payout" />
-            <span className="text-xs font-bold text-foreground">
-              3. Payout Details Setup
-            </span>
-          </div>
-          <p className="text-[11px] text-neutral-subtext leading-relaxed">
-            Set up your payment receiving account (GCash, Maya, or Bank) so others can pay you when it is your turn.
-          </p>
-        </div>
+        <PreparationGuideStepItem
+          stepNumber={3}
+          title="Payout Details Setup"
+          description="Set up your payment receiving account (GCash, Maya, or Bank) so others can pay you when it is your turn."
+          icon={<Wallet className="h-4 w-4 shrink-0 text-winner-payout" />}
+        />
 
-        <div className="h-full p-4 rounded-2xl border border-neutral-border bg-neutral-table-stripe/50 hover:border-brand-accent/40 transition-all flex flex-col justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="h-4 w-4 shrink-0 text-warning" />
-            <span className="text-xs font-bold text-foreground">
-              4. Starting the Group
-            </span>
-          </div>
-          <p className="text-[11px] text-neutral-subtext leading-relaxed">
-            {isOrganizer
+        <PreparationGuideStepItem
+          stepNumber={4}
+          title="Starting the Group"
+          description={
+            isOrganizer
               ? "When ready, click 'Start Group Cycle' in the settings card."
-              : "The organizer will start the group cycle once all members are ready."}
-          </p>
-        </div>
+              : "The organizer will start the group cycle once all members are ready."
+          }
+          icon={<ShieldAlert className="h-4 w-4 shrink-0 text-warning" />}
+        />
       </div>
 
       {isOrganizer && inviteCode && !isReadyToStart && (
-        <div className="p-4 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-1">
-          <div className="flex items-center gap-2.5">
-            <Users className="w-4 h-4 text-brand-accent shrink-0" />
-            <div>
-              <span className="text-xs font-bold text-foreground block">
-                Share Group Code
-              </span>
-              <span className="text-[11px] text-neutral-subtext">
-                Share this code with friends so they can join your group
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <code className="font-mono text-xs font-bold bg-background px-3 py-1.5 rounded-xl border border-brand-accent/30 text-foreground select-all">
-              {inviteCode}
-            </code>
-            <button
-              type="button"
-              onClick={onCopyInviteCode}
-              className="p-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground transition-all active:scale-95 cursor-pointer shrink-0"
-              title="Copy Code"
-            >
-              {copied ? (
-                <Check className="w-3.5 h-3.5 text-brand-accent-foreground" />
-              ) : (
-                <Copy className="w-3.5 h-3.5" />
-              )}
-            </button>
-          </div>
-        </div>
+        <PreparationGuideInviteBox
+          inviteCode={inviteCode}
+          copied={copied}
+          onCopyInviteCode={onCopyInviteCode}
+        />
       )}
     </div>
   );

@@ -7,15 +7,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/shared/components/ui/dialog";
-import {
-  Receipt,
-  ShieldCheck,
-  Clock,
-  AlertCircle,
-  CreditCard,
-} from "lucide-react";
-import formatDate, { formatDateTime12h } from "@/shared/utils/formatDate";
-import { MemberPaymentHistoryModalProps } from "@/features/groups/types/showcase.types";
+import { Receipt, CreditCard } from "lucide-react";
+import type { MemberPaymentHistoryModalProps } from "@/features/groups/types/showcase.types";
+import MemberPaymentHistoryItem from "./elements/MemberPaymentHistoryItem";
 
 export default function MemberPaymentHistoryModal({
   isOpen,
@@ -78,82 +72,13 @@ export default function MemberPaymentHistoryModal({
 
         <div className="p-6 overflow-y-auto max-h-[50vh] space-y-3">
           {payments.length > 0 ? (
-            payments.map((p) => {
-              const roundInfo = getPaymentRoundInfo(p.roundId);
-              const isVerified = p.status === "VERIFIED";
-              const isPending = p.status === "PENDING";
-              const isRejected = p.status === "REJECTED";
-
-              return (
-                <div
-                  key={p.id}
-                  className="p-4 rounded-2xl border border-neutral-border/80 bg-background flex flex-col gap-2.5 shadow-2xs"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
-                          isVerified
-                            ? "border border-success/30 bg-success-bg text-success"
-                            : isPending
-                            ? "border border-warning/30 bg-warning-bg text-warning"
-                            : "border border-danger-border bg-danger-bg text-danger"
-                        }`}
-                      >
-                        #{roundInfo.roundNumber}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-bold text-foreground">
-                            Cycle {roundInfo.cycleNumber} • Turn #{roundInfo.roundNumber}
-                          </span>
-                          <span className="text-[10px] text-neutral-subtext font-semibold uppercase px-1.5 py-0.5 rounded-md bg-neutral-subtext/10">
-                            {p.paymentMethod.replace("_", " ")}
-                          </span>
-                        </div>
-                        <span className="text-[11px] text-neutral-subtext block mt-0.5">
-                          {p.createdAt ? formatDateTime12h(p.createdAt) : formatDate(new Date())}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-sm font-black text-foreground">
-                        ₱{Number(p.totalAmount || 0).toLocaleString()}
-                      </span>
-                      {isVerified ? (
-                        <span className="flex items-center gap-1 rounded-full border border-success/30 bg-success-bg px-2 py-0.5 text-[9px] font-bold text-success">
-                          <ShieldCheck className="w-3 h-3" /> Verified
-                        </span>
-                      ) : isPending ? (
-                        <span className="flex items-center gap-1 rounded-full border border-warning/30 bg-warning-bg px-2 py-0.5 text-[9px] font-bold text-warning">
-                          <Clock className="w-3 h-3" /> Pending Approval
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1 rounded-full border border-danger-border bg-danger-bg px-2 py-0.5 text-[9px] font-bold text-danger">
-                          <AlertCircle className="w-3 h-3" /> Rejected
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {p.referenceNumber && (
-                    <div className="text-[11px] font-mono text-neutral-subtext bg-neutral-subtext/5 px-2.5 py-1 rounded-lg border border-neutral-border/50">
-                      Ref: {p.referenceNumber}
-                    </div>
-                  )}
-
-                  {isRejected && p.rejectionReason && (
-                    <div className="space-y-0.5 rounded-xl border border-danger-border bg-danger-bg p-2.5 text-xs text-danger">
-                      <span className="text-[10px] font-bold uppercase tracking-wider block">
-                        Rejection Reason
-                      </span>
-                      <p className="text-[11px] leading-relaxed">{p.rejectionReason}</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })
+            payments.map((p) => (
+              <MemberPaymentHistoryItem
+                key={p.id}
+                payment={p}
+                roundInfo={getPaymentRoundInfo(p.roundId)}
+              />
+            ))
           ) : (
             <div className="py-12 px-4 rounded-2xl border border-dashed border-neutral-border text-center flex flex-col items-center justify-center gap-2">
               <div className="w-10 h-10 rounded-2xl bg-neutral-subtext/10 flex items-center justify-center text-neutral-subtext">

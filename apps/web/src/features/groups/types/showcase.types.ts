@@ -1,3 +1,4 @@
+import React from "react";
 import { Membership, PaymentRecord, GroupRound } from "@/features/groups/types/group.types";
 
 export interface GroupTurnShowcaseProps {
@@ -22,7 +23,7 @@ export interface GroupTurnShowcaseProps {
   gracePeriodDays?: number;
   latePenaltyAmount?: number;
   organizerFeeAmount?: number;
-  onRefresh?: () => void;
+  inviteCode?: string | null;
 }
 
 export interface ShowcaseTurnCardProps {
@@ -87,7 +88,6 @@ export interface TurnDetailPanelProps {
   isDisbursingPayout?: boolean;
   onConfirmPayoutReceipt?: (data: { notes?: string }) => Promise<void>;
   isConfirmingPayoutReceipt?: boolean;
-  onRefresh?: () => void;
 }
 
 export interface MemberPaymentHistoryModalProps {
@@ -114,4 +114,178 @@ export interface GroupRoundsStatusCardProps {
   rounds?: GroupRound[];
   payments?: PaymentRecord[];
   memberships?: Membership[];
+}
+
+export interface TurnQueueProps {
+  memberships: Membership[];
+  rounds: GroupRound[];
+  maxMembers: number;
+  selectedTurn: number;
+  currentCycle: number;
+  currentTurn: number;
+  hasStarted: boolean;
+  startDate?: string | null;
+  billingCycle: string;
+  completedDisbursementDates: Record<number, Date>;
+  confirmedTurns: Set<string>;
+  disbursedTurns: Set<string>;
+  organizerId?: string;
+  onSelectTurn: (turn: number) => void;
+}
+
+export interface TurnActionPanelProps {
+  selectedTurn: number;
+  selectedMemberName: string;
+  selectedMembership?: Membership;
+  currentRound?: GroupRound;
+  group: TurnDetailGroup;
+  currentCycle: number;
+  currentUserId?: string;
+  calculatedPayoutDate: Date | null;
+  contributionAmount: number;
+  poolTotal: number;
+  isOrganizer: boolean;
+  isCurrentTurn: boolean;
+  isCycleDone: boolean;
+  hasStarted: boolean;
+  isUserSlotOwner: boolean;
+  isSelectedTurnReceived: boolean;
+  isSelectedPaid: boolean;
+  isSelectedPending: boolean;
+  isSelectedRejected: boolean;
+  hasCurrentMemberPaidOrganizerFee: boolean;
+  isRoundAllContributionsPaid: boolean;
+  isSelectingSlot: boolean;
+  isDisbursingPayout: boolean;
+  onSelectSlot?: (position: number) => Promise<void>;
+  onDisbursePayout?: (data: {
+    referenceNumber: string;
+    proofUrl: string;
+  }) => Promise<void>;
+}
+
+export interface TurnPaymentStatusPanelProps {
+  selectedTurn: number;
+  selectedMemberName: string;
+  currentTurn?: number;
+  contributionAmount: number;
+  poolTotal: number;
+  hasStarted: boolean;
+  hasSelectedMembership: boolean;
+  isCurrentBeneficiary: boolean;
+  isSelectedTurnReceived: boolean;
+  isSelectedTurnDisbursed: boolean;
+  isSelectedPaid: boolean;
+  isSelectedPending: boolean;
+  isSelectedRejected: boolean;
+}
+
+export interface TurnDetailHeaderProps {
+  selectedTurn: number;
+  hasStarted: boolean;
+  isSelectedTurnReceived: boolean;
+  isSelectedTurnDisbursed: boolean;
+  isCurrentBeneficiary: boolean;
+  currentCycle: number;
+}
+
+export interface TurnDetailBeneficiaryProps {
+  selectedMemberName: string;
+  initials: string;
+  selectedMembership?: Membership;
+  isSlotOrganizer: boolean;
+  isUserSlotOwner: boolean;
+  isRemovableMember: boolean;
+  isRemovingMember: boolean;
+  feeAmount: number;
+  hasSelectedMemberPaidOrganizerFee: boolean;
+  selectedTurn: number;
+  onRemoveMember?: (memberUserId: string) => Promise<void>;
+}
+
+export interface TurnDetailMetricsProps {
+  selectedTurn: number;
+  maxMembers: number;
+  poolTotal: number;
+  calculatedPayoutDate: Date | null;
+}
+
+export interface TurnDetailHistoryBarProps {
+  paymentCount: number;
+  onOpenHistory: () => void;
+}
+
+export interface TurnActionWaitingStateProps {
+  icon: React.ReactNode;
+  message: React.ReactNode;
+  className?: string;
+}
+
+export interface DisbursePayoutActionProps {
+  group: TurnDetailGroup;
+  currentRound?: GroupRound;
+  currentCycle: number;
+  selectedMemberName: string;
+  selectedMembership?: Membership;
+  selectedTurn: number;
+  poolTotal: number;
+  isDisbursingPayout: boolean;
+  onDisbursePayout?: (data: {
+    referenceNumber: string;
+    proofUrl: string;
+  }) => Promise<void>;
+}
+
+export interface SubmitContributionActionProps {
+  currentRound?: GroupRound;
+  group: TurnDetailGroup;
+  contributionAmount: number;
+  currentUserId?: string;
+  calculatedPayoutDate: Date | null;
+  isSelectedRejected: boolean;
+  hasCurrentMemberPaidOrganizerFee: boolean;
+}
+
+export interface GroupRoundsSummaryCardsProps {
+  maxMembers: number;
+  contributionAmount: number;
+  poolTotal: number;
+  hasStarted: boolean;
+  activeBeneficiaryName: string;
+  currentTurn: number;
+  isCycleDone: boolean;
+  isRoundReceived: boolean;
+  isRoundDisbursed: boolean;
+  isRoundAllPaid: boolean;
+  verifiedPaymentsCount: number;
+}
+
+export interface GroupRoundsProgressBarsProps {
+  currentTurn: number;
+  verifiedPaymentsCount: number;
+  maxMembers: number;
+  progressPercent: number;
+  organizerFeeAmount: number;
+  paidOrganizerFeeCount: number;
+  nonOrganizerCount: number;
+  feeProgressPercent: number;
+}
+
+export interface MemberPaymentHistoryItemProps {
+  payment: PaymentRecord;
+  roundInfo: {
+    cycleNumber: number;
+    roundNumber: number;
+  };
+}
+
+export interface GroupTurnShowcaseHeaderProps {
+  payoutSequence: "RANDOM" | "MANUAL" | "FREECHOOSING";
+  groupId: string;
+  isOrganizer: boolean;
+  hasStarted: boolean;
+  isCycleDone: boolean;
+  currentCycle: number;
+  cycleDuration: number;
+  totalPayoutNum: number;
 }

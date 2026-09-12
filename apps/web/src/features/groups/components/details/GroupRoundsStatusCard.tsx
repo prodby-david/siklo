@@ -1,17 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
 import {
   Layers,
-  Award,
-  ShieldCheck,
   Clock,
-  Coins,
   CheckCircle2,
-  Users,
-  HandCoins,
 } from "lucide-react";
-import { GroupRoundsStatusCardProps } from "@/features/groups/types/showcase.types";
+import type { GroupRoundsStatusCardProps } from "@/features/groups/types/showcase.types";
+import { useGroupRoundsStatus } from "@/features/groups/hooks/useGroupRoundsStatus";
+import GroupRoundsSummaryCards from "./elements/GroupRoundsSummaryCards";
+import GroupRoundsProgressBars from "./elements/GroupRoundsProgressBars";
 
 export default function GroupRoundsStatusCard({
   groupName,
@@ -28,69 +25,30 @@ export default function GroupRoundsStatusCard({
   payments = [],
   memberships = [],
 }: GroupRoundsStatusCardProps) {
-  const contributionNum = Number(contributionAmount) || 0;
-  const poolTotal = contributionNum * maxMembers;
-  const organizerFeeNum = organizerFeeAmount || 0;
-
-  const currentRound = useMemo(
-    () =>
-      rounds.find(
-        (r) => r.cycleNumber === currentCycle && r.roundNumber === currentTurn,
-      ),
-    [rounds, currentCycle, currentTurn],
-  );
-
-  const activeBeneficiaryMembership = useMemo(
-    () => memberships.find((m) => m.position === currentTurn),
-    [memberships, currentTurn],
-  );
-
-  const activeBeneficiaryName =
-    activeBeneficiaryMembership?.user?.name || `Slot #${currentTurn}`;
-
-  const verifiedPaymentsCount = useMemo(() => {
-    if (!currentRound) return 0;
-    const currentRoundPayments = payments.filter(
-      (p) => p.roundId === currentRound.id && p.status === "VERIFIED",
-    );
-    const uniqueUserIds = new Set(currentRoundPayments.map((p) => p.userId));
-    return uniqueUserIds.size;
-  }, [currentRound, payments]);
-
-  const progressPercent = Math.min(
-    100,
-    Math.round((verifiedPaymentsCount / maxMembers) * 100),
-  );
-
-  const nonOrganizerMembers = useMemo(
-    () => memberships.filter((m) => m.userId !== organizerId),
-    [memberships, organizerId],
-  );
-
-  const paidOrganizerFeeCount = useMemo(() => {
-    if (organizerFeeNum <= 0) return 0;
-    const paidIds = new Set<string>();
-    payments.forEach((p) => {
-      if (p.status === "VERIFIED" && (p.organizerFeeAmount || 0) > 0) {
-        paidIds.add(p.userId);
-      }
-    });
-    return nonOrganizerMembers.filter((m) => paidIds.has(m.userId)).length;
-  }, [payments, nonOrganizerMembers, organizerFeeNum]);
-
-  const feeProgressPercent =
-    nonOrganizerMembers.length > 0
-      ? Math.min(
-          100,
-          Math.round(
-            (paidOrganizerFeeCount / nonOrganizerMembers.length) * 100,
-          ),
-        )
-      : 100;
-
-  const isRoundDisbursed = currentRound?.status === "DISBURSED";
-  const isRoundReceived = currentRound?.status === "RECEIVED";
-  const isRoundAllPaid = verifiedPaymentsCount >= maxMembers;
+  const {
+    contributionNum,
+    poolTotal,
+    organizerFeeNum,
+    activeBeneficiaryName,
+    verifiedPaymentsCount,
+    progressPercent,
+    nonOrganizerMembers,
+    paidOrganizerFeeCount,
+    feeProgressPercent,
+    isRoundDisbursed,
+    isRoundReceived,
+    isRoundAllPaid,
+  } = useGroupRoundsStatus({
+    rounds,
+    currentCycle,
+    currentTurn,
+    memberships,
+    organizerId,
+    organizerFeeAmount,
+    payments,
+    maxMembers,
+    contributionAmount,
+  });
 
   return (
     <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-background shadow-xs space-y-4">
@@ -130,115 +88,31 @@ export default function GroupRoundsStatusCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="p-3.5 rounded-2xl border border-neutral-border/70 bg-neutral-subtext/3 flex flex-col justify-between gap-1.5">
-          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider flex items-center gap-1">
-            <Coins className="w-3 h-3 text-brand-accent" /> Round Concept
-          </span>
-          <p className="text-xs font-semibold text-foreground leading-snug">
-            Each round is 1 rotation where all {maxMembers} members contribute ₱
-            {contributionNum.toLocaleString()} for 1 recipient.
-          </p>
-          <span className="text-[10px] text-neutral-subtext">
-            Pool total: ₱{poolTotal.toLocaleString()} per round
-          </span>
-        </div>
-
-        <div className="p-3.5 rounded-2xl border border-neutral-border/70 bg-neutral-subtext/3 flex flex-col justify-between gap-1.5">
-          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider flex items-center gap-1">
-            <Award className="w-3 h-3 text-brand-accent" /> Current Round
-            Recipient
-          </span>
-          <p className="text-sm font-extrabold text-foreground truncate">
-            {hasStarted ? activeBeneficiaryName : "Pending Cycle Start"}
-          </p>
-          <span className="text-[10px] text-brand-accent font-bold">
-            {hasStarted
-              ? `Turn #${currentTurn} Beneficiary`
-              : "Waiting for organizer"}
-          </span>
-        </div>
-
-        <div className="p-3.5 rounded-2xl border border-neutral-border/70 bg-neutral-subtext/3 flex flex-col justify-between gap-1.5">
-          <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider flex items-center gap-1">
-            <ShieldCheck className="w-3 h-3 text-brand-accent" /> Payout Stage
-          </span>
-          <div>
-            {isCycleDone ? (
-              <span className="text-xs font-extrabold text-success">
-                Completed
-              </span>
-            ) : isRoundReceived ? (
-              <span className="text-xs font-extrabold text-success">
-                Payout Confirmed Received
-              </span>
-            ) : isRoundDisbursed ? (
-              <span className="text-xs font-extrabold text-winner-payout">
-                Payout Disbursed
-              </span>
-            ) : isRoundAllPaid ? (
-              <span className="text-xs font-extrabold text-success">
-                Ready for Payout Release
-              </span>
-            ) : hasStarted ? (
-              <span className="text-xs font-extrabold text-warning">
-                Collecting Contributions
-              </span>
-            ) : (
-              <span className="text-xs font-extrabold text-neutral-subtext">
-                Waiting for Start
-              </span>
-            )}
-          </div>
-          <span className="text-[10px] text-neutral-subtext">
-            {hasStarted
-              ? `${verifiedPaymentsCount} of ${maxMembers} members verified`
-              : "0 members contributed"}
-          </span>
-        </div>
-      </div>
+      <GroupRoundsSummaryCards
+        maxMembers={maxMembers}
+        contributionAmount={contributionNum}
+        poolTotal={poolTotal}
+        hasStarted={hasStarted}
+        activeBeneficiaryName={activeBeneficiaryName}
+        currentTurn={currentTurn}
+        isCycleDone={isCycleDone}
+        isRoundReceived={isRoundReceived}
+        isRoundDisbursed={isRoundDisbursed}
+        isRoundAllPaid={isRoundAllPaid}
+        verifiedPaymentsCount={verifiedPaymentsCount}
+      />
 
       {hasStarted && !isCycleDone && (
-        <div className="space-y-3">
-          <div className="p-4 rounded-2xl border border-brand-accent/25 bg-brand-accent/5 space-y-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-foreground flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-brand-accent" /> Active Turn
-                #{currentTurn} Contribution Progress
-              </span>
-              <span className="font-black text-brand-accent">
-                {verifiedPaymentsCount} / {maxMembers} Paid
-              </span>
-            </div>
-            <progress
-              className="siklo-progress h-2 block"
-              value={progressPercent}
-              max={100}
-              aria-label={`${verifiedPaymentsCount} of ${maxMembers} contributions verified`}
-            />
-          </div>
-
-          {organizerFeeNum > 0 && (
-            <div className="space-y-2 rounded-2xl border border-warning/25 bg-warning-bg p-4">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-foreground flex items-center gap-1.5">
-                  <HandCoins className="h-3.5 w-3.5 text-warning" /> One-Time
-                  Organizer Fee Progress (₱{organizerFeeNum.toLocaleString()} /
-                  member)
-                </span>
-                <span className="font-black text-warning">
-                  {paidOrganizerFeeCount} / {nonOrganizerMembers.length} Paid
-                </span>
-              </div>
-              <progress
-                className="siklo-progress siklo-progress-warning h-2 block"
-                value={feeProgressPercent}
-                max={100}
-                aria-label={`${paidOrganizerFeeCount} of ${nonOrganizerMembers.length} organizer fees paid`}
-              />
-            </div>
-          )}
-        </div>
+        <GroupRoundsProgressBars
+          currentTurn={currentTurn}
+          verifiedPaymentsCount={verifiedPaymentsCount}
+          maxMembers={maxMembers}
+          progressPercent={progressPercent}
+          organizerFeeAmount={organizerFeeNum}
+          paidOrganizerFeeCount={paidOrganizerFeeCount}
+          nonOrganizerCount={nonOrganizerMembers.length}
+          feeProgressPercent={feeProgressPercent}
+        />
       )}
     </div>
   );

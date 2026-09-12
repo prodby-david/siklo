@@ -6,22 +6,7 @@ import {
   HandCoins,
   ShieldCheck,
 } from "lucide-react";
-
-interface TurnPaymentStatusPanelProps {
-  selectedTurn: number;
-  selectedMemberName: string;
-  currentTurn?: number;
-  contributionAmount: number;
-  poolTotal: number;
-  hasStarted: boolean;
-  hasSelectedMembership: boolean;
-  isCurrentBeneficiary: boolean;
-  isSelectedTurnReceived: boolean;
-  isSelectedTurnDisbursed: boolean;
-  isSelectedPaid: boolean;
-  isSelectedPending: boolean;
-  isSelectedRejected: boolean;
-}
+import type { TurnPaymentStatusPanelProps } from "@/features/groups/types/showcase.types";
 
 export default function TurnPaymentStatusPanel({
   selectedTurn,

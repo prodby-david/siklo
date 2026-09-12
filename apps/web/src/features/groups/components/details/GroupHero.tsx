@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCw, CreditCard, Settings, ShieldCheck, Crown, Clock } from "lucide-react";
+import { RotateCw } from "lucide-react";
 import { BILLING_CYCLE_LABELS } from "../../constants/billing-cycle.constants";
 import { GroupHeroProps } from "../../types/group.types";
-import formatDate from "@/shared/utils/formatDate";
 import PaymentSubmissionModal from "@/features/payments/components/modals/PaymentSubmissionModal";
 import EditGroupModal from "../modals/EditGroupModal";
 import GroupHeroCompletedBadge from "./elements/GroupHeroCompletedBadge";
 import GroupHeroInviteCodeCard from "./elements/GroupHeroInviteCodeCard";
 import GroupHeroWisdomQuoteCard from "./elements/GroupHeroWisdomQuoteCard";
+import GroupHeroHeader from "./elements/GroupHeroHeader";
+import GroupHeroActions from "./elements/GroupHeroActions";
 
 export default function GroupHero({
   groupId,
@@ -38,7 +39,6 @@ export default function GroupHero({
   isCurrentUserPending = false,
   currentTurn = 1,
   nextPayoutee,
-  onRefresh,
 }: GroupHeroProps) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -55,104 +55,29 @@ export default function GroupHero({
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
         <div className="space-y-3 max-w-2xl">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
-                isCycleDone
-                  ? "border border-success/30 bg-success-bg text-success"
-                  : hasStarted
-                  ? "bg-brand-accent/15 text-brand-accent"
-                  : "bg-warning/15 text-warning"
-              }`}
-            >
-              {isCycleDone ? "Cycle Complete" : hasStarted ? "Active Cycle" : "Unstarted"}
-            </span>
+          <GroupHeroHeader
+            name={name}
+            description={description}
+            billingLabel={billingLabel}
+            hasStarted={hasStarted}
+            isCycleDone={isCycleDone}
+            isOrganizer={isOrganizer}
+            onOpenEdit={() => setIsEditModalOpen(true)}
+          />
 
-            <span className="rounded-full bg-neutral-table-stripe px-3 py-1 text-[10px] font-bold text-neutral-subtext uppercase tracking-wider border border-neutral-border">
-              {billingLabel}
-            </span>
-          </div>
-
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-black text-foreground tracking-tight">
-              {name}
-            </h1>
-            {description ? (
-              <p className="text-xs sm:text-sm text-neutral-subtext line-clamp-2">
-                {description}
-              </p>
-            ) : (
-              <p className="text-xs sm:text-sm text-neutral-subtext italic">
-                No description provided for this group.
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            {isCycleDone ? (
-              <div className="flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-4 py-2 text-xs font-bold text-success">
-                <ShieldCheck className="w-4 h-4" />
-                <span>All Cycle Rotations Completed</span>
-              </div>
-            ) : hasStarted ? (
-              isOrganizer && !isOrganizerParticipating ? (
-                <div className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-brand-accent bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Facilitating Turn #{currentTurn}</span>
-                </div>
-              ) : isCurrentUserPaid ? (
-                <div className="flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-4 py-2 text-xs font-bold text-success">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Turn #{currentTurn} Contribution Paid</span>
-                </div>
-              ) : isCurrentUserPending ? (
-                <div className="flex items-center gap-1.5 rounded-2xl border border-warning/25 bg-warning-bg px-4 py-2 text-xs font-bold text-warning">
-                  <Clock className="w-4 h-4" />
-                  <span>Contribution Awaiting Verification</span>
-                </div>
-              ) : roundId && isUserMember ? (
-                <button
-                  onClick={() => setIsPayModalOpen(true)}
-                  className="flex items-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-4 py-2 rounded-2xl text-xs font-bold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
-                >
-                  <CreditCard className="w-4 h-4" />
-                  <span>Pay Contribution (Turn #{currentTurn})</span>
-                </button>
-              ) : (
-                <div className="flex items-center gap-1.5 rounded-2xl border border-danger-border bg-danger-bg px-4 py-2 text-xs font-bold text-danger">
-                  <Clock className="w-4 h-4" />
-                  <span>Current contribution round is unavailable</span>
-                </div>
-              )
-            ) : (
-              <div className="text-xs text-neutral-subtext">
-                Waiting for organizer to start cycle...
-              </div>
-            )}
-
-            {hasStarted && !isCycleDone && nextPayoutee && (
-              <div className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-brand-accent bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
-                <Crown className="w-3.5 h-3.5" />
-                <span>
-                  Next Payoutee: {nextPayoutee.name} · Turn #
-                  {nextPayoutee.roundNumber}
-                  {nextPayoutee.payoutDate
-                    ? ` · ${formatDate(nextPayoutee.payoutDate)}`
-                    : ""}
-                </span>
-              </div>
-            )}
-
-            {isOrganizer && !hasStarted && (
-              <button
-                onClick={() => setIsEditModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-neutral-subtext hover:text-foreground bg-background hover:bg-neutral-subtext/5 rounded-2xl border border-neutral-border transition-all duration-150 active:scale-95 cursor-pointer"
-              >
-                <Settings className="w-3.5 h-3.5" />
-                <span>Settings</span>
-              </button>
-            )}
-          </div>
+          <GroupHeroActions
+            hasStarted={hasStarted}
+            isCycleDone={isCycleDone}
+            isOrganizer={isOrganizer}
+            isOrganizerParticipating={isOrganizerParticipating}
+            isCurrentUserPaid={isCurrentUserPaid}
+            isCurrentUserPending={isCurrentUserPending}
+            roundId={roundId}
+            isUserMember={isUserMember}
+            currentTurn={currentTurn}
+            nextPayoutee={nextPayoutee}
+            onOpenPay={() => setIsPayModalOpen(true)}
+          />
         </div>
 
         {isCycleDone ? (
@@ -181,7 +106,6 @@ export default function GroupHero({
           latePenaltyRate={latePenaltyAmount}
           allowedMethods={allowedMethods}
           organizerPaymentDetails={organizerPaymentDetails}
-          onSuccess={onRefresh}
         />
       )}
 
@@ -202,7 +126,6 @@ export default function GroupHero({
             billingCycle,
             payoutSequence,
           }}
-          onSuccess={onRefresh}
         />
       )}
     </div>
