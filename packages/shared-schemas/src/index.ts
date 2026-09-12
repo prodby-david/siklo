@@ -93,3 +93,14 @@ export {
 } from "./notifications/create-notification.schema.js";
 
 export { uuidSchema, optionalProofSchema } from "./common/identifier.schema.js";
+
+export {
+  inviteStatusSchema,
+  inviteSchema,
+  createInviteSchema,
+  acceptInviteSchema,
+  type InviteStatus,
+  type CreateInviteDTO,
+  type AcceptInviteDTO,
+  type InviteDTO,
+} from "./users/invite-user.schema.js";
