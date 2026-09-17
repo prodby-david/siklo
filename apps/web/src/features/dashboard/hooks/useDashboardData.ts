@@ -23,7 +23,7 @@ const MONTHLY_MULTIPLIER: Record<string, number> = {
 export function useDashboardData() {
   const { data: user, isLoading: isUserLoading } = useGetCurrentName();
   const { data: groups = [], isLoading: isGroupsLoading } = useGetGroup();
-  const { data: pendingPayments = [], isLoading: isPendingPaymentsLoading } =
+  const { isLoading: isPendingPaymentsLoading } =
     usePendingPayments(undefined, Boolean(user?.id));
 
   const { data: nearestDue, isLoading: isNearestDueLoading } = useQuery({
@@ -90,9 +90,8 @@ export function useDashboardData() {
     return deriveDashboardInsights(
       groups,
       user?.id || "",
-      pendingPayments.length,
     );
-  }, [groups, user?.id, pendingPayments.length]);
+  }, [groups, user?.id]);
 
   const organizerTasks = useMemo(() => {
     return deriveOrganizerTasks(groups, user?.id || "");

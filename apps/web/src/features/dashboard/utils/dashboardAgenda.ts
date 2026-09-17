@@ -15,7 +15,6 @@ import {
 export function deriveDashboardInsights(
   groups: Group[],
   currentUserId: string,
-  pendingPaymentsCount = 0,
 ): {
   alerts: ActionAlertItem[];
   agenda: RotationAgendaItem[];
@@ -33,18 +32,7 @@ export function deriveDashboardInsights(
   let totalDueRounds = 0;
   let onTimePaidRounds = 0;
 
-  if (pendingPaymentsCount > 0) {
-    alerts.push({
-      id: "organizer-verify-alert",
-      type: "ORGANIZER_VERIFY",
-      title: "Incoming Member Payments Pending Verification",
-      subtitle: `You have ${pendingPaymentsCount} incoming payment proof(s) waiting for organizer review.`,
-      groupId: "",
-      groupName: "Organizer Verification",
-      actionUrl: "/group",
-      actionLabel: "Review Payments",
-    });
-  }
+
 
   for (const group of groups) {
     const hasStarted = Boolean(group.startDate);
