@@ -13,6 +13,7 @@ export class GroupsRepository {
   async findGroupByName(tx: Prisma.TransactionClient, name: string) {
     return tx.group.findFirst({
       where: { name },
+      select: { id: true },
     });
   }
 
@@ -69,18 +70,10 @@ export class GroupsRepository {
     });
   }
 
-  async getGroupById(groupId: string, userId: string) {
+  async getGroupById(groupId: string, _userId?: string) {
     return this.prisma.group.findFirst({
       where: {
         id: groupId,
-        OR: [
-          { organizerId: userId },
-          {
-            memberships: {
-              some: { userId },
-            },
-          },
-        ],
       },
       include: {
         _count: {
@@ -147,6 +140,7 @@ export class GroupsRepository {
           groupId: dto.groupId,
         },
       },
+      select: { id: true },
     });
   }
 
@@ -184,6 +178,10 @@ export class GroupsRepository {
         groupId,
         position,
       },
+      select: {
+        id: true,
+        userId: true,
+      },
     });
   }
 
@@ -209,6 +207,58 @@ export class GroupsRepository {
     return this.prisma.group.update({
       where: { id: groupId },
       data,
+    });
+  }
+
+  async findGroupForInvite(groupId: string, organizerId: string) {
+    return this.prisma.group.findFirst({
+      where: {
+        id: groupId,
+        organizerId,
+      },
+      select: {
+        id: true,
+        organizerId: true,
+        startDate: true,
+        maxMembers: true,
+        memberships: {
+          select: { userId: true },
+        },
+      },
+    });
+  }
+
+  async findOwnedGroupsForPlanLimit(
+    tx: Prisma.TransactionClient,
+    userId: string,
+  ) {
+    return tx.group.findMany({
+      where: {
+        organizerId: userId,
+      },
+      select: {
+        startDate: true,
+        cycleDuration: true,
+        organizerId: true,
+        organizerFeeAmount: true,
+        memberships: {
+          select: {
+            userId: true,
+          },
+        },
+        payments: {
+          select: {
+            status: true,
+            userId: true,
+            organizerFeeAmount: true,
+          },
+        },
+        rounds: {
+          select: {
+            status: true,
+          },
+        },
+      },
     });
   }
 }
