@@ -11,6 +11,7 @@ export default function SidebarNavItem({
   unreadCount,
   isNotificationOpen,
   onOpenNotifications,
+  onNavigate,
 }: SidebarNavItemProps) {
   const IconComponent = item.icon;
   const isNotification = item.id === "notification";
@@ -24,23 +25,26 @@ export default function SidebarNavItem({
     return (
       <button
         type="button"
-        onClick={onOpenNotifications}
+        onClick={() => {
+          onOpenNotifications();
+          onNavigate?.();
+        }}
         title={item.label}
-        className={`w-full flex items-center rounded-2xl font-medium transition-all duration-150 active:scale-95 cursor-pointer ${
+        className={`w-full group flex items-center rounded-2xl transition-all duration-150 active:scale-98 cursor-pointer ${
           isCollapsed ? "justify-center p-2.5" : "justify-between px-3.5 py-2.5"
         } ${
           isNotificationOpen
-            ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
-            : "text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground"
+            ? "bg-brand-accent/10 text-brand-accent font-bold border border-brand-accent/25 shadow-2xs"
+            : "text-neutral-subtext hover:bg-neutral-subtext/10 hover:text-foreground font-medium border border-transparent"
         }`}
       >
         <div className="flex items-center gap-3">
           <div className="relative flex items-center justify-center">
             <IconComponent
-              className={`w-5 h-5 ${
+              className={`w-5 h-5 transition-colors ${
                 isNotificationOpen
-                  ? "text-brand-accent-foreground"
-                  : "text-neutral-subtext"
+                  ? "text-brand-accent"
+                  : "text-neutral-subtext group-hover:text-foreground"
               }`}
             />
             {isCollapsed && (
@@ -48,7 +52,7 @@ export default function SidebarNavItem({
             )}
           </div>
           {!isCollapsed && (
-            <span className="text-sm font-medium">{item.label}</span>
+            <span className="text-xs sm:text-sm">{item.label}</span>
           )}
         </div>
         {!isCollapsed && (
@@ -64,21 +68,26 @@ export default function SidebarNavItem({
   return (
     <Link
       href={`/${item.id}`}
+      onClick={onNavigate}
       title={item.label}
-      className={`w-full flex items-center rounded-2xl font-medium transition-all duration-150 active:scale-95 cursor-pointer ${
+      className={`w-full group flex items-center rounded-2xl transition-all duration-150 active:scale-98 cursor-pointer ${
         isCollapsed ? "justify-center p-2.5" : "gap-3 px-3.5 py-2.5"
       } ${
         isActive
-          ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
-          : "text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground"
+          ? "bg-brand-accent/10 text-brand-accent font-bold border border-brand-accent/25 shadow-2xs"
+          : "text-neutral-subtext hover:bg-neutral-subtext/10 hover:text-foreground font-medium border border-transparent"
       }`}
     >
       <IconComponent
-        className={`w-5 h-5 ${
-          isActive ? "text-brand-accent-foreground" : "text-neutral-subtext"
+        className={`w-5 h-5 transition-colors ${
+          isActive
+            ? "text-brand-accent"
+            : "text-neutral-subtext group-hover:text-foreground"
         }`}
       />
-      {!isCollapsed && <span className="text-sm font-medium">{item.label}</span>}
+      {!isCollapsed && (
+        <span className="text-xs sm:text-sm">{item.label}</span>
+      )}
     </Link>
   );
 }

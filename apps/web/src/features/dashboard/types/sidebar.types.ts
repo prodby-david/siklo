@@ -6,6 +6,11 @@ export interface NavItem {
   icon: LucideIcon;
 }
 
+export interface SidebarSection {
+  title: string;
+  items: NavItem[];
+}
+
 export interface SidebarContextType {
   isCollapsed: boolean;
   toggleCollapse: () => void;
@@ -29,6 +34,7 @@ export interface SidebarNavItemProps {
   unreadCount: number;
   isNotificationOpen: boolean;
   onOpenNotifications: () => void;
+  onNavigate?: () => void;
 }
 
 export interface SidebarMobileDrawerProps {

@@ -1,11 +1,11 @@
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, LogOut } from "lucide-react";
 import { SidebarMobileDrawerProps } from "../../types/sidebar.types";
-import { NAV_ITEMS } from "../../constants/sidebar.constants";
-import SidebarUnreadBadge from "./SidebarUnreadBadge";
+import { SIDEBAR_SECTIONS } from "../../constants/sidebar.constants";
+import SidebarBrandHeader from "./SidebarBrandHeader";
+import SidebarNavItem from "./SidebarNavItem";
+import SidebarUserProfile from "./SidebarUserProfile";
 import ThemeToggle from "@/shared/components/theme/ThemeToggle";
 
 export default function SidebarMobileDrawer({
@@ -34,96 +34,68 @@ export default function SidebarMobileDrawer({
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 280 }}
-            className="relative z-10 w-72 max-w-[85vw] h-full bg-background border-r border-neutral-border p-5 flex flex-col justify-between shadow-2xl overflow-y-auto no-scrollbar"
+            className="relative z-10 w-72 max-w-[85vw] h-full bg-card border-r border-neutral-border/80 p-4 flex flex-col justify-between shadow-2xl overflow-y-auto no-scrollbar select-none"
           >
-            <div>
-              <div className="flex items-center justify-between mb-6 px-1">
-                <Image
-                  src="/images/logo.svg"
-                  width={65}
-                  height={65}
-                  alt="Logo"
-                  priority
-                />
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="w-8 h-8 rounded-xl flex items-center justify-center text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/10 transition-colors cursor-pointer"
-                  aria-label="Close menu drawer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+            <div className="flex flex-col min-h-0 flex-1">
+              <SidebarBrandHeader
+                onNavigate={onClose}
+                action={
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="w-8 h-8 rounded-xl flex items-center justify-center text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/10 transition-colors cursor-pointer shrink-0"
+                    aria-label="Close menu drawer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                }
+              />
 
-              <nav className="space-y-1.5">
-                {NAV_ITEMS.map((item) => {
-                  const IconComponent = item.icon;
-                  const isNotification = item.id === "notification";
-                  const isActive =
-                    !isNotification &&
-                    (pathname === `/${item.id}` ||
-                      pathname.startsWith(`/${item.id}/`) ||
-                      (item.id === "dashboard" && pathname === "/"));
-
-                  if (isNotification) {
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        onClick={() => {
-                          onClose();
-                          onOpenNotifications();
-                        }}
-                        className="w-full flex items-center justify-between px-4 py-3 rounded-2xl font-medium text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground transition-all duration-150 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-3">
-                          <IconComponent className="w-5 h-5 text-neutral-subtext" />
-                          <span className="text-sm font-medium">{item.label}</span>
-                        </div>
-                        <SidebarUnreadBadge
+              <div className="flex-1 overflow-y-auto no-scrollbar space-y-5 pr-0.5">
+                {SIDEBAR_SECTIONS.map((section) => (
+                  <div key={section.title} className="space-y-1">
+                    <p className="px-3 text-[10px] font-black uppercase tracking-wider text-neutral-subtext/70">
+                      {section.title}
+                    </p>
+                    <div className="space-y-1">
+                      {section.items.map((item) => (
+                        <SidebarNavItem
+                          key={item.id}
+                          item={item}
+                          pathname={pathname}
+                          isCollapsed={false}
                           unreadCount={unreadCount}
                           isNotificationOpen={false}
+                          onOpenNotifications={() => {
+                            onClose();
+                            onOpenNotifications();
+                          }}
+                          onNavigate={onClose}
                         />
-                      </button>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={item.id}
-                      href={`/${item.id}`}
-                      onClick={onClose}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl font-medium transition-all duration-150 ${
-                        isActive
-                          ? "bg-brand-accent text-brand-accent-foreground shadow-sm"
-                          : "text-neutral-subtext hover:bg-neutral-subtext/5 hover:text-foreground"
-                      }`}
-                    >
-                      <IconComponent
-                        className={`w-5 h-5 ${
-                          isActive
-                            ? "text-brand-accent-foreground"
-                            : "text-neutral-subtext"
-                        }`}
-                      />
-                      <span className="text-sm font-medium">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="pt-3 border-t border-neutral-border/60 space-y-1 w-full">
-              <ThemeToggle showLabel />
-              <button
-                type="button"
-                onClick={onSignOut}
-                title="Sign out"
-                className="group flex w-full cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-neutral-subtext transition-all duration-150 hover:bg-danger-bg hover:text-danger active:scale-95"
-              >
-                <LogOut className="h-5 w-5 text-neutral-subtext transition-colors group-hover:text-danger" />
-                <span>Sign out</span>
-              </button>
+            <div className="pt-3 border-t border-neutral-border/60 space-y-2 shrink-0">
+              <SidebarUserProfile onNavigate={onClose} />
+              <div className="space-y-1.5">
+                <ThemeToggle variant="segmented" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    onSignOut();
+                  }}
+                  title="Sign out"
+                  className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl px-3 py-2 text-xs font-bold text-neutral-subtext transition-all duration-150 border border-neutral-border/60 bg-neutral-table-stripe/40 hover:bg-danger-bg hover:text-danger hover:border-danger-border/60 active:scale-98"
+                >
+                  <LogOut className="h-3.5 w-3.5 text-neutral-subtext transition-colors group-hover:text-danger group-hover:-translate-x-0.5" />
+                  <span>Sign out</span>
+                </button>
+              </div>
             </div>
           </motion.aside>
         </div>

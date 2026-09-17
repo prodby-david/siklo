@@ -33,7 +33,7 @@ export default function DashboardMobileHeader() {
         >
           <Bell className="w-5 h-5 text-neutral-subtext" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-brand-accent animate-pulse border border-background" />
+            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-brand-accent border border-background" />
           )}
         </button>
       </header>

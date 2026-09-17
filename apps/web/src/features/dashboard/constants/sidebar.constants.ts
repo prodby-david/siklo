@@ -5,12 +5,31 @@ import {
   Settings,
   Mail,
 } from "lucide-react";
-import { NavItem } from "../types/sidebar.types";
+import { NavItem, SidebarSection } from "../types/sidebar.types";
 
-export const NAV_ITEMS: NavItem[] = [
+export const MAIN_NAV_ITEMS: NavItem[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { id: "group", label: "Groups", icon: Users },
   { id: "invites", label: "Invites", icon: Mail },
+];
+
+export const SYSTEM_NAV_ITEMS: NavItem[] = [
   { id: "notification", label: "Notifications", icon: Bell },
   { id: "settings", label: "Settings", icon: Settings },
+];
+
+export const SIDEBAR_SECTIONS: SidebarSection[] = [
+  {
+    title: "Main",
+    items: MAIN_NAV_ITEMS,
+  },
+  {
+    title: "Preferences",
+    items: SYSTEM_NAV_ITEMS,
+  },
+];
+
+export const NAV_ITEMS: NavItem[] = [
+  ...MAIN_NAV_ITEMS,
+  ...SYSTEM_NAV_ITEMS,
 ];
