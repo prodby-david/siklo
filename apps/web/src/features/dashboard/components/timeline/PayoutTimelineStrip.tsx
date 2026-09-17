@@ -7,7 +7,30 @@ import type { PayoutTimelineStripProps } from "../../types/dashboard.types";
 export default function PayoutTimelineStrip({
   milestones,
 }: PayoutTimelineStripProps) {
-  if (!milestones || milestones.length === 0) return null;
+  if (!milestones || milestones.length === 0) {
+    return (
+      <section className="w-full rounded-3xl border border-neutral-border bg-card p-6 sm:p-8 shadow-xs">
+        <div className="flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-3 py-6">
+          <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/20">
+            <CalendarDays className="w-6 h-6" />
+          </div>
+          <h3 className="text-base font-extrabold text-foreground">
+            No Upcoming Payout Milestones
+          </h3>
+          <p className="text-xs text-neutral-subtext leading-relaxed">
+            When you join or start a paluwagan circle, your scheduled turns and payout roadmap will appear here automatically.
+          </p>
+          <Link
+            href="/group"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-brand-accent text-brand-accent-foreground hover:bg-brand-accent-hover transition-colors shadow-xs mt-2 cursor-pointer"
+          >
+            <span>Browse Circles</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </section>
+    );
+  }
 
   const totalProjected = milestones.reduce(
     (sum, item) => sum + item.payoutAmount,
@@ -84,7 +107,7 @@ export default function PayoutTimelineStrip({
             return (
               <div
                 key={milestone.id}
-                className={`min-w-[260px] sm:min-w-[280px] max-w-[300px] flex-1 flex flex-col justify-between p-4.5 rounded-2xl border transition-all shadow-2xs ${cardBorderClasses}`}
+                className={`min-w-[260px] sm:min-w-[280px] max-w-[320px] flex-1 flex flex-col justify-between p-4 sm:p-5 rounded-2xl border transition-all shadow-2xs ${cardBorderClasses}`}
               >
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between gap-2">

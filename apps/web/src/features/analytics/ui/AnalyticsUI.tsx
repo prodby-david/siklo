@@ -16,23 +16,29 @@ export default function AnalyticsUI() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-full overflow-hidden">
+    <div className="flex flex-col gap-6 sm:gap-8 w-full max-w-full overflow-hidden">
       <AnalyticsHeader stats={stats} />
 
       <PayoutTimelineStrip milestones={payoutTimeline} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-        <TotalSavingsCard
-          totalPayoutPool={stats.totalPayoutPool}
-          totalMonthlyContributions={stats.totalMonthlyContributions}
-          perTurnContribution={stats.perTurnContribution}
-          primaryBillingCycle={stats.primaryBillingCycle}
-          activeGroupsCount={stats.activeGroupsCount}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 items-stretch">
+        <div className="w-full flex">
+          <TotalSavingsCard
+            totalPayoutPool={stats.totalPayoutPool}
+            totalMonthlyContributions={stats.totalMonthlyContributions}
+            perTurnContribution={stats.perTurnContribution}
+            primaryBillingCycle={stats.primaryBillingCycle}
+            activeGroupsCount={stats.activeGroupsCount}
+          />
+        </div>
 
-        <SavingsFlowCard stats={stats} />
+        <div className="w-full flex">
+          <SavingsFlowCard stats={stats} />
+        </div>
 
-        <SaverReliabilityCard stats={stats} />
+        <div className="w-full flex md:col-span-2 xl:col-span-1">
+          <SaverReliabilityCard stats={stats} />
+        </div>
       </div>
     </div>
   );
