@@ -20,7 +20,7 @@ export default function ShowcaseTurnCard({
       className={`flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer gap-2.5 sm:gap-0 ${
         isSelected
           ? "bg-brand-accent/10 border-brand-accent scale-[1.01]"
-          : "bg-background border-neutral-border/60 hover:border-brand-accent/30"
+          : "bg-card border-neutral-border/60 hover:border-brand-accent/30"
       }`}
     >
       <div className="flex items-center gap-3">

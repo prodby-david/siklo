@@ -20,10 +20,10 @@ export default function PricingCard({ plan, interval, index = 0 }: PricingCardPr
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: index * 0.12, ease: "easeOut" }}
       whileHover={{ scale: plan.isComingSoon ? 1 : 1.03, transition: { duration: 0.2 } }}
-      className={`relative flex flex-col justify-between p-6 sm:p-8 rounded-3xl transition-all duration-300 ${
+      className={`relative flex flex-col justify-between p-5 sm:p-8 rounded-3xl transition-all duration-300 ${
         plan.isPopular
-          ? "border-2 border-brand-accent bg-gradient-to-b from-brand-accent/15 via-background/80 to-background/90 backdrop-blur-xl relative z-10 scale-102 z-10"
-          : "border border-neutral-border bg-background/80 backdrop-blur-xl relative z-10 hover:border-brand-accent/30"
+          ? "border-2 border-brand-accent bg-gradient-to-b from-brand-accent/15 via-card/80 to-card/90 backdrop-blur-xl relative z-10 scale-102 z-10"
+          : "border border-neutral-border bg-card/80 backdrop-blur-xl relative z-10 hover:border-brand-accent/30"
       }`}
     >
       {plan.isComingSoon ? (

@@ -30,7 +30,7 @@ export default function ProfileSettings() {
 
   return (
     <div className="space-y-6 max-w-xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-base font-bold text-foreground">
             Profile Information
@@ -42,14 +42,14 @@ export default function ProfileSettings() {
 
         <Button
           onClick={openDrawer}
-          className="flex cursor-pointer items-center gap-2 rounded-2xl bg-brand-accent px-4 py-2 text-xs font-bold text-brand-accent-foreground shadow-xs hover:bg-brand-accent-hover"
+          className="flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-brand-accent px-4 py-2 text-xs font-bold text-brand-accent-foreground shadow-xs hover:bg-brand-accent-hover w-full sm:w-auto"
         >
           <Edit3 className="w-4 h-4" />
           <span>Edit Profile</span>
         </Button>
       </div>
 
-      <div className="p-5 sm:p-6 rounded-3xl border border-neutral-border/80 bg-background/80 backdrop-blur-xl space-y-4 shadow-xs">
+      <div className="p-4 sm:p-6 rounded-3xl border border-neutral-border/80 bg-card backdrop-blur-xl space-y-4 shadow-xs">
         <div className="flex items-center gap-4 pb-4 border-b border-neutral-border/60">
           <div className="w-12 h-12 rounded-2xl bg-brand-accent/15 text-brand-accent flex items-center justify-center font-black text-lg border border-brand-accent/20">
             {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-6 h-6" />}

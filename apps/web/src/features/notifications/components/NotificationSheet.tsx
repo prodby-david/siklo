@@ -57,7 +57,7 @@ export default function NotificationSheet({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 280 }}
-            className="relative z-10 w-full sm:w-[440px] h-full bg-background border-l border-neutral-border shadow-2xl flex flex-col overflow-hidden"
+            className="relative z-10 w-full sm:w-[440px] h-full bg-card border-l border-neutral-border shadow-2xl flex flex-col overflow-hidden"
           >
             <NotificationHeader
               unreadCount={unreadCount}

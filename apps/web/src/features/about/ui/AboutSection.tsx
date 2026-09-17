@@ -23,8 +23,8 @@ export default function AboutSection({
             transition={{ duration: 0.55, ease: "easeOut" }}
             className="lg:col-span-5 flex flex-col gap-6"
           >
-            <div className="flex flex-col gap-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-bold self-start">
+            <div className="flex flex-col gap-3 text-center sm:text-left items-center sm:items-start">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-accent/10 border border-brand-accent/20 text-brand-accent text-xs font-bold self-center sm:self-start">
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>About Siklo</span>
               </div>

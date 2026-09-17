@@ -19,10 +19,10 @@ export default function ComparisonCard({
       whileInView={{ opacity: 1, x: 0, rotate: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`rounded-3xl border p-6 sm:p-8 flex flex-col justify-between h-full transition-all duration-300 relative overflow-hidden ${
+      className={`rounded-3xl border p-4 sm:p-6 md:p-8 flex flex-col justify-between h-full transition-all duration-300 relative overflow-hidden ${
         isAdvantage
-          ? "bg-gradient-to-b from-brand-accent/15 via-background to-background border-brand-accent/30"
-          : "bg-background/90 border-neutral-border/80"
+          ? "bg-gradient-to-b from-brand-accent/15 via-card/80 to-card/90 backdrop-blur-xl border-brand-accent/30"
+          : "bg-card/90 backdrop-blur-xl border-neutral-border/80"
       }`}
     >
 

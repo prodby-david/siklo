@@ -11,17 +11,17 @@ export function getCategoryConfig(category: NotificationCategory): CategoryConfi
     case "PAYMENT":
       return {
         icon: CreditCard,
-        iconBg: "bg-amber-500/15 text-amber-500 border-amber-500/20",
+        iconBg: "bg-warning-bg text-warning border-warning/20",
       };
     case "PAYOUT":
       return {
         icon: TrendingUp,
-        iconBg: "bg-emerald-500/15 text-emerald-500 border-emerald-500/20",
+        iconBg: "bg-success-bg text-success border-success/20",
       };
     case "ANNOUNCEMENT":
       return {
         icon: Megaphone,
-        iconBg: "bg-indigo-500/15 text-indigo-500 border-indigo-500/20",
+        iconBg: "bg-brand-accent/15 text-brand-accent border-brand-accent/20",
       };
     default:
       return {

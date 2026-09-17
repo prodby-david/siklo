@@ -19,7 +19,7 @@ export default function SimulatorMemberRow({
 }: SimulatorMemberRowProps) {
   return (
     <div
-      className={`p-3 sm:p-4 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
+      className={`p-3 sm:p-4 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 ${
         isCurrentRecipient && !simulationFinished
           ? "border-brand-accent/40 bg-brand-accent/10 ring-1 ring-brand-accent/30"
           : "border-brand-accent/25 bg-card/80 backdrop-blur-xl"
@@ -50,7 +50,7 @@ export default function SimulatorMemberRow({
         </div>
       </div>
 
-      <div className="flex items-center gap-4 sm:gap-6 text-right">
+      <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-6 text-right w-full sm:w-auto pt-2 sm:pt-0 border-t border-brand-accent/15 sm:border-0">
         <div className="flex flex-col text-left sm:text-right">
           <div className="text-[10px] text-neutral-subtext font-semibold uppercase tracking-wider">
             Current Action

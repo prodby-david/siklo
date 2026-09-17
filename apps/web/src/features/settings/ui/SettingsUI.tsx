@@ -11,7 +11,7 @@ export default function SettingsUI() {
 
   return (
     <div className="max-w-5xl mx-auto flex flex-col gap-6 w-full">
-      <div>
+      <div className="text-center sm:text-left">
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground">
           Account Settings
         </h1>
@@ -22,7 +22,7 @@ export default function SettingsUI() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-        <aside className="md:col-span-4 lg:col-span-3 bg-background border border-neutral-border rounded-2xl p-4 shadow-sm space-y-1">
+        <aside className="md:col-span-4 lg:col-span-3 bg-card border border-neutral-border rounded-2xl p-4 shadow-sm space-y-1">
           {SETTINGS_TABS.map((tab) => {
             const IconComponent = tab.icon || Settings;
             const isActive = activeTab === tab.id;
@@ -46,7 +46,7 @@ export default function SettingsUI() {
           })}
         </aside>
 
-        <main className="md:col-span-8 lg:col-span-9 bg-background border border-neutral-border rounded-2xl p-6 md:p-8 shadow-sm min-h-[450px] transition-all duration-200">
+        <main className="md:col-span-8 lg:col-span-9 bg-card border border-neutral-border rounded-2xl p-4 sm:p-6 md:p-8 shadow-sm min-h-[450px] transition-all duration-200">
           {(() => {
             const ActiveComponent = SETTINGS_COMPONENTS[activeTab];
             return ActiveComponent ? <ActiveComponent /> : null;

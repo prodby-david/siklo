@@ -24,7 +24,7 @@ export default function CycleTurnShowcase() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full rounded-3xl border border-brand-accent/30 bg-background/80 backdrop-blur-xl relative z-10 p-4 sm:p-8 overflow-hidden"
+      className="w-full rounded-3xl border border-brand-accent/30 bg-card/80 backdrop-blur-xl relative z-10 p-4 sm:p-8 overflow-hidden"
     >
 
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-neutral-border/60 pb-5 sm:pb-6 mb-6 sm:mb-8 gap-3 sm:gap-4">
@@ -43,7 +43,7 @@ export default function CycleTurnShowcase() {
         </div>
 
         <div className="flex items-center gap-2 bg-neutral-table-stripe p-1.5 rounded-2xl border border-neutral-border/60 self-start md:self-auto">
-          <span className="text-[11px] sm:text-xs font-bold text-brand-accent px-2.5 sm:px-3 py-1 bg-background rounded-xl border border-neutral-border/40">
+          <span className="text-[11px] sm:text-xs font-bold text-brand-accent px-2.5 sm:px-3 py-1 bg-card rounded-xl border border-neutral-border/40">
             Round 3 of 6
           </span>
           <span className="text-[11px] sm:text-xs font-semibold text-neutral-subtext px-1.5 sm:px-2">

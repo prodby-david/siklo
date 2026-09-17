@@ -8,7 +8,7 @@ export default function PricingBillingToggle({
   const isYearly = interval === "YEARLY";
 
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
       <span
         className={`text-xs font-extrabold ${
           !isYearly ? "text-foreground" : "text-neutral-subtext"

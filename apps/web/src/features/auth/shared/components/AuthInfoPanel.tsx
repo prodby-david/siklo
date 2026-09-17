@@ -33,7 +33,7 @@ export default function AuthInfoPanel({
           {highlights.map((item, index) => (
             <div
               key={index}
-              className="flex gap-3 items-center p-3 rounded-2xl bg-background/60 border border-brand-accent/15 backdrop-blur-xs hover:border-brand-accent/30 transition-all duration-200"
+              className="flex gap-3 items-center p-3 rounded-2xl bg-card/60 border border-brand-accent/15 backdrop-blur-xs hover:border-brand-accent/30 transition-all duration-200"
             >
               <div className="h-9 w-9 rounded-2xl bg-brand-accent/15 flex items-center justify-center text-brand-accent shrink-0">
                 {item.icon}

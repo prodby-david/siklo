@@ -40,7 +40,7 @@ export default function ShowcaseMemberDetail({
         </div>
       </div>
 
-      <div className="mt-2 p-3 rounded-xl bg-background border border-neutral-border/60 text-xs space-y-1.5">
+      <div className="mt-2 p-3 rounded-xl bg-card border border-neutral-border/60 text-xs space-y-1.5">
         <div className="flex items-center gap-1.5 text-brand-accent font-bold text-[11px]">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span>Ledger Verification</span>

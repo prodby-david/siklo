@@ -24,11 +24,12 @@ export default function PaluwaganGuide() {
         </div>
 
         <h3 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-          Paluwagan Guide & Guidelines
+          Group Circle Guidelines
         </h3>
 
         <p className="text-xs sm:text-sm text-neutral-subtext leading-relaxed font-normal">
-          Select the best turn scheme for your circle and follow community-proven best practices.
+          Select the best turn scheme for your circle and follow
+          community-proven best practices.
         </p>
       </motion.div>
 

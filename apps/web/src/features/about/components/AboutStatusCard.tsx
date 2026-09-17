@@ -9,7 +9,6 @@ export default function AboutStatusCard() {
           <Notebook className="w-4 h-4 text-brand-accent" />
           <span className="text-foreground font-extrabold">Notebook Status</span>
         </div>
-        <span className="flex h-2 w-2 rounded-full bg-brand-accent animate-slow-pulse" />
       </div>
 
       <div className="flex justify-between text-xs font-semibold text-neutral-subtext">

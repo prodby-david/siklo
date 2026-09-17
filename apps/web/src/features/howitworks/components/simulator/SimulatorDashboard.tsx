@@ -99,7 +99,7 @@ export default function SimulatorDashboard({
         ))}
       </div>
 
-      <div className="flex items-center gap-3 mt-4 border-t border-brand-accent/15 pt-4">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 mt-4 border-t border-brand-accent/15 pt-4">
         <button
           type="button"
           onClick={onReset}

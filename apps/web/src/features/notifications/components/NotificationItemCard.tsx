@@ -22,7 +22,7 @@ export default function NotificationItemCard({
       }`}
     >
       {!item.isRead && (
-        <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-brand-accent animate-pulse" />
+        <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-brand-accent" />
       )}
 
       <div

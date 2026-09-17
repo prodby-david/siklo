@@ -19,7 +19,7 @@ export default function PaluwaganFinalCtaSection() {
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="relative flex w-full flex-col items-center gap-6 overflow-hidden rounded-3xl border border-brand-accent/30 bg-gradient-to-br from-brand-accent/20 via-brand-accent/10 to-winner-payout-bg p-8 text-center sm:p-14"
+          className="relative flex w-full flex-col items-center gap-6 overflow-hidden rounded-3xl border border-brand-accent/30 bg-gradient-to-br from-brand-accent/20 via-brand-accent/10 to-winner-payout-bg p-5 sm:p-8 md:p-14 text-center"
         >
 
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-accent/20 border border-brand-accent/35 text-brand-accent text-xs font-extrabold relative z-10">
@@ -38,7 +38,7 @@ export default function PaluwaganFinalCtaSection() {
             minutes.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-2 relative z-10">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-2 relative z-10">
             <div className="flex items-center gap-2 text-xs font-bold text-foreground">
               <ShieldCheck className="h-4 w-4 text-brand-accent shrink-0" />
               <span>100% Shared Transparency</span>
@@ -53,7 +53,7 @@ export default function PaluwaganFinalCtaSection() {
             </div>
           </div>
 
-          <div className="mt-4 relative z-10">
+          <div className="mt-4 relative z-10 w-full sm:w-auto flex justify-center [&>div]:w-full sm:[&>div]:w-auto [&>div>a]:w-full sm:[&>div>a]:w-auto">
             <GetStartedButton
               size="lg"
               text="Start Your Group Cycle Now"

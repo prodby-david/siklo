@@ -27,7 +27,7 @@ export default function SimulatorSetup({
         <label className="text-xs font-bold text-neutral-subtext uppercase tracking-wider">
           Contribution per Member
         </label>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {CONTRIBUTION_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -49,7 +49,7 @@ export default function SimulatorSetup({
         <label className="text-xs font-bold text-neutral-subtext uppercase tracking-wider">
           Number of Members
         </label>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {MEMBER_COUNT_OPTIONS.map((count) => (
             <button
               key={count}
@@ -71,7 +71,7 @@ export default function SimulatorSetup({
         <label className="text-xs font-bold text-neutral-subtext uppercase tracking-wider">
           Payout Turn Scheme
         </label>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {SCHEME_OPTIONS.map((option) => (
             <button
               key={option.value}

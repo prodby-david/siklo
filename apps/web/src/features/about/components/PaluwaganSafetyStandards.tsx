@@ -2,7 +2,13 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, FileText, Lock, HelpCircle, ArrowRight } from "lucide-react";
+import {
+  ShieldCheck,
+  FileText,
+  Lock,
+  HelpCircle,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function PaluwaganSafetyStandards() {
@@ -48,11 +54,12 @@ export default function PaluwaganSafetyStandards() {
         </div>
 
         <h3 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-          How Siklo Protects Your Group Ledger
+          How Siklo Protects Your Group Ledger?
         </h3>
 
         <p className="text-xs sm:text-sm text-neutral-subtext leading-relaxed font-normal">
-          Strict operational standards designed specifically to preserve community trust and eliminate disputes.
+          Strict operational standards designed specifically to preserve
+          community trust and eliminate disputes.
         </p>
       </motion.div>
 
@@ -65,7 +72,11 @@ export default function PaluwaganSafetyStandards() {
               initial={{ opacity: 0, y: 25 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.45, delay: index * 0.1, ease: "easeOut" }}
+              transition={{
+                duration: 0.45,
+                delay: index * 0.1,
+                ease: "easeOut",
+              }}
               className="h-full"
             >
               <div className="h-full rounded-3xl border border-brand-accent/25 bg-card/80 backdrop-blur-xl p-6 sm:p-7 flex flex-col justify-between gap-6 shadow-xs hover:border-brand-accent/50 transition-all duration-300">

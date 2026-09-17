@@ -16,8 +16,8 @@ export default function ChatUI() {
   } = useChatUI();
 
   return (
-    <div className="flex flex-col h-[100vh] bg-background">
-      <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-border bg-background/50 backdrop-blur-md sticky top-0 z-10">
+    <div className="flex flex-col h-[100dvh] bg-background">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-neutral-border bg-background/50 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-brand-accent/10 flex items-center justify-center text-brand-accent">
             <MessageSquare className="w-5 h-5" />
@@ -25,7 +25,6 @@ export default function ChatUI() {
           <div>
             <h1 className="font-semibold text-foreground text-base">Siklo</h1>
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
               <span className="text-xs text-neutral-subtext">Online</span>
             </div>
           </div>
@@ -47,7 +46,7 @@ export default function ChatUI() {
                 </div>
               )}
               <div
-                className={`max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-sm ${
+                className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] rounded-2xl px-4 py-2.5 text-sm ${
                   isUser
                     ? "rounded-tr-none bg-brand-accent text-brand-accent-foreground"
                     : "bg-muted text-foreground rounded-tl-none border border-neutral-border"

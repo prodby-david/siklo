@@ -27,7 +27,7 @@ const signinHighlights: FeatureHighlight[] = [
 
 export default function SigninCard() {
   return (
-    <div className="w-full max-w-4xl bg-background/90 backdrop-blur-xl border border-brand-accent/20 rounded-3xl flex flex-col md:flex-row overflow-hidden transition-all duration-300">
+    <div className="w-full max-w-4xl bg-card/90 backdrop-blur-xl border border-brand-accent/20 rounded-3xl flex flex-col md:flex-row overflow-hidden transition-all duration-300">
       <AuthInfoPanel
         title="Manage your funds, together."
         subtitle="Siklo makes Paluwagan transparent, secure, and hassle-free. Keep track of cycle turns, contribution logs, and group status in one place."

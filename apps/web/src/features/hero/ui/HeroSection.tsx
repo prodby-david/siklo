@@ -71,16 +71,18 @@ export const HeroSection = ({
 
           <motion.div
             variants={heroCtaVariants}
-            className="flex flex-row items-center justify-center gap-4 w-full sm:w-auto mt-2 relative z-10"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto mt-2 relative z-10"
           >
-            <GetStartedButton
-              size="md"
-              text={primaryCtaText}
-              icon={<Coins className="w-4 h-4" />}
-            />
+            <div className="w-full sm:w-auto [&>div]:w-full [&>div>a]:w-full">
+              <GetStartedButton
+                size="md"
+                text={primaryCtaText}
+                icon={<Coins className="w-4 h-4" />}
+              />
+            </div>
             <Link
               href="/how-it-works"
-              className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl border border-neutral-border bg-background text-xs sm:text-sm font-bold text-neutral-subtext hover:bg-neutral-table-stripe hover:text-foreground cursor-pointer transition-all duration-150 active:scale-95"
+              className="flex h-11 px-6 items-center justify-center gap-2 rounded-2xl border border-neutral-border bg-background text-xs sm:text-sm font-bold text-neutral-subtext hover:bg-neutral-table-stripe hover:text-foreground cursor-pointer transition-all duration-150 active:scale-95 w-full sm:w-auto"
             >
               <BookOpen className="w-4 h-4 text-brand-accent" />
               <span>{secondaryCtaText}</span>

@@ -10,7 +10,7 @@ export const StatsCard = ({
 }: StatsCardProps) => {
   return (
     <div
-      className={`rounded-2xl border border-neutral-border bg-background p-4 ${className}`}
+      className={`rounded-2xl border border-neutral-border bg-card p-4 ${className}`}
     >
       <p className="text-xs font-bold text-neutral-subtext">{title}</p>
       <div className="mt-1 flex items-baseline gap-1.5">

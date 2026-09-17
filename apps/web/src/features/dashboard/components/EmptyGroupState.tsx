@@ -39,7 +39,7 @@ export default function EmptyGroupState({
   const displayDescription = description || content.description;
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center border border-neutral-border border-dashed rounded-3xl bg-background mt-3 shadow-xs">
+    <div className="flex flex-col items-center justify-center p-8 text-center border border-neutral-border border-dashed rounded-3xl bg-card/60 mt-3 shadow-xs">
       <div className="mb-4">
         <Image
           src="/images/siklo-looking.png"

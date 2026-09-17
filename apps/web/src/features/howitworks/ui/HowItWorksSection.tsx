@@ -11,7 +11,7 @@ import {
 } from "../constants/howitworks.constants";
 
 export const HowItWorksSection = ({
-  title = "How to use this tool",
+  title = "How to use this tool?",
   organizerSteps = defaultOrganizerSteps,
   memberSteps = defaultMemberSteps,
   defaultRole = "ORGANIZER",
@@ -91,7 +91,11 @@ export const HowItWorksSection = ({
                 key={`${activeRole}-${step.stepNumber}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: index * 0.08, ease: "easeOut" }}
+                transition={{
+                  duration: 0.35,
+                  delay: index * 0.08,
+                  ease: "easeOut",
+                }}
                 className="h-full flex flex-col"
               >
                 <StepCard step={step} />
