@@ -22,10 +22,10 @@ export default function GroupListUI() {
   }
 
   return (
-    <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen">
+    <main className="flex-1 bg-neutral-subtext/5 p-4 sm:p-6 md:p-10 min-h-screen">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
+          <div className="space-y-1 text-center sm:text-left">
             <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground">
               My Savings Groups
             </h1>
@@ -33,7 +33,7 @@ export default function GroupListUI() {
               Manage your active Paluwagan cycles and review your completed groups.
             </p>
           </div>
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
             <JoinGroupModal />
             <CreateGroupButton />
           </div>

@@ -38,7 +38,7 @@ export default function GroupInfoCard({
   const isOnlyOrganizerLeft = membershipsCount === 1;
 
   return (
-    <div className="p-5 border border-neutral-border rounded-2xl bg-background shadow-sm space-y-4">
+    <div className="p-5 border border-neutral-border rounded-2xl bg-card shadow-sm space-y-4">
       <h3 className="text-sm sm:text-base font-bold text-foreground border-b border-neutral-border pb-3 flex items-center gap-2">
         <Info className="w-4 h-4 text-brand-accent" /> Group Details & Rules
       </h3>

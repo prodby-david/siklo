@@ -83,7 +83,7 @@ export default function GroupTurnShowcase({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full rounded-3xl border border-neutral-border bg-background p-4 sm:p-6 shadow-xs relative overflow-hidden space-y-4"
+      className="w-full rounded-3xl border border-neutral-border bg-card p-4 sm:p-6 shadow-xs relative overflow-hidden space-y-4"
     >
       <GroupTurnShowcaseHeader
         payoutSequence={payoutSequence}

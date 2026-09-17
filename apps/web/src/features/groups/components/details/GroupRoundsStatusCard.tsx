@@ -51,7 +51,7 @@ export default function GroupRoundsStatusCard({
   });
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-background shadow-xs space-y-4">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-card shadow-xs space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-neutral-border/60 pb-4">
         <div className="flex items-center gap-2.5">
           <div className="flex items-center justify-center w-9 h-9 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/25 shrink-0">
@@ -74,10 +74,6 @@ export default function GroupRoundsStatusCard({
             </span>
           ) : hasStarted ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-accent/15 text-brand-accent border border-brand-accent/25">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent" />
-              </span>
               Active Cycle {currentCycle} of {cycleDuration}
             </span>
           ) : (

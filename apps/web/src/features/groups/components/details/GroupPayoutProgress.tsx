@@ -59,7 +59,7 @@ export default function GroupPayoutProgress({
   const nextPayoutDate = getPayoutDate(startDate, activeRound, billingCycle);
 
   return (
-    <div className="p-6 border border-neutral-border rounded-2xl bg-background shadow-sm space-y-5">
+    <div className="p-6 border border-neutral-border rounded-2xl bg-card shadow-sm space-y-5">
       <div className="flex items-center justify-between border-b border-neutral-border pb-3">
         <h3 className="text-md font-bold text-foreground flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-brand-accent" /> Cycle Payout Progress
@@ -103,7 +103,7 @@ export default function GroupPayoutProgress({
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 rounded-2xl bg-background border border-neutral-border flex flex-col gap-1">
+        <div className="p-3 rounded-2xl bg-card border border-neutral-border flex flex-col gap-1">
           <span className="text-[10px] text-neutral-subtext font-medium flex items-center gap-1">
             <Wallet className="h-3 w-3 text-success" /> Pool Per Round
           </span>
@@ -112,7 +112,7 @@ export default function GroupPayoutProgress({
           </span>
         </div>
 
-        <div className="p-3 rounded-2xl bg-background border border-neutral-border flex flex-col gap-1">
+        <div className="p-3 rounded-2xl bg-card border border-neutral-border flex flex-col gap-1">
           <span className="text-[10px] text-neutral-subtext font-medium flex items-center gap-1">
             <ShieldCheck className="w-3 h-3 text-brand-accent" /> Guarantee
           </span>

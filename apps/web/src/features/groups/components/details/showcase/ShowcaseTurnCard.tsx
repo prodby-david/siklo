@@ -31,7 +31,7 @@ export default function ShowcaseTurnCard({
           ? "border-winner-payout/30 bg-winner-payout-bg hover:border-winner-payout/50"
           : isOrganizerSlot && !hasStarted
           ? "border-warning/30 bg-warning-bg hover:border-warning/50"
-          : "border-neutral-border hover:border-neutral-border/80 bg-background"
+          : "border-neutral-border hover:border-neutral-border/80 bg-card hover:bg-neutral-table-stripe/40"
       }`}
     >
       <div className="flex items-center gap-2.5 min-w-0">

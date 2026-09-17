@@ -32,7 +32,7 @@ export default function GroupActivityLogs({
   }, [group, memberships, organizerName, activities]);
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-background shadow-xs space-y-4">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-card shadow-xs space-y-4">
       <div className="flex items-center justify-between border-b border-neutral-border/60 pb-3.5">
         <div className="flex items-center gap-2">
           <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25">
@@ -50,11 +50,7 @@ export default function GroupActivityLogs({
 
         <div className="flex items-center gap-2">
           {isConnected && !isCycleDone ? (
-            <span className="flex items-center gap-1 rounded-full border border-success/25 bg-success-bg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-success">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
-              </span>
+            <span className="flex items-center gap-1.5 rounded-full border border-success/25 bg-success-bg px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-success">
               Live Sync
             </span>
           ) : (
@@ -111,7 +107,7 @@ export default function GroupActivityLogs({
             return (
               <div
                 key={event.id}
-                className="flex items-start gap-3 p-3 rounded-2xl border border-neutral-border/60 bg-background hover:border-neutral-border hover:bg-neutral-table-stripe/30 transition-all shadow-2xs"
+                className="flex items-start gap-3 p-3 rounded-2xl border border-neutral-border/60 bg-card hover:border-neutral-border hover:bg-neutral-table-stripe/30 transition-all shadow-2xs"
               >
                 <span
                   className={`w-7 h-7 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 ${event.iconColor}`}

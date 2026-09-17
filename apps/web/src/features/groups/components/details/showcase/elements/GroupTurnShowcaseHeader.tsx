@@ -14,11 +14,11 @@ export default function GroupTurnShowcaseHeader({
 }: GroupTurnShowcaseHeaderProps) {
   const sequenceBadge =
     payoutSequence === "RANDOM" ? (
-      <span className="text-[10px] font-bold text-sky-500 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-full">
+      <span className="text-[10px] font-bold text-brand-accent bg-brand-accent/10 border border-brand-accent/20 px-2 py-0.5 rounded-full">
         Random Sequence
       </span>
     ) : payoutSequence === "FREECHOOSING" ? (
-      <span className="text-[10px] font-bold text-violet-500 bg-violet-500/10 border border-violet-500/20 px-2 py-0.5 rounded-full">
+      <span className="text-[10px] font-bold text-winner-payout bg-winner-payout-bg border border-winner-payout/20 px-2 py-0.5 rounded-full">
         Free Choice Slots
       </span>
     ) : (
@@ -43,12 +43,12 @@ export default function GroupTurnShowcaseHeader({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 shrink-0">
+      <div className="flex flex-wrap items-center gap-2">
         {isOrganizer && hasStarted && !isCycleDone && (
           <GroupAnnouncementDialog groupId={groupId} />
         )}
 
-        <div className="flex items-center gap-2 bg-neutral-table-stripe p-1 rounded-2xl border border-neutral-border/60 shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-neutral-table-stripe p-1 rounded-2xl border border-neutral-border/60">
           {isCycleDone ? (
             <span className="flex items-center gap-1 rounded-xl border border-success/30 bg-success-bg px-3 py-1 text-[11px] font-bold text-success">
               <CheckCircle2 className="w-3 h-3" /> Cycle Finished

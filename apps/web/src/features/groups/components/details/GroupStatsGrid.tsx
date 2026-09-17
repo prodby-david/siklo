@@ -25,7 +25,7 @@ export default function GroupStatsGrid({
   return (
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+        <div className="p-4 sm:p-5 border border-neutral-border rounded-2xl bg-card flex items-center justify-between shadow-sm">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
               Payout Per Round
@@ -45,7 +45,7 @@ export default function GroupStatsGrid({
           </div>
         </div>
 
-        <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+        <div className="p-4 sm:p-5 border border-neutral-border rounded-2xl bg-card flex items-center justify-between shadow-sm">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
               Contribution Per Turn
@@ -65,7 +65,7 @@ export default function GroupStatsGrid({
           </div>
         </div>
 
-        <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+        <div className="p-4 sm:p-5 border border-neutral-border rounded-2xl bg-card flex items-center justify-between shadow-sm">
           <div className="flex flex-col gap-1 w-full mr-2">
             <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
               Members Joined
@@ -88,7 +88,7 @@ export default function GroupStatsGrid({
           </div>
         </div>
 
-        <div className="p-5 border border-neutral-border rounded-2xl bg-background flex items-center justify-between shadow-sm">
+        <div className="p-4 sm:p-5 border border-neutral-border rounded-2xl bg-card flex items-center justify-between shadow-sm">
           <div className="flex flex-col gap-1">
             <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider">
               Total Rounds

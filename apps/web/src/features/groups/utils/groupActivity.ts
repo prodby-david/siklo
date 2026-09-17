@@ -13,7 +13,7 @@ export function mapApiActivitiesToEvents(
     const Icon = config?.icon ?? Activity;
     const iconColor =
       config?.iconColor ??
-      "text-neutral-500 bg-neutral-500/10 border-neutral-500/20";
+      "text-neutral-subtext bg-neutral-subtext/10 border-neutral-border";
 
     return {
       id: a.id,
@@ -39,7 +39,7 @@ export function buildDerivedEvents(
     text: `Group "${group.name}" was created by ${organizerName}`,
     date: new Date(group.createdAt),
     icon: PlusCircle,
-    iconColor: "text-sky-500 bg-sky-500/10 border-sky-500/20",
+    iconColor: "text-brand-accent bg-brand-accent/10 border-brand-accent/20",
   });
 
   if (memberships) {

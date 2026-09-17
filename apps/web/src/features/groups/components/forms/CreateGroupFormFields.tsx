@@ -58,7 +58,7 @@ export default function CreateGroupFormFields(
   };
 
   return (
-    <div className="flex flex-col justify-between rounded-2xl border border-neutral-border bg-card p-6 shadow-sm lg:col-span-7">
+    <div className="flex flex-col justify-between rounded-2xl border border-neutral-border bg-card p-4 sm:p-6 shadow-sm lg:col-span-7">
       {isPending && <Loader text="Creating paluwagan group..." />}
       <form onSubmit={handleSubmit} className="space-y-6">
         <header className="space-y-1 border-b border-neutral-border/60 pb-4">

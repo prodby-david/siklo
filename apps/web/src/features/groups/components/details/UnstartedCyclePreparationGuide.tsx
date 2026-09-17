@@ -30,7 +30,7 @@ export default function UnstartedCyclePreparationGuide({
   );
 
   return (
-    <div className="w-full flex flex-col gap-5 p-6 rounded-3xl border border-brand-accent/20 bg-background/80 backdrop-blur-sm shadow-xs">
+    <div className="w-full flex flex-col gap-5 p-6 rounded-3xl border border-brand-accent/20 bg-card/80 backdrop-blur-sm shadow-xs">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-border pb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center shrink-0">

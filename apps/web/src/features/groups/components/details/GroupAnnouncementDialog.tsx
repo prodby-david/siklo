@@ -31,7 +31,7 @@ export default function GroupAnnouncementDialog({
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in fade-in duration-200">
           {isPending && <Loader text="Broadcasting announcement..." />}
-          <div className="bg-background border border-neutral-border rounded-3xl p-6 shadow-2xl max-w-md w-full relative">
+          <div className="bg-card border border-neutral-border rounded-3xl p-5 sm:p-6 shadow-2xl max-w-md w-full max-h-[calc(100dvh-2rem)] overflow-y-auto relative">
             <button
               onClick={() => setIsOpen(false)}
               className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-neutral-subtext/10 text-neutral-subtext transition-colors cursor-pointer"
@@ -68,18 +68,18 @@ export default function GroupAnnouncementDialog({
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-neutral-border/60">
+              <div className="flex flex-col-reverse sm:flex-row gap-2.5 pt-2 border-t border-neutral-border/60 sm:justify-end">
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="px-4 py-2 rounded-xl border border-neutral-border text-xs font-semibold text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/5 transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-xl border border-neutral-border text-xs font-semibold text-neutral-subtext hover:text-foreground hover:bg-neutral-subtext/5 transition-all cursor-pointer text-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isPending || !message.trim()}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground text-xs font-bold transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? (
                     <>

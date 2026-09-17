@@ -31,7 +31,7 @@ export default function JoinGroupModal() {
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
       <DialogTrigger render={<JoinGroupButton onClick={handleShowModal} />} />
-      <DialogContent>
+      <DialogContent className="sm:max-w-md">
         {needsSetup ? (
           <div className="space-y-4 text-center py-2">
             <div className="mx-auto flex w-fit items-center justify-center p-3 rounded-2xl bg-brand-accent/10 text-brand-accent">
@@ -45,7 +45,7 @@ export default function JoinGroupModal() {
             </p>
             <a
               href="/settings"
-              className="inline-flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm"
+              className="inline-flex items-center justify-center gap-2 bg-brand-accent hover:bg-brand-accent-hover text-brand-accent-foreground px-5 py-3 sm:py-2.5 rounded-2xl text-sm font-semibold transition-all duration-150 active:scale-95 cursor-pointer shadow-sm min-h-[44px]"
             >
               Go to Settings
             </a>
@@ -73,7 +73,7 @@ export default function JoinGroupModal() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-brand-accent-foreground px-4 py-2.5 rounded-2xl font-semibold active:opacity-90 transition-all shadow-sm cursor-pointer mt-5 disabled:opacity-50 disabled:pointer-events-none"
+              className="w-full text-xs flex items-center justify-center gap-2 bg-brand-accent text-brand-accent-foreground px-4 py-3 sm:py-2.5 rounded-2xl font-bold active:scale-95 transition-all shadow-sm cursor-pointer mt-5 disabled:opacity-50 disabled:pointer-events-none min-h-[44px]"
             >
               <LogIn size={14} />
               {isSubmitting ? "Joining Group..." : "Join Group"}

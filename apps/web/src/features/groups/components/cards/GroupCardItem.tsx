@@ -24,7 +24,7 @@ export default function GroupCardItem({ group }: GroupCardItemProps) {
   return (
     <div
       key={group.id}
-      className="flex flex-col justify-between gap-4 border border-neutral-border rounded-2xl p-5 bg-background shadow-sm hover:border-brand-accent/30 hover:shadow-md transition-all duration-300 group hover:-translate-y-1"
+      className="flex flex-col justify-between gap-4 border border-neutral-border rounded-2xl p-5 bg-card shadow-sm hover:border-brand-accent/30 hover:shadow-md transition-all duration-300 group hover:-translate-y-1"
     >
       <div className="space-y-3">
         <div className="flex items-center justify-between">

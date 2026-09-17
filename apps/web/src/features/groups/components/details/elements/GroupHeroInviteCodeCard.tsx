@@ -9,7 +9,7 @@ export default function GroupHeroInviteCodeCard({
   if (!inviteCode) return null;
 
   return (
-    <div className="flex flex-col gap-2 bg-background/80 backdrop-blur-sm border border-neutral-border p-4 rounded-2xl w-[250px] shadow-sm">
+    <div className="flex flex-col gap-2 bg-card/80 backdrop-blur-sm border border-neutral-border p-4 rounded-2xl w-full sm:w-[250px] shadow-sm">
       <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-subtext">
         Organizer Invite Code
       </span>

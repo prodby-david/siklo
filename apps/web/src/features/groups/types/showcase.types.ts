@@ -162,6 +162,7 @@ export interface TurnActionPanelProps {
     referenceNumber: string;
     proofUrl: string;
   }) => Promise<void>;
+  accruedPenalty?: number;
 }
 
 export interface TurnPaymentStatusPanelProps {
@@ -178,6 +179,11 @@ export interface TurnPaymentStatusPanelProps {
   isSelectedPaid: boolean;
   isSelectedPending: boolean;
   isSelectedRejected: boolean;
+  latePenaltyRate?: number;
+  gracePeriodDays?: number;
+  daysOverdue?: number;
+  accruedPenalty?: number;
+  paidPenalty?: number;
 }
 
 export interface TurnDetailHeaderProps {
@@ -208,6 +214,11 @@ export interface TurnDetailMetricsProps {
   maxMembers: number;
   poolTotal: number;
   calculatedPayoutDate: Date | null;
+  latePenaltyRate?: number;
+  gracePeriodDays?: number;
+  accruedPenalty?: number;
+  paidPenalty?: number;
+  daysOverdue?: number;
 }
 
 export interface TurnDetailHistoryBarProps {
@@ -244,6 +255,7 @@ export interface SubmitContributionActionProps {
   calculatedPayoutDate: Date | null;
   isSelectedRejected: boolean;
   hasCurrentMemberPaidOrganizerFee: boolean;
+  accruedPenalty?: number;
 }
 
 export interface GroupRoundsSummaryCardsProps {

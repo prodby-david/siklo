@@ -36,7 +36,7 @@ export default function DeleteGroupDialog({
       </button>
 
       <Dialog open={isOpen} onOpenChange={(open) => !isDeleting && setIsOpen(open)}>
-        <DialogContent className="sm:max-w-md p-6">
+        <DialogContent className="sm:max-w-md p-5 sm:p-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-start gap-3">
               <div className="p-2.5 rounded-2xl bg-danger/10 text-danger shrink-0 mt-0.5">
@@ -55,12 +55,12 @@ export default function DeleteGroupDialog({
               </DialogHeader>
             </div>
 
-            <div className="flex gap-2 pt-2 border-t border-neutral-border/60 justify-end">
+            <div className="flex flex-col-reverse sm:flex-row gap-2.5 pt-2 border-t border-neutral-border/60 sm:justify-end">
               <button
                 type="button"
                 disabled={isDeleting}
                 onClick={() => setIsOpen(false)}
-                className="px-4 py-2 text-xs font-bold rounded-2xl border border-neutral-border bg-background hover:bg-neutral-subtext/5 text-foreground cursor-pointer transition-all active:scale-95 disabled:opacity-50"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 text-xs font-bold rounded-2xl border border-neutral-border bg-secondary hover:bg-secondary/80 text-foreground cursor-pointer transition-all active:scale-95 disabled:opacity-50 text-center"
               >
                 Cancel
               </button>
@@ -68,7 +68,7 @@ export default function DeleteGroupDialog({
                 type="button"
                 disabled={isDeleting}
                 onClick={handleDelete}
-                className="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-danger px-4 py-2 text-xs font-bold text-brand-accent-foreground transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-danger px-4 py-2.5 sm:py-2 text-xs font-bold text-brand-accent-foreground transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
               >
                 {isDeleting ? (
                   <>

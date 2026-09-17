@@ -40,6 +40,7 @@ export default function TurnActionPanel({
   isDisbursingPayout,
   onSelectSlot,
   onDisbursePayout,
+  accruedPenalty = 0,
 }: TurnActionPanelProps) {
   if (isCycleDone) {
     return (
@@ -169,6 +170,7 @@ export default function TurnActionPanel({
         calculatedPayoutDate={calculatedPayoutDate}
         isSelectedRejected={isSelectedRejected}
         hasCurrentMemberPaidOrganizerFee={hasCurrentMemberPaidOrganizerFee}
+        accruedPenalty={accruedPenalty}
       />
     );
   }
