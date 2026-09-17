@@ -181,7 +181,7 @@ export function useGroupPageController() {
 
   return {
     data,
-    isLoading,
+    isLoading: isLoading || !groupId,
     copied,
     isConnected,
     handleCopyInviteCode,
