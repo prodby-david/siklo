@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarDays, ArrowRight, Award } from "lucide-react";
+import { CalendarDays, ArrowRight, Award, Check } from "lucide-react";
 import type { PayoutTimelineStripProps } from "../../types/dashboard.types";
 
 export default function PayoutTimelineStrip({
@@ -65,9 +65,7 @@ export default function PayoutTimelineStrip({
       </div>
 
       <div className="relative overflow-x-auto pb-4 scrollbar-thin">
-        <div className="absolute top-10 left-12 right-12 h-0.5 bg-neutral-border/70 -z-0 hidden md:block" />
-
-        <div className="relative z-10 flex items-stretch gap-4 min-w-max px-1">
+        <div className="flex items-stretch min-w-max px-1">
           {milestones.map((milestone, idx) => {
             const dateObj = new Date(milestone.targetDate);
             const monthStr = dateObj.toLocaleDateString("en-US", {
@@ -107,65 +105,121 @@ export default function PayoutTimelineStrip({
             return (
               <div
                 key={milestone.id}
-                className={`min-w-[260px] sm:min-w-[280px] max-w-[320px] flex-1 flex flex-col justify-between p-4 sm:p-5 rounded-2xl border transition-all shadow-2xs ${cardBorderClasses}`}
+                className="flex flex-col items-center w-[290px] sm:w-[320px] shrink-0"
               >
-                <div className="space-y-3.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="flex flex-col items-center justify-center w-11 h-11 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-center shrink-0 shadow-2xs">
-                        <span className="text-[9px] font-black uppercase tracking-wider text-brand-accent leading-none">
-                          {monthStr}
-                        </span>
-                        <span className="text-sm font-black text-foreground leading-tight tabular-nums mt-0.5">
-                          {dayStr}
-                        </span>
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[10px] font-medium text-neutral-subtext leading-none">
-                          Step #{idx + 1} • {yearStr}
-                        </span>
-                        <span className="text-xs font-black text-foreground truncate mt-1">
-                          {milestone.groupName}
-                        </span>
-                      </div>
-                    </div>
+                <div className="relative w-full flex items-center justify-center">
+                  <div
+                    className={`h-0.5 flex-1 transition-colors ${
+                      idx === 0
+                        ? "opacity-0"
+                        : isReceived
+                          ? "bg-success"
+                          : isCurrent
+                            ? "bg-brand-accent"
+                            : "bg-neutral-border/80"
+                    }`}
+                  />
 
-                    <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border shrink-0 ${badgeClasses}`}
-                    >
-                      {badgeLabel}
-                    </span>
+                  <div
+                    className={`relative z-10 flex items-center justify-center w-8 h-8 rounded-full border-2 font-black text-xs shrink-0 transition-all ${
+                      isReceived
+                        ? "bg-success text-success-foreground border-success"
+                        : isCurrent
+                          ? "bg-brand-accent text-brand-accent-foreground border-brand-accent ring-4 ring-brand-accent/25 shadow-xs"
+                          : isDisbursed
+                            ? "bg-winner-payout text-white border-winner-payout ring-4 ring-winner-payout/25"
+                            : "bg-card text-neutral-subtext border-neutral-border/80"
+                    }`}
+                  >
+                    {isReceived ? (
+                      <Check className="w-4 h-4 stroke-[3]" />
+                    ) : (
+                      <span>{idx + 1}</span>
+                    )}
                   </div>
 
-                  <div className="pt-1">
-                    <span className="text-[10px] font-semibold text-neutral-subtext uppercase tracking-wider block">
-                      Target Lump Sum
-                    </span>
-                    <p
-                      className={`text-2xl font-black tracking-tight tabular-nums mt-0.5 ${
-                        isCurrent ? "text-brand-accent" : "text-foreground"
-                      }`}
-                    >
-                      ₱{milestone.payoutAmount.toLocaleString()}
-                    </p>
-                    <p className="text-[11px] text-neutral-subtext mt-1 truncate">
-                      Turn #{milestone.turnNumber} of {milestone.totalTurns} •{" "}
-                      {milestone.billingCycle.toLowerCase()}
-                    </p>
-                  </div>
+                  <div
+                    className={`h-0.5 flex-1 transition-colors ${
+                      idx === milestones.length - 1
+                        ? "opacity-0"
+                        : isReceived
+                          ? "bg-success"
+                          : "bg-neutral-border/80"
+                    }`}
+                  />
                 </div>
 
-                <div className="pt-3 border-t border-neutral-border/50 mt-3.5">
-                  <Link
-                    href={`/group/${milestone.groupId}`}
-                    className="inline-flex items-center justify-between w-full text-xs font-bold text-brand-accent hover:text-brand-accent-hover transition-colors group cursor-pointer"
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <Award className="w-3.5 h-3.5" />
-                      View Circle
-                    </span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                <div
+                  className={`w-0.5 h-3.5 transition-colors ${
+                    isCurrent
+                      ? "bg-brand-accent"
+                      : isReceived
+                        ? "bg-success"
+                        : "bg-neutral-border/80"
+                  }`}
+                />
+
+                <div
+                  className={`w-[calc(100%-16px)] flex-1 flex flex-col justify-between p-4 sm:p-5 rounded-2xl border transition-all shadow-2xs ${cardBorderClasses}`}
+                >
+                  <div className="space-y-3.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="flex flex-col items-center justify-center w-11 h-11 rounded-2xl bg-brand-accent/10 border border-brand-accent/20 text-center shrink-0 shadow-2xs">
+                          <span className="text-[9px] font-black uppercase tracking-wider text-brand-accent leading-none">
+                            {monthStr}
+                          </span>
+                          <span className="text-sm font-black text-foreground leading-tight tabular-nums mt-0.5">
+                            {dayStr}
+                          </span>
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[10px] font-medium text-neutral-subtext leading-none">
+                            Step #{idx + 1} • {yearStr}
+                          </span>
+                          <span className="text-xs font-black text-foreground truncate mt-1">
+                            {milestone.groupName}
+                          </span>
+                        </div>
+                      </div>
+
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border shrink-0 ${badgeClasses}`}
+                      >
+                        {badgeLabel}
+                      </span>
+                    </div>
+
+                    <div className="pt-1">
+                      <span className="text-[10px] font-semibold text-neutral-subtext uppercase tracking-wider block">
+                        Target Lump Sum
+                      </span>
+                      <p
+                        className={`text-2xl font-black tracking-tight tabular-nums mt-0.5 ${
+                          isCurrent ? "text-brand-accent" : "text-foreground"
+                        }`}
+                      >
+                        ₱{milestone.payoutAmount.toLocaleString()}
+                      </p>
+                      <p className="text-[11px] text-neutral-subtext mt-1 truncate">
+                        Turn #{milestone.turnNumber} of {milestone.totalTurns} •{" "}
+                        {milestone.billingCycle.toLowerCase()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-neutral-border/50 mt-3.5">
+                    <Link
+                      href={`/group/${milestone.groupId}`}
+                      className="inline-flex items-center justify-between w-full text-xs font-bold text-brand-accent hover:text-brand-accent-hover transition-colors group cursor-pointer"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Award className="w-3.5 h-3.5" />
+                        View Circle
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
               </div>
             );
