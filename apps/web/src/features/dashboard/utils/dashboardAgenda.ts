@@ -90,9 +90,24 @@ export function deriveDashboardInsights(
           state.paidUserIdsByTurn[turnKey]?.has(currentUserId),
         );
 
-        totalDueRounds += 1;
         if (hasVerifiedPayment) {
+          totalDueRounds += 1;
           onTimePaidRounds += 1;
+        } else if (turn < currentTurn) {
+          totalDueRounds += 1;
+        } else {
+          const turnDueDate = getPayoutDate(
+            group.startDate || new Date(),
+            turn,
+            group.billingCycle || "MONTHLY",
+            [],
+          );
+          const graceDays = group.gracePeriodDays ?? 0;
+          const dueTime = turnDueDate ? turnDueDate.getTime() : 0;
+          const deadline = dueTime + graceDays * 24 * 60 * 60 * 1000;
+          if (dueTime > 0 && Date.now() > deadline) {
+            totalDueRounds += 1;
+          }
         }
       }
     }
@@ -213,7 +228,7 @@ export function deriveDashboardInsights(
   const hasHistory = totalDueRounds > 0;
   const onTimeReliabilityPercent = hasHistory
     ? Math.round((onTimePaidRounds / totalDueRounds) * 100)
-    : 0;
+    : 100;
 
   return {
     alerts,
