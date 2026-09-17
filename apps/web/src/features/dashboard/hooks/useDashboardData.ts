@@ -4,7 +4,12 @@ import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import useGetGroup from "@/features/groups/hooks/useGetGroup";
 import { usePendingPayments } from "@/features/payments/hooks/usePendingPayments";
 import { fetchNearestDue } from "../api/fetchNearestDue";
-import { deriveDashboardInsights } from "../utils/dashboardAgenda";
+import {
+  deriveDashboardInsights,
+  deriveContributionDueStatus,
+  deriveOrganizerTasks,
+  derivePayoutTimeline,
+} from "../utils/dashboardAgenda";
 import { Group } from "@/features/groups/types/group.types";
 
 const MONTHLY_MULTIPLIER: Record<string, number> = {
@@ -59,6 +64,23 @@ export function useDashboardData() {
   const activeGroupsCount = nearestDue?.activeGroupsCount ?? groups.length;
   const nearestDueDate = nearestDue?.nearestDueDate || null;
 
+  const dueGroup = useMemo(
+    () => groups.find((g: Group) => g.id === dueGroupId),
+    [groups, dueGroupId],
+  );
+
+  const { paymentStatus: dueContributionStatus, daysOverdue: dueDaysOverdue } =
+    useMemo(
+      () =>
+        deriveContributionDueStatus(
+          dueGroup,
+          nearestDueDate,
+          user?.id,
+          nextContributionAmount,
+        ),
+      [dueGroup, nearestDueDate, user?.id, nextContributionAmount],
+    );
+
   const nextPayoutDate = nearestDue?.nextPayoutDate || null;
   const nextPayoutAmount = nearestDue?.nextPayoutAmount || 0;
   const nextPayoutGroupName = nearestDue?.nextPayoutGroupName || "";
@@ -72,10 +94,20 @@ export function useDashboardData() {
     );
   }, [groups, user?.id, pendingPayments.length]);
 
+  const organizerTasks = useMemo(() => {
+    return deriveOrganizerTasks(groups, user?.id || "");
+  }, [groups, user?.id]);
+
+  const payoutTimeline = useMemo(() => {
+    return derivePayoutTimeline(groups, user?.id || "");
+  }, [groups, user?.id]);
+
   return {
     firstName,
     groups,
     alerts: insights.alerts,
+    organizerTasks,
+    payoutTimeline,
     agenda: insights.agenda,
     healthStats: insights.healthStats,
     activities: insights.activities,
@@ -100,6 +132,8 @@ export function useDashboardData() {
       nearestDueDate,
       activeGroupsCount,
       nextContributionAmount,
+      dueContributionStatus,
+      dueDaysOverdue,
     },
   };
 }

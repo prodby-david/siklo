@@ -4,12 +4,16 @@ export interface DashboardWelcomeBannerProps {
   firstName: string;
 }
 
+export type ContributionDueStatus = "PAID" | "PENDING" | "DELAYED" | "UPCOMING";
+
 export interface ActiveGroupsCardProps {
   count: number;
   nextContributionAmount?: number;
   groupName?: string;
   groupId?: string;
   nearestDueDate?: string | null;
+  paymentStatus?: ContributionDueStatus;
+  daysOverdue?: number;
 }
 
 export interface NextPayoutCardProps {
@@ -100,4 +104,41 @@ export interface EmptyGroupStateProps {
   filter?: GroupFilterStatus;
   title?: string;
   description?: string;
+}
+
+export type OrganizerTaskType = "VERIFY_PAYMENTS" | "DISBURSE_PAYOUT" | "START_CYCLE";
+
+export interface OrganizerTaskItem {
+  id: string;
+  type: OrganizerTaskType;
+  groupId: string;
+  groupName: string;
+  count?: number;
+  amount?: number;
+  recipientName?: string;
+  turnNumber?: number;
+  actionUrl: string;
+  actionLabel: string;
+}
+
+export interface OrganizerActionCenterProps {
+  tasks: OrganizerTaskItem[];
+}
+
+export type PayoutMilestoneStatus = "RECEIVED" | "DISBURSED" | "CURRENT" | "UPCOMING";
+
+export interface PayoutMilestoneItem {
+  id: string;
+  groupId: string;
+  groupName: string;
+  turnNumber: number;
+  totalTurns: number;
+  payoutAmount: number;
+  targetDate: Date;
+  status: PayoutMilestoneStatus;
+  billingCycle: string;
+}
+
+export interface PayoutTimelineStripProps {
+  milestones: PayoutMilestoneItem[];
 }

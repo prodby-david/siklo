@@ -6,6 +6,10 @@ import {
   RotationAgendaItem,
   SaverHealthStats,
   DashboardActivityItem,
+  ContributionDueStatus,
+  OrganizerTaskItem,
+  PayoutMilestoneItem,
+  PayoutMilestoneStatus,
 } from "../types/dashboard.types";
 
 export function deriveDashboardInsights(
@@ -106,13 +110,24 @@ export function deriveDashboardInsights(
     }
 
     for (const act of groupActivities) {
+      const actUpper = act.activity.toUpperCase();
+      const type: "PAYMENT" | "ANNOUNCEMENT" | "CYCLE" | "JOIN" = actUpper.includes(
+        "PAYMENT",
+      )
+        ? "PAYMENT"
+        : actUpper.includes("ANNOUNCEMENT")
+          ? "ANNOUNCEMENT"
+          : actUpper.includes("JOIN") || actUpper.includes("MEMBER")
+            ? "JOIN"
+            : "CYCLE";
+
       activities.push({
         id: act.id,
         groupId: group.id,
         groupName: group.name,
         text: act.activity.replace(/_/g, " "),
         date: new Date(act.createdAt),
-        type: act.activity.includes("PAYMENT") ? "PAYMENT" : "CYCLE",
+        type,
       });
     }
 
@@ -225,4 +240,199 @@ export function deriveDashboardInsights(
     },
     activities: activities.slice(0, 8),
   };
+}
+
+export function deriveContributionDueStatus(
+  dueGroup: Group | undefined,
+  nearestDueDate: string | null,
+  userId: string | undefined,
+  nextContributionAmount: number,
+): {
+  paymentStatus: ContributionDueStatus;
+  daysOverdue: number;
+} {
+  if (nextContributionAmount <= 0) {
+    return { paymentStatus: "PAID", daysOverdue: 0 };
+  }
+  if (!dueGroup) {
+    return { paymentStatus: "UPCOMING", daysOverdue: 0 };
+  }
+  const hasPendingPayment = dueGroup.payments?.some(
+    (p) => p.userId === userId && p.status === "PENDING",
+  );
+  if (hasPendingPayment) {
+    return { paymentStatus: "PENDING", daysOverdue: 0 };
+  }
+  const dueTime = nearestDueDate ? new Date(nearestDueDate).getTime() : 0;
+  const graceDays = dueGroup.gracePeriodDays ?? 0;
+  const deadlineTime = dueTime + graceDays * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  if (dueTime > 0 && now > deadlineTime) {
+    const days = Math.max(
+      1,
+      Math.ceil((now - deadlineTime) / (1000 * 60 * 60 * 24)),
+    );
+    return { paymentStatus: "DELAYED", daysOverdue: days };
+  }
+  return { paymentStatus: "UPCOMING", daysOverdue: 0 };
+}
+
+export function deriveOrganizerTasks(
+  groups: Group[],
+  currentUserId: string,
+): OrganizerTaskItem[] {
+  const tasks: OrganizerTaskItem[] = [];
+
+  for (const group of groups) {
+    if (group.organizerId !== currentUserId) continue;
+
+    const hasStarted = Boolean(group.startDate);
+    const memberships = group.memberships || [];
+    const rounds = group.rounds || [];
+    const payments = group.payments || [];
+
+    const pendingPayments = payments.filter((p) => p.status === "PENDING");
+    if (pendingPayments.length > 0) {
+      const totalPendingAmount = pendingPayments.reduce(
+        (sum, p) => sum + (Number(p.totalAmount) || Number(p.baseAmount) || 0),
+        0,
+      );
+      tasks.push({
+        id: `organizer-verify-${group.id}`,
+        type: "VERIFY_PAYMENTS",
+        groupId: group.id,
+        groupName: group.name,
+        count: pendingPayments.length,
+        amount: totalPendingAmount,
+        actionUrl: `/group/${group.id}`,
+        actionLabel: "Review Proofs",
+      });
+    }
+
+    if (hasStarted) {
+      const state = calculateGroupTurnState(
+        memberships,
+        rounds,
+        payments,
+        [],
+        group.cycleDuration || 1,
+        hasStarted,
+      );
+
+      const turnKey = `${state.currentCycle}-${state.currentTurn}`;
+      const paidUserCount = state.paidUserIdsByTurn[turnKey]?.size || 0;
+      const isRoundAllPaid = paidUserCount >= group.maxMembers;
+      const isRoundDisbursed = state.disbursedTurns.has(turnKey);
+
+      if (!state.isCycleDone && isRoundAllPaid && !isRoundDisbursed) {
+        const currentRound = rounds.find(
+          (r) =>
+            r.cycleNumber === state.currentCycle &&
+            r.roundNumber === state.currentTurn,
+        );
+        const recipientMembership = memberships.find(
+          (m) => m.userId === currentRound?.recipientId,
+        );
+        const recipientName =
+          recipientMembership?.user?.name || group.nextPayoutee?.name || "Beneficiary";
+        const poolAmount = group.contributionAmount * group.maxMembers;
+
+        tasks.push({
+          id: `organizer-disburse-${group.id}`,
+          type: "DISBURSE_PAYOUT",
+          groupId: group.id,
+          groupName: group.name,
+          amount: poolAmount,
+          turnNumber: state.currentTurn,
+          recipientName,
+          actionUrl: `/group/${group.id}`,
+          actionLabel: "Disburse Payout",
+        });
+      }
+    } else {
+      if (memberships.length >= group.maxMembers && group.maxMembers > 0) {
+        tasks.push({
+          id: `organizer-start-${group.id}`,
+          type: "START_CYCLE",
+          groupId: group.id,
+          groupName: group.name,
+          count: memberships.length,
+          actionUrl: `/group/${group.id}`,
+          actionLabel: "Start Cycle",
+        });
+      }
+    }
+  }
+
+  return tasks;
+}
+
+export function derivePayoutTimeline(
+  groups: Group[],
+  currentUserId: string,
+): PayoutMilestoneItem[] {
+  const milestones: PayoutMilestoneItem[] = [];
+
+  for (const group of groups) {
+    const memberships = group.memberships || [];
+    const userMembership = memberships.find((m) => m.userId === currentUserId);
+    if (!userMembership || !userMembership.position) continue;
+
+    const hasStarted = Boolean(group.startDate);
+    const rounds = group.rounds || [];
+    const payments = group.payments || [];
+    const userPosition = userMembership.position;
+    const poolAmount = group.contributionAmount * group.maxMembers;
+
+    const state = calculateGroupTurnState(
+      memberships,
+      rounds,
+      payments,
+      [],
+      group.cycleDuration || 1,
+      hasStarted,
+    );
+
+    const userRound = rounds.find((r) => r.roundNumber === userPosition);
+    let targetDate: Date | null = null;
+
+    if (userRound?.targetDate) {
+      targetDate = new Date(userRound.targetDate);
+    } else {
+      targetDate = getPayoutDate(
+        group.startDate || new Date(),
+        userPosition,
+        group.billingCycle || "MONTHLY",
+      );
+    }
+
+    if (!targetDate || isNaN(targetDate.getTime())) {
+      targetDate = new Date();
+    }
+
+    let status: PayoutMilestoneStatus = "UPCOMING";
+    if (userRound?.status === "RECEIVED") {
+      status = "RECEIVED";
+    } else if (userRound?.status === "DISBURSED") {
+      status = "DISBURSED";
+    } else if (hasStarted && !state.isCycleDone && state.currentTurn === userPosition) {
+      status = "CURRENT";
+    }
+
+    milestones.push({
+      id: `milestone-${group.id}-${userPosition}`,
+      groupId: group.id,
+      groupName: group.name,
+      turnNumber: userPosition,
+      totalTurns: group.maxMembers,
+      payoutAmount: poolAmount,
+      targetDate,
+      status,
+      billingCycle: group.billingCycle || "MONTHLY",
+    });
+  }
+
+  return milestones.sort(
+    (a, b) => a.targetDate.getTime() - b.targetDate.getTime(),
+  );
 }
