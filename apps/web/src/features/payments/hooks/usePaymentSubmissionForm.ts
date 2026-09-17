@@ -24,6 +24,7 @@ interface UsePaymentSubmissionFormOptions {
   latePenaltyRate?: number;
   allowedMethods: PaymentMethod[];
   onSuccess?: () => void;
+  overrideLateFee?: number;
 }
 
 export function usePaymentSubmissionForm({
@@ -37,6 +38,7 @@ export function usePaymentSubmissionForm({
   latePenaltyRate = 0,
   allowedMethods,
   onSuccess,
+  overrideLateFee,
 }: UsePaymentSubmissionFormOptions) {
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [currentTimestamp] = useState(() => Date.now());
@@ -50,11 +52,13 @@ export function usePaymentSubmissionForm({
     gracePeriodDays,
   );
   const daysOverdue = calculateDaysOverdue(effectiveDeadline, currentTimestamp);
-  const lateFee = calculateLatePenalty(
+  const computedLateFee = calculateLatePenalty(
     baseAmount,
     latePenaltyRate,
     daysOverdue,
   );
+  const lateFee =
+    overrideLateFee !== undefined ? overrideLateFee : computedLateFee;
   const effectiveOrganizerFee =
     isFeeEligible && payOrganizerFeeNow ? organizerFeeAmount : 0;
   const totalAmount = baseAmount + lateFee + effectiveOrganizerFee;

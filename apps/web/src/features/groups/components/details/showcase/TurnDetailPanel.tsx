@@ -3,6 +3,11 @@
 import { useState, useMemo } from "react";
 import { TurnDetailPanelProps } from "@/features/groups/types/showcase.types";
 import { getInitials } from "@/features/groups/utils/groupHelpers";
+import {
+  calculateEffectiveDeadline,
+  calculateDaysOverdue,
+  calculateLatePenalty,
+} from "@/features/payments/utils/payment.helper";
 import MemberPaymentHistoryModal from "@/features/groups/components/modals/MemberPaymentHistoryModal";
 import TurnDetailHeader from "./elements/TurnDetailHeader";
 import TurnDetailBeneficiary from "./elements/TurnDetailBeneficiary";
@@ -84,6 +89,34 @@ export default function TurnDetailPanel({
     );
   }, [group.payments, selectedMemberUserId]);
 
+  const effectiveDeadline = useMemo(() => {
+    return calculateEffectiveDeadline(
+      currentRound?.targetDate || calculatedPayoutDate,
+      group.gracePeriodDays ?? 0,
+    );
+  }, [currentRound?.targetDate, calculatedPayoutDate, group.gracePeriodDays]);
+
+  const daysOverdue = useMemo(() => {
+    return calculateDaysOverdue(effectiveDeadline);
+  }, [effectiveDeadline]);
+
+  const latePenaltyRate = group.latePenaltyAmount ?? 0;
+
+  const accruedPenalty = useMemo(() => {
+    if (daysOverdue <= 0 || isSelectedPaid || latePenaltyRate <= 0) {
+      return 0;
+    }
+    return calculateLatePenalty(contributionNum, latePenaltyRate, daysOverdue);
+  }, [daysOverdue, isSelectedPaid, latePenaltyRate, contributionNum]);
+
+  const paidPenalty = useMemo(() => {
+    if (!currentRound) return 0;
+    const roundPayment = memberPayments.find(
+      (p) => p.roundId === currentRound.id && p.status === "VERIFIED",
+    );
+    return roundPayment?.penaltyAmount ?? 0;
+  }, [currentRound, memberPayments]);
+
   const initials = getInitials(selectedMemberName);
   const feeAmount = group.organizerFeeAmount || 0;
 
@@ -118,6 +151,11 @@ export default function TurnDetailPanel({
           maxMembers={group.maxMembers}
           poolTotal={poolTotal}
           calculatedPayoutDate={calculatedPayoutDate}
+          latePenaltyRate={latePenaltyRate}
+          gracePeriodDays={group.gracePeriodDays ?? 0}
+          accruedPenalty={accruedPenalty}
+          paidPenalty={paidPenalty}
+          daysOverdue={daysOverdue}
         />
 
         <TurnPaymentStatusPanel
@@ -134,6 +172,11 @@ export default function TurnDetailPanel({
           isSelectedPaid={isSelectedPaid}
           isSelectedPending={isSelectedPending}
           isSelectedRejected={isSelectedRejected}
+          latePenaltyRate={latePenaltyRate}
+          gracePeriodDays={group.gracePeriodDays ?? 0}
+          daysOverdue={daysOverdue}
+          accruedPenalty={accruedPenalty}
+          paidPenalty={paidPenalty}
         />
 
         {selectedMembership && (
@@ -171,6 +214,7 @@ export default function TurnDetailPanel({
           isDisbursingPayout={isDisbursingPayout}
           onSelectSlot={onSelectSlot}
           onDisbursePayout={onDisbursePayout}
+          accruedPenalty={accruedPenalty}
         />
       </div>
 

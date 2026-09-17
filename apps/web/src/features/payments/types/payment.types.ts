@@ -87,6 +87,7 @@ export interface PaymentSubmissionModalProps {
   latePenaltyRate?: number;
   allowedMethods: PaymentMethod[];
   organizerPaymentDetails?: string | null;
+  overrideLateFee?: number;
 }
 
 export interface PaymentRejectionReasonModalProps {

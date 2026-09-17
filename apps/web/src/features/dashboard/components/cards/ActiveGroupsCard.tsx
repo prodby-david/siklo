@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Clock, CheckCircle2, ArrowRight } from "lucide-react";
+import { Clock, CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
 import { ActiveGroupsCardProps } from "../../types/dashboard.types";
 
 export default function ActiveGroupsCard({
@@ -9,8 +9,10 @@ export default function ActiveGroupsCard({
   groupName,
   groupId,
   nearestDueDate,
+  paymentStatus = "UPCOMING",
+  daysOverdue = 0,
 }: ActiveGroupsCardProps) {
-  const hasContribution = nextContributionAmount > 0;
+  const hasContribution = nextContributionAmount > 0 && paymentStatus !== "PAID";
   const targetHref = groupId ? `/group/${groupId}` : "/group";
 
   const formattedDueDate = nearestDueDate
@@ -20,55 +22,78 @@ export default function ActiveGroupsCard({
       })
     : null;
 
+  const isDelayed = paymentStatus === "DELAYED";
+  const isPending = paymentStatus === "PENDING";
+  const isPaid = paymentStatus === "PAID" || !hasContribution;
+
   return (
-    <div className="p-6 border border-neutral-border rounded-2xl w-full bg-background shadow-sm hover:border-brand-accent/30 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col justify-between gap-4">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-1 items-start w-full">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col justify-between gap-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-1 items-start min-w-0 flex-1">
           <span className="text-xs font-semibold text-neutral-subtext uppercase tracking-wider">
             Next Contribution Due
           </span>
           <p
-            className={`text-3xl font-extrabold tracking-tight mt-1 ${
-              hasContribution
-                ? "text-foreground"
-                : "text-success"
+            className={`text-3xl font-black tracking-tight mt-1 tabular-nums ${
+              isDelayed
+                ? "text-warning"
+                : isPaid
+                  ? "text-success"
+                  : "text-foreground"
             }`}
           >
             {hasContribution
               ? `₱${nextContributionAmount.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                 })}`
-              : "No Due"}
+              : "All Settled"}
           </p>
-          {hasContribution ? (
-            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-warning/25 bg-warning-bg px-2.5 py-1 text-[11px] font-semibold text-warning">
-              <Clock className="w-3.5 h-3.5" />
-              <span>
-                {groupName ? `${groupName}` : ""}
-                {","}
-                {formattedDueDate ? ` ${formattedDueDate}` : ""}
+
+          {isDelayed ? (
+            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-warning/30 bg-warning-bg px-2.5 py-1 text-[11px] font-semibold text-warning max-w-full">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate max-w-[130px] xs:max-w-[180px] sm:max-w-none">
+                {groupName ? `${groupName} • ` : ""}Delayed ({daysOverdue}d overdue)
+              </span>
+            </div>
+          ) : isPending ? (
+            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-warning/25 bg-warning-bg px-2.5 py-1 text-[11px] font-semibold text-warning max-w-full">
+              <Clock className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate max-w-[130px] xs:max-w-[180px] sm:max-w-none">
+                {groupName ? `${groupName} • ` : ""}Verification Pending
+              </span>
+            </div>
+          ) : isPaid ? (
+            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success max-w-full">
+              <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">
+                {count > 0 ? "Contribution Paid & Clear" : "No Active Circles"}
               </span>
             </div>
           ) : (
-            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg px-2.5 py-1 text-[11px] font-semibold text-success">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>
-                {count > 0
-                  ? "No Pending Due • All Payments Clear"
-                  : "No Active Groups"}
+            <div className="mt-2 flex items-center gap-1.5 rounded-2xl border border-warning/25 bg-warning-bg px-2.5 py-1 text-[11px] font-semibold text-warning max-w-full">
+              <Clock className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate max-w-[130px] xs:max-w-[180px] sm:max-w-none">
+                {groupName ? `${groupName}` : "Due Soon"}
+                {formattedDueDate ? ` • Due ${formattedDueDate}` : ""}
               </span>
             </div>
           )}
         </div>
+
         <div
-          className={`flex items-center justify-center w-12 h-12 rounded-full shrink-0 ${
-            hasContribution ? "bg-warning-bg" : "bg-success-bg"
+          className={`flex items-center justify-center w-12 h-12 rounded-2xl border shrink-0 ${
+            isDelayed || isPending || !isPaid
+              ? "bg-warning-bg text-warning border-warning/30"
+              : "bg-success-bg text-success border-success/30"
           }`}
         >
-          {hasContribution ? (
-            <Clock className="h-6 w-6 text-warning" />
+          {isDelayed ? (
+            <AlertTriangle className="h-6 w-6" />
+          ) : isPaid ? (
+            <CheckCircle2 className="h-6 w-6" />
           ) : (
-            <CheckCircle2 className="h-6 w-6 text-success" />
+            <Clock className="h-6 w-6" />
           )}
         </div>
       </div>

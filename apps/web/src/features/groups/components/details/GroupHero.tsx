@@ -48,7 +48,7 @@ export default function GroupHero({
     billingCycle;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-winner-payout-bg p-6 shadow-sm backdrop-blur-md sm:p-8">
+    <div className="relative overflow-hidden rounded-3xl border border-brand-accent/20 bg-gradient-to-tr from-brand-accent/15 to-winner-payout-bg p-4 sm:p-6 md:p-8 shadow-sm backdrop-blur-md">
       <div className="absolute top-0 right-0 p-8 opacity-10 dark:opacity-5 pointer-events-none">
         <RotateCw className="w-32 h-32 text-brand-accent" />
       </div>
@@ -102,6 +102,7 @@ export default function GroupHero({
           organizerFeeAmount={organizerFeeAmount}
           isOrganizer={isOrganizer}
           hasAlreadyPaidOrganizerFee={hasAlreadyPaidOrganizerFee}
+          targetDueDate={nextPayoutee?.payoutDate}
           gracePeriodDays={gracePeriodDays}
           latePenaltyRate={latePenaltyAmount}
           allowedMethods={allowedMethods}

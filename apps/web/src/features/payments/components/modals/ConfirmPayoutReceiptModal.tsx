@@ -53,7 +53,7 @@ export default function ConfirmPayoutReceiptModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
+      <DialogContent className="sm:max-w-md">
         {isConfirming && <Loader text="Confirming payout receipt..." />}
         <div className="space-y-4">
           <DialogHeader>
@@ -69,7 +69,7 @@ export default function ConfirmPayoutReceiptModal({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex items-center justify-between rounded-2xl border border-success/25 bg-success-bg p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-success/25 bg-success-bg p-4">
             <div className="flex items-center gap-2.5">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-success-bg font-bold text-success">
                 <PhilippinePeso className="w-5 h-5" />
@@ -83,7 +83,7 @@ export default function ConfirmPayoutReceiptModal({
                 </span>
               </div>
             </div>
-            <span className="rounded-xl border border-success/30 bg-success-bg px-2.5 py-1 text-xs font-bold text-success">
+            <span className="self-start sm:self-auto rounded-xl border border-success/30 bg-success-bg px-2.5 py-1 text-xs font-bold text-success">
               Turn #{turnNumber} • Cycle {cycleNumber}
             </span>
           </div>
@@ -107,13 +107,13 @@ export default function ConfirmPayoutReceiptModal({
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-2">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 pt-2">
               <Button
                 type="button"
                 variant="outline"
                 onClick={onClose}
                 disabled={isConfirming}
-                className="w-full rounded-2xl py-2.5 border-neutral-border text-foreground hover:bg-neutral-subtext/5 text-xs font-semibold cursor-pointer"
+                className="w-full sm:w-auto rounded-2xl py-2.5 border-neutral-border text-foreground hover:bg-neutral-subtext/5 text-xs font-semibold cursor-pointer"
               >
                 Cancel
               </Button>
@@ -121,7 +121,7 @@ export default function ConfirmPayoutReceiptModal({
               <Button
                 type="submit"
                 disabled={isConfirming}
-                className="w-full cursor-pointer rounded-2xl bg-success py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm hover:opacity-90"
+                className="w-full sm:w-auto cursor-pointer rounded-2xl bg-success py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm hover:opacity-90"
               >
                 <ShieldCheck className="w-4 h-4 mr-1.5" />
                 {isConfirming ? "Confirming..." : "I Received My Payout"}

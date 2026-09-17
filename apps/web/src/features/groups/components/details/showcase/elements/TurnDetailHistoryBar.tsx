@@ -6,7 +6,7 @@ export default function TurnDetailHistoryBar({
   onOpenHistory,
 }: TurnDetailHistoryBarProps) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-2xl border border-neutral-border/70 bg-neutral-table-stripe/50">
+    <div className="flex items-center justify-between p-3.5 rounded-2xl border border-neutral-border bg-card shadow-xs">
       <div className="flex items-center gap-2">
         <Receipt className="w-4 h-4 text-brand-accent" />
         <span className="text-xs font-bold text-foreground">

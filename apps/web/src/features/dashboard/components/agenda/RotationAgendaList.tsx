@@ -16,10 +16,10 @@ export default function RotationAgendaList({
   agenda,
 }: RotationAgendaListProps) {
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-background shadow-xs space-y-4">
-      <div className="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-card shadow-xs space-y-4">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-neutral-border/60 pb-3 gap-2.5">
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25 shrink-0">
             <CalendarDays className="w-4 h-4" />
           </div>
           <div>
@@ -32,7 +32,7 @@ export default function RotationAgendaList({
           </div>
         </div>
 
-        <span className="text-[10px] font-bold text-neutral-subtext bg-neutral-table-stripe px-2.5 py-1 rounded-full border border-neutral-border/60">
+        <span className="text-[10px] font-bold text-neutral-subtext bg-neutral-table-stripe px-2.5 py-1 rounded-full border border-neutral-border/60 self-start xs:self-auto">
           {agenda.length} Active {agenda.length === 1 ? "Turn" : "Turns"}
         </span>
       </div>
@@ -58,7 +58,7 @@ export default function RotationAgendaList({
             return (
               <div
                 key={item.id}
-                className="p-3.5 sm:p-4 rounded-2xl border border-neutral-border/80 hover:border-neutral-border bg-background hover:bg-neutral-table-stripe/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs"
+                className="p-3.5 sm:p-4 rounded-2xl border border-neutral-border/80 hover:border-neutral-border bg-card hover:bg-neutral-table-stripe/30 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs"
               >
                 <div className="flex items-start sm:items-center gap-3 min-w-0">
                   <div
@@ -103,7 +103,7 @@ export default function RotationAgendaList({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t border-neutral-border/40 sm:border-0">
                   {item.status === "PAID" ? (
                     <span className="inline-flex items-center gap-1 rounded-xl border border-success/30 bg-success-bg px-2.5 py-1 text-[10px] font-bold text-success">
                       <CheckCircle2 className="w-3 h-3" /> Paid
@@ -120,7 +120,7 @@ export default function RotationAgendaList({
 
                   <Link
                     href={`/group/${item.groupId}`}
-                    className="p-1.5 rounded-xl border border-neutral-border bg-background hover:bg-neutral-subtext/10 text-neutral-subtext hover:text-foreground transition-all cursor-pointer"
+                    className="p-1.5 rounded-xl border border-neutral-border bg-card hover:bg-neutral-subtext/10 text-neutral-subtext hover:text-foreground transition-all cursor-pointer"
                     title="Open Group"
                   >
                     <ArrowRight className="w-4 h-4" />

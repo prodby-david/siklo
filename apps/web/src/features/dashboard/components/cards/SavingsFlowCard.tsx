@@ -11,8 +11,6 @@ import {
 import { SavingsFlowCardProps } from "../../types/dashboard.types";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 import { hasUsablePaymentAccount } from "@/shared/utils/hasUsablePaymentAccount";
-import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
-import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
 
 export default function SavingsFlowCard({ stats }: SavingsFlowCardProps) {
   const { data: user } = useGetCurrentName();
@@ -22,10 +20,10 @@ export default function SavingsFlowCard({ stats }: SavingsFlowCardProps) {
   const isPositive = netBalance >= 0;
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-background shadow-xs space-y-4">
-      <div className="flex items-center justify-between border-b border-neutral-border/60 pb-3">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl bg-card shadow-xs space-y-4">
+      <div className="flex flex-col xs:flex-row xs:items-center justify-between border-b border-neutral-border/60 pb-3 gap-2.5">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-xl border bg-brand-accent/15 text-brand-accent border-brand-accent/25">
+          <div className="flex items-center justify-center w-8 h-8 rounded-xl border bg-brand-accent/15 text-brand-accent border-brand-accent/25 shrink-0">
             <Wallet className="w-4 h-4" />
           </div>
           <div>
@@ -39,13 +37,13 @@ export default function SavingsFlowCard({ stats }: SavingsFlowCardProps) {
         </div>
 
         {isAccountSetup ? (
-          <span className="inline-flex items-center gap-1 rounded-full border border-success/25 bg-success-bg px-2.5 py-1 text-[10px] font-bold text-success">
+          <span className="inline-flex items-center gap-1 rounded-full border border-success/25 bg-success-bg px-2.5 py-1 text-[10px] font-bold text-success self-start xs:self-auto">
             <CheckCircle2 className="w-3 h-3" /> Payout Ready
           </span>
         ) : (
           <Link
             href="/settings"
-            className="inline-flex items-center gap-1 rounded-full border border-warning/25 bg-warning-bg px-2.5 py-1 text-[10px] font-bold text-warning transition-colors hover:opacity-80"
+            className="inline-flex items-center gap-1 rounded-full border border-warning/25 bg-warning-bg px-2.5 py-1 text-[10px] font-bold text-warning transition-colors hover:opacity-80 self-start xs:self-auto"
           >
             <AlertCircle className="w-3 h-3" /> Setup Payout
           </Link>
@@ -101,11 +99,6 @@ export default function SavingsFlowCard({ stats }: SavingsFlowCardProps) {
               : `${stats.completedCyclesCount} Cycles`}
           </span>
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 pt-1">
-        <JoinGroupModal />
-        <CreateGroupButton />
       </div>
     </div>
   );

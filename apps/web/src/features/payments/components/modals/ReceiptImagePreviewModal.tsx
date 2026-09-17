@@ -25,7 +25,7 @@ export default function ReceiptImagePreviewModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl max-h-[92vh] p-5 flex flex-col gap-3">
+      <DialogContent className="sm:max-w-2xl max-h-[calc(100dvh-2rem)] p-4 sm:p-6 flex flex-col gap-3.5 overflow-y-auto">
         <DialogHeader className="w-full pb-2.5 border-b border-neutral-border/60">
           <div className="flex items-center justify-between gap-2 pr-6">
             <DialogTitle className="text-sm font-extrabold text-foreground">
@@ -70,7 +70,7 @@ export default function ReceiptImagePreviewModal({
           </div>
         )}
 
-        <div className="relative w-full h-[52vh] max-h-[460px] rounded-2xl overflow-hidden bg-neutral-subtext/5 flex items-center justify-center border border-neutral-border/60">
+        <div className="relative w-full h-[36vh] sm:h-[48vh] max-h-[420px] rounded-2xl overflow-hidden bg-neutral-subtext/5 flex items-center justify-center border border-neutral-border/60">
           {imageUrl ? (
             <Image
               src={imageUrl}
@@ -88,7 +88,7 @@ export default function ReceiptImagePreviewModal({
         </div>
 
         {payment && (onApprove || onReject) && (
-          <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-border/60">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 pt-2 border-t border-neutral-border/60">
             {onReject && (
               <button
                 type="button"
@@ -97,7 +97,7 @@ export default function ReceiptImagePreviewModal({
                   onClose();
                   onReject(payment.id, payment.user?.name || "Member");
                 }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-danger-border bg-danger-bg px-4 py-2 text-xs font-bold text-danger transition-all hover:opacity-80 active:scale-95 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-danger-border bg-danger-bg px-4 py-2.5 sm:py-2 text-xs font-bold text-danger transition-all hover:opacity-80 active:scale-95 disabled:opacity-50"
               >
                 <UserX className="w-3.5 h-3.5" />
                 <span>Reject</span>
@@ -112,7 +112,7 @@ export default function ReceiptImagePreviewModal({
                   await onApprove(payment.id);
                   onClose();
                 }}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl bg-success px-4 py-2 text-xs font-bold text-brand-accent-foreground shadow-xs transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-success px-4 py-2.5 sm:py-2 text-xs font-bold text-brand-accent-foreground shadow-xs transition-all hover:opacity-90 active:scale-95 disabled:opacity-50"
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>{isProcessing ? "Approving..." : "Approve Payment"}</span>

@@ -22,6 +22,9 @@ export default function TurnPaymentStatusPanel({
   isSelectedPaid,
   isSelectedPending,
   isSelectedRejected,
+  daysOverdue = 0,
+  accruedPenalty = 0,
+  paidPenalty = 0,
 }: TurnPaymentStatusPanelProps) {
   if (!hasStarted) return null;
 
@@ -86,8 +89,11 @@ export default function TurnPaymentStatusPanel({
           </span>
         </div>
         <p className="text-[11px] font-normal leading-relaxed text-neutral-subtext">
-          Contribution of ₱{contributionAmount.toLocaleString()} is confirmed and
-          recorded on the ledger.
+          Contribution of ₱{contributionAmount.toLocaleString()}
+          {paidPenalty > 0
+            ? ` (including ₱${paidPenalty.toLocaleString()} late penalty)`
+            : ""}{" "}
+          is confirmed and recorded on the ledger.
         </p>
       </div>
     );
@@ -128,8 +134,27 @@ export default function TurnPaymentStatusPanel({
 
   if (!hasSelectedMembership) return null;
 
+  if (daysOverdue > 0 && accruedPenalty > 0) {
+    return (
+      <div className="space-y-1.5 rounded-2xl border border-warning/30 bg-warning-bg p-3.5">
+        <div className="flex items-center gap-2">
+          <AlertCircle className="h-4 w-4 shrink-0 text-warning" />
+          <span className="text-xs font-bold text-warning">
+            Turn #{currentTurn} Contribution: Overdue ({daysOverdue}d)
+          </span>
+        </div>
+        <p className="text-[11px] font-normal leading-relaxed text-neutral-subtext">
+          Contribution of ₱{contributionAmount.toLocaleString()} is {daysOverdue}{" "}
+          day{daysOverdue > 1 ? "s" : ""} overdue. A late penalty of ₱
+          {accruedPenalty.toLocaleString()} has accrued (Total Due: ₱
+          {(contributionAmount + accruedPenalty).toLocaleString()}).
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-1 rounded-2xl border border-neutral-border/60 bg-background/80 p-3.5">
+    <div className="space-y-1 rounded-2xl border border-neutral-border/60 bg-card p-3.5">
       <div className="flex items-center gap-2">
         <Clock className="h-4 w-4 shrink-0 text-neutral-subtext" />
         <span className="text-xs font-bold text-neutral-subtext">

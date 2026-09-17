@@ -34,8 +34,8 @@ export default function MemberPaymentHistoryModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl border border-neutral-border">
-        <div className="p-6 border-b border-neutral-border/70 bg-neutral-subtext/5">
+      <DialogContent className="sm:max-w-lg max-h-[90dvh] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl border border-neutral-border">
+        <div className="p-4 sm:p-6 border-b border-neutral-border/80 bg-card">
           <DialogHeader className="space-y-1 text-left">
             <div className="flex items-center gap-2">
               <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-brand-accent/15 text-brand-accent border border-brand-accent/25">
@@ -50,27 +50,27 @@ export default function MemberPaymentHistoryModal({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-neutral-border/60">
-            <div className="p-2.5 rounded-xl bg-background border border-neutral-border/60">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 mt-4 pt-3 border-t border-neutral-border/60">
+            <div className="p-2.5 rounded-2xl bg-neutral-table-stripe/40 border border-neutral-border/70">
               <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider block">
                 Total Payments
               </span>
-              <span className="text-sm font-extrabold text-foreground">
+              <span className="text-xs sm:text-sm font-extrabold text-foreground">
                 {payments.length} {payments.length === 1 ? "Record" : "Records"}
               </span>
             </div>
-            <div className="p-2.5 rounded-xl bg-background border border-neutral-border/60">
+            <div className="p-2.5 rounded-2xl bg-neutral-table-stripe/40 border border-neutral-border/70">
               <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider block">
                 Verified Total
               </span>
-              <span className="text-sm font-extrabold text-brand-accent">
+              <span className="text-xs sm:text-sm font-extrabold text-brand-accent">
                 ₱{totalVerifiedAmount.toLocaleString()}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[50vh] space-y-3">
+        <div className="p-4 sm:p-6 overflow-y-auto max-h-[55dvh] flex-1 space-y-3">
           {payments.length > 0 ? (
             payments.map((p) => (
               <MemberPaymentHistoryItem
@@ -92,11 +92,11 @@ export default function MemberPaymentHistoryModal({
           )}
         </div>
 
-        <div className="p-4 border-t border-neutral-border/70 bg-background flex justify-end">
+        <div className="p-3.5 sm:p-4 border-t border-neutral-border/70 bg-card flex justify-end">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-2xl border border-neutral-border bg-neutral-table-stripe hover:bg-neutral-subtext/10 text-xs font-bold text-foreground transition-all cursor-pointer active:scale-95 shadow-2xs"
+            className="w-full sm:w-auto px-5 py-2.5 sm:py-2 rounded-2xl border border-neutral-border bg-card hover:bg-neutral-table-stripe text-xs font-bold text-foreground transition-all cursor-pointer active:scale-95 shadow-2xs"
           >
             Close
           </button>

@@ -6,6 +6,11 @@ export default function TurnDetailMetrics({
   maxMembers,
   poolTotal,
   calculatedPayoutDate,
+  latePenaltyRate = 0,
+  gracePeriodDays = 0,
+  accruedPenalty = 0,
+  paidPenalty = 0,
+  daysOverdue = 0,
 }: TurnDetailMetricsProps) {
   return (
     <div className="divide-y divide-neutral-border/60 text-xs sm:text-sm pt-1">
@@ -35,6 +40,40 @@ export default function TurnDetailMetrics({
           {calculatedPayoutDate ? formatDate(calculatedPayoutDate) : "Not started"}
         </span>
       </div>
+
+      {latePenaltyRate > 0 && accruedPenalty > 0 && (
+        <div className="flex items-center justify-between py-2.5">
+          <span className="text-warning font-medium">
+            Overdue Late Penalty
+          </span>
+          <span className="font-bold text-warning">
+            +₱{accruedPenalty.toLocaleString()} ({daysOverdue}d overdue)
+          </span>
+        </div>
+      )}
+
+      {latePenaltyRate > 0 && paidPenalty > 0 && (
+        <div className="flex items-center justify-between py-2.5">
+          <span className="text-neutral-subtext font-medium">
+            Late Penalty Included
+          </span>
+          <span className="font-bold text-foreground">
+            ₱{paidPenalty.toLocaleString()}
+          </span>
+        </div>
+      )}
+
+      {latePenaltyRate > 0 && accruedPenalty === 0 && paidPenalty === 0 && (
+        <div className="flex items-center justify-between py-2.5">
+          <span className="text-neutral-subtext font-medium">
+            Daily Late Penalty
+          </span>
+          <span className="font-semibold text-neutral-subtext">
+            {latePenaltyRate}% / day
+            {gracePeriodDays > 0 ? ` (${gracePeriodDays}d grace)` : ""}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

@@ -33,6 +33,7 @@ export default function PaymentSubmissionModal({
   latePenaltyRate = 0,
   allowedMethods,
   organizerPaymentDetails,
+  overrideLateFee,
 }: PaymentSubmissionModalProps) {
   const {
     previewImage,
@@ -69,6 +70,7 @@ export default function PaymentSubmissionModal({
     gracePeriodDays,
     latePenaltyRate,
     allowedMethods,
+    overrideLateFee,
     onSuccess: () => {
       handleClearImage();
       onClose();
@@ -76,10 +78,9 @@ export default function PaymentSubmissionModal({
   });
 
   const activeError = submissionError || uploadError;
-
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto no-scrollbar">
+      <DialogContent className="sm:max-w-md">
         {isSubmitting && <Loader text="Submitting payment proof..." />}
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
@@ -181,18 +182,18 @@ export default function PaymentSubmissionModal({
 
           <PaymentErrorAlert message={activeError} />
 
-          <div className="flex gap-2 pt-2 border-t border-neutral-border/60">
+          <div className="flex flex-col-reverse sm:flex-row gap-2.5 pt-2 border-t border-neutral-border/60">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 text-xs py-2.5 rounded-2xl border border-neutral-border bg-background hover:bg-neutral-subtext/5 text-foreground font-semibold cursor-pointer transition-all active:scale-95"
+              className="w-full sm:flex-1 text-xs py-2.5 rounded-2xl border border-neutral-border bg-background hover:bg-neutral-subtext/5 text-foreground font-semibold cursor-pointer transition-all active:scale-95"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 cursor-pointer rounded-2xl bg-brand-accent py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm transition-all hover:bg-brand-accent-hover active:scale-95 disabled:opacity-50"
+              className="w-full sm:flex-1 cursor-pointer rounded-2xl bg-brand-accent py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm transition-all hover:bg-brand-accent-hover active:scale-95 disabled:opacity-50"
             >
               {isSubmitting ? "Submitting..." : "Submit Payment"}
             </button>

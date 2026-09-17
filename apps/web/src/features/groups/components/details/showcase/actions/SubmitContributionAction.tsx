@@ -13,6 +13,7 @@ export default function SubmitContributionAction({
   calculatedPayoutDate,
   isSelectedRejected,
   hasCurrentMemberPaidOrganizerFee,
+  accruedPenalty = 0,
 }: SubmitContributionActionProps) {
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
 
@@ -45,7 +46,9 @@ export default function SubmitContributionAction({
         <span>
           {isSelectedRejected
             ? "Re-submit Contribution"
-            : `Pay Contribution (₱${contributionAmount.toLocaleString()})`}
+            : accruedPenalty > 0
+              ? `Pay Contribution (₱${(contributionAmount + accruedPenalty).toLocaleString()} incl. penalty)`
+              : `Pay Contribution (₱${contributionAmount.toLocaleString()})`}
         </span>
       </button>
 
@@ -58,7 +61,7 @@ export default function SubmitContributionAction({
           organizerFeeAmount={group.organizerFeeAmount}
           isOrganizer={currentUserId === group.organizerId}
           hasAlreadyPaidOrganizerFee={hasCurrentMemberPaidOrganizerFee}
-          targetDueDate={calculatedPayoutDate}
+          targetDueDate={currentRound.targetDate || calculatedPayoutDate}
           gracePeriodDays={group.gracePeriodDays ?? 0}
           latePenaltyRate={group.latePenaltyAmount ?? 0}
           allowedMethods={
@@ -69,6 +72,7 @@ export default function SubmitContributionAction({
             ]
           }
           organizerPaymentDetails={group.paymentDetails}
+          overrideLateFee={accruedPenalty}
         />
       )}
     </>

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Calendar, Banknote, Coins, ArrowRight } from "lucide-react";
+import { Calendar, Banknote, ArrowRight } from "lucide-react";
 import formatDate from "@/shared/utils/formatDate";
 import { NextPayoutCardProps } from "../../types/dashboard.types";
 
@@ -11,60 +11,40 @@ export default function NextPayoutCard({
   groupId,
 }: NextPayoutCardProps) {
   const targetHref = groupId ? `/group/${groupId}` : "/group";
-
   const formattedDate = expectedDate ? formatDate(expectedDate) : null;
 
   return (
-    <div className="relative flex w-full flex-col justify-between gap-4 overflow-hidden rounded-2xl border border-transparent bg-brand-accent p-6 text-brand-accent-foreground shadow-md transition-all duration-300 hover:bg-brand-accent-hover">
-      <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-        <Coins className="h-24 w-24 text-brand-accent-foreground" />
-      </div>
-
-      <div className="flex items-center justify-between relative z-10">
-        <div className="flex flex-col items-start gap-3 w-full">
-          <span className="text-xs font-semibold uppercase tracking-wider text-brand-accent-foreground/85">
-            Next Payout
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 flex flex-col justify-between gap-4">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-1 items-start min-w-0 flex-1">
+          <span className="text-xs font-semibold text-neutral-subtext uppercase tracking-wider">
+            Next Expected Payout
           </span>
-          <div className="space-y-1 w-full">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-brand-accent-foreground/70">
-              Expected Amount
-            </p>
-            <p className="text-3xl font-extrabold tracking-tight text-brand-accent-foreground">
-              ₱
-              {expectedAmount.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}
-            </p>
-            {groupName && (
-              <p
-                className="max-w-[200px] truncate text-xs font-semibold text-brand-accent-foreground/95"
-                title={groupName}
-              >
-                {groupName}
-              </p>
-            )}
-          </div>
-          <div className="mt-2 flex items-center gap-2 rounded-2xl border border-brand-accent-foreground/25 bg-brand-accent-foreground/15 px-3 py-1 text-[11px] font-semibold text-brand-accent-foreground">
-            <Calendar className="h-3.5 w-3.5 text-brand-accent-foreground" />
-            <span>
+          <p className="text-3xl font-black tracking-tight text-brand-accent mt-1 tabular-nums">
+            ₱{expectedAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          </p>
+          <div className="flex items-center gap-1.5 mt-2 bg-brand-accent/10 text-brand-accent px-2.5 py-1 rounded-2xl text-[11px] font-semibold border border-brand-accent/20 max-w-full">
+            <Calendar className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate max-w-[130px] xs:max-w-[180px] sm:max-w-none">
               {expectedAmount > 0
-                ? formattedDate || "Cycle Starting Soon"
+                ? `${formattedDate || "Starting Soon"}${groupName ? ` • ${groupName}` : ""}`
                 : "No Upcoming Payouts"}
             </span>
           </div>
         </div>
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-accent-foreground/20">
-          <Banknote className="h-6 w-6 text-brand-accent-foreground" />
+
+        <div className="flex items-center justify-center w-12 h-12 bg-brand-accent/10 text-brand-accent border border-brand-accent/20 rounded-2xl shrink-0">
+          <Banknote className="w-6 h-6" />
         </div>
       </div>
 
-      <div className="pt-3 border-t border-white/20 relative z-10 flex items-center justify-between">
+      <div className="pt-3 border-t border-neutral-border/50 flex items-center justify-between">
         <Link
           href={targetHref}
-          className="group inline-flex cursor-pointer items-center gap-1 text-[11px] font-extrabold text-brand-accent-foreground transition-colors hover:text-brand-accent-foreground/80"
+          className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
         >
           <span>View Payout Schedule</span>
-          <ArrowRight className="h-3.5 w-3.5 text-brand-accent-foreground transition-transform group-hover:translate-x-0.5" />
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
     </div>
