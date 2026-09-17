@@ -106,18 +106,6 @@ export class PaymentsRepository {
     });
   }
 
-  async findGroupPayments(groupId: string) {
-    return this.prisma.payment.findMany({
-      where: { groupId },
-    });
-  }
-
-  async findGroupMemberships(groupId: string) {
-    return this.prisma.membership.findMany({
-      where: { groupId },
-    });
-  }
-
   async findMembership(userId: string, groupId: string) {
     return this.prisma.membership.findUnique({
       where: {
@@ -169,11 +157,7 @@ export class PaymentsRepository {
         memberships: {
           include: { user: { select: { id: true, name: true } } },
         },
-        rounds: {
-          include: {
-            payments: true,
-          },
-        },
+        rounds: true,
         payments: true,
       },
     });

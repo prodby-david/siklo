@@ -10,6 +10,11 @@ export class UsersRepository {
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+      },
     });
   }
 
@@ -30,12 +35,19 @@ export class UsersRepository {
   async findUserWithPasswordById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        password: true,
+      },
     });
   }
 
   async createUser(data: CreateUserDTO) {
     return this.prisma.user.create({
       data,
+      select: {
+        id: true,
+      },
     });
   }
 
@@ -47,6 +59,9 @@ export class UsersRepository {
           password,
           sessionVersion: { increment: 1 },
         },
+        select: {
+          id: true,
+        },
       });
     });
   }
@@ -55,6 +70,9 @@ export class UsersRepository {
     return this.prisma.user.update({
       where: { id },
       data,
+      select: {
+        id: true,
+      },
     });
   }
 
@@ -63,6 +81,9 @@ export class UsersRepository {
       where: { id },
       data: {
         paymentAccounts: (data as Prisma.InputJsonValue) ?? Prisma.JsonNull,
+      },
+      select: {
+        id: true,
       },
     });
   }

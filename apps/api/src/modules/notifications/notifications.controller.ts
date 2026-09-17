@@ -20,7 +20,7 @@ export class NotificationsController {
     return this.notificationService.getUserNotifications(userId);
   }
 
-  @Patch(':notificationId/read')
+  @Patch(':notificationId/read-status')
   @UseGuards(JwtAuthGuard)
   async markNotificationRead(
     @Param('notificationId', ParseUUIDPipe) notificationId: string,
@@ -32,7 +32,7 @@ export class NotificationsController {
     );
   }
 
-  @Patch('read-all')
+  @Patch('read-status')
   @UseGuards(JwtAuthGuard)
   async markAllNotificationsRead(@CurrentUser('sub') userId: string) {
     return this.notificationService.markAllNotificationRead(userId);

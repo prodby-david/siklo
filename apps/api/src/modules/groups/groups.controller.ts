@@ -43,7 +43,7 @@ export class GroupsController {
     return this.groupsService.createGroup(createGroupDto, userId);
   }
 
-  @Post('join')
+  @Post('memberships')
   @UseGuards(JwtAuthGuard)
   async joinGroup(
     @Body(new ZodValidationPipe(joinGroupBodySchema))
@@ -53,7 +53,7 @@ export class GroupsController {
     return this.groupsService.joinGroup(joinGroupDto, userId);
   }
 
-  @Post(':id/cycle')
+  @Post(':id/cycles')
   @UseGuards(JwtAuthGuard)
   async startGroupCycle(
     @Param('id', ParseUUIDPipe) groupId: string,
@@ -71,7 +71,7 @@ export class GroupsController {
     return this.groupsService.getUsersGroup(userId, status);
   }
 
-  @Get('invites/:inviteCode')
+  @Get('invite-previews/:inviteCode')
   @UseGuards(JwtAuthGuard)
   async getGroupByInviteCodePreview(@Param('inviteCode') inviteCode: string) {
     return this.groupsService.getGroupByInviteCodePreview(inviteCode);

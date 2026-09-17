@@ -103,4 +103,15 @@ export class UsersService {
       message: 'Payment accounts updated successfully.',
     };
   }
+  async getUserByEmail(email: string) {
+    const user = await this.usersRepository.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User with this email does not exist.');
+    }
+    return user;
+  }
+
+  async getUserEmail(email: string) {
+    return this.getUserByEmail(email);
+  }
 }
