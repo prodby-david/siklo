@@ -1,6 +1,5 @@
 "use client";
 
-import Badge from "../components/Badge";
 import CycleVisualizer from "../components/CycleVisualizer";
 import Link from "next/link";
 import { HeroProps } from "../types/hero.types";
@@ -10,15 +9,12 @@ import { motion } from "framer-motion";
 import {
   heroContainerVariants,
   heroVisualizerVariants,
-  heroBadgeVariants,
   heroTitleVariants,
   heroSubtitleVariants,
   heroCtaVariants,
 } from "../constants/hero.motion";
 
 export const HeroSection = ({
-  badgeText = "Paluwagan Savings Notebook",
-  badgeLink = "Simple & Safe",
   title = (
     <>
       Organize your{" "}
@@ -51,13 +47,9 @@ export const HeroSection = ({
             />
           </motion.div>
 
-          <motion.div variants={heroBadgeVariants}>
-            <Badge text={badgeText} linkText={badgeLink} />
-          </motion.div>
-
           <motion.h1
             variants={heroTitleVariants}
-            className="text-3xl sm:text-5xl font-extrabold text-foreground leading-tight tracking-tight relative z-10"
+            className="text-4xl sm:text-6xl font-extrabold text-foreground leading-tight tracking-tight relative z-10"
           >
             {title}
           </motion.h1>
