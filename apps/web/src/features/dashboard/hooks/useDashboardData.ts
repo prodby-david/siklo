@@ -8,7 +8,6 @@ import {
   deriveDashboardInsights,
   deriveContributionDueStatus,
   deriveOrganizerTasks,
-  derivePayoutTimeline,
 } from "../utils/dashboardAgenda";
 import { Group } from "@/features/groups/types/group.types";
 
@@ -97,16 +96,11 @@ export function useDashboardData() {
     return deriveOrganizerTasks(groups, user?.id || "");
   }, [groups, user?.id]);
 
-  const payoutTimeline = useMemo(() => {
-    return derivePayoutTimeline(groups, user?.id || "");
-  }, [groups, user?.id]);
-
   return {
     firstName,
     groups,
     alerts: insights.alerts,
     organizerTasks,
-    payoutTimeline,
     agenda: insights.agenda,
     healthStats: insights.healthStats,
     activities: insights.activities,

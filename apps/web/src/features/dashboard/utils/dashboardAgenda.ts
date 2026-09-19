@@ -8,8 +8,6 @@ import {
   DashboardActivityItem,
   ContributionDueStatus,
   OrganizerTaskItem,
-  PayoutMilestoneItem,
-  PayoutMilestoneStatus,
 } from "../types/dashboard.types";
 
 export function deriveDashboardInsights(
@@ -373,74 +371,4 @@ export function deriveOrganizerTasks(
   }
 
   return tasks;
-}
-
-export function derivePayoutTimeline(
-  groups: Group[],
-  currentUserId: string,
-): PayoutMilestoneItem[] {
-  const milestones: PayoutMilestoneItem[] = [];
-
-  for (const group of groups) {
-    const memberships = group.memberships || [];
-    const userMembership = memberships.find((m) => m.userId === currentUserId);
-    if (!userMembership || !userMembership.position) continue;
-
-    const hasStarted = Boolean(group.startDate);
-    const rounds = group.rounds || [];
-    const payments = group.payments || [];
-    const userPosition = userMembership.position;
-    const poolAmount = group.contributionAmount * group.maxMembers;
-
-    const state = calculateGroupTurnState(
-      memberships,
-      rounds,
-      payments,
-      [],
-      group.cycleDuration || 1,
-      hasStarted,
-    );
-
-    const userRound = rounds.find((r) => r.roundNumber === userPosition);
-    let targetDate: Date | null = null;
-
-    if (userRound?.targetDate) {
-      targetDate = new Date(userRound.targetDate);
-    } else {
-      targetDate = getPayoutDate(
-        group.startDate || new Date(),
-        userPosition,
-        group.billingCycle || "MONTHLY",
-      );
-    }
-
-    if (!targetDate || isNaN(targetDate.getTime())) {
-      targetDate = new Date();
-    }
-
-    let status: PayoutMilestoneStatus = "UPCOMING";
-    if (userRound?.status === "RECEIVED") {
-      status = "RECEIVED";
-    } else if (userRound?.status === "DISBURSED") {
-      status = "DISBURSED";
-    } else if (hasStarted && !state.isCycleDone && state.currentTurn === userPosition) {
-      status = "CURRENT";
-    }
-
-    milestones.push({
-      id: `milestone-${group.id}-${userPosition}`,
-      groupId: group.id,
-      groupName: group.name,
-      turnNumber: userPosition,
-      totalTurns: group.maxMembers,
-      payoutAmount: poolAmount,
-      targetDate,
-      status,
-      billingCycle: group.billingCycle || "MONTHLY",
-    });
-  }
-
-  return milestones.sort(
-    (a, b) => a.targetDate.getTime() - b.targetDate.getTime(),
-  );
 }

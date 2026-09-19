@@ -20,8 +20,6 @@ export interface CycleStats {
 }
 
 export interface HeroProps {
-  badgeText?: string;
-  badgeLink?: string;
   title?: ReactNode;
   subtitle?: string;
   primaryCtaText?: string;
@@ -64,27 +62,6 @@ export interface ShowcaseTurnCardProps {
 
 export interface ShowcaseMemberDetailProps {
   member: Member;
-}
-
-export interface BadgeProps {
-  text: string;
-  linkText?: string;
-  href?: string;
-}
-
-export interface FeaturePillProps {
-  label: string;
-}
-
-export interface StatsCardProps {
-  title: string;
-  value: string;
-  description?: string;
-  trend?: {
-    value: string;
-    positive: boolean;
-  };
-  className?: string;
 }
 
 export interface TrackerItem {

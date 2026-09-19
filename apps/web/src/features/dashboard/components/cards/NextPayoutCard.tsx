@@ -14,7 +14,7 @@ export default function NextPayoutCard({
   const formattedDate = expectedDate ? formatDate(expectedDate) : null;
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 flex flex-col justify-between gap-4">
+    <div className="h-full p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 flex flex-col justify-between gap-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex flex-col gap-1 items-start min-w-0 flex-1">
           <span className="text-xs font-semibold text-neutral-subtext uppercase tracking-wider">
@@ -38,10 +38,10 @@ export default function NextPayoutCard({
         </div>
       </div>
 
-      <div className="pt-3 border-t border-neutral-border/50 flex items-center justify-between">
+      <div className="pt-3 border-t border-neutral-border/50 min-h-[48px] flex items-center justify-between">
         <Link
           href={targetHref}
-          className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
+          className="h-9 inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
         >
           <span>View Payout Schedule</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />

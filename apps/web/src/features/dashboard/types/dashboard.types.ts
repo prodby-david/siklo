@@ -124,21 +124,3 @@ export interface OrganizerTaskItem {
 export interface OrganizerActionCenterProps {
   tasks: OrganizerTaskItem[];
 }
-
-export type PayoutMilestoneStatus = "RECEIVED" | "DISBURSED" | "CURRENT" | "UPCOMING";
-
-export interface PayoutMilestoneItem {
-  id: string;
-  groupId: string;
-  groupName: string;
-  turnNumber: number;
-  totalTurns: number;
-  payoutAmount: number;
-  targetDate: Date;
-  status: PayoutMilestoneStatus;
-  billingCycle: string;
-}
-
-export interface PayoutTimelineStripProps {
-  milestones: PayoutMilestoneItem[];
-}

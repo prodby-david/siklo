@@ -9,7 +9,6 @@ import { useDashboardData } from "../hooks/useDashboardData";
 import DashboardWelcomeBanner from "../components/DashboardWelcomeBanner";
 import ActionRequiredBanner from "../components/ActionRequiredBanner";
 import OrganizerActionCenter from "../components/organizer/OrganizerActionCenter";
-import PayoutTimelineStrip from "../components/timeline/PayoutTimelineStrip";
 import RotationAgendaList from "../components/agenda/RotationAgendaList";
 import SavingsFlowCard from "../components/cards/SavingsFlowCard";
 import DashboardActivityFeed from "../components/activity/DashboardActivityFeed";
@@ -22,7 +21,6 @@ export default function DashboardUI() {
     stats,
     alerts,
     organizerTasks,
-    payoutTimeline,
     agenda,
     healthStats,
     activities,
@@ -40,7 +38,7 @@ export default function DashboardUI() {
 
       <OrganizerActionCenter tasks={organizerTasks} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
         <ActiveGroupsCard
           count={stats.activeGroupsCount}
           nextContributionAmount={stats.nextContributionAmount}
@@ -68,21 +66,17 @@ export default function DashboardUI() {
       {stats.activeGroupsCount === 0 ? (
         <DashboardOnboardingCard />
       ) : (
-        <>
-          <PayoutTimelineStrip milestones={payoutTimeline} />
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <div className="lg:col-span-7 flex flex-col gap-6">
-              <RotationAgendaList agenda={agenda} />
-              <ActiveCycleSection />
-            </div>
-
-            <div className="lg:col-span-5 flex flex-col gap-6">
-              <SavingsFlowCard stats={healthStats} />
-              <DashboardActivityFeed activities={activities} />
-            </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div className="lg:col-span-7 flex flex-col gap-6">
+            <RotationAgendaList agenda={agenda} />
+            <ActiveCycleSection />
           </div>
-        </>
+
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            <SavingsFlowCard stats={healthStats} />
+            <DashboardActivityFeed activities={activities} />
+          </div>
+        </div>
       )}
     </div>
   );

@@ -16,7 +16,7 @@ export default function TotalSavingsCard({
     : "/ turn";
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col justify-between gap-4">
+    <div className="h-full p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 flex flex-col justify-between gap-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex flex-col gap-1 items-start min-w-0 flex-1">
           <span className="text-xs font-semibold text-neutral-subtext uppercase tracking-wider">
@@ -25,9 +25,9 @@ export default function TotalSavingsCard({
           <p className="text-3xl font-black tracking-tight text-foreground mt-1 tabular-nums">
             ₱{totalPayoutPool.toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </p>
-          <div className="flex flex-wrap items-center gap-1.5 mt-2 bg-neutral-table-stripe text-neutral-subtext px-2.5 py-1 rounded-2xl text-[11px] font-semibold border border-neutral-border/60 max-w-full">
+          <div className="flex items-center gap-1.5 mt-2 bg-neutral-table-stripe text-neutral-subtext px-2.5 py-1 rounded-2xl text-[11px] font-semibold border border-neutral-border/60 max-w-full">
             <ArrowUpRight className="w-3.5 h-3.5 text-brand-accent shrink-0" />
-            <span className="break-words">
+            <span className="truncate">
               ₱{perTurnContribution.toLocaleString(undefined, { minimumFractionDigits: 2 })} {cycleLabel}
             </span>
           </div>
@@ -38,10 +38,10 @@ export default function TotalSavingsCard({
         </div>
       </div>
 
-      <div className="pt-3 border-t border-neutral-border/50 flex items-center justify-between">
+      <div className="pt-3 border-t border-neutral-border/50 min-h-[48px] flex items-center justify-between">
         <Link
           href="/group"
-          className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
+          className="h-9 inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
         >
           <span>All Savings Groups</span>
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
