@@ -27,7 +27,7 @@ export default function ActiveGroupsCard({
   const isPaid = paymentStatus === "PAID" || !hasContribution;
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col justify-between gap-4">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 flex flex-col justify-between gap-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex flex-col gap-1 items-start min-w-0 flex-1">
           <span className="text-xs font-semibold text-neutral-subtext uppercase tracking-wider">
@@ -99,13 +99,23 @@ export default function ActiveGroupsCard({
       </div>
 
       <div className="pt-3 border-t border-neutral-border/50 flex items-center justify-between">
-        <Link
-          href={targetHref}
-          className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
-        >
-          <span>View Turn Details</span>
-          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </Link>
+        {hasContribution && !isPaid ? (
+          <Link
+            href={targetHref}
+            className="inline-flex items-center justify-between w-full px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-accent text-brand-accent-foreground hover:bg-brand-accent-hover shadow-xs active:scale-98 transition-all group cursor-pointer"
+          >
+            <span>{isDelayed ? "Pay Overdue Contribution" : "Pay Contribution Now"}</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        ) : (
+          <Link
+            href={targetHref}
+            className="inline-flex items-center gap-1 text-[11px] font-extrabold text-brand-accent hover:text-brand-accent-hover transition-colors cursor-pointer group"
+          >
+            <span>{count > 0 ? "View Turn Details" : "Browse Circles"}</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        )}
       </div>
     </div>
   );

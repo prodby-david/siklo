@@ -16,7 +16,7 @@ export default function TotalSavingsCard({
     : "/ turn";
 
   return (
-    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 flex flex-col justify-between gap-4">
+    <div className="p-5 sm:p-6 border border-neutral-border rounded-3xl w-full bg-card shadow-xs hover:border-brand-accent/40 transition-all duration-300 col-span-1 sm:col-span-2 lg:col-span-1 flex flex-col justify-between gap-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex flex-col gap-1 items-start min-w-0 flex-1">
           <span className="text-xs font-semibold text-neutral-subtext uppercase tracking-wider">

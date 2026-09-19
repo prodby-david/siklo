@@ -51,8 +51,8 @@ export default function DashboardActivityFeed({
           </p>
         </div>
       ) : (
-        <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1 no-scrollbar">
-          {activities.map((act) => {
+        <div className="space-y-2.5">
+          {activities.slice(0, 4).map((act) => {
             const isPayment = act.type === "PAYMENT";
             const isAnnouncement = act.type === "ANNOUNCEMENT";
             const isJoin = act.type === "JOIN";

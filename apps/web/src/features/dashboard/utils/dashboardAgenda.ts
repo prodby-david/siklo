@@ -205,18 +205,23 @@ export function deriveDashboardInsights(
           isCurrentUserTurn: false,
         });
 
-        if (!isPaidForCurrentTurn && !isPendingForCurrentTurn) {
+        const graceDays = group.gracePeriodDays ?? 0;
+        const dueTime = targetDate ? targetDate.getTime() : 0;
+        const deadline = dueTime + graceDays * 24 * 60 * 60 * 1000;
+        const isPastDeadline = dueTime > 0 && Date.now() > deadline;
+
+        if (!isPaidForCurrentTurn && !isPendingForCurrentTurn && isPastDeadline) {
           alerts.push({
             id: `payment-due-${group.id}`,
             type: "PAYMENT_DUE",
-            title: `Contribution Due for ${group.name}`,
-            subtitle: `Turn #${activeTurn} contribution of ₱${group.contributionAmount.toLocaleString()} is open.`,
+            title: `Contribution Overdue for ${group.name}`,
+            subtitle: `Turn #${activeTurn} contribution of ₱${group.contributionAmount.toLocaleString()} is past due. Please settle immediately.`,
             amount: group.contributionAmount,
             dueDate: targetDate,
             groupId: group.id,
             groupName: group.name,
             actionUrl: `/group/${group.id}`,
-            actionLabel: "Pay Contribution",
+            actionLabel: "Pay Overdue",
           });
         }
       }

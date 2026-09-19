@@ -13,6 +13,7 @@ import PayoutTimelineStrip from "../components/timeline/PayoutTimelineStrip";
 import RotationAgendaList from "../components/agenda/RotationAgendaList";
 import SavingsFlowCard from "../components/cards/SavingsFlowCard";
 import DashboardActivityFeed from "../components/activity/DashboardActivityFeed";
+import DashboardOnboardingCard from "../components/onboarding/DashboardOnboardingCard";
 
 export default function DashboardUI() {
   const {
@@ -40,19 +41,6 @@ export default function DashboardUI() {
       <OrganizerActionCenter tasks={organizerTasks} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <TotalSavingsCard
-          totalPayoutPool={stats.totalPayoutPool}
-          totalMonthlyContributions={stats.totalMonthlyContributions}
-          perTurnContribution={stats.perTurnContribution}
-          primaryBillingCycle={stats.primaryBillingCycle}
-          activeGroupsCount={stats.activeGroupsCount}
-        />
-        <NextPayoutCard
-          expectedAmount={stats.nextPayoutAmount}
-          expectedDate={stats.nextPayoutDate}
-          groupName={stats.nextPayoutGroupName}
-          groupId={stats.nextPayoutGroupId}
-        />
         <ActiveGroupsCard
           count={stats.activeGroupsCount}
           nextContributionAmount={stats.nextContributionAmount}
@@ -62,21 +50,40 @@ export default function DashboardUI() {
           paymentStatus={stats.dueContributionStatus}
           daysOverdue={stats.dueDaysOverdue}
         />
+        <NextPayoutCard
+          expectedAmount={stats.nextPayoutAmount}
+          expectedDate={stats.nextPayoutDate}
+          groupName={stats.nextPayoutGroupName}
+          groupId={stats.nextPayoutGroupId}
+        />
+        <TotalSavingsCard
+          totalPayoutPool={stats.totalPayoutPool}
+          totalMonthlyContributions={stats.totalMonthlyContributions}
+          perTurnContribution={stats.perTurnContribution}
+          primaryBillingCycle={stats.primaryBillingCycle}
+          activeGroupsCount={stats.activeGroupsCount}
+        />
       </div>
 
-      <PayoutTimelineStrip milestones={payoutTimeline} />
+      {stats.activeGroupsCount === 0 ? (
+        <DashboardOnboardingCard />
+      ) : (
+        <>
+          <PayoutTimelineStrip milestones={payoutTimeline} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          <RotationAgendaList agenda={agenda} />
-          <ActiveCycleSection />
-        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-7 flex flex-col gap-6">
+              <RotationAgendaList agenda={agenda} />
+              <ActiveCycleSection />
+            </div>
 
-        <div className="lg:col-span-5 flex flex-col gap-6">
-          <SavingsFlowCard stats={healthStats} />
-          <DashboardActivityFeed activities={activities} />
-        </div>
-      </div>
+            <div className="lg:col-span-5 flex flex-col gap-6">
+              <SavingsFlowCard stats={healthStats} />
+              <DashboardActivityFeed activities={activities} />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
