@@ -1,5 +1,4 @@
-import { Clock, CreditCard, Crown, ShieldCheck } from "lucide-react";
-import formatDate from "@/shared/utils/formatDate";
+import { Clock, CreditCard, ShieldCheck } from "lucide-react";
 import type { GroupHeroActionsProps } from "../../../types/group.types";
 
 export default function GroupHeroActions({
@@ -12,7 +11,6 @@ export default function GroupHeroActions({
   roundId = "",
   isUserMember = true,
   currentTurn = 1,
-  nextPayoutee,
   onOpenPay,
 }: GroupHeroActionsProps) {
   return (
@@ -55,19 +53,6 @@ export default function GroupHeroActions({
       ) : (
         <div className="text-xs text-neutral-subtext">
           Waiting for organizer to start cycle...
-        </div>
-      )}
-
-      {hasStarted && !isCycleDone && nextPayoutee && (
-        <div className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-brand-accent bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
-          <Crown className="w-3.5 h-3.5" />
-          <span>
-            Next Payoutee: {nextPayoutee.name} · Turn #
-            {nextPayoutee.roundNumber}
-            {nextPayoutee.payoutDate
-              ? ` · ${formatDate(nextPayoutee.payoutDate)}`
-              : ""}
-          </span>
         </div>
       )}
     </div>
