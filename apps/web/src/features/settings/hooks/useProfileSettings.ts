@@ -20,6 +20,8 @@ export default function useProfileSettings() {
     handleSubmit,
     reset,
     register,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<UserProfileSettingDTO>({
     resolver: zodResolver(userProfileSettingSchema),
@@ -27,10 +29,12 @@ export default function useProfileSettings() {
       name: user?.name || "",
       email: user?.email || "",
       contactNumber: user?.contactNumber || "",
+      avatarUrl: user?.avatarUrl || null,
     },
   });
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const avatarUrl = watch("avatarUrl");
 
   const openDrawer = () => setIsDrawerOpen(true);
   const closeDrawer = () => {
@@ -38,8 +42,13 @@ export default function useProfileSettings() {
       name: user?.name || "",
       email: user?.email || "",
       contactNumber: user?.contactNumber || "",
+      avatarUrl: user?.avatarUrl || null,
     });
     setIsDrawerOpen(false);
+  };
+
+  const handleAvatarChange = (newAvatar: string | null) => {
+    setValue("avatarUrl", newAvatar, { shouldDirty: true });
   };
 
   const onSubmit = async (data: UserProfileSettingDTO) => {
@@ -67,6 +76,8 @@ export default function useProfileSettings() {
     user,
     handleSubmit: handleSubmit(onSubmit),
     register,
+    avatarUrl,
+    handleAvatarChange,
     errors,
     isSubmitting,
     isDrawerOpen,

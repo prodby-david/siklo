@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { User, Mail, Phone, Edit3, Fingerprint, Copy, Check } from "lucide-react";
+import Image from "next/image";
+import {
+  User,
+  Mail,
+  Phone,
+  Edit3,
+  Fingerprint,
+  Copy,
+  Check,
+  Award,
+} from "lucide-react";
 import useProfileSettings from "../hooks/useProfileSettings";
 import ProfileEditSheet from "./ProfileEditSheet";
 import { Button } from "@/shared/components/ui/button";
@@ -12,6 +22,8 @@ export default function ProfileSettings() {
     user,
     handleSubmit,
     register,
+    avatarUrl,
+    handleAvatarChange,
     errors,
     isSubmitting,
     isDrawerOpen,
@@ -51,12 +63,32 @@ export default function ProfileSettings() {
 
       <div className="p-4 sm:p-6 rounded-3xl border border-neutral-border/80 bg-card backdrop-blur-xl space-y-4 shadow-xs">
         <div className="flex items-center gap-4 pb-4 border-b border-neutral-border/60">
-          <div className="w-12 h-12 rounded-2xl bg-brand-accent/15 text-brand-accent flex items-center justify-center font-black text-lg border border-brand-accent/20">
-            {user?.name ? user.name.charAt(0).toUpperCase() : <User className="w-6 h-6" />}
+          <div className="w-12 h-12 rounded-2xl overflow-hidden bg-brand-accent/15 text-brand-accent flex items-center justify-center font-black text-lg border border-brand-accent/20 shrink-0">
+            {user?.avatarUrl ? (
+              <Image
+                src={user.avatarUrl}
+                alt={user.name || "Account avatar"}
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+                unoptimized
+              />
+            ) : user?.name ? (
+              user.name.charAt(0).toUpperCase()
+            ) : (
+              <User className="w-6 h-6" />
+            )}
           </div>
           <div>
-            <h4 className="text-base font-extrabold text-foreground">{user?.name || "Account User"}</h4>
-            <p className="text-xs text-neutral-subtext">Registered Siklo Member</p>
+            <h4 className="text-base font-extrabold text-foreground">
+              {user?.name || "Account User"}
+            </h4>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <Award className="w-4 h-4 text-brand-accent" />
+              <p className="text-xs text-neutral-subtext">
+                {user?.subscriptionPlan} TIER
+              </p>
+            </div>
           </div>
         </div>
 
@@ -92,7 +124,9 @@ export default function ProfileSettings() {
               <Mail className="w-4 h-4 text-brand-accent" />
               <span className="font-semibold">Email Address</span>
             </div>
-            <span className="font-bold text-foreground">{user?.email || "—"}</span>
+            <span className="font-bold text-foreground">
+              {user?.email || "—"}
+            </span>
           </div>
 
           <div className="flex items-center justify-between text-xs py-1">
@@ -100,7 +134,9 @@ export default function ProfileSettings() {
               <Phone className="w-4 h-4 text-brand-accent" />
               <span className="font-semibold">Contact Number</span>
             </div>
-            <span className="font-bold text-foreground">{user?.contactNumber || "—"}</span>
+            <span className="font-bold text-foreground">
+              {user?.contactNumber || "—"}
+            </span>
           </div>
         </div>
       </div>
@@ -112,6 +148,9 @@ export default function ProfileSettings() {
         register={register}
         errors={errors}
         isSubmitting={isSubmitting}
+        avatarUrl={avatarUrl}
+        userName={user?.name}
+        onAvatarChange={handleAvatarChange}
       />
     </div>
   );

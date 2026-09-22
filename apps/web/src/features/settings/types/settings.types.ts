@@ -53,6 +53,9 @@ export interface ProfileEditSheetProps {
   register: UseFormRegister<UserProfileSettingDTO>;
   errors: FieldErrors<UserProfileSettingDTO>;
   isSubmitting: boolean;
+  avatarUrl?: string | null;
+  userName?: string;
+  onAvatarChange: (base64Url: string | null) => void;
 }
 
 export interface NotificationPreferenceRowProps {

@@ -1,5 +1,5 @@
-import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 
@@ -29,8 +29,19 @@ export default function SidebarUserProfile({ onNavigate }: SidebarUserProfilePro
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <div className="relative shrink-0">
-          <div className="w-9 h-9 rounded-xl bg-brand-accent/15 text-brand-accent font-extrabold text-xs border border-brand-accent/25 flex items-center justify-center">
-            {initials}
+          <div className="w-9 h-9 rounded-xl overflow-hidden bg-brand-accent/15 text-brand-accent font-extrabold text-xs border border-brand-accent/25 flex items-center justify-center">
+            {user?.avatarUrl ? (
+              <Image
+                src={user.avatarUrl}
+                alt={displayName}
+                width={36}
+                height={36}
+                className="w-full h-full object-cover"
+                unoptimized
+              />
+            ) : (
+              initials
+            )}
           </div>
           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full ring-2 ring-card" />
         </div>

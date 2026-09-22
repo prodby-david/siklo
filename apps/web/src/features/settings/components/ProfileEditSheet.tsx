@@ -7,6 +7,7 @@ import { Input, ContactNumberInput } from "@/shared/components/inputs";
 import { Button } from "@/shared/components/ui/button";
 import { ProfileEditSheetProps } from "../types/settings.types";
 import Loader from "@/shared/components/loader/Loader";
+import AvatarUploader from "./AvatarUploader";
 
 export default function ProfileEditSheet({
   isOpen,
@@ -15,6 +16,9 @@ export default function ProfileEditSheet({
   register,
   errors,
   isSubmitting,
+  avatarUrl,
+  userName,
+  onAvatarChange,
 }: ProfileEditSheetProps) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -57,7 +61,7 @@ export default function ProfileEditSheet({
                     Edit Profile Details
                   </h2>
                   <p className="text-xs text-neutral-subtext">
-                    Update your account name and contact number
+                    Update your account photo, name, and contact number
                   </p>
                 </div>
               </div>
@@ -77,6 +81,13 @@ export default function ProfileEditSheet({
               className="flex-1 flex flex-col justify-between p-5 sm:p-6 overflow-y-auto no-scrollbar"
             >
               <div className="space-y-4">
+                <AvatarUploader
+                  currentAvatarUrl={avatarUrl}
+                  name={userName}
+                  onAvatarChange={onAvatarChange}
+                  disabled={isSubmitting}
+                />
+
                 <Input
                   label="name"
                   labelText="Full Name"
