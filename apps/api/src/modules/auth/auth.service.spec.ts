@@ -1,19 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { PrismaService } from '@/database/prisma.service';
+import { AuthRepository } from './auth.repository';
 import { TokenService } from '../token/token.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: { findUnique: jest.Mock } };
+  let authRepository: { findUserByEmail: jest.Mock };
   let tokenService: { generateAccessToken: jest.Mock };
 
   beforeEach(async () => {
-    prisma = {
-      user: {
-        findUnique: jest.fn(),
-      },
+    authRepository = {
+      findUserByEmail: jest.fn(),
     };
 
     tokenService = {
@@ -23,7 +21,7 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: PrismaService, useValue: prisma },
+        { provide: AuthRepository, useValue: authRepository },
         { provide: TokenService, useValue: tokenService },
       ],
     }).compile();
@@ -42,7 +40,7 @@ describe('AuthService', () => {
     };
 
     it('should throw UnauthorizedException if user is not found', async () => {
-      prisma.user.findUnique.mockResolvedValue(null);
+      authRepository.findUserByEmail.mockResolvedValue(null);
 
       await expect(service.signIn(signInDto)).rejects.toThrow(
         UnauthorizedException,
@@ -59,7 +57,7 @@ describe('AuthService', () => {
         password: 'hashed-password',
         sessionVersion: 0,
       };
-      prisma.user.findUnique.mockResolvedValue(mockUser);
+      authRepository.findUserByEmail.mockResolvedValue(mockUser);
 
       jest.spyOn(service, 'comparePassword').mockResolvedValue(false);
 
@@ -82,16 +80,16 @@ describe('AuthService', () => {
         accessToken: 'mock-access-token',
       };
 
-      prisma.user.findUnique.mockResolvedValue(mockUser);
+      authRepository.findUserByEmail.mockResolvedValue(mockUser);
       jest.spyOn(service, 'comparePassword').mockResolvedValue(true);
       tokenService.generateAccessToken.mockResolvedValue(mockTokens);
 
       const result = await service.signIn(signInDto);
 
       expect(result).toEqual(mockTokens);
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { email: signInDto.email },
-      });
+      expect(authRepository.findUserByEmail).toHaveBeenCalledWith(
+        signInDto.email,
+      );
       expect(service.comparePassword).toHaveBeenCalledWith(
         signInDto.password,
         mockUser.password,
