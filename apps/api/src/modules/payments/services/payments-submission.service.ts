@@ -12,7 +12,10 @@ import { PaymentsRepository } from '../payments.repository';
 import { PAYMENT_STATUS } from '../constants/payment.constants';
 import { calculatePenaltyAmount } from '../utils/paymentCalculator';
 import { PrismaService } from '@/database/prisma.service';
-import { RoundStatus } from '@/generated/prisma/client';
+import {
+  PaymentVerificationSource,
+  RoundStatus,
+} from '@/generated/prisma/client';
 
 @Injectable()
 export class PaymentsSubmissionService {
@@ -35,6 +38,12 @@ export class PaymentsSubmissionService {
 
     if (payment.group.organizerId !== organizerUserId) {
       throw new ForbiddenException(`Only the organizer can ${action} payments`);
+    }
+
+    if (payment.userId === organizerUserId) {
+      throw new ConflictException(
+        'Organizer contributions must use the self-attested submission flow',
+      );
     }
 
     if (payment.status !== PAYMENT_STATUS.PENDING) {
@@ -94,6 +103,8 @@ export class PaymentsSubmissionService {
       throw new ForbiddenException('You are not a member of this group');
     }
 
+    const isOrganizerPayment = userId === group.organizerId;
+
     const { savedPayment, cycleNumber, turnNumber } =
       await this.prisma.$transaction(async (tx) => {
         const existingPayment =
@@ -115,7 +126,8 @@ export class PaymentsSubmissionService {
 
         if (
           existingPayment &&
-          existingPayment.status === PAYMENT_STATUS.PENDING
+          existingPayment.status === PAYMENT_STATUS.PENDING &&
+          !isOrganizerPayment
         ) {
           throw new ConflictException(
             'Your contribution is already awaiting organizer verification.',
@@ -138,9 +150,8 @@ export class PaymentsSubmissionService {
             tx,
           );
 
-        const isOrganizer = userId === group.organizerId;
         const isFeeApplicable =
-          !isOrganizer &&
+          !isOrganizerPayment &&
           (group.organizerFeeAmount || 0) > 0 &&
           !hasPaidOrganizerFee;
 
@@ -151,6 +162,19 @@ export class PaymentsSubmissionService {
 
         const totalAmount =
           group.contributionAmount + penaltyAmount + organizerFeeAmount;
+
+        const paymentState = isOrganizerPayment
+          ? {
+              status: PAYMENT_STATUS.VERIFIED,
+              verificationSource:
+                PaymentVerificationSource.ORGANIZER_SELF_ATTESTED,
+              verifiedAt: now,
+            }
+          : {
+              status: PAYMENT_STATUS.PENDING,
+              verificationSource: null,
+              verifiedAt: null,
+            };
 
         const refLabel = dto.referenceNumber
           ? ` (Ref: ${dto.referenceNumber})`
@@ -167,7 +191,9 @@ export class PaymentsSubmissionService {
                 totalAmount,
                 referenceNumber: dto.referenceNumber,
                 proofUrl: dto.proofUrl,
-                status: PAYMENT_STATUS.PENDING,
+                rejectionReason: null,
+                rejectionProofUrl: null,
+                ...paymentState,
               },
               tx,
             )
@@ -183,17 +209,21 @@ export class PaymentsSubmissionService {
                 totalAmount,
                 referenceNumber: dto.referenceNumber,
                 proofUrl: dto.proofUrl,
-                status: PAYMENT_STATUS.PENDING,
+                ...paymentState,
               },
               tx,
             );
 
         await this.activityService.createActivity(
           {
-            userId: group.organizerId,
+            userId: isOrganizerPayment ? userId : group.organizerId,
             groupId: group.id,
-            activityType: 'PAYMENT',
-            description: `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}`,
+            activityType: isOrganizerPayment
+              ? 'PAYMENT_VERIFIED'
+              : 'PAYMENT',
+            description: isOrganizerPayment
+              ? `${membership.user.name} declared their organizer contribution for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}.`
+              : `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}`,
           },
           tx,
         );
@@ -205,15 +235,19 @@ export class PaymentsSubmissionService {
         };
       });
 
-    await this.notificationsService.createNotification({
-      userId: group.organizerId,
-      groupId: group.id,
-      notificationType: 'PAYMENT',
-      description: `${membership.user.name} submitted payment proof for Cycle #${cycleNumber} (Turn #${turnNumber}). Please review and verify.`,
-    });
+    if (!isOrganizerPayment) {
+      await this.notificationsService.createNotification({
+        userId: group.organizerId,
+        groupId: group.id,
+        notificationType: 'PAYMENT',
+        description: `${membership.user.name} submitted payment proof for Cycle #${cycleNumber} (Turn #${turnNumber}). Please review and verify.`,
+      });
+    }
 
     return {
-      message: 'Payment proof submitted successfully',
+      message: isOrganizerPayment
+        ? 'Organizer contribution recorded as self-attested'
+        : 'Payment proof submitted successfully',
       payment: savedPayment,
     };
   }

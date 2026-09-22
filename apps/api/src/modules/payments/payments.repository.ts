@@ -3,6 +3,7 @@ import { PrismaService } from '@/database/prisma.service';
 import {
   PaymentStatus,
   PaymentMethodType,
+  PaymentVerificationSource,
   RoundStatus,
   Prisma,
 } from '@/generated/prisma/client';
@@ -19,6 +20,8 @@ export interface CreatePaymentRecordData {
   referenceNumber?: string;
   proofUrl?: string;
   status: PaymentStatus;
+  verificationSource?: PaymentVerificationSource | null;
+  verifiedAt?: Date | null;
   rejectionReason?: string;
   rejectionProofUrl?: string;
 }
@@ -54,6 +57,7 @@ export class PaymentsRepository {
       where: { id },
       data: {
         status: PaymentStatus.VERIFIED,
+        verificationSource: PaymentVerificationSource.ORGANIZER_APPROVED,
         verifiedAt: new Date(),
       },
     });
@@ -299,6 +303,7 @@ export class PaymentsRepository {
     id: string,
     data: {
       status?: PaymentStatus;
+      verificationSource?: PaymentVerificationSource | null;
       verifiedAt?: Date | null;
       rejectionReason?: string | null;
       rejectionProofUrl?: string | null;

@@ -9,6 +9,8 @@ export default function MemberPaymentHistoryItem({
   const isVerified = payment.status === "VERIFIED";
   const isPending = payment.status === "PENDING";
   const isRejected = payment.status === "REJECTED";
+  const isOrganizerSelfAttested =
+    payment.verificationSource === "ORGANIZER_SELF_ATTESTED";
 
   return (
     <div className="p-4 rounded-2xl border border-neutral-border bg-card flex flex-col gap-2.5 shadow-xs hover:border-brand-accent/30 transition-all">
@@ -53,7 +55,10 @@ export default function MemberPaymentHistoryItem({
           )}
           {isVerified ? (
             <span className="flex items-center gap-1 rounded-full border border-success/30 bg-success-bg px-2 py-0.5 text-[9px] font-bold text-success">
-              <ShieldCheck className="w-3 h-3" /> Verified
+              <ShieldCheck className="w-3 h-3" />
+              {isOrganizerSelfAttested
+                ? "Organizer Self-Declared"
+                : "Verified"}
             </span>
           ) : isPending ? (
             <span className="flex items-center gap-1 rounded-full border border-warning/30 bg-warning-bg px-2 py-0.5 text-[9px] font-bold text-warning">

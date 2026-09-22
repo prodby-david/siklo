@@ -111,6 +111,7 @@ model Payment {
   referenceNumber   String?
   proofUrl          String?
   status            PaymentStatus     @default(PENDING)
+  verificationSource PaymentVerificationSource?
   rejectionReason   String?
   rejectionProofUrl String?
   verifiedAt        DateTime?
@@ -224,6 +225,11 @@ enum PaymentStatus {
   PENDING
   VERIFIED
   REJECTED
+}
+
+enum PaymentVerificationSource {
+  ORGANIZER_APPROVED
+  ORGANIZER_SELF_ATTESTED
 }
 
 enum NotificationType {

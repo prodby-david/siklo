@@ -41,6 +41,10 @@ export interface PaymentRecord {
   referenceNumber?: string | null;
   proofUrl?: string | null;
   status: "PENDING" | "VERIFIED" | "REJECTED";
+  verificationSource?:
+    | "ORGANIZER_APPROVED"
+    | "ORGANIZER_SELF_ATTESTED"
+    | null;
   rejectionReason?: string | null;
   rejectionProofUrl?: string | null;
   verifiedAt?: string | Date | null;
@@ -349,4 +353,3 @@ export interface GroupInfoOrganizerSectionProps {
   onStartCycle?: () => void;
   onDeleteGroup?: () => void;
 }
-

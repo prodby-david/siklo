@@ -3,7 +3,10 @@ import { PrismaService } from '@/database/prisma.service';
 
 describe('PaymentsRepository', () => {
   const findMany = jest.fn().mockResolvedValue([]);
-  const prisma = { payment: { findMany } } as unknown as PrismaService;
+  const update = jest.fn();
+  const prisma = {
+    payment: { findMany, update },
+  } as unknown as PrismaService;
   const repository = new PaymentsRepository(prisma);
 
   beforeEach(() => {
@@ -22,5 +25,20 @@ describe('PaymentsRepository', () => {
         }),
       }),
     );
+  });
+
+  it('records organizer approval as the verification source', async () => {
+    update.mockResolvedValue({ id: 'payment-1', status: 'VERIFIED' });
+
+    await repository.updatePaymentStatusVerified('payment-1');
+
+    expect(update).toHaveBeenCalledWith({
+      where: { id: 'payment-1' },
+      data: {
+        status: 'VERIFIED',
+        verificationSource: 'ORGANIZER_APPROVED',
+        verifiedAt: expect.any(Date),
+      },
+    });
   });
 });

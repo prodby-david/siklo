@@ -5,7 +5,10 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
-import { PaymentMethodType } from '@/generated/prisma/client';
+import {
+  PaymentMethodType,
+  PaymentVerificationSource,
+} from '@/generated/prisma/client';
 import { ActivityService } from '../../activity/activity.service';
 import { GroupsCoreService } from '../../groups/services/groups-core.service';
 import { NotificationsService } from '../../notifications/notifications.service';
@@ -121,6 +124,11 @@ export class PaymentsManagementService {
       organizerUserId,
       'Only the organizer can mark members as paid',
     );
+    if (memberUserId === organizerUserId) {
+      throw new BadRequestException(
+        'Organizer contributions must be submitted through the regular contribution flow',
+      );
+    }
     if (!group.startDate) {
       throw new ConflictException('Group cycle has not started yet');
     }
@@ -176,6 +184,8 @@ export class PaymentsManagementService {
             existingPayment.id,
             {
               status: PAYMENT_STATUS.VERIFIED,
+              verificationSource:
+                PaymentVerificationSource.ORGANIZER_APPROVED,
               verifiedAt: new Date(),
               referenceNumber:
                 referenceNumber || existingPayment.referenceNumber,
@@ -200,6 +210,9 @@ export class PaymentsManagementService {
               referenceNumber,
               proofUrl,
               status: PAYMENT_STATUS.VERIFIED,
+              verificationSource:
+                PaymentVerificationSource.ORGANIZER_APPROVED,
+              verifiedAt: new Date(),
             },
             tx,
           );
@@ -251,6 +264,11 @@ export class PaymentsManagementService {
       organizerUserId,
       'Only the organizer can reject payments',
     );
+    if (memberUserId === organizerUserId) {
+      throw new BadRequestException(
+        'Organizer contributions must be submitted through the regular contribution flow',
+      );
+    }
 
     const { targetMember, currentCycleNum } = await this.validateMemberAndCycle(
       group,

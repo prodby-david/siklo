@@ -179,6 +179,22 @@ describe('PaymentsService', () => {
         paymentsRepository.updatePaymentStatusRejected,
       ).not.toHaveBeenCalled();
     });
+
+    it('should prevent the organizer from verifying their own pending payment', async () => {
+      paymentsRepository.findPaymentById.mockResolvedValue({
+        id: 'payment-1',
+        userId: 'organizer-1',
+        status: 'PENDING',
+        group: { organizerId: 'organizer-1' },
+      });
+
+      await expect(
+        service.verifyPayment('payment-1', 'organizer-1'),
+      ).rejects.toThrow(ConflictException);
+      expect(
+        paymentsRepository.updatePaymentStatusVerified,
+      ).not.toHaveBeenCalled();
+    });
   });
 
   describe('submitPayment', () => {
@@ -206,6 +222,133 @@ describe('PaymentsService', () => {
         ),
       ).rejects.toThrow(ConflictException);
       expect(paymentsRepository.createPayment).not.toHaveBeenCalled();
+    });
+
+    it('should record an organizer contribution as self-attested', async () => {
+      paymentsRepository.findGroupByGroupId.mockResolvedValue({
+        id: 'group-1',
+        organizerId: 'organizer-1',
+        startDate: new Date(),
+        contributionAmount: 1000,
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        organizerFeeAmount: 100,
+        allowedPaymentMethods: ['CASH'],
+      });
+      paymentsRepository.findMembership.mockResolvedValue({
+        userId: 'organizer-1',
+        position: 1,
+        user: { name: 'Organizer' },
+      });
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
+        id: 'round-1',
+        groupId: 'group-1',
+        status: 'PENDING',
+        cycleNumber: 1,
+        roundNumber: 1,
+        targetDate: new Date(),
+      });
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'round-1',
+      });
+      paymentsRepository.findPaymentByGroupRoundAndUser.mockResolvedValue(null);
+      paymentsRepository.createPayment.mockResolvedValue({
+        id: 'payment-1',
+        status: 'VERIFIED',
+        verificationSource: 'ORGANIZER_SELF_ATTESTED',
+      });
+
+      const result = await service.submitPayment(
+        {
+          roundId: 'round-1',
+          paymentMethod: 'CASH',
+          proofUrl: 'proof.png',
+        },
+        'organizer-1',
+      );
+
+      expect(paymentsRepository.createPayment).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'organizer-1',
+          status: 'VERIFIED',
+          verificationSource: 'ORGANIZER_SELF_ATTESTED',
+          verifiedAt: expect.any(Date),
+          organizerFeeAmount: 0,
+        }),
+        undefined,
+      );
+      expect(activityService.createActivity).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'organizer-1',
+          activityType: 'PAYMENT_VERIFIED',
+          description: expect.stringContaining(
+            'declared their organizer contribution',
+          ),
+        }),
+        undefined,
+      );
+      expect(notificationsService.createNotification).not.toHaveBeenCalled();
+      expect(result.message).toBe(
+        'Organizer contribution recorded as self-attested',
+      );
+    });
+
+    it('should convert a legacy pending organizer payment to self-attested', async () => {
+      paymentsRepository.findGroupByGroupId.mockResolvedValue({
+        id: 'group-1',
+        organizerId: 'organizer-1',
+        startDate: new Date(),
+        contributionAmount: 1000,
+        gracePeriodDays: 0,
+        latePenaltyAmount: 0,
+        organizerFeeAmount: 0,
+        allowedPaymentMethods: ['CASH'],
+      });
+      paymentsRepository.findMembership.mockResolvedValue({
+        userId: 'organizer-1',
+        position: 1,
+        user: { name: 'Organizer' },
+      });
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
+        id: 'round-1',
+        groupId: 'group-1',
+        status: 'PENDING',
+        cycleNumber: 1,
+        roundNumber: 1,
+        targetDate: new Date(),
+      });
+      paymentsRepository.findCurrentRoundByGroupId.mockResolvedValue({
+        id: 'round-1',
+      });
+      paymentsRepository.findPaymentByGroupRoundAndUser.mockResolvedValue({
+        id: 'payment-1',
+        status: 'PENDING',
+      });
+      paymentsRepository.updatePaymentRecord.mockResolvedValue({
+        id: 'payment-1',
+        status: 'VERIFIED',
+        verificationSource: 'ORGANIZER_SELF_ATTESTED',
+      });
+
+      await service.submitPayment(
+        {
+          roundId: 'round-1',
+          paymentMethod: 'CASH',
+          proofUrl: 'replacement-proof.png',
+        },
+        'organizer-1',
+      );
+
+      expect(paymentsRepository.updatePaymentRecord).toHaveBeenCalledWith(
+        'payment-1',
+        expect.objectContaining({
+          status: 'VERIFIED',
+          verificationSource: 'ORGANIZER_SELF_ATTESTED',
+          verifiedAt: expect.any(Date),
+        }),
+        undefined,
+      );
+      expect(notificationsService.createNotification).not.toHaveBeenCalled();
     });
   });
 
@@ -413,6 +556,45 @@ describe('PaymentsService', () => {
 
       expect(result.success).toBe(true);
       expect(result.round.status).toBe('DISBURSED');
+    });
+  });
+
+  describe('manual organizer payment protection', () => {
+    it('should prevent the organizer from manually marking themselves paid', async () => {
+      groupsCoreService.getExistingGroup.mockResolvedValue({
+        id: 'group-1',
+        organizerId: 'organizer-1',
+        startDate: new Date(),
+      });
+
+      await expect(
+        service.markMemberPaid(
+          'group-1',
+          'organizer-1',
+          'organizer-1',
+          1,
+          'REF-1',
+          'proof.png',
+        ),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should prevent the organizer from manually rejecting themselves', async () => {
+      groupsCoreService.getExistingGroup.mockResolvedValue({
+        id: 'group-1',
+        organizerId: 'organizer-1',
+        startDate: new Date(),
+      });
+
+      await expect(
+        service.markMemberRejected(
+          'group-1',
+          'organizer-1',
+          'organizer-1',
+          'Invalid proof',
+          1,
+        ),
+      ).rejects.toThrow(BadRequestException);
     });
   });
 
