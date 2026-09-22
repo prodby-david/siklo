@@ -33,6 +33,7 @@ describe('GroupsService', () => {
     countUserMemberships: jest.Mock;
     findMembershipByPosition: jest.Mock;
     findMembershipsByGroupId: jest.Mock;
+    findOwnedGroupsForPlanLimit: jest.Mock;
   };
   let activityService: { createActivity: jest.Mock };
   let notificationService: { createNotification: jest.Mock };
@@ -52,6 +53,7 @@ describe('GroupsService', () => {
       countUserMemberships: jest.fn().mockResolvedValue(0),
       findMembershipByPosition: jest.fn(),
       findMembershipsByGroupId: jest.fn().mockResolvedValue([]),
+      findOwnedGroupsForPlanLimit: jest.fn().mockResolvedValue([]),
     };
 
     activityService = {
@@ -99,6 +101,8 @@ describe('GroupsService', () => {
         allowedPaymentMethods: ['E_WALLET' as const],
         gracePeriodDays: 0,
         latePenaltyAmount: 0,
+        isOrganizerParticipating: true,
+        organizerFeeAmount: 0,
       };
       const userId = 'user-1';
 
@@ -109,6 +113,7 @@ describe('GroupsService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
           group: {
@@ -135,6 +140,8 @@ describe('GroupsService', () => {
         allowedPaymentMethods: ['E_WALLET' as const],
         gracePeriodDays: 0,
         latePenaltyAmount: 0,
+        isOrganizerParticipating: true,
+        organizerFeeAmount: 0,
       };
       const userId = 'user-1';
 
@@ -145,6 +152,7 @@ describe('GroupsService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
         });

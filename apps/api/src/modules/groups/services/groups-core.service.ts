@@ -19,6 +19,7 @@ import { computeGroupCompletion } from '@/commons/utils/computeGroupCompletion';
 import { BILLING_CYCLE_DAYS } from '@/commons/constants/billing-cycle.constants';
 import { computeNextPayoutee } from '@/commons/utils/computeNextPayoutee';
 import { hasUsablePaymentAccount } from '@/commons/utils/hasUsablePaymentAccount';
+import { SUBSCRIPTION_PLAN_LIMITS } from '@/commons/constants/subscription-plan.constant';
 
 @Injectable()
 export class GroupsCoreService {
@@ -46,6 +47,38 @@ export class GroupsCoreService {
         );
       }
 
+      const userPlan =
+        user?.subscriptionPlan &&
+        user.subscriptionPlan in SUBSCRIPTION_PLAN_LIMITS
+          ? user.subscriptionPlan
+          : 'STARTER';
+      const planLimits =
+        SUBSCRIPTION_PLAN_LIMITS[
+          userPlan as keyof typeof SUBSCRIPTION_PLAN_LIMITS
+        ];
+
+      if (dto.maxMembers > planLimits.maxMembersPerGroup) {
+        throw new ForbiddenException(
+          `Your ${userPlan} plan supports up to ${planLimits.maxMembersPerGroup} members per group`,
+        );
+      }
+
+      const ownedGroups =
+        await this.groupsRepository.findOwnedGroupsForPlanLimit(tx, userId);
+
+      const activeOwnedGroupCount = ownedGroups.filter(
+        (group) => !computeGroupCompletion(group).isComplete,
+      ).length;
+
+      if (
+        planLimits.maxActiveOwnedGroups !== null &&
+        activeOwnedGroupCount >= planLimits.maxActiveOwnedGroups
+      ) {
+        throw new ForbiddenException(
+          `Your ${userPlan} plan supports up to ${planLimits.maxActiveOwnedGroups} active groups`,
+        );
+      }
+
       const existingGroup = await this.groupsRepository.findGroupByName(
         tx,
         dto.name,
@@ -53,17 +86,6 @@ export class GroupsCoreService {
 
       if (existingGroup) {
         throw new ConflictException('Group name already exist');
-      }
-
-      const MAX_GROUPS_PER_USER = 3;
-      const membershipCount = await this.groupsRepository.countUserMemberships(
-        tx,
-        userId,
-      );
-      if (membershipCount >= MAX_GROUPS_PER_USER) {
-        throw new ConflictException(
-          `You can only be part of up to ${MAX_GROUPS_PER_USER} groups`,
-        );
       }
 
       const inviteCode = generateInviteCode();
@@ -175,6 +197,10 @@ export class GroupsCoreService {
   async getGroupById(groupId: string, userId: string) {
     const group = await this.getExistingGroup(groupId, userId);
     return { ...group, nextPayoutee: computeNextPayoutee(group) };
+  }
+
+  async getGroupForInvite(groupId: string, organizerId: string) {
+    return this.groupsRepository.findGroupForInvite(groupId, organizerId);
   }
 
   async startGroupCycle(groupId: string, userId: string) {

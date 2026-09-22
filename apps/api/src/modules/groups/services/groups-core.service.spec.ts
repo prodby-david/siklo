@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
-  NotFoundException,
   ForbiddenException,
   BadRequestException,
 } from '@nestjs/common';
@@ -13,7 +12,7 @@ import { NotificationsService } from '../../notifications/notifications.service'
 
 jest.mock('@/commons/utils/generateInviteCode', () => ({
   __esModule: true,
-  default: jest.fn(() => 'ABC123'),
+  default: jest.fn(() => 'ABC123DEF456'),
 }));
 
 describe('GroupsCoreService', () => {
@@ -28,6 +27,7 @@ describe('GroupsCoreService', () => {
     createMembership: jest.Mock;
     countUserMemberships: jest.Mock;
     updateGroup: jest.Mock;
+    findOwnedGroupsForPlanLimit: jest.Mock;
   };
   let activityService: { createActivity: jest.Mock };
   let notificationService: { createNotification: jest.Mock };
@@ -44,6 +44,7 @@ describe('GroupsCoreService', () => {
       createMembership: jest.fn(),
       countUserMemberships: jest.fn().mockResolvedValue(0),
       updateGroup: jest.fn(),
+      findOwnedGroupsForPlanLimit: jest.fn().mockResolvedValue([]),
     };
 
     activityService = {
@@ -88,6 +89,8 @@ describe('GroupsCoreService', () => {
         allowedPaymentMethods: ['E_WALLET' as const],
         gracePeriodDays: 0,
         latePenaltyAmount: 0,
+        isOrganizerParticipating: true,
+        organizerFeeAmount: 0,
       };
       const userId = 'user-1';
 
@@ -98,6 +101,7 @@ describe('GroupsCoreService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
           group: {
@@ -124,6 +128,8 @@ describe('GroupsCoreService', () => {
         allowedPaymentMethods: ['E_WALLET' as const],
         gracePeriodDays: 0,
         latePenaltyAmount: 0,
+        isOrganizerParticipating: true,
+        organizerFeeAmount: 0,
       };
       const userId = 'user-1';
 
@@ -133,6 +139,7 @@ describe('GroupsCoreService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashName: 'Juan' },
+              subscriptionPlan: 'STARTER',
             }),
           },
         });
@@ -155,6 +162,8 @@ describe('GroupsCoreService', () => {
         allowedPaymentMethods: ['E_WALLET' as const],
         gracePeriodDays: 0,
         latePenaltyAmount: 0,
+        isOrganizerParticipating: true,
+        organizerFeeAmount: 0,
       };
       const userId = 'user-1';
 
@@ -165,6 +174,7 @@ describe('GroupsCoreService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
         });
@@ -203,6 +213,7 @@ describe('GroupsCoreService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
           group: {
@@ -253,6 +264,7 @@ describe('GroupsCoreService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
         });
@@ -292,6 +304,7 @@ describe('GroupsCoreService', () => {
             findUnique: jest.fn().mockResolvedValue({
               id: userId,
               paymentAccounts: { gcashNumber: '09123456789' },
+              subscriptionPlan: 'STARTER',
             }),
           },
           group: {
