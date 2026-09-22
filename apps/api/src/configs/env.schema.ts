@@ -13,6 +13,18 @@ export const envSchema = z.object({
   RESEND_FROM_EMAIL: z.string().email(),
   PORT: z.coerce.number().default(3001),
   OPENROUTER_API_KEY: z.string().min(1),
+  UPSTASH_REDIS_REST_URL: z.string().url(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().min(1),
+  RATE_LIMIT_SECRET_KEY: z.string().min(32),
+  REDIS_URL: z
+    .string()
+    .min(1)
+    .refine(
+      (url) => url.startsWith('redis://') || url.startsWith('rediss://'),
+      {
+        message: 'REDIS_URL must start with redis:// or rediss://',
+      },
+    ),
 });
 
 export type Env = z.infer<typeof envSchema>;
