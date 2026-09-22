@@ -15,6 +15,7 @@ export const signupBaseSchema = z.object({
     .string()
     .min(1, "Contact number must not be empty.")
     .regex(/^\d{11}$/, "Contact number must be exactly 11 digits."),
+  avatarUrl: z.string().optional().nullable(),
 });
 
 export const createUserSchema = signupBaseSchema;

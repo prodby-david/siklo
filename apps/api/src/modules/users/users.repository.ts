@@ -25,6 +25,8 @@ export class UsersRepository {
         id: true,
         email: true,
         name: true,
+        avatarUrl: true,
+        subscriptionPlan: true,
         contactNumber: true,
         paymentAccounts: true,
         createdAt: true,
