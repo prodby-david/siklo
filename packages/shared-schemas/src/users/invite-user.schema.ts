@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { uuidSchema } from "../common/identifier.schema.js";
+import { BILLING_CYCLES } from "../enums/billing-cycle.js";
 
 export const inviteStatusSchema = z.enum([
   "PENDING",
@@ -34,3 +35,25 @@ export const inviteSchema = z.object({
 });
 
 export type InviteDTO = z.infer<typeof inviteSchema>;
+
+export const pendingInviteSchema = z.object({
+  id: uuidSchema,
+  groupId: uuidSchema,
+  status: inviteStatusSchema,
+  createdAt: z.union([z.string(), z.date()]),
+  group: z.object({
+    id: uuidSchema,
+    name: z.string(),
+    contributionAmount: z.number().int(),
+    billingCycle: z.enum(BILLING_CYCLES),
+  }),
+  organizer: z.object({
+    id: uuidSchema,
+    name: z.string(),
+  }),
+});
+
+export const pendingInvitesSchema = z.array(pendingInviteSchema);
+
+export type PendingInviteDTO = z.infer<typeof pendingInviteSchema>;
+export type PendingInvitesDTO = z.infer<typeof pendingInvitesSchema>;

@@ -12,6 +12,7 @@ import { ActivityModule } from './modules/activity/activity.module';
 import { envSchema } from './configs/env.schema';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { HealthModule } from './modules/health/health.module';
+import { InvitesModule } from './modules/invites/invites.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { HealthModule } from './modules/health/health.module';
     ActivityModule,
     NotificationsModule,
     HealthModule,
+    InvitesModule,
   ],
 })
 export class AppModule {}

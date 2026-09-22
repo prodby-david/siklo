@@ -103,4 +103,8 @@ export {
   type CreateInviteDTO,
   type AcceptInviteDTO,
   type InviteDTO,
+  pendingInviteSchema,
+  pendingInvitesSchema,
+  type PendingInviteDTO,
+  type PendingInvitesDTO,
 } from "./users/invite-user.schema.js";

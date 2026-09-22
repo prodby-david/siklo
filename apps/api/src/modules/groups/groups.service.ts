@@ -33,6 +33,10 @@ export class GroupsService {
     return this.groupsCoreService.getGroupById(groupId, userId);
   }
 
+  async getGroupForInvite(groupId: string, organizerId: string) {
+    return this.groupsCoreService.getGroupForInvite(groupId, organizerId);
+  }
+
   async startGroupCycle(groupId: string, userId: string) {
     return this.groupsCoreService.startGroupCycle(groupId, userId);
   }
