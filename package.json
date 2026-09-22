@@ -15,7 +15,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@12.4.2",
   "type": "module",
   "dependencies": {
     "zod": "^4.4.3"
