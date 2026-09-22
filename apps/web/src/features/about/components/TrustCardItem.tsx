@@ -1,4 +1,3 @@
-import React from "react";
 import type { TrustCardItemProps } from "../types/about.types";
 import getIcon from "../utils/getIcon";
 

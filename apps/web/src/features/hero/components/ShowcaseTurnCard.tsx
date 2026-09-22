@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, Clock, Award, ChevronRight } from "lucide-react";
 import { ShowcaseTurnCardProps } from "../types/hero.types";

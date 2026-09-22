@@ -1,4 +1,3 @@
-import React from "react";
 import { SidebarUnreadBadgeProps } from "../../types/sidebar.types";
 
 export default function SidebarUnreadBadge({

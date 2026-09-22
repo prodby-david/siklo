@@ -75,7 +75,6 @@ export default function GroupHero({
             roundId={roundId}
             isUserMember={isUserMember}
             currentTurn={currentTurn}
-            nextPayoutee={nextPayoutee}
             onOpenPay={() => setIsPayModalOpen(true)}
           />
         </div>

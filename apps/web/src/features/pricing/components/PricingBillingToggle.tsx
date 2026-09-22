@@ -1,4 +1,3 @@
-import React from "react";
 import { PricingBillingToggleProps } from "../types/pricing.types";
 
 export default function PricingBillingToggle({

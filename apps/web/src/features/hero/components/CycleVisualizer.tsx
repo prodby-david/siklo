@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { CycleVisualizerProps } from "../types/hero.types";
 import { defaultMembers, defaultStats } from "@/shared/constants/sampleData";
 import { FloatingTrackerVisualizer } from "./FloatingTrackerVisualizer";

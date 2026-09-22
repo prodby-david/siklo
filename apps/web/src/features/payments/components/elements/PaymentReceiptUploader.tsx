@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 import { Upload, X, FileText } from "lucide-react";
 import { PaymentReceiptUploaderProps } from "../../types/payment.types";

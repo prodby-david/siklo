@@ -1,4 +1,3 @@
-import React from "react";
 import { SidebarCollapsedDotProps } from "../../types/sidebar.types";
 
 export default function SidebarCollapsedDot({

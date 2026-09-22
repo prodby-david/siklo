@@ -1,4 +1,3 @@
-import React from "react";
 import { SimulatorMember } from "../../types/simulator.types";
 import { User, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { PolicyTableOfContentsProps } from "../types/policy.types";
 
 export default function policyTableOfContents({

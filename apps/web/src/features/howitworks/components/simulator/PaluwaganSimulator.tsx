@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { RotateCw } from "lucide-react";
 import { usePaluwaganSimulator } from "../../hooks/usePaluwaganSimulator";

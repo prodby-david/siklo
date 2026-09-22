@@ -1,4 +1,3 @@
-import React from "react";
 import {
   UseFormRegister,
   FieldErrors,
@@ -304,7 +303,6 @@ export interface GroupHeroActionsProps {
   roundId?: string;
   isUserMember?: boolean;
   currentTurn?: number;
-  nextPayoutee?: NextPayoutee | null;
   onOpenPay: () => void;
 }
 

@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { SidebarNavItemProps } from "../../types/sidebar.types";
 import SidebarUnreadBadge from "./SidebarUnreadBadge";

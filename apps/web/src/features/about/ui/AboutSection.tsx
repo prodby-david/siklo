@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import AboutCard from "../components/AboutCard";
 import AboutStatusCard from "../components/AboutStatusCard";

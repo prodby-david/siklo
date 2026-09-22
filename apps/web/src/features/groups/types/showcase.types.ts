@@ -1,4 +1,3 @@
-import React from "react";
 import { Membership, PaymentRecord, GroupRound } from "@/features/groups/types/group.types";
 
 export interface GroupTurnShowcaseProps {

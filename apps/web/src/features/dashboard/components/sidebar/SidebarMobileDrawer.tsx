@@ -1,4 +1,3 @@
-import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, LogOut } from "lucide-react";
 import { SidebarMobileDrawerProps } from "../../types/sidebar.types";

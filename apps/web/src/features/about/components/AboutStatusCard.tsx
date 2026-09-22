@@ -1,4 +1,3 @@
-import React from "react";
 import { Notebook } from "lucide-react";
 
 export default function AboutStatusCard() {

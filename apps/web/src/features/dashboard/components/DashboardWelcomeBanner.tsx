@@ -1,4 +1,3 @@
-import React from "react";
 import CreateGroupButton from "@/features/groups/components/buttons/CreateGroup";
 import JoinGroupModal from "@/features/groups/components/modals/JoinGroupModal";
 import { timeGreeting } from "@/shared/utils/greetings";

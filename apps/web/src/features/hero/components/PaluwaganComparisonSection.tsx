@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, FileWarning } from "lucide-react";
 import { TRADITIONAL_DRAWBACKS, SIKLO_ADVANTAGES } from "../constants/hero.constants";

@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { Calendar, Banknote, ArrowRight } from "lucide-react";
 import formatDate from "@/shared/utils/formatDate";

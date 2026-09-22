@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/shared/components/nav/Navbar";
 import Footer from "@/shared/components/footer/Footer";

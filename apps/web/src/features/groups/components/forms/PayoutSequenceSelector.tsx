@@ -1,4 +1,3 @@
-import React from "react";
 import { Shuffle, ListOrdered, Touchpad } from "lucide-react";
 import { PayoutSequenceSelectorProps } from "../../types/create-group-field.types";
 

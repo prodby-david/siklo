@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { HandCoins, ArrowUpRight, ArrowRight } from "lucide-react";
 import { TotalSavingsCardProps } from "../../types/dashboard.types";

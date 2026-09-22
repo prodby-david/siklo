@@ -1,4 +1,3 @@
-import React from "react";
 import { User, Membership, Group } from "./group.types";
 
 export type { User, Membership, Group };

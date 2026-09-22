@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import { Clock, CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
 import { ActiveGroupsCardProps } from "../../types/dashboard.types";

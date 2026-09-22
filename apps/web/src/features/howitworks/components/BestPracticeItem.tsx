@@ -1,4 +1,3 @@
-import React from "react";
 import { BestPracticeItem as BestPracticeType } from "../types/howitworks.types";
 
 interface BestPracticeItemProps {
