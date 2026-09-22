@@ -1,20 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '@/database/prisma.service';
 import bcrypt from 'bcrypt';
 import { TokenService } from '../token/token.service';
 import { SignInDTO } from '@siklo/shared-schemas';
+import { AuthRepository } from './auth.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly tokenService: TokenService,
+    private readonly authRepository: AuthRepository,
   ) {}
 
   async signIn(data: SignInDTO) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: data.email },
-    });
+    const user = await this.authRepository.findUserByEmail(data.email);
 
     if (!user) {
       throw new UnauthorizedException(
