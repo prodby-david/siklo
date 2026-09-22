@@ -1,4 +1,5 @@
-import React from "react";
+
+import type { ReactNode } from "react";
 import { FeatureCategory } from "../types/features.types";
 import { Layers, RotateCcw, ShieldCheck, Users, Settings } from "lucide-react";
 
@@ -7,7 +8,7 @@ interface FeatureCategoryFilterProps {
   onSelectCategory: (category: FeatureCategory) => void;
 }
 
-const categories: { id: FeatureCategory; label: string; icon: React.ReactNode }[] = [
+const categories: { id: FeatureCategory; label: string; icon: ReactNode }[] = [
   { id: "all", label: "All Features", icon: <Layers className="w-3.5 h-3.5" /> },
   { id: "rotation", label: "Rotation & Payouts", icon: <RotateCcw className="w-3.5 h-3.5" /> },
   { id: "transparency", label: "Ledger & Security", icon: <ShieldCheck className="w-3.5 h-3.5" /> },

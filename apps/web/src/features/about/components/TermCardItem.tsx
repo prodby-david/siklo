@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type { ElementType } from "react";
 import {
   RotateCcw,
   Clock,
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { PaluwaganTermItem } from "../types/about.types";
 
-const ICON_MAP: Record<string, React.ElementType> = {
+const ICON_MAP: Record<string, ElementType> = {
   RotateCcw,
   Clock,
   PhilippinePeso,

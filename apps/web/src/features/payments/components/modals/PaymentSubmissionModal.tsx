@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Controller } from "react-hook-form";
 import {
   Dialog,
@@ -80,7 +79,7 @@ export default function PaymentSubmissionModal({
   const activeError = submissionError || uploadError;
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md overflow-x-hidden no-scrollbar">
         {isSubmitting && <Loader text="Submitting payment proof..." />}
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>

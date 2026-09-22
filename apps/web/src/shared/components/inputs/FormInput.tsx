@@ -1,14 +1,14 @@
-import React from "react";
+import type { ReactNode, InputHTMLAttributes } from "react";
 
 type InputProps = {
   label?: string;
   placeholder?: string;
   register?: (name: never, options?: never) => Record<string, unknown>;
   errors?: Record<string, { message?: string }>;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   type?: string;
   labelText?: string;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+} & InputHTMLAttributes<HTMLInputElement>;
 
 export default function FormInput({
   label = "",

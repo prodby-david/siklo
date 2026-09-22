@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import type { SimulatorDashboardProps } from "../../types/simulator.types";
 import SimulatorMemberRow from "./SimulatorMemberRow";
 import { Play, RotateCcw, ArrowLeft, Landmark } from "lucide-react";

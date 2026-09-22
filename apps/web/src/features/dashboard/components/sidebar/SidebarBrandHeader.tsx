@@ -1,11 +1,11 @@
-import React from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 interface SidebarBrandHeaderProps {
   onNavigate?: () => void;
   className?: string;
-  action?: React.ReactNode;
+  action?: ReactNode;
 }
 
 export default function SidebarBrandHeader({

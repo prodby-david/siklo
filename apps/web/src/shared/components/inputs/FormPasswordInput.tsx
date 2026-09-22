@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type ReactNode, type InputHTMLAttributes } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 type PasswordInputProps = {
@@ -7,10 +7,10 @@ type PasswordInputProps = {
   placeholder?: string;
   register?: (name: never, options?: never) => Record<string, unknown>;
   errors?: Record<string, { message?: string }>;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   showPassword?: boolean;
   setShowPassword?: (showPassword: boolean) => void;
-} & React.InputHTMLAttributes<HTMLInputElement>;
+} & InputHTMLAttributes<HTMLInputElement>;
 
 export default function FormPasswordInput({
   label = "",

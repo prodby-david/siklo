@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Coins } from "lucide-react";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ interface GetStartedButtonProps {
   href?: string;
   className?: string;
   size?: "sm" | "md" | "lg";
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   onClick?: () => void;
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { TrendingUp, Calendar, Clock, ShieldCheck, Wallet } from "lucide-react";
 import { GroupPayoutProgressProps } from "../../types/group.types";
 import { ApiActivity } from "../../types/group-activity.types";
