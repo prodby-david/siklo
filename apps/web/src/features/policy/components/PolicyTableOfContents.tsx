@@ -1,6 +1,6 @@
 import { PolicyTableOfContentsProps } from "../types/policy.types";
 
-export default function policyTableOfContents({
+export default function PolicyTableOfContents({
   sections,
   activeSection,
   onSectionClick,

@@ -4,7 +4,7 @@ import {
   Coins,
   KeyRound,
   CreditCard,
-  Sparkles,
+  HandCoins,
 } from "lucide-react";
 import { HowItWorksStep, PaluwaganRules, BestPracticeItem } from "../types/howitworks.types";
 
@@ -46,7 +46,7 @@ export const memberSteps: HowItWorksStep[] = [
     stepNumber: 3,
     title: "Receive Your Payout & Confirm Receipt",
     description: "Collect your full pooled lump-sum payout when your assigned turn arrives, and confirm receipt on the shared circle ledger.",
-    icon: Sparkles,
+    icon: HandCoins,
   },
 ];
 
@@ -62,9 +62,11 @@ export const defaultPlannerRules: PaluwaganRules = {
 };
 
 export const frequencyOptions = [
+  { label: "Daily", value: "daily" },
   { label: "Weekly", value: "weekly" },
-  { label: "Semi-Monthly", value: "semi-monthly" },
+  { label: "Every 2 Weeks (Bi-weekly)", value: "semi-monthly" },
   { label: "Monthly", value: "monthly" },
+  { label: "Every 3 Months (Quarterly)", value: "quarterly" },
 ] as const;
 
 export const payoutSchemeOptions = [

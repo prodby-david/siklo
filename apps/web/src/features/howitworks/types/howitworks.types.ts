@@ -20,7 +20,7 @@ export interface HowItWorksProps {
 
 export interface PaluwaganRules {
   contributionAmount: number;
-  frequency: "weekly" | "semi-monthly" | "monthly";
+  frequency: "daily" | "weekly" | "semi-monthly" | "monthly" | "quarterly";
   payoutScheme: "draw-lots" | "seniority" | "first-come";
   gracePeriodDays: number;
   latePenalty: number;

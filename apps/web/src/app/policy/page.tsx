@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Navbar from "@/shared/components/nav/Navbar";
 import Footer from "@/shared/components/footer/Footer";
@@ -14,7 +15,9 @@ export default function PolicyPage() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <Navbar />
       <DotsBackground />
-      <PolicySection />
+      <Suspense fallback={null}>
+        <PolicySection />
+      </Suspense>
       <Footer />
     </div>
   );

@@ -20,7 +20,7 @@ export const helpCategories: HelpCategory[] = [
       },
       {
         question: "How do I create a Paluwagan group on Siklo?",
-        answer: "Once logged in, click on the 'Create Group' button from your dashboard. Fill in the group name, individual contribution amounts, cycle frequency (weekly, semi-monthly, or monthly), and set up your member list.",
+        answer: "Once logged in, click the 'Create Group' button from your dashboard. Type your group name, how much each member contributes, how often members pay (Daily, Weekly, Every 2 Weeks, Monthly, or Every 3 Months), and your member limit.",
       },
       {
         question: "Is Siklo free to use?",
@@ -39,19 +39,19 @@ export const helpCategories: HelpCategory[] = [
       },
       {
         question: "Can I change the payout order after starting a cycle?",
-        answer: "Yes, group administrators can reorder the payout turns in the group settings page, provided the cycle has not yet passed those turns.",
+        answer: "No. Once your savings group starts, the turn order is locked so no one can change turns or cut in line. This protects everyone's hard-earned money and keeps the whole circle fair and honest.",
       },
       {
         question: "How do I add or remove members?",
-        answer: "Navigate to your Group Dashboard, click on 'Manage Members', and select 'Add Member' or 'Remove Member'. Note that members cannot be removed if they have already received a payout in the current active cycle.",
+        answer: "To add members, simply copy your group's unique 12-character invite code and share it with your family, friends, or coworkers. They enter the code on the Invites page to join. Group leaders can also remove a member before the savings cycle begins.",
       },
       {
         question: "How many members can save together in a single cycle?",
-        answer: "Our interactive planner supports groups of 3 to 15 members depending on the group's savings goals and frequency.",
+        answer: "Our planner supports circles of 3 to 30 members depending on your savings goal and payment schedule.",
       },
       {
         question: "Can we pause or stop a cycle once it starts?",
-        answer: "Yes, organizers can pause the active tracking of a cycle or adjust contribution rules mid-stream in case of member emergency adjustments or seasonal agreements.",
+        answer: "No. To make sure everyone receives their scheduled payout on time without delay, active cycles cannot be paused. The group moves forward turn by turn until every member gets their payout.",
       },
       {
         question: "How do members coordinate payment receipts?",
@@ -70,7 +70,7 @@ export const helpCategories: HelpCategory[] = [
       },
       {
         question: "How does payment verification work?",
-        answer: "Siklo is a ledger-only app. Contributions are sent directly between members using mobile wallets, bank transfer, or cash. Once sent, the administrator verifies the payment and marks the member as 'Paid' in Siklo.",
+        answer: "Members send their contribution directly to the organizer or turn recipient via GCash, Maya, bank transfer, or cash. Then, the member enters their reference number and uploads a picture of their receipt in Siklo. The organizer reviews the receipt and approves it on the shared group ledger.",
       },
       {
         question: "What happens if a member pays late or defaults?",
