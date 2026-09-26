@@ -1,18 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { generateId, type UIMessage } from "ai";
 import { api } from "@/shared/lib/axios";
-import { useForm } from "react-hook-form";
 import axios from "axios";
-import type { ChatFormInput } from "../types/chat.types";
 import { getMessageText } from "../utils/chat.utils";
 
 export default function useChatUI() {
   const [messages, setMessages] = useState<UIMessage[]>([
     {
       id: generateId(),
-      role: "user",
+      role: "assistant",
       parts: [
         {
           type: "text",
@@ -25,18 +23,7 @@ export default function useChatUI() {
     "ready" | "submitted" | "streaming" | "error"
   >("ready");
   const [error, setError] = useState<Error | null>(null);
-
-  const { register, handleSubmit, reset, watch, setValue } =
-    useForm<ChatFormInput>({
-      defaultValues: {
-        message: "",
-      },
-    });
-
-  const input = watch("message") || "";
-  const setInput = (val: string) => {
-    setValue("message", val);
-  };
+  const [input, setInput] = useState("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "submitted" || status === "streaming";
@@ -49,8 +36,9 @@ export default function useChatUI() {
     scrollToBottom();
   }, [messages, isLoading]);
 
-  const onFormSubmit = async (data: ChatFormInput) => {
-    const inputVal = data.message.trim();
+  const onFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const inputVal = input.trim();
     if (!inputVal || isLoading) return;
 
     setError(null);
@@ -62,7 +50,7 @@ export default function useChatUI() {
 
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
-    reset({ message: "" });
+    setInput("");
     setStatus("submitted");
 
     try {
@@ -91,6 +79,24 @@ export default function useChatUI() {
     }
   };
 
+  const handleReset = () => {
+    setMessages([
+      {
+        id: generateId(),
+        role: "assistant",
+        parts: [
+          {
+            type: "text",
+            text: "Hello! I am Siklo, your personal paluwagan helper. I can help you create and manage your paluwagan groups. How can I assist you today?",
+          },
+        ],
+      },
+    ]);
+    setError(null);
+    setInput("");
+    setStatus("ready");
+  };
+
   return {
     messages,
     setMessages,
@@ -103,8 +109,8 @@ export default function useChatUI() {
     messagesEndRef,
     isLoading,
     scrollToBottom,
-    handleSubmit: handleSubmit(onFormSubmit),
+    handleSubmit: onFormSubmit,
+    handleReset,
     getMessageText,
-    register,
   };
 }
