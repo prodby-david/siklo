@@ -7,9 +7,11 @@ export const api = axios.create({
 });
 
 const PROTECTED_ROUTE_PREFIXES = [
+  "/assistance",
   "/chat",
   "/dashboard",
   "/group",
+  "/invites",
   "/settings",
 ];
 
