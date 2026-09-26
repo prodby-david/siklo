@@ -15,6 +15,18 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {
     const redisUrl = this.configService.getOrThrow<string>('REDIS_URL');
 
+    this.logger.log(
+      `Redis URL configured: ${redisUrl.replace(/\/\/.*@/, '//***@')}`,
+    );
+
+    this.logger.log(
+      `Redis options: ${JSON.stringify({
+        host: this.client.options.host,
+        port: this.client.options.port,
+        tls: !!this.client.options.tls,
+      })}`,
+    );
+
     this.client = new Redis(redisUrl, {
       maxRetriesPerRequest: 2,
     });
