@@ -45,7 +45,12 @@ export class GroupsRepository {
             userId: true,
             position: true,
             user: {
-              select: { id: true, name: true, paymentAccounts: true },
+              select: {
+                id: true,
+                name: true,
+                avatarUrl: true,
+                paymentAccounts: true,
+              },
             },
           },
         },
@@ -70,10 +75,18 @@ export class GroupsRepository {
     });
   }
 
-  async getGroupById(groupId: string, _userId?: string) {
+  async getGroupById(groupId: string, userId: string) {
     return this.prisma.group.findFirst({
       where: {
         id: groupId,
+        OR: [
+          { organizerId: userId },
+          {
+            memberships: {
+              some: { userId },
+            },
+          },
+        ],
       },
       include: {
         _count: {
@@ -93,6 +106,7 @@ export class GroupsRepository {
               select: {
                 id: true,
                 name: true,
+                avatarUrl: true,
                 contactNumber: true,
                 paymentAccounts: true,
               },
