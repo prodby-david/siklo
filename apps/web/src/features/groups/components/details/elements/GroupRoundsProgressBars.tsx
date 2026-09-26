@@ -27,7 +27,7 @@ export default function GroupRoundsProgressBars({
           className="siklo-progress h-2 block"
           value={progressPercent}
           max={100}
-          aria-label={`${verifiedPaymentsCount} of ${maxMembers} contributions verified`}
+          aria-label={`${verifiedPaymentsCount} of ${maxMembers} contributions completed`}
         />
       </div>
 

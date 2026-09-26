@@ -31,7 +31,7 @@ export const ACTIVITY_TYPE_CONFIG: Record<string, ActivityConfig> = {
   PAYMENT_VERIFIED: {
     icon: CheckCircle2,
     iconColor: "text-success bg-success-bg border-success/20",
-    label: "Payment Verified",
+    label: "Payment Completed",
   },
   PAYOUT_DISBURSED: {
     icon: Wallet,

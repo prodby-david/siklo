@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   UserCheck,
   Clock,
@@ -11,6 +12,7 @@ import type { TurnDetailBeneficiaryProps } from "@/features/groups/types/showcas
 export default function TurnDetailBeneficiary({
   selectedMemberName,
   initials,
+  avatarUrl,
   selectedMembership,
   isSlotOrganizer,
   isUserSlotOwner,
@@ -24,8 +26,19 @@ export default function TurnDetailBeneficiary({
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-brand-accent/15 text-brand-accent font-black text-base border border-brand-accent/25 shrink-0">
-          {initials}
+        <div className="w-11 h-11 rounded-full overflow-hidden bg-brand-accent/15 text-brand-accent font-black text-base border border-brand-accent/25 flex items-center justify-center shrink-0">
+          {avatarUrl ? (
+            <Image
+              src={avatarUrl}
+              alt={selectedMemberName}
+              width={44}
+              height={44}
+              className="w-full h-full object-cover"
+              unoptimized
+            />
+          ) : (
+            initials
+          )}
         </div>
         <div className="flex flex-col gap-0.5">
           <span className="text-[10px] font-extrabold uppercase tracking-wider text-brand-accent">

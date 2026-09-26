@@ -1,10 +1,11 @@
-import { ShieldCheck, Clock, AlertCircle } from "lucide-react";
+import { ShieldCheck, Clock, AlertCircle, FileImage } from "lucide-react";
 import formatDate, { formatDateTime12h } from "@/shared/utils/formatDate";
 import type { MemberPaymentHistoryItemProps } from "@/features/groups/types/showcase.types";
 
 export default function MemberPaymentHistoryItem({
   payment,
   roundInfo,
+  onViewReceipt,
 }: MemberPaymentHistoryItemProps) {
   const isVerified = payment.status === "VERIFIED";
   const isPending = payment.status === "PENDING";
@@ -76,6 +77,17 @@ export default function MemberPaymentHistoryItem({
         <div className="text-[11px] font-mono text-neutral-subtext bg-neutral-table-stripe/60 px-2.5 py-1 rounded-lg border border-neutral-border/60">
           Ref: {payment.referenceNumber}
         </div>
+      )}
+
+      {payment.proofUrl && onViewReceipt && (
+        <button
+          type="button"
+          onClick={() => onViewReceipt(payment.proofUrl!)}
+          className="flex w-fit cursor-pointer items-center gap-1.5 rounded-xl border border-neutral-border bg-card px-3 py-1.5 text-[11px] font-bold text-foreground transition-colors hover:border-brand-accent/40 hover:text-brand-accent"
+        >
+          <FileImage className="h-3.5 w-3.5" />
+          <span>View Receipt</span>
+        </button>
       )}
 
       {isRejected && payment.rejectionReason && (

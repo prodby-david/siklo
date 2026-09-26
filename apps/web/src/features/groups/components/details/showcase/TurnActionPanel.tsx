@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -13,6 +14,7 @@ import type { TurnActionPanelProps } from "@/features/groups/types/showcase.type
 import TurnActionWaitingState from "./actions/TurnActionWaitingState";
 import DisbursePayoutAction from "./actions/DisbursePayoutAction";
 import SubmitContributionAction from "./actions/SubmitContributionAction";
+import ConfirmPayoutReceiptModal from "@/features/payments/components/modals/ConfirmPayoutReceiptModal";
 
 export default function TurnActionPanel({
   selectedTurn,
@@ -31,17 +33,30 @@ export default function TurnActionPanel({
   hasStarted,
   isUserSlotOwner,
   isSelectedTurnReceived,
+  isSelectedTurnDisbursed,
   isSelectedPaid,
   isSelectedPending,
   isSelectedRejected,
+  isOrganizerSelfAttested,
   hasCurrentMemberPaidOrganizerFee,
   isRoundAllContributionsPaid,
   isSelectingSlot,
   isDisbursingPayout,
+  isConfirmingPayoutReceipt,
   onSelectSlot,
   onDisbursePayout,
+  onConfirmPayoutReceipt,
   accruedPenalty = 0,
 }: TurnActionPanelProps) {
+  const [isConfirmReceiptModalOpen, setIsConfirmReceiptModalOpen] =
+    useState(false);
+
+  const isOrganizerRecipient =
+    selectedMembership?.userId === group.organizerId;
+  const isCurrentUserRecipient = Boolean(
+    currentUserId && currentRound?.recipientId === currentUserId,
+  );
+
   if (isCycleDone) {
     return (
       <TurnActionWaitingState
@@ -97,8 +112,64 @@ export default function TurnActionPanel({
     return (
       <div className="flex w-full items-center justify-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg py-3 text-xs font-bold text-success">
         <CheckCircle2 className="h-4 w-4" />
-        <span>Payout Received & Confirmed for Turn #{selectedTurn}</span>
+        <span>
+          {isOrganizerRecipient
+            ? `Organizer Payout Self-Confirmed for Turn #${selectedTurn}`
+            : `Payout Received & Confirmed for Turn #${selectedTurn}`}
+        </span>
       </div>
+    );
+  }
+
+  if (isSelectedTurnDisbursed && isCurrentTurn) {
+    if (
+      isCurrentUserRecipient &&
+      currentRound &&
+      onConfirmPayoutReceipt
+    ) {
+      return (
+        <>
+          <button
+            type="button"
+            onClick={() => setIsConfirmReceiptModalOpen(true)}
+            disabled={isConfirmingPayoutReceipt}
+            className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-2xl bg-success py-3 text-xs font-bold text-brand-accent-foreground shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            <span>
+              {isOrganizerRecipient
+                ? "Self-Confirm Organizer Payout"
+                : "Confirm Payout Received"}
+            </span>
+          </button>
+
+          <ConfirmPayoutReceiptModal
+            isOpen={isConfirmReceiptModalOpen}
+            onClose={() => setIsConfirmReceiptModalOpen(false)}
+            groupId={group.id || currentRound.groupId}
+            roundId={currentRound.id}
+            cycleNumber={currentRound.cycleNumber}
+            turnNumber={selectedTurn}
+            poolTotal={poolTotal}
+            isOrganizerRecipient={isOrganizerRecipient}
+            isConfirming={isConfirmingPayoutReceipt}
+            onConfirmReceipt={async ({ notes }) => {
+              await onConfirmPayoutReceipt({ notes });
+            }}
+          />
+        </>
+      );
+    }
+
+    return (
+      <TurnActionWaitingState
+        icon={<Hourglass className="h-3.5 w-3.5" />}
+        message={
+          isOrganizerRecipient
+            ? "Payout Disbursed • Awaiting Organizer Self-Confirmation"
+            : `Payout Disbursed • Awaiting ${selectedMemberName} to Confirm Receipt`
+        }
+      />
     );
   }
 
@@ -142,7 +213,13 @@ export default function TurnActionPanel({
     return (
       <div className="flex w-full items-center justify-center gap-1.5 rounded-2xl border border-success/25 bg-success-bg py-3 text-xs font-bold text-success">
         <ShieldCheck className="h-4 w-4" />
-        <span>Your Contribution is Verified (Turn #{selectedTurn})</span>
+        <span>
+          {isOrganizerSelfAttested
+            ? `Organizer Contribution is Self-Declared (Turn #${selectedTurn})`
+            : isUserSlotOwner
+              ? `Your Contribution is Verified (Turn #${selectedTurn})`
+              : `${selectedMemberName}'s Contribution is Verified (Turn #${selectedTurn})`}
+        </span>
       </div>
     );
   }

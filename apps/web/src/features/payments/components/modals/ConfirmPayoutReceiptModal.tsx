@@ -30,6 +30,7 @@ export default function ConfirmPayoutReceiptModal({
   cycleNumber,
   turnNumber,
   poolTotal,
+  isOrganizerRecipient = false,
   onConfirmReceipt,
   isConfirming = false,
 }: ConfirmPayoutReceiptModalProps) {
@@ -53,17 +54,22 @@ export default function ConfirmPayoutReceiptModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
-        {isConfirming && <Loader text="Confirming payout receipt..." />}
+        {isConfirming && <Loader />}
         <div className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">
               <CheckCircle2 className="h-5 w-5 text-success" />
-              <span>Confirm Payout Received</span>
+              <span>
+                {isOrganizerRecipient
+                  ? "Self-Confirm Organizer Payout"
+                  : "Confirm Payout Received"}
+              </span>
             </DialogTitle>
             <DialogDescription>
               <span className="text-xs text-neutral-subtext block">
-                Please verify that you have successfully received your lump-sum
-                payout of ₱{poolTotal.toLocaleString()} for Turn #{turnNumber}.
+                {isOrganizerRecipient
+                  ? `You are both the organizer and scheduled beneficiary. Confirm that you received the ₱${poolTotal.toLocaleString()} payout you released for Turn #${turnNumber}. This will be recorded as an organizer self-confirmation.`
+                  : `Please verify that you received your lump-sum payout of ₱${poolTotal.toLocaleString()} for Turn #${turnNumber}.`}
               </span>
             </DialogDescription>
           </DialogHeader>
@@ -75,7 +81,9 @@ export default function ConfirmPayoutReceiptModal({
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-neutral-subtext block">
-                  Lump-Sum Payout Received
+                  {isOrganizerRecipient
+                    ? "Organizer Payout"
+                    : "Lump-Sum Payout Received"}
                 </span>
                 <span className="text-base font-black text-success">
                   ₱{poolTotal.toLocaleString()}
@@ -123,7 +131,11 @@ export default function ConfirmPayoutReceiptModal({
                 className="w-full sm:w-auto cursor-pointer rounded-2xl bg-success py-2.5 text-xs font-bold text-brand-accent-foreground shadow-sm hover:opacity-90"
               >
                 <ShieldCheck className="w-4 h-4 mr-1.5" />
-                {isConfirming ? "Confirming..." : "I Received My Payout"}
+                {isConfirming
+                  ? "Confirming..."
+                  : isOrganizerRecipient
+                    ? "Self-Confirm Payout"
+                    : "I Received My Payout"}
               </Button>
             </div>
           </form>

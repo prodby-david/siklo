@@ -15,6 +15,7 @@ import TurnDetailMetrics from "./elements/TurnDetailMetrics";
 import TurnDetailHistoryBar from "./elements/TurnDetailHistoryBar";
 import TurnPaymentStatusPanel from "./TurnPaymentStatusPanel";
 import TurnActionPanel from "./TurnActionPanel";
+import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 
 export default function TurnDetailPanel({
   selectedTurn,
@@ -43,6 +44,8 @@ export default function TurnDetailPanel({
   isRoundAllContributionsPaid = false,
   onDisbursePayout,
   isDisbursingPayout = false,
+  onConfirmPayoutReceipt,
+  isConfirmingPayoutReceipt = false,
 }: TurnDetailPanelProps) {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
@@ -89,6 +92,18 @@ export default function TurnDetailPanel({
     );
   }, [group.payments, selectedMemberUserId]);
 
+  const currentRoundPayment = useMemo(() => {
+    if (!currentRound) return undefined;
+
+    return memberPayments.find(
+      (payment) =>
+        payment.roundId === currentRound.id && payment.status === "VERIFIED",
+    );
+  }, [currentRound, memberPayments]);
+
+  const isOrganizerSelfAttested =
+    currentRoundPayment?.verificationSource === "ORGANIZER_SELF_ATTESTED";
+
   const effectiveDeadline = useMemo(() => {
     return calculateEffectiveDeadline(
       currentRound?.targetDate || calculatedPayoutDate,
@@ -109,16 +124,14 @@ export default function TurnDetailPanel({
     return calculateLatePenalty(contributionNum, latePenaltyRate, daysOverdue);
   }, [daysOverdue, isSelectedPaid, latePenaltyRate, contributionNum]);
 
-  const paidPenalty = useMemo(() => {
-    if (!currentRound) return 0;
-    const roundPayment = memberPayments.find(
-      (p) => p.roundId === currentRound.id && p.status === "VERIFIED",
-    );
-    return roundPayment?.penaltyAmount ?? 0;
-  }, [currentRound, memberPayments]);
+  const paidPenalty = currentRoundPayment?.penaltyAmount ?? 0;
 
+  const { data: currentUser } = useGetCurrentName();
   const initials = getInitials(selectedMemberName);
   const feeAmount = group.organizerFeeAmount || 0;
+  const avatarUrl =
+    selectedMembership?.user?.avatarUrl ||
+    (isUserSlotOwner ? currentUser?.avatarUrl : undefined);
 
   return (
     <div className="lg:col-span-7 border border-neutral-border/80 rounded-3xl p-5 sm:p-7 bg-card flex flex-col justify-between gap-5 shadow-xs">
@@ -135,6 +148,7 @@ export default function TurnDetailPanel({
         <TurnDetailBeneficiary
           selectedMemberName={selectedMemberName}
           initials={initials}
+          avatarUrl={avatarUrl}
           selectedMembership={selectedMembership}
           isSlotOrganizer={isSlotOrganizer}
           isUserSlotOwner={isUserSlotOwner}
@@ -167,11 +181,13 @@ export default function TurnDetailPanel({
           hasStarted={hasStarted}
           hasSelectedMembership={Boolean(selectedMembership)}
           isCurrentBeneficiary={isCurrentBeneficiary}
+          isSelectedMemberOrganizer={isSlotOrganizer}
           isSelectedTurnReceived={isSelectedTurnReceived}
           isSelectedTurnDisbursed={isSelectedTurnDisbursed}
           isSelectedPaid={isSelectedPaid}
           isSelectedPending={isSelectedPending}
           isSelectedRejected={isSelectedRejected}
+          isOrganizerSelfAttested={isOrganizerSelfAttested}
           latePenaltyRate={latePenaltyRate}
           gracePeriodDays={group.gracePeriodDays ?? 0}
           daysOverdue={daysOverdue}
@@ -205,15 +221,19 @@ export default function TurnDetailPanel({
           hasStarted={hasStarted}
           isUserSlotOwner={isUserSlotOwner}
           isSelectedTurnReceived={isSelectedTurnReceived}
+          isSelectedTurnDisbursed={isSelectedTurnDisbursed}
           isSelectedPaid={isSelectedPaid}
           isSelectedPending={isSelectedPending}
           isSelectedRejected={isSelectedRejected}
+          isOrganizerSelfAttested={isOrganizerSelfAttested}
           hasCurrentMemberPaidOrganizerFee={hasCurrentMemberPaidOrganizerFee}
           isRoundAllContributionsPaid={isRoundAllContributionsPaid}
           isSelectingSlot={isSelectingSlot}
           isDisbursingPayout={isDisbursingPayout}
+          isConfirmingPayoutReceipt={isConfirmingPayoutReceipt}
           onSelectSlot={onSelectSlot}
           onDisbursePayout={onDisbursePayout}
+          onConfirmPayoutReceipt={onConfirmPayoutReceipt}
           accruedPenalty={accruedPenalty}
         />
       </div>

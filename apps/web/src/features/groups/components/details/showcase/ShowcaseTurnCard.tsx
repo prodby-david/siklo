@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import formatDate from "@/shared/utils/formatDate";
 import { Clock, CheckCircle2, Crown, ChevronRight, Award, HandCoins } from "lucide-react";
 import { ShowcaseTurnCardProps } from "@/features/groups/types/showcase.types";
+import { getInitials } from "@/features/groups/utils/groupHelpers";
 
 export default function ShowcaseTurnCard({
   position,
@@ -18,6 +20,9 @@ export default function ShowcaseTurnCard({
 }: ShowcaseTurnCardProps) {
   const isOrganizerSlot = membership && organizerId && membership.userId === organizerId;
   const isCurrentActive = Boolean(hasStarted && isCurrent);
+  const memberName = membership?.user?.name;
+  const avatarUrl = membership?.user?.avatarUrl;
+  const initials = memberName ? getInitials(memberName) : null;
 
   return (
     <button
@@ -36,23 +41,43 @@ export default function ShowcaseTurnCard({
     >
       <div className="flex items-center gap-2.5 min-w-0">
         <div
-          className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 ${
-            isReceived
-              ? "bg-success text-brand-accent-foreground"
+          className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center font-black text-xs shrink-0 border ${
+            avatarUrl
+              ? "border-neutral-border/80 bg-neutral-table-stripe"
+              : isReceived
+              ? "bg-success text-brand-accent-foreground border-success/30"
               : isDisbursed
-              ? "bg-winner-payout text-brand-accent-foreground shadow-2xs"
+              ? "bg-winner-payout text-brand-accent-foreground border-winner-payout/30 shadow-2xs"
               : isCurrentActive
-              ? "bg-brand-accent text-brand-accent-foreground shadow-2xs"
+              ? "bg-brand-accent text-brand-accent-foreground border-brand-accent/30 shadow-2xs"
               : isOrganizerSlot && !hasStarted
-              ? "bg-warning text-brand-accent-foreground shadow-2xs"
-              : "bg-neutral-subtext/10 text-neutral-subtext"
+              ? "bg-warning text-brand-accent-foreground border-warning/30 shadow-2xs"
+              : "bg-neutral-subtext/10 text-neutral-subtext border-neutral-border/40"
           }`}
         >
-          #{position}
+          {avatarUrl ? (
+            <Image
+              src={avatarUrl}
+              alt={memberName || "Member"}
+              width={32}
+              height={32}
+              className="w-full h-full object-cover"
+              unoptimized
+            />
+          ) : initials ? (
+            <span>{initials}</span>
+          ) : (
+            <span>#{position}</span>
+          )}
         </div>
         <div className="min-w-0">
-          <p className="text-xs font-bold text-foreground truncate flex items-center gap-1">
-            {membership?.user?.name || "Available Slot"}
+          <p className="text-xs font-bold text-foreground truncate flex items-center gap-1.5">
+            <span>{memberName || `Slot #${position}`}</span>
+            {memberName && (
+              <span className="text-[10px] font-semibold text-neutral-subtext">
+                #{position}
+              </span>
+            )}
           </p>
           <p className="text-[10px] text-neutral-subtext font-medium flex items-center gap-1">
             <Clock className="w-2.5 h-2.5 text-neutral-subtext" />

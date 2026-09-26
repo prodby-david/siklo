@@ -137,6 +137,7 @@ export interface ConfirmPayoutReceiptModalProps {
   cycleNumber: number;
   turnNumber: number;
   poolTotal: number;
+  isOrganizerRecipient?: boolean;
   onConfirmReceipt: (data: ConfirmPayoutReceiptDTO) => Promise<void>;
   isConfirming?: boolean;
 }

@@ -77,7 +77,7 @@ export default function GroupRoundsSummaryCards({
         </div>
         <span className="text-[10px] text-neutral-subtext">
           {hasStarted
-            ? `${verifiedPaymentsCount} of ${maxMembers} members verified`
+            ? `${verifiedPaymentsCount} of ${maxMembers} contributions completed`
             : "0 members contributed"}
         </span>
       </div>

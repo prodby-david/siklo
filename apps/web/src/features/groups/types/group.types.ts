@@ -15,6 +15,7 @@ export type GroupFilterStatus = "ALL" | "ACTIVE" | "PENDING" | "COMPLETED";
 export interface User {
   id: string;
   name: string;
+  avatarUrl?: string | null;
   contactNumber?: string;
   paymentAccounts?: PaymentAccountDetailsDTO | null;
 }
@@ -198,18 +199,6 @@ export interface GroupInfoCardProps {
   paymentDetails?: string | null;
   gracePeriodDays?: number;
   latePenaltyAmount?: number;
-}
-
-export interface GroupPayoutProgressProps {
-  groupId?: string;
-  memberships?: Membership[];
-  maxMembers: number;
-  contributionAmount: number;
-  startDate?: string | Date | null;
-  billingCycle: string;
-  currentCycle?: number;
-  cycleDuration?: number;
-  isCycleDone?: boolean;
 }
 
 export interface UnstartedCyclePreparationGuideProps {

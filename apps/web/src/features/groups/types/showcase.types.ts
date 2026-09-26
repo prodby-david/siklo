@@ -149,17 +149,23 @@ export interface TurnActionPanelProps {
   hasStarted: boolean;
   isUserSlotOwner: boolean;
   isSelectedTurnReceived: boolean;
+  isSelectedTurnDisbursed: boolean;
   isSelectedPaid: boolean;
   isSelectedPending: boolean;
   isSelectedRejected: boolean;
+  isOrganizerSelfAttested: boolean;
   hasCurrentMemberPaidOrganizerFee: boolean;
   isRoundAllContributionsPaid: boolean;
   isSelectingSlot: boolean;
   isDisbursingPayout: boolean;
+  isConfirmingPayoutReceipt: boolean;
   onSelectSlot?: (position: number) => Promise<void>;
   onDisbursePayout?: (data: {
     referenceNumber: string;
     proofUrl: string;
+  }) => Promise<void>;
+  onConfirmPayoutReceipt?: (data: {
+    notes?: string;
   }) => Promise<void>;
   accruedPenalty?: number;
 }
@@ -173,11 +179,13 @@ export interface TurnPaymentStatusPanelProps {
   hasStarted: boolean;
   hasSelectedMembership: boolean;
   isCurrentBeneficiary: boolean;
+  isSelectedMemberOrganizer: boolean;
   isSelectedTurnReceived: boolean;
   isSelectedTurnDisbursed: boolean;
   isSelectedPaid: boolean;
   isSelectedPending: boolean;
   isSelectedRejected: boolean;
+  isOrganizerSelfAttested: boolean;
   latePenaltyRate?: number;
   gracePeriodDays?: number;
   daysOverdue?: number;
@@ -197,6 +205,7 @@ export interface TurnDetailHeaderProps {
 export interface TurnDetailBeneficiaryProps {
   selectedMemberName: string;
   initials: string;
+  avatarUrl?: string | null;
   selectedMembership?: Membership;
   isSlotOrganizer: boolean;
   isUserSlotOwner: boolean;
@@ -288,6 +297,7 @@ export interface MemberPaymentHistoryItemProps {
     cycleNumber: number;
     roundNumber: number;
   };
+  onViewReceipt?: (receiptUrl: string) => void;
 }
 
 export interface GroupTurnShowcaseHeaderProps {
