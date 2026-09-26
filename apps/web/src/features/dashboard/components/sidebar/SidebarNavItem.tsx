@@ -70,22 +70,29 @@ export default function SidebarNavItem({
       onClick={onNavigate}
       title={item.label}
       className={`w-full group flex items-center rounded-2xl transition-all duration-150 active:scale-98 cursor-pointer ${
-        isCollapsed ? "justify-center p-2.5" : "gap-3 px-3.5 py-2.5"
+        isCollapsed ? "justify-center p-2.5" : "justify-between px-3.5 py-2.5"
       } ${
         isActive
           ? "bg-brand-accent/10 text-brand-accent font-bold border border-brand-accent/25 shadow-2xs"
           : "text-neutral-subtext hover:bg-neutral-subtext/10 hover:text-foreground font-medium border border-transparent"
       }`}
     >
-      <IconComponent
-        className={`w-5 h-5 transition-colors ${
-          isActive
-            ? "text-brand-accent"
-            : "text-neutral-subtext group-hover:text-foreground"
-        }`}
-      />
-      {!isCollapsed && (
-        <span className="text-xs sm:text-sm">{item.label}</span>
+      <div className="flex items-center gap-3 min-w-0">
+        <IconComponent
+          className={`w-5 h-5 shrink-0 transition-colors ${
+            isActive
+              ? "text-brand-accent"
+              : "text-neutral-subtext group-hover:text-foreground"
+          }`}
+        />
+        {!isCollapsed && (
+          <span className="text-xs sm:text-sm truncate">{item.label}</span>
+        )}
+      </div>
+      {!isCollapsed && item.badge && (
+        <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30 shrink-0">
+          {item.badge}
+        </span>
       )}
     </Link>
   );

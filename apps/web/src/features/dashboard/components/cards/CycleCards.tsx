@@ -12,7 +12,7 @@ export default function CycleCards({ statusFilter = "ALL" }: CycleCardsProps) {
   const { data = [], isLoading } = useGetGroup(queryParam);
 
   if (isLoading) {
-    return <Loader text="Retrieving your groups..." />;
+    return <Loader />;
   }
 
   if (data.length === 0) {

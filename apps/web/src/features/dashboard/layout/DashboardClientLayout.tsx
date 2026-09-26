@@ -16,7 +16,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
       <DashboardMobileHeader />
       <div className="flex flex-1 w-full">
         <DashboardSidebar />
-        <div className="flex-1 min-h-screen w-full pl-0 md:pl-60 transition-all duration-300">
+        <div className="flex-1 min-h-screen w-full pl-0 md:pl-72 transition-all duration-300">
           {children}
         </div>
       </div>

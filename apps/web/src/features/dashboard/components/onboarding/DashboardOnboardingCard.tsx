@@ -5,7 +5,7 @@ import {
   Wallet,
   Users,
   PlusCircle,
-  Sparkles,
+  ClipboardCheck,
   ArrowRight,
   CheckCircle2,
   AlertCircle,
@@ -24,7 +24,7 @@ export default function DashboardOnboardingCard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-border/60 pb-5">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-accent/10 text-brand-accent border border-brand-accent/20 shrink-0">
-            <Sparkles className="w-6 h-6" />
+            <ClipboardCheck className="w-6 h-6" />
           </div>
           <div>
             <h2 className="text-base sm:text-lg font-extrabold text-foreground leading-tight">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useSignOut } from "@/features/auth/signout/hooks/useSignOut";
+import SignOutModal from "@/features/auth/signout/components/SignOutModal";
 import ThemeToggle from "@/shared/components/theme/ThemeToggle";
 import { useSidebarContext } from "./SidebarContext";
 import NotificationSheet from "@/features/notifications/components/NotificationSheet";
@@ -16,14 +17,15 @@ import SidebarMobileDrawer from "./SidebarMobileDrawer";
 
 export default function DashboardSidebar() {
   const pathname = usePathname();
-  const { mutateAsync: signOut } = useSignOut();
+  const { mutateAsync: signOut, isPending: isSigningOut } = useSignOut();
   const { unreadCount } = useFetchNotifications();
   const { isCollapsed, collapseSidebar } = useSidebarContext();
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
   return (
     <>
-      <aside className="hidden md:flex flex-col justify-between p-3 border-r border-neutral-border/80 h-screen fixed inset-y-0 left-0 top-0 shrink-0 bg-card text-foreground z-30 select-none w-60">
+      <aside className="hidden md:flex flex-col justify-between p-3 border-r border-neutral-border/80 h-screen fixed inset-y-0 left-0 top-0 shrink-0 bg-card text-foreground z-30 select-none w-72">
         <div className="flex flex-col min-h-0 flex-1">
           <SidebarBrandHeader />
 
@@ -58,7 +60,7 @@ export default function DashboardSidebar() {
             <SidebarUserProfile />
             <button
               type="button"
-              onClick={() => signOut()}
+              onClick={() => setIsSignOutModalOpen(true)}
               title="Sign out"
               className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl px-3 py-2 text-xs font-bold text-neutral-subtext transition-all duration-150 border border-neutral-border/60 bg-neutral-table-stripe/40 hover:bg-danger-bg hover:text-danger hover:border-danger-border/60 active:scale-98"
             >
@@ -75,12 +77,22 @@ export default function DashboardSidebar() {
         unreadCount={unreadCount}
         onClose={collapseSidebar}
         onOpenNotifications={() => setIsNotificationOpen(true)}
-        onSignOut={() => signOut()}
+        onSignOut={() => setIsSignOutModalOpen(true)}
       />
 
       <NotificationSheet
         isOpen={isNotificationOpen}
         onClose={() => setIsNotificationOpen(false)}
+      />
+
+      <SignOutModal
+        isOpen={isSignOutModalOpen}
+        onClose={() => setIsSignOutModalOpen(false)}
+        onConfirm={async () => {
+          await signOut();
+          setIsSignOutModalOpen(false);
+        }}
+        isSigningOut={isSigningOut}
       />
     </>
   );

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Crown, CheckCircle2 } from "lucide-react";
 import { useGetCurrentName } from "@/features/users/hooks/useGetCurrentName";
 
 interface SidebarUserProfileProps {
@@ -12,6 +12,7 @@ export default function SidebarUserProfile({ onNavigate }: SidebarUserProfilePro
 
   const displayName = user?.name || "Member";
   const displayEmail = user?.email || "";
+  const plan = user?.subscriptionPlan || "FREE";
   const initials =
     displayName
       .split(" ")
@@ -46,15 +47,28 @@ export default function SidebarUserProfile({ onNavigate }: SidebarUserProfilePro
           <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full ring-2 ring-card" />
         </div>
 
-        <div className="min-w-0">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-bold text-foreground truncate group-hover:text-brand-accent transition-colors block">
-              {displayName}
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <span className="text-xs font-bold text-foreground truncate block group-hover:text-brand-accent transition-colors">
+            {displayName}
+          </span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span
+              className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shrink-0 border ${
+                plan === "PREMIUM"
+                  ? "bg-amber-500/15 text-amber-500 border-amber-500/30"
+                  : plan === "PRO"
+                    ? "bg-brand-accent/15 text-brand-accent border-brand-accent/30"
+                    : "bg-neutral-subtext/15 text-neutral-subtext border-neutral-border/60"
+              }`}
+            >
+              {plan === "PREMIUM" && <Crown className="w-2.5 h-2.5" />}
+              {plan === "PRO" && <CheckCircle2 className="w-2.5 h-2.5" />}
+              <span>{plan === "FREE" ? "STARTER" : plan}</span>
+            </span>
+            <span className="text-[10px] text-neutral-subtext truncate min-w-0">
+              {isLoading ? "Loading..." : displayEmail || "Active Saver"}
             </span>
           </div>
-          <span className="text-[10px] text-neutral-subtext truncate block">
-            {isLoading ? "Loading..." : displayEmail || "Active Saver"}
-          </span>
         </div>
       </div>
 
