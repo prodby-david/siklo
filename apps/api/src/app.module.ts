@@ -13,6 +13,8 @@ import { envSchema } from './configs/env.schema';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { HealthModule } from './modules/health/health.module';
 import { InvitesModule } from './modules/invites/invites.module';
+import { RedisModule } from './infrastructure/redis/redis.module';
+import { RateLimitModule } from './infrastructure/rate-limit/rate-limit.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { InvitesModule } from './modules/invites/invites.module';
     NotificationsModule,
     HealthModule,
     InvitesModule,
+    RedisModule,
+    RateLimitModule,
   ],
 })
 export class AppModule {}
