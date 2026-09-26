@@ -13,7 +13,7 @@ export const envSchema = z.object({
   RESEND_FROM_EMAIL: z.string().email(),
   PORT: z.coerce.number().default(3001),
   OPENROUTER_API_KEY: z.string().min(1),
-  REDIS_URL: z.url().min(1),
+  REDIS_URL: z.string().min(1),
 });
 
 export type Env = z.infer<typeof envSchema>;
