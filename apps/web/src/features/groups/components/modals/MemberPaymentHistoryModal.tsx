@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +11,7 @@ import {
 import { Receipt, CreditCard } from "lucide-react";
 import type { MemberPaymentHistoryModalProps } from "@/features/groups/types/showcase.types";
 import MemberPaymentHistoryItem from "./elements/MemberPaymentHistoryItem";
+import ReceiptImagePreviewModal from "@/features/payments/components/modals/ReceiptImagePreviewModal";
 
 export default function MemberPaymentHistoryModal({
   isOpen,
@@ -20,6 +22,10 @@ export default function MemberPaymentHistoryModal({
   currentCycle,
   selectedTurn,
 }: MemberPaymentHistoryModalProps) {
+  const [selectedReceiptUrl, setSelectedReceiptUrl] = useState<string | null>(
+    null,
+  );
+
   const getPaymentRoundInfo = (roundId: string) => {
     const round = rounds.find((r) => r.id === roundId);
     return {
@@ -28,13 +34,17 @@ export default function MemberPaymentHistoryModal({
     };
   };
 
-  const totalVerifiedAmount = payments
-    .filter((p) => p.status === "VERIFIED")
-    .reduce((sum, p) => sum + Number(p.totalAmount || 0), 0);
+  const totalCompletedAmount = payments
+    .filter((payment) => payment.status === "VERIFIED")
+    .reduce(
+      (total, payment) => total + Number(payment.totalAmount || 0),
+      0,
+    );
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-lg max-h-[90dvh] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl border border-neutral-border">
+    <>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="sm:max-w-lg max-h-[90dvh] flex flex-col p-0 gap-0 overflow-hidden rounded-3xl border border-neutral-border">
         <div className="p-4 sm:p-6 border-b border-neutral-border/80 bg-card">
           <DialogHeader className="space-y-1 text-left">
             <div className="flex items-center gap-2">
@@ -61,10 +71,10 @@ export default function MemberPaymentHistoryModal({
             </div>
             <div className="p-2.5 rounded-2xl bg-neutral-table-stripe/40 border border-neutral-border/70">
               <span className="text-[10px] font-bold text-neutral-subtext uppercase tracking-wider block">
-                Verified Total
+                Completed Total
               </span>
               <span className="text-xs sm:text-sm font-extrabold text-brand-accent">
-                ₱{totalVerifiedAmount.toLocaleString()}
+                ₱{totalCompletedAmount.toLocaleString()}
               </span>
             </div>
           </div>
@@ -77,6 +87,7 @@ export default function MemberPaymentHistoryModal({
                 key={p.id}
                 payment={p}
                 roundInfo={getPaymentRoundInfo(p.roundId)}
+                onViewReceipt={setSelectedReceiptUrl}
               />
             ))
           ) : (
@@ -101,7 +112,15 @@ export default function MemberPaymentHistoryModal({
             Close
           </button>
         </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <ReceiptImagePreviewModal
+        isOpen={Boolean(selectedReceiptUrl)}
+        onClose={() => setSelectedReceiptUrl(null)}
+        imageUrl={selectedReceiptUrl}
+        title={`${memberName}'s Payment Receipt`}
+      />
+    </>
   );
 }

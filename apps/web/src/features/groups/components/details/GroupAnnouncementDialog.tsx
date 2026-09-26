@@ -30,7 +30,7 @@ export default function GroupAnnouncementDialog({
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs animate-in fade-in duration-200">
-          {isPending && <Loader text="Broadcasting announcement..." />}
+          {isPending && <Loader />}
           <div className="bg-card border border-neutral-border rounded-3xl p-5 sm:p-6 shadow-2xl max-w-md w-full max-h-[calc(100dvh-2rem)] overflow-y-auto relative">
             <button
               onClick={() => setIsOpen(false)}

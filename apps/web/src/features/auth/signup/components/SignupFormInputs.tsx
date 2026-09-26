@@ -22,7 +22,7 @@ export default function SignupFormInputs() {
   return (
     <>
       {(isSubmitting || isRedirecting) && (
-        <Loader text="Creating your account..." />
+        <Loader />
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-1 flex-col gap-4">

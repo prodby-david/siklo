@@ -71,7 +71,7 @@ export default function DisbursePayoutModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
-        {isDisbursing && <Loader text="Disbursing payout..." />}
+        {isDisbursing && <Loader />}
         <div className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">

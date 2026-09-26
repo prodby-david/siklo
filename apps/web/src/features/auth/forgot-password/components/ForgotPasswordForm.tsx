@@ -59,7 +59,7 @@ export default function ForgotPasswordForm() {
 
   return (
     <>
-      {isSubmitting && <Loader text="Sending password reset link..." />}
+      {isSubmitting && <Loader />}
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <Input
         label="email"

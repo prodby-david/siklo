@@ -33,7 +33,7 @@ export default function EditGroupModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-2xl">
-        {isSubmitting && <Loader text="Updating group settings..." />}
+        {isSubmitting && <Loader />}
         <form onSubmit={handleSubmit} className="space-y-5 p-1">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg font-extrabold text-foreground">

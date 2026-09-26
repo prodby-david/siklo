@@ -17,7 +17,7 @@ export default function GroupLogsUI() {
   if (isLoading) {
     return (
       <main className="flex-1 bg-neutral-subtext/5 p-6 md:p-10 min-h-screen flex items-center justify-center">
-        <Loader text="Loading group activity logs..." />
+        <Loader />
       </main>
     );
   }

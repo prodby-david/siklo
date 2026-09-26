@@ -80,7 +80,7 @@ export default function PaymentSubmissionModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md overflow-x-hidden no-scrollbar">
-        {isSubmitting && <Loader text="Submitting payment proof..." />}
+        {isSubmitting && <Loader />}
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold flex items-center gap-2 text-foreground">

@@ -75,7 +75,7 @@ export default function PaymentRejectionReasonModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
-        {isRejecting && <Loader text="Rejecting payment..." />}
+        {isRejecting && <Loader />}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg font-bold text-danger">

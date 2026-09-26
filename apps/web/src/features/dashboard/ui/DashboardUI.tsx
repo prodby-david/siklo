@@ -27,7 +27,7 @@ export default function DashboardUI() {
   } = useDashboardData();
 
   if (isLoading) {
-    return <Loader text="Loading your dashboard..." />;
+    return <Loader />;
   }
 
   return (

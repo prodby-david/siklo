@@ -40,7 +40,7 @@ export default function PaymentSettings() {
 
   return (
     <div className="space-y-6 max-w-xl">
-      {isSubmitting && <Loader text="Saving payment accounts..." />}
+      {isSubmitting && <Loader />}
       <div>
         <h3 className="text-base font-bold text-foreground">
           Payment & Payout Accounts

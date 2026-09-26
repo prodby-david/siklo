@@ -52,7 +52,7 @@ export default function JoinGroupModal() {
           </div>
         ) : (
           <>
-            {isSubmitting && <Loader text="Joining group..." />}
+            {isSubmitting && <Loader />}
             <form onSubmit={handleSubmit}>
             <DialogHeader>
               <DialogTitle>Join Group</DialogTitle>

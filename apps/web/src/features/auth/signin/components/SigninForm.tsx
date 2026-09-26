@@ -19,7 +19,7 @@ export default function SigninForm() {
 
   return (
     <>
-      {(isSubmitting || isRedirecting) && <Loader text="Signing in..." />}
+      {(isSubmitting || isRedirecting) && <Loader />}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <Input
         label="email"

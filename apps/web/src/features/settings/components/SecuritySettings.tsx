@@ -13,7 +13,7 @@ export default function SecuritySettings() {
 
   return (
     <div className="space-y-8">
-      {isSubmitting && <Loader text="Changing password..." />}
+      {isSubmitting && <Loader />}
       <div>
         <h3 className="text-base font-bold text-foreground">
           Login & Security
