@@ -40,10 +40,11 @@ export default function Navbar() {
           className="flex items-center gap-2 text-base font-bold text-foreground"
         >
           <Image
-            src="/images/logo.svg"
-            width={70}
-            height={70}
-            alt="Logo"
+            src="/images/siklo-logo.svg"
+            width={100}
+            height={44}
+            alt="Siklo Logo"
+            className="h-8 w-auto object-contain"
             priority
           />
         </Link>

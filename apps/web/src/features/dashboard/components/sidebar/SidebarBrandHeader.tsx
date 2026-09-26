@@ -25,12 +25,12 @@ export default function SidebarBrandHeader({
         className="flex items-center justify-center cursor-pointer"
       >
         <Image
-          src="/images/logo.svg"
-          width={64}
-          height={64}
-          alt="Logo"
+          src="/images/siklo-logo.svg"
+          width={100}
+          height={44}
+          alt="Siklo Logo"
           priority
-          className="h-12 w-auto object-contain"
+          className="h-9 w-auto object-contain"
         />
       </Link>
       {action}

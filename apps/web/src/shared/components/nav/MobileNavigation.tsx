@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, Coins, Menu, X } from "lucide-react";
 import GetStartedButton from "@/shared/components/buttons/GetStartedButton";
@@ -110,18 +109,6 @@ export default function MobileNavigation({
               className="mt-2 w-full"
               onClick={onCloseMenu}
             />
-
-            <div className="flex flex-col items-center justify-center border-t border-neutral-border/50 pt-2">
-              <Image
-                src="/images/siklo-waving.png"
-                alt="Siklo Mobile Menu Mascot"
-                width={80}
-                height={80}
-              />
-              <span className="mt-1 text-[10px] font-bold text-neutral-subtext">
-                Welcome to Siklo!
-              </span>
-            </div>
           </div>
         </div>
       </div>

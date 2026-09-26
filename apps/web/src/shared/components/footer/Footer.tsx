@@ -13,10 +13,11 @@ export default function Footer() {
           <div className="lg:col-span-4 flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2 text-base font-bold text-foreground self-start">
               <Image
-                src="/images/logo.svg"
+                src="/images/siklo-logo.svg"
                 alt="Siklo Logo"
-                width={70}
-                height={70}
+                width={100}
+                height={44}
+                className="h-8 w-auto object-contain"
                 priority
               />
             </Link>

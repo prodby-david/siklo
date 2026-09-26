@@ -23,8 +23,8 @@ export const FOOTER_SECTIONS: FooterSection[] = [
     links: [
       { label: "Create Group", href: "/group/create" },
       { label: "Dashboard", href: "/dashboard" },
-      { label: "Rotation Simulator", href: "/how-it-works" },
-      { label: "Group Ledger", href: "/features" },
+      { label: "Rotation Simulator", href: "/how-it-works#cycle-calculator" },
+      { label: "Group Ledger", href: "/group" },
     ],
   },
   {
