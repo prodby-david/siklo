@@ -1,5 +1,3 @@
-import Link from "next/link";
-import Image from "next/image";
 import type { AuthInfoPanelProps } from "../types/auth-info.types";
 
 export type { FeatureHighlight, AuthInfoPanelProps } from "../types/auth-info.types";
@@ -12,12 +10,6 @@ export default function AuthInfoPanel({
   return (
     <div className="hidden md:flex md:w-5/12 bg-gradient-to-br from-brand-accent/10 via-brand-accent/5 to-transparent border-r border-brand-accent/15 p-8 flex-col justify-between relative overflow-hidden">
       <div className="flex flex-col gap-6 relative z-10">
-        <Link
-          href="/"
-          className="flex items-center text-lg font-bold text-foreground self-start transition-transform hover:scale-105"
-        >
-          <Image src="/images/logo.svg" alt="Siklo" width={64} height={64} priority />
-        </Link>
 
         <div className="flex flex-col gap-2 mt-1">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground leading-tight">

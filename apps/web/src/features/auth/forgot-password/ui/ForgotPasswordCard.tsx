@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
 import { KeyRound, ShieldCheck, MailCheck } from "lucide-react";
 import ForgotPasswordForm from "../components/ForgotPasswordForm";
 import AuthInfoPanel from "@/features/auth/shared/components/AuthInfoPanel";
@@ -36,13 +34,6 @@ export default function ForgotPasswordCard() {
 
       <div className="w-full md:w-7/12 p-6 sm:p-10 flex flex-col gap-6 justify-center">
         <div className="flex flex-col items-center text-center gap-2">
-          <Link
-            href="/"
-            className="flex md:hidden items-center gap-2 text-lg font-bold text-foreground mb-2"
-          >
-            <Image src="/images/logo.svg" alt="Siklo" width={56} height={56} priority />
-          </Link>
-
           <div className="flex flex-col gap-1.5 items-center">
             <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
               Forgot Password?
