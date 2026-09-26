@@ -649,6 +649,65 @@ describe('PaymentsService', () => {
           description: expect.stringContaining('contributions are now open'),
         }),
       );
+      expect(activityService.createActivity).toHaveBeenCalledWith(
+        expect.objectContaining({
+          activityType: 'PAYOUT_RECEIVED',
+          description: expect.stringContaining('Recipient confirmed receipt'),
+        }),
+        undefined,
+      );
+    });
+
+    it('should record organizer payout confirmation as self-confirmed', async () => {
+      groupsCoreService.getExistingGroup.mockResolvedValue({
+        id: 'group-1',
+        startDate: new Date(),
+        organizerId: 'organizer-1',
+        contributionAmount: 1000,
+        maxMembers: 2,
+        cycleDuration: 1,
+        memberships: [
+          {
+            userId: 'organizer-1',
+            position: 1,
+            user: { id: 'organizer-1', name: 'Organizer' },
+          },
+          {
+            userId: 'member-2',
+            position: 2,
+            user: { id: 'member-2', name: 'Member Two' },
+          },
+        ],
+      });
+      paymentsRepository.findRoundByRoundId.mockResolvedValue({
+        id: 'round-1',
+        groupId: 'group-1',
+        recipientId: 'organizer-1',
+        cycleNumber: 1,
+        roundNumber: 1,
+        status: 'DISBURSED',
+      });
+      paymentsRepository.transitionRoundStatus.mockResolvedValue({
+        id: 'round-1',
+        status: 'RECEIVED',
+      });
+      paymentsRepository.findNextUnpaidRoundAfter.mockResolvedValue(null);
+
+      await service.confirmPayoutReceipt({ roundId: 'round-1' }, 'organizer-1');
+
+      expect(activityService.createActivity).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'organizer-1',
+          activityType: 'PAYOUT_RECEIVED',
+          description: expect.stringContaining('self-confirmed receipt'),
+        }),
+        undefined,
+      );
+      expect(notificationsService.createNotification).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'organizer-1',
+        }),
+      );
     });
   });
 

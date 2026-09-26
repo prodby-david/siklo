@@ -218,9 +218,7 @@ export class PaymentsSubmissionService {
           {
             userId: isOrganizerPayment ? userId : group.organizerId,
             groupId: group.id,
-            activityType: isOrganizerPayment
-              ? 'PAYMENT_VERIFIED'
-              : 'PAYMENT',
+            activityType: isOrganizerPayment ? 'PAYMENT_VERIFIED' : 'PAYMENT',
             description: isOrganizerPayment
               ? `${membership.user.name} declared their organizer contribution for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}.`
               : `${membership.user.name} submitted payment proof for Cycle #${round.cycleNumber} Turn #${round.roundNumber}${refLabel}`,

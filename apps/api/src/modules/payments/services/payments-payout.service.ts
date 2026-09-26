@@ -83,7 +83,7 @@ export class PaymentsPayoutService {
       memberships.some((membership) => !verifiedUserIds.has(membership.userId))
     ) {
       throw new BadRequestException(
-        `Advance payout is only available after all ${totalMembers} members have completed verified contributions for this round`,
+        `Advance payout is only available after all ${totalMembers} members have completed their contributions for this round`,
       );
     }
 
@@ -177,7 +177,7 @@ export class PaymentsPayoutService {
       memberships.some((membership) => !verifiedUserIds.has(membership.userId))
     ) {
       throw new BadRequestException(
-        `All ${totalMembers} members must complete verified contributions before releasing payout`,
+        `All ${totalMembers} members must complete their contributions before releasing payout`,
       );
     }
 
@@ -293,7 +293,10 @@ export class PaymentsPayoutService {
       totalMembers,
     );
     const notesInfo = dto.notes ? ` (Note: ${dto.notes})` : '';
-    const description = `${userMembership.user.name} confirmed receipt of ₱${poolTotal.toLocaleString()} payout for Turn #${round.roundNumber} (Cycle ${round.cycleNumber})${notesInfo}.`;
+    const isOrganizerRecipient = group.organizerId === recipientUserId;
+    const description = isOrganizerRecipient
+      ? `Organizer ${userMembership.user.name} self-confirmed receipt of ₱${poolTotal.toLocaleString()} payout for Turn #${round.roundNumber} (Cycle ${round.cycleNumber})${notesInfo}.`
+      : `${userMembership.user.name} confirmed receipt of ₱${poolTotal.toLocaleString()} payout for Turn #${round.roundNumber} (Cycle ${round.cycleNumber})${notesInfo}.`;
 
     const updatedRound = await this.prisma.$transaction(async (tx) => {
       const receivedRound = await this.paymentsRepository.transitionRoundStatus(

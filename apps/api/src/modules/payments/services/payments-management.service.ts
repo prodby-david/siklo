@@ -184,8 +184,7 @@ export class PaymentsManagementService {
             existingPayment.id,
             {
               status: PAYMENT_STATUS.VERIFIED,
-              verificationSource:
-                PaymentVerificationSource.ORGANIZER_APPROVED,
+              verificationSource: PaymentVerificationSource.ORGANIZER_APPROVED,
               verifiedAt: new Date(),
               referenceNumber:
                 referenceNumber || existingPayment.referenceNumber,
@@ -210,8 +209,7 @@ export class PaymentsManagementService {
               referenceNumber,
               proofUrl,
               status: PAYMENT_STATUS.VERIFIED,
-              verificationSource:
-                PaymentVerificationSource.ORGANIZER_APPROVED,
+              verificationSource: PaymentVerificationSource.ORGANIZER_APPROVED,
               verifiedAt: new Date(),
             },
             tx,
