@@ -18,7 +18,7 @@ export const HeroSection = ({
   title = (
     <>
       Organize your{" "}
-      <span className="text-brand-accent font-extrabold">rotation savings</span>{" "}
+      <span className="text-brand-accent font-extrabold">rotating savings</span>{" "}
       with total clarity.
     </>
   ),
@@ -41,10 +41,7 @@ export const HeroSection = ({
             variants={heroVisualizerVariants}
             className="w-full flex flex-col items-center"
           >
-            <CycleVisualizer
-              members={members}
-              stats={stats}
-            />
+            <CycleVisualizer members={members} stats={stats} />
           </motion.div>
 
           <motion.h1
