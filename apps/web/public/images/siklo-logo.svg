@@ -5,8 +5,6 @@
 <path d="M-62 -65H538.552V349H-62V-65Z" fill="white"/>
 </mask>
 <g mask="url(#mask0_1_17)">
-<path d="M-102 -119H498.552V295H-102V-119Z" fill="white"/>
-<path d="M-102 -119H498.552V295H-102V-119Z" fill="white"/>
 <mask id="mask1_1_17" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="-102" y="-119" width="601" height="415">
 <rect x="-102" y="-119" width="600.553" height="414.002" fill="url(#pattern0_1_17)"/>
 </mask>
